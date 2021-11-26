@@ -1,0 +1,1 @@
+PrefVote is a project to promote use and understanding of preference voting methods and algorithms. It is derived from the Vote::STV software written by Ian Kluft in Perl originally in 1999. With translations to multiple programming languages, the library is intended to have a common test suite among the different implementations to verify proper functioning.
