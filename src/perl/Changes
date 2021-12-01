@@ -1,0 +1,28 @@
+Change log for PrefVote
+
+{{$NEXT}}
+ [API CHANGE]
+
+ [BUG FIXES]
+
+ [DOCS]
+
+ [ENHANCEMENTS]
+
+ [MAJOR]
+
+ [MINOR]
+ - import code from Vote::STV 0.5 and modernize as Perl reference implementation of PrefVote
+
+ [REVISION]
+
+ [SECURITY]
+
+0.5.0 2006-06-29T21:08:57-07:00 America/Los_Angeles
+ [REVISION]
+ - reorg directory for ExtUtils::MakeMaker build
+
+
+0.1.0 2002-07-10T00:00:00-07:00 America/Los_Angeles
+ [REVISION]
+ - convert stv script as it was used since 1998 into Vote::STV module
