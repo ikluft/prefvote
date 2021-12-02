@@ -1,15 +1,16 @@
-# PrefVote - Preference voting base class
+# PrefVote
+# ABSTRACT: Preference voting system
 # derived from Vote::STV by Ian Kluft
 # Copyright (c) 1998-2021 by Ian Kluft
 # Open Source license: Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
 
+## no critic (Modules::RequireExplicitPackage)
+# 'use strict' and 'use warnings' included here
 package PrefVote;
-use strict;
-use warnings;
 use Modern::Perl qw(2015); # require 5.20.0
-use Carp qw(croak);
+## use critic (Modules::RequireExplicitPackage)
 
-our $VERSION = '0.6';
+use Carp qw(croak);
 my $debug=($ENV{PREFVOTE_DEBUG} // 0);
 
 # new instance of vote-counting structure
@@ -71,3 +72,27 @@ sub debug
 
 
 1;
+
+__END__
+
+# POD documentation
+
+=head1 NAME
+
+PrefVote - Preference voting system
+
+=head1 SYNOPSIS
+
+
+=head1 DESCRIPTION
+
+
+=head1 SEE ALSO
+
+=head1 BUGS AND LIMITATIONS
+
+Please report bugs via GitHub at L<https://github.com/ikluft/prefvote/issues>
+
+Patches and enhancements may be submitted via a pull request at L<https://github.com/ikluft/prefvote/pulls>
+
+=cut

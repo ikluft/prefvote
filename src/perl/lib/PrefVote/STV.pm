@@ -1,14 +1,16 @@
-# PrefVote::STV - single-transferable vote counting module
+# PrefVote::STV
+# ABSTRACT: single-transferable vote counting module for PrefVote
 # Single Transferable Vote (STV) voting and counting module
 # derived from Vote::STV by Ian Kluft
 # Copyright (c) 1998-2021 by Ian Kluft
 # Open Source license: Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
 
+## no critic (Modules::RequireExplicitPackage)
+## use critic (Modules::RequireExplicitPackage)
 package PrefVote::STV;
-
-use strict;
-use warnings;
 use Modern::Perl qw(2015); # require 5.20.0
+## use critic (Modules::RequireExplicitPackage)
+
 use base qw(PrefVote);
 
 # submit a ballot - just store it, do not count yet
@@ -344,5 +346,11 @@ PrefVote::STV - Single Transferable Vote (STV) counting
 
 =head1 SEE ALSO
 
+
+=head1 BUGS AND LIMITATIONS
+
+Please report bugs via GitHub at L<https://github.com/ikluft/prefvote/issues>
+
+Patches and enhancements may be submitted via a pull request at L<https://github.com/ikluft/prefvote/pulls>
 
 =cut
