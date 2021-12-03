@@ -16,6 +16,10 @@ package PrefVote::STV;
 use base qw(PrefVote);
 use autodie;
 
+#
+# configuration and initialization
+#
+
 # subclass initialization - called by PrefVote::initialize()
 sub subclass_init
 {
@@ -25,23 +29,27 @@ sub subclass_init
 	return;
 }
 
+#
+# data input
+#
+
 # submit a ballot - just store it, do not count yet
 sub submit_ballot
 {
 	my ($self, @ballot) = @_;
-	my $result;
+	my $errors;
 
 	# Note: ballots are anonymous once this function is called.
 	# Protection against casting multiple votes must be done elsewhere
 	# (preferably when the vote is accepted) because this module doesn't
 	# retain any association between the ballot and the voter.
-	if ( !( $result = $self->verify_ballot ( \@ballot ))) {
+	if (not ($errors = $self->verify_ballot (\@ballot))) {
 		$self->debug_print("accepting ", join(" ", @ballot), "\n");
 		push ( @{$self->{ballots}}, \@ballot );
 	}
 
-	# result will be undef for OK, or multiline string with error messages
-	return $result;
+	# errors will be undef for OK, or multiline string with error messages
+	return $errors;
 }
 
 # verify that a ballot is valid
@@ -49,27 +57,31 @@ sub verify_ballot
 {
 	my $self = shift;
 	my $ballot_ref = shift;
-	my @result;
+	my @errors;
 
 	foreach ( @$ballot_ref ) {
 		if ( ! defined $self->{choices}{$_}) {
-			push ( @result, "$_ is not a valid choice" );
+			push ( @errors, "$_ is not a valid choice" );
 		}
 	}
-	if ( $#result == -1 ) {
+	if (not @errors) {
 		# ballot is OK
 		return;
 	} else {
 		# we found errors
-		return join ( "\n", @result )."\n";
+		return join ( "\n", @errors )."\n";
 	}
 }
+
+#
+# processing
+#
 
 # count using STV
 sub count_stv
 {
 	my $self = shift;
-	my ( %candidate, @result, $quota );
+	my %candidate;
 
 	# initialize candidates
 	foreach ( keys %{$self->{choices}} ) {
@@ -77,13 +89,14 @@ sub count_stv
 	}
 	$self->debug_print("candidate (init) = ".join(" ",keys %candidate)."\n");
 
-	# stop now if there were no votes
-	if ( $#{@{$self->{ballots}}} == -1 ) {
+	# stop now if there are no votes
+	if (not @{$self->{ballots}}) {
 		return;
 	}
 
 	# loop forever until a valid result is established
 	for ( ;; ) {
+		my (@result, $quota);
 		$self->debug_print("new round\n");
 
 		# clear candidate tallies
@@ -173,7 +186,7 @@ sub count_stv
 		@curr_candidate = sort {$candidate{$b}{tally} <=> $candidate{$a}{tally}}
 			@curr_candidate;
 		$self->debug_print("curr_candidate = ".join(" ",@curr_candidate)."\n");
-		if ( $#curr_candidate == -1 ) {
+		if (not @curr_candidate ) {
 			$self->debug_print("no candidates remaining in new round\n");
 			return @result;
 		}
@@ -212,7 +225,7 @@ sub count_stv
 					# mark this candidate a winner
 					push @$winners, $_;
 					$candidate{$_}{winner} = {};
-					$candidate{$_}{winner}{place} = $#result+1;
+					$candidate{$_}{winner}{place} = scalar @result;
 					$candidate{$_}{winner}{quota} = $quota;
 					$candidate{$_}{winner}{tally} = $c_tally;
 					$candidate{$_}{winner}{surplus} = $c_surplus;
@@ -234,7 +247,7 @@ sub count_stv
 			}
 
 			# did we just exhaust the pool of candidates?
-			#if ( $#curr_candidate == 0 ) {
+			#if ( scalar @curr_candidate == 0 ) {
 			#	$self->debug_print("no candidates remaining after win\n");
 			#	return @result;
 			#}
@@ -244,16 +257,15 @@ sub count_stv
 			foreach ( keys %candidate ) {
 				$candidate{$_}{eliminated} = 0;
 			}
-		} elsif ( $quota > 0.001 and $#curr_candidate >= 1
-			and $candidate{$curr_candidate[0]}{tally}
-			== $candidate{$curr_candidate[-1]}{tally}
+		} elsif ( $quota > 0.001 and @curr_candidate
+			and $candidate{$curr_candidate[0]}{tally} == $candidate{$curr_candidate[-1]}{tally}
 			and $candidate{$curr_candidate[0]}{tally} > $quota + .00001 )
 		{
 			# candidates in this round have all tied
 			my $result = [];
 			my $i;
 			$self->debug_print("tie: ".join("/",@curr_candidate)."\n");
-			for ( $i=0; $i <= $#curr_candidate; $i++ ) {
+			for ( $i=0; $i < scalar @curr_candidate; $i++ ) {
 				my $c_tally = $candidate{$curr_candidate[$i]}{tally};
 				my $c_surplus = $c_tally - $quota;
 				my $pc_to_elect = sprintf ( "%6.3f",
@@ -267,8 +279,7 @@ sub count_stv
 					." ($pc_to_elect% of each vote used, $pc_transfer% transfers)" ]);
 
 				# mark the candidates as winners
-				$candidate{$curr_candidate[$i]}{winner}{place} =
-					$#result+1;
+				$candidate{$curr_candidate[$i]}{winner}{place} = scalar @result;
 				$candidate{$curr_candidate[$i]}{winner}{quota} = $quota;
 				$candidate{$curr_candidate[$i]}{winner}{tally} = $c_tally;
 				$candidate{$curr_candidate[$i]}{winner}{surplus} = $c_surplus;
@@ -290,7 +301,7 @@ sub count_stv
 			my $i;
 
 			$candidate{$curr_candidate[-1]}{eliminated}=1;
-			for ( $i = $#curr_candidate - 1; $i >= 0; $i-- ) {
+			for ( $i = scalar @curr_candidate; $i > 0; $i-- ) {
 				if ( $candidate{$curr_candidate[-1]}{tally}
 					== $candidate{$curr_candidate[$i]}{tally})
 				{
