@@ -4,12 +4,15 @@
 # Copyright (c) 1998-2021 by Ian Kluft
 # Open Source license: Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
 
+# pragmas to silence some warnings from Perl::Critic
 ## no critic (Modules::RequireExplicitPackage)
 # 'use strict' and 'use warnings' included here
-package PrefVote;
-use Modern::Perl qw(2015); # require 5.20.0
+# This solves a catch-22 where parts of Perl::Critic want both package and use-strict to be first
+use Modern::Perl qw(2015); # require 5.20.0 or later
 ## use critic (Modules::RequireExplicitPackage)
 
+package PrefVote;
+use autodie;
 use Carp qw(croak);
 my $debug=($ENV{PREFVOTE_DEBUG} // 0);
 
@@ -54,8 +57,13 @@ sub initialize
 		croak "seats up for election must be positive number\n";
 	}
 
-	# clear tables
+	# initialize tables
 	$self->{ballots} = [];
+
+	# callback for optional subclass-specific initialization
+	if ($self->can("subclass_init")) {
+		$self->subclass_init();
+	}
 
 	# debugging
 	debug() and print STDERR "set choices to "
@@ -70,6 +78,26 @@ sub debug
 	return $debug;
 }
 
+# print debug message
+sub debug_print
+{
+	my @strs = @_;
+	debug() and print STDERR @strs;
+	return;
+}
+
+# accessor
+sub get
+{
+	my ($self, $key) = @_;
+	if (not exists $self->{$key}) {
+		return;
+	}
+	if (ref $self->{$key} eq "ARRAY") {
+		return wantarray ? @{$self->{$key}} : join(" ", @{$self->{$key}});
+	}
+	return $self->{$key};
+}
 
 1;
 
