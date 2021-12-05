@@ -22,19 +22,19 @@ my $debug=(($ENV{PREFVOTE_DEBUG} // 0) ? 1 : 0);
 # debug flag read/write accessor
 sub debug
 {
-	my $value = shift;
-	if (defined $value) {
-		$debug = $value ? 1 : 0;
-	}
-	return $debug;
+    my $value = shift;
+    if (defined $value) {
+        $debug = $value ? 1 : 0;
+    }
+    return $debug;
 }
 
 # print debug message
 sub debug_print
 {
-	my @strs = @_;
-	debug() and print STDERR @strs;
-	return;
+    my @strs = @_;
+    debug() and print STDERR @strs;
+    return;
 }
 
 1;
