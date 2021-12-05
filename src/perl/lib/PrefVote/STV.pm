@@ -13,84 +13,46 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 ## use critic (Modules::RequireExplicitPackage)
 
 package PrefVote::STV;
-use base qw(PrefVote);
 use autodie;
 
 #
-# configuration and initialization
+# class definitions
 #
+use Moo;
+use Type::Tiny;
+use Types::Standard qw(Str Int ArrayRef);
+extends 'PrefVote::Core';
 
-# subclass initialization - called by PrefVote::initialize()
-sub subclass_init
-{
-	my $self = shift;
-	$self->{winners} = [];
-	$self->{rounds} = [];
-	return;
-}
+has rounds => (
+	is => 'rw',
+	isa => ArrayRef[Str],
+	default => sub { return [] },
+);
 
-#
-# data input
-#
-
-# submit a ballot - just store it, do not count yet
-sub submit_ballot
-{
-	my ($self, @ballot) = @_;
-	my $errors;
-
-	# Note: ballots are anonymous once this function is called.
-	# Protection against casting multiple votes must be done elsewhere
-	# (preferably when the vote is accepted) because this module doesn't
-	# retain any association between the ballot and the voter.
-	if (not ($errors = $self->verify_ballot (\@ballot))) {
-		$self->debug_print("accepting ", join(" ", @ballot), "\n");
-		push ( @{$self->{ballots}}, \@ballot );
-	}
-
-	# errors will be undef for OK, or multiline string with error messages
-	return $errors;
-}
-
-# verify that a ballot is valid
-sub verify_ballot
-{
-	my $self = shift;
-	my $ballot_ref = shift;
-	my @errors;
-
-	foreach ( @$ballot_ref ) {
-		if ( ! defined $self->{choices}{$_}) {
-			push ( @errors, "$_ is not a valid choice" );
-		}
-	}
-	if (not @errors) {
-		# ballot is OK
-		return;
-	} else {
-		# we found errors
-		return join ( "\n", @errors )."\n";
-	}
-}
+has winners => (
+	is => 'rw',
+	isa => ArrayRef[Str],
+	default => sub { return [] },
+);
 
 #
 # processing
 #
 
 # count using STV
-sub count_stv
+sub count
 {
 	my $self = shift;
 	my %candidate;
 
 	# initialize candidates
-	foreach ( keys %{$self->{choices}} ) {
+	foreach my $choice ($self->get_choices()) {
 		$candidate{$_} = {};
 	}
 	$self->debug_print("candidate (init) = ".join(" ",keys %candidate)."\n");
 
 	# stop now if there are no votes
-	if (not @{$self->{ballots}}) {
+	if ($self->count_ballots() == 0) {
 		return;
 	}
 
@@ -107,7 +69,7 @@ sub count_stv
 
 		# loop through votes
 		my $ballot_num = 0;
-		foreach my $ballot ( @{$self->{ballots}} ) {
+		foreach my $ballot ( @{$self->ballots()} ) {
 			# loop through choices
 			my $selection = undef;
 			my $fraction = 1;
@@ -195,8 +157,8 @@ sub count_stv
 		# In a 1-seat race, a quota is a simple 50%+1 majority.
 		# If N seats are up for election and V votes were cast,
 		# a quota is V/(N+1)
-		$quota = $ballot_num / ($self->{seats}+1);
-		push @{$self->{rounds}}, {
+		$quota = $ballot_num / ($self->seats()+1);
+		push @{$self->rounds()}, {
 			"quota" => $quota,
 			"ballots" => $ballot_num,
 		};
@@ -219,7 +181,7 @@ sub count_stv
 					push ( @$result,
 						[ $_, $candidate{$_}{tally},
 						"winner for Choice #".
-						((scalar @{$self->{winners}})+1)
+						((scalar @{$self->winners()})+1)
 						." ($pc_to_elect% of each vote used, $pc_transfer% transfers)" ]);
 
 					# mark this candidate a winner
@@ -240,11 +202,7 @@ sub count_stv
 			push ( @result, $result );
 
 			$self->debug_print( "winner: ".(join( " ", @$winners ))."\n");
-			if ( scalar @$winners == 1 ) {
-				push ( @{$self->{winners}}, $winners->[0]);
-			} else {
-				push ( @{$self->{winners}}, $winners );
-			}
+			push @{$self->winners()}, @$winners;
 
 			# did we just exhaust the pool of candidates?
 			#if ( scalar @curr_candidate == 0 ) {
@@ -275,7 +233,7 @@ sub count_stv
 				push ( @$result, [ $curr_candidate[$i],
 					$candidate{$curr_candidate[$i]}{tally},
 					"tie for Choice #".
-					((scalar @{$self->{winners}})+1)
+					((scalar @{$self->winners()})+1)
 					." ($pc_to_elect% of each vote used, $pc_transfer% transfers)" ]);
 
 				# mark the candidates as winners
@@ -288,7 +246,7 @@ sub count_stv
 					/ $candidate{$curr_candidate[$i]}{winner}{tally};
 			}
 			push ( @result, $result );
-			push ( @{$self->{winners}}, [ @curr_candidate ]);
+			push ( @{$self->winners()}, [ @curr_candidate ]);
 
 			# start a new round
 			# remove elimination flags from remaining candidates
@@ -334,6 +292,18 @@ sub count_stv
 	}
 	return;
 }
+
+## no critic (Modules::ProhibitMultiplePackages)
+
+package PrefVote::STV::Result;
+use base qw(PrefVote);
+use autodie;
+
+package PrefVote::STV::Round;
+use base qw(PrefVote);
+use autodie;
+
+
 
 1;
 

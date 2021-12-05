@@ -7,6 +7,7 @@ use Test::More;
 
 my @classes = qw(
 		PrefVote
+		PrefVote::Core
 		PrefVote::STV
         );
 plan tests => scalar @classes;
