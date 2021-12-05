@@ -8,10 +8,10 @@ color-severity-high = rgb530
 color-severity-highest = bright_red
 
 [TestingAndDebugging::RequireUseStrict]
-equivalent_modules = Modern::Perl
+equivalent_modules = Moo Modern::Perl
 
 [TestingAndDebugging::RequireUseWarnings]
-equivalent_modules = Modern::Perl
+equivalent_modules = Moo Modern::Perl
 
 [Documentation::RequirePodSections]
 lib_sections = NAME | VERSION | SYNOPSIS | DESCRIPTION | BUGS AND LIMITATIONS | AUTHOR | COPYRIGHT AND LICENSE
