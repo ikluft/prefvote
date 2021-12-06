@@ -21,7 +21,7 @@ use DateTime;
 #
 use Moo;
 use Type::Tiny;
-use Types::Standard qw(Str Int HashRef ArrayRef);
+use Types::Standard qw(Str Int ArrayRef HashRef);
 extends 'PrefVote';
 with 'MooX::Singleton';
 
@@ -89,7 +89,7 @@ sub count_ballots
     my $class_or_obj = shift;
     my $self = ($class_or_obj->isa("PrefVote::Core")) ? $class_or_obj : $class_or_obj->instance();
     my $ballots_ref = $self->ballots();
-    return scalar @$ballots;
+    return scalar @$ballots_ref;
 }
 
 #
@@ -117,9 +117,7 @@ sub submit_ballot
 package PrefVote::Core::Ballot;
 use autodie;
 
-#
 # class definitions
-#
 use Moo;
 use Type::Tiny;
 use Types::Standard qw(Str ArrayRef);
