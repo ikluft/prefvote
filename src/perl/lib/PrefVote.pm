@@ -37,6 +37,18 @@ sub debug_print
     return;
 }
 
+## no critic (Modules::ProhibitMultiplePackages)
+
+#
+# exception classes
+#
+package PrefVote::Exception;
+use Moo;
+use Types::Standard qw(Str);
+with 'Throwable';
+has classname => (is => 'ro', isa =>Str);
+has description => (is => 'ro', isa =>Str);
+
 1;
 
 __END__
