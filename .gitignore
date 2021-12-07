@@ -19,6 +19,7 @@ nytprof.out
 /Container-Buildah-*/
 
 # Module::Build
+.build/
 _build/
 Build
 Build.bat
