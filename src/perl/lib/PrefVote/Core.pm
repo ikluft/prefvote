@@ -15,13 +15,15 @@ package PrefVote::Core;
 use autodie;
 use Carp qw(croak);
 use DateTime;
+use PrefVote::Core::Ballot;
 
 #
 # class definitions
 #
 use Moo;
 use Type::Tiny;
-use Types::Standard qw(Str Int ArrayRef HashRef);
+use Types::Standard qw(Str Int ArrayRef HashRef InstanceOf);
+use Types::Common::Numeric qw(PositiveInt);
 extends 'PrefVote';
 with 'MooX::Singleton';
 
@@ -46,21 +48,21 @@ has choices => (
 # number of seats/selections to be filled by poll/vote
 has seats => (
     is => 'ro',
-    isa => 'Int->where( "$_ >= 1" )',
+    isa => PositiveInt,
     default => sub { return 1 },
 );
 
 # poll/vote end time
 has end_time => (
     is => 'ro',
-    isa => 'DateTime',
+    isa => InstanceOf["DateTime"],
     required => 0,
 );
 
 # array of ballots
 has ballots => (
     is => 'rw',
-    isa => 'ArrayRef[PrefVote::Core::Ballot]',
+    isa => ArrayRef[InstanceOf["PrefVote::Core::Ballot"]],
     default => sub { return [] },
 );
 
@@ -106,37 +108,11 @@ sub submit_ballot
     # Protection against casting multiple votes must be done elsewhere
     # (preferably when the vote is received) because this module doesn't
     # retain any association between the ballot and the voter.
-    my $ballot = PrefVote::STV::Ballot->new($self, items => \@ballot); # throws exception on content error
+    my $ballot = PrefVote::Core::Ballot->new($self, items => \@ballot); # throws exception on content error
     $self->debug_print("accepting ", $ballot->as_string(), "\n");
     push ( @{$self->{ballots}}, $ballot );
     return;
 }
-
-## no critic (Modules::ProhibitMultiplePackages)
-
-package PrefVote::Core::Ballot;
-use autodie;
-
-# class definitions
-use Moo;
-use Type::Tiny;
-use Types::Standard qw(Str ArrayRef);
-extends 'PrefVote';
-
-has items => (
-    is => 'ro',
-    isa => ArrayRef[Str],
-    required => 1,
-    constraint => sub {
-        my $items_ref = $_;
-        foreach my $item (@$items_ref) {
-            if (not PrefVote::Core->choiceExists($item)) {
-                return 0;
-            }
-        }
-        return 1;
-    }
-);
 
 # return string of ballot contents
 sub as_string

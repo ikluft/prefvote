@@ -14,24 +14,15 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 
 package PrefVote::STV;
 use autodie;
+use PrefVote::STV::Round;
+use PrefVote::STV::Candidate;
+use PrefVote::STV::Result;
 
 # class definitions
 use Moo;
 use Type::Tiny;
-use Types::Standard qw(Str Int ArrayRef);
+use Types::Standard qw(Str ArrayRef HashRef InstanceOf);
 extends 'PrefVote::Core';
-
-has rounds => (
-    is => 'rw',
-    isa => 'ArrayRef[PrefVote::STV::Round]',
-    default => sub { return [] },
-);
-
-has candidates => (
-	is => 'rw',
-	isa => 'HashRef[PrefVote::STV::Candidate]',
-	default => sub { return [] },
-);
 
 has winners => (
     is => 'rw',
@@ -45,12 +36,23 @@ has eliminated => (
     default => sub { return [] },
 );
 
-has results => {
-	is => 'rw',
-	isa => 'ArrayRef[PrefVote::STV::Result]',
-	default => sub { return [] },
-};
+has rounds => (
+    is => 'rw',
+    isa => ArrayRef[InstanceOf["PrefVote::STV::Round"]],
+    default => sub { return [] },
+);
 
+has candidates => (
+	is => 'rw',
+	isa => HashRef[InstanceOf["PrefVote::STV::Candidate"]],
+	default => sub { return [] },
+);
+
+has results => (
+	is => 'rw',
+	isa => ArrayRef[InstanceOf["PrefVote::STV::Result"]],
+	default => sub { return [] },
+);
 
 #
 # processing
@@ -129,7 +131,7 @@ sub add_result
 {
     my ($self, @opts) = @_;
 	my $results_ref = $self->results();
-	push @{$self->results()}, PrefVote::STV::Result->new(@opts);
+	push @$results_ref, PrefVote::STV::Result->new(@opts);
 	return;
 }
 
@@ -138,7 +140,7 @@ sub add_winner
 {
     my ($self, $cand_key) = @_;
 	my $winners_ref = $self->winners();
-	push @{$self->winners()}, $cand_key;
+	push @$winners_ref, $cand_key;
 	return;
 }
 
@@ -147,7 +149,7 @@ sub add_eliminated
 {
     my ($self, $cand_key) = @_;
 	my $eliminated_ref = $self->eliminated();
-	push @{$self->eliminated()}, $cand_key;
+	push @$eliminated_ref, $cand_key;
 	return;
 }
 
@@ -361,176 +363,6 @@ use Moo;
 use Types::Standard qw(Str);
 extends 'PrefVote::Exception';
 has attribute => (is => 'ro', isa =>Str);
-
-#
-# STV voting round class
-#
-package PrefVote::STV::Round;
-use autodie;
-
-# class definitions
-use Moo;
-use Type::Tiny;
-use Types::Standard qw(StrictNum ArrayRef);
-use Types::Common::Numeric qw(PositiveNum);
-use Types::Common::String qw(NonEmptySimpleStr);
-extends 'PrefVote';
-
-has votes_used => (
-	is => 'rw',
-	isa => PositiveNum,
-	default => 0,
-);
-
-has candidates => (
-	is => 'rw',
-	isa => 'ArrayRef[NonEmptySimpleStr]',
-);
-
-has quota => (
-	is => 'rw',
-	isa => StrictNum,
-	default => 0,
-);
-
-# add a candidate to a round
-sub add_candidate
-{
-	my $self = shift;
-	my $candidate = shift;
-	my $candidates_ref = $self->candidates();
-	push @$candidates_ref, $candidate;
-	return;
-}
-
-# add to total votes found/used in the round
-# this counts fractional votes for transfers above a winning candidate's quota
-sub add_votes_used
-{
-	my $self = shift;
-	my $votes = shift;
-	if ($votes < 0) {
-		PrefVote::STV::InvalidInternalData->throw({classname => __PACKAGE__,
-			attribute => 'votes_used',
-			description => "negative incrememnt is invalid",
-		});
-	}
-	my $votes_used = $self->votes_used() + $votes;
-	$self->votes_used($votes_used);
-	return $votes_used;
-}
-
-# sort the round's candidates list
-# this is done manually after adding last item so we don't waste time doing it more than once
-sub sort_candidates
-{
-	my $self = shift;
-	my $round_candidates = $self->candidates();
-	@$round_candidates = sort {$round_candidates->{$b}->tally() <=> $round_candidates->{$a}->tally()}
-		@$round_candidates;
-	$self->debug_print("sorted round candidate list = ".join(" ", @$round_candidates)."\n");
-	return;
-}
-
-#
-# STV candidate record within each round
-#
-package PrefVote::STV::Candidate;
-use autodie;
-
-# class definitions
-use Moo;
-use Type::Tiny;
-use Types::Standard qw(Bool Int StrictNum Str ArrayRef);
-extends 'PrefVote';
-
-has tally => (
-	is => 'rw',
-	isa => Int,
-	default => 0,
-);
-
-has winner => (
-	is => 'rw',
-	isa => Bool,
-	default => 0,
-);
-
-has eliminated => (
-	is => 'rw',
-	isa => Bool,
-	default => 0,
-);
-
-has place => (
-	is => 'rw',
-	isa => Int,
-	default => 0,
-);
-
-has transfer => (
-	is => 'rw',
-	isa => Int,
-	default => 0,
-);
-
-has surplus => (
-	is => 'rw',
-	isa => Int,
-	default => 0,
-);
-
-# mark candidate as a winner
-# if there is a tie, call this once per winning candidate
-sub mark_as_winner
-{
-	my ($self, %opts) = @_;
-	$self->winner(1);
-	$self->place($opts{place});
-	$self->tally($opts{tally});
-	$self->surplus($opts{surplus});
-	$self->transfer($opts{transfer});
-	return;
-}
-
-# mark candidate as eliminated
-sub mark_as_eliminated
-{
-	my $self = shift;
-	$self->eliminated(1);
-	return;
-}
-
-#
-# STV candidate record within each round
-#
-package PrefVote::STV::Result;
-use autodie;
-
-# class definitions
-use Moo;
-use Type::Tiny;
-use Types::Standard qw(Bool Int StrictNum Str ArrayRef);
-use Types::Common::String qw(NonEmptySimpleStr);
-extends 'PrefVote';
-
-has name => (
-	is => 'ro',
-	isa => 'NonEmptySimpleStr',
-	required => 1,
-);
-
-has tally => (
-	is => 'ro',
-	isa => Int,
-	default => 0,
-	required => 1,
-);
-
-has desc => (
-	is => 'ro',
-	isa => 'NonEmptySimpleStr',
-);
 
 1;
 
