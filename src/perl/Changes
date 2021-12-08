@@ -13,6 +13,8 @@ Change log for PrefVote
 
  [MINOR]
  - import code from Vote::STV 0.5 and modernize as Perl reference implementation of PrefVote
+ - use Moo object system (40% lighter than Moose) instead of directly managing objects
+ - code modernization and refactoring
 
  [REVISION]
 
