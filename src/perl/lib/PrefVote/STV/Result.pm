@@ -15,6 +15,7 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 # STV candidate record within each round
 #
 package PrefVote::STV::Result;
+
 use autodie;
 
 # class definitions

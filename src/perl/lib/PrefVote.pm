@@ -12,6 +12,7 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 ## use critic (Modules::RequireExplicitPackage)
 
 package PrefVote;
+
 use autodie;
 use Carp qw(croak);
 use Moo;
@@ -43,6 +44,7 @@ sub debug_print
 # exception classes
 #
 package PrefVote::Exception;
+
 use Moo;
 use Types::Standard qw(Str);
 with 'Throwable';

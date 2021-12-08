@@ -13,6 +13,7 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 ## use critic (Modules::RequireExplicitPackage)
 
 package PrefVote::STV;
+
 use autodie;
 use PrefVote::STV::Round;
 use PrefVote::STV::Candidate;
@@ -359,6 +360,7 @@ sub count
 # exception classes
 #
 package PrefVote::STV::InvalidInternalData;
+
 use Moo;
 use Types::Standard qw(Str);
 extends 'PrefVote::Exception';

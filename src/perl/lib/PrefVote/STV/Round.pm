@@ -15,6 +15,7 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 # STV voting round class
 #
 package PrefVote::STV::Round;
+
 use autodie;
 
 # class definitions

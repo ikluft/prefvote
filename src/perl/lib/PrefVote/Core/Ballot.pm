@@ -12,6 +12,7 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 ## use critic (Modules::RequireExplicitPackage)
 
 package PrefVote::Core::Ballot;
+
 use autodie;
 
 # class definitions
