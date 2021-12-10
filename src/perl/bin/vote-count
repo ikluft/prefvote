@@ -1,0 +1,52 @@
+#!/usr/bin/perl
+# PODNAME: vote-count
+# command line interface to run PrefVote::STV processing YAML input for testing and simple usage example
+# derived from Vote::STV by Ian Kluft
+# Copyright (c) 1998-2021 by Ian Kluft
+# Open Source license: Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
+
+use Modern::Perl qw(2015); # require 5.20.0 or later
+use autodie;
+use Carp;
+use YAML::XS; # RPM: perl-YAML-LibYAML, DEB: libyaml-libyaml-perl
+use PrefVote::Core;
+use Data::Dumper;
+
+# main
+if (not @ARGV) {
+	say STDERR "usage: $0 yaml_file";
+	exit 0;
+}
+
+# count votes
+my $vote_obj = PrefVote::Core::yaml2vote($ARGV[0]);
+if (PrefVote::Core->debug()) {
+	say Dumper($vote_obj);
+}
+
+
+__END__
+
+# POD documentation
+
+=head1 NAME
+
+vote-count
+
+=head1 USAGE
+
+vote-count vote-data.yaml
+
+=head1 OPTIONS
+
+=head1 EXIT STATUS
+
+=head1 SEE ALSO
+
+=head1 BUGS AND LIMITATIONS
+
+Please report bugs via GitHub at L<https://github.com/ikluft/prefvote/issues>
+
+Patches and enhancements may be submitted via a pull request at L<https://github.com/ikluft/prefvote/pulls>
+
+=cut

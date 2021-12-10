@@ -23,10 +23,12 @@ use PrefVote::Core::Ballot;
 #
 use Moo;
 use Type::Tiny;
-use Types::Standard qw(Str Int ArrayRef HashRef InstanceOf);
+use Types::Standard qw(Str Int ArrayRef HashRef InstanceOf Any);
 use Types::Common::Numeric qw(PositiveInt);
 extends 'PrefVote';
 with 'MooX::Singleton';
+
+# constants
 
 # name of poll/vote
 has name => (
@@ -53,18 +55,16 @@ has seats => (
     default => sub { return 1 },
 );
 
-# poll/vote end time
-has end_time => (
-    is => 'ro',
-    isa => InstanceOf["DateTime"],
-    required => 0,
-);
-
 # array of ballots
 has ballots => (
     is => 'rw',
     isa => ArrayRef[InstanceOf["PrefVote::Core::Ballot"]],
     default => sub { return [] },
+);
+
+# misc additional info: storage for extra data from input file, used for testing
+has extra => (
+	is => 'ro',
 );
 
 # check existence of a voting choice/option
@@ -112,7 +112,7 @@ sub submit_ballot
     my $ballot = PrefVote::Core::Ballot->new($self, items => \@ballot); # throws exception on content error
     $self->debug_print("accepting ", $ballot->as_string(), "\n");
     push ( @{$self->{ballots}}, $ballot );
-    return;
+    return 1; # returns true, whose absence can be used to detect if an exception was thrown
 }
 
 # return string of ballot contents
@@ -122,6 +122,78 @@ sub as_string
     return join " ", @{$self->items()};
 }
 
+# read YAML input
+sub read_yaml
+{
+	my $filepath = shift;
+
+	# read YAML
+	(-e $filepath) or croak "$filepath not found";
+	(-f $filepath) or croak "$filepath not a regular file";
+	my @yaml_docs = eval { YAML::XS::LoadFile($filepath) };
+    if ($@) {
+		croak "$0: error reading $filepath: $@";
+	}
+	return @yaml_docs;
+}
+
+# convert YAML input to PrefVote::Core structure and ballots
+sub yaml2vote
+{
+	my $filepath = shift;
+	my @yaml_docs = read_yaml($filepath);
+
+	# save the first YAML document as the definition of the vote for entry into a PrefVote::Core structure
+	my $yaml_vote_def = shift @yaml_docs;
+	if (ref $yaml_vote_def ne "HASH") {
+		croak "$0: misformatted YAML input: 1st document must be in map/hash format";
+	}
+	foreach my $key ( qw(class params)) {
+		if (not exists $yaml_vote_def->{$key}) {
+			croak "$0: misformatted YAML input: '$key' parameter missing from top level of vote definition";
+		}
+	}
+
+	# save the second YAML document as the list of ballots
+	my $yaml_ballots = shift @yaml_docs;
+	if (ref $yaml_ballots ne "ARRAY") {
+		croak "$0: misformatted YAML input: 2nd document must be in list/array format";
+	}
+
+	my $extra_data = [@yaml_docs]; # save any additional YAML documents in extra, available for testing
+
+	# instantiate the voting object from 1st YAML document - enforce that it must be a subclass of this class
+	my $class = $yaml_vote_def->{class};
+	## no critic (BuiltinFunctions::ProhibitStringyEval)
+	if (not eval "require $class") {
+		croak "failed to load class $class: $@";
+	}
+	## critic (BuiltinFunctions::ProhibitStringyEval)
+	if (not $class->isa(__PACKAGE__)) {
+		croak "class $class in vote defintion is not a subclass of ".__PACKAGE__;
+	}
+	my $params = $yaml_vote_def->{params};
+	if ($extra_data) {
+		# stash extra YAML documents in "extra" for use in testing
+		$params->{extra} = $extra_data;
+	}
+	my $vote_obj = eval { $class->new(%$params) };
+	if (not defined $vote_obj) {
+		croak "failed to instantiate object of $class: $@";
+	}
+
+	# ingest ballots from 2nd YAML document
+	my $submitted = 0;
+	my $accepted = 0;
+	foreach my $ballot (@$yaml_ballots) {
+		$submitted++;
+		eval { $vote_obj->submit_ballot(@$ballot) }
+			and $accepted++;
+	}
+	$vote_obj->debug_print("votes: submitted=$submitted accepted=$accepted");
+
+	return $vote_obj;
+}
 
 1;
 

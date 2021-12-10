@@ -46,7 +46,7 @@ has rounds => (
 has candidates => (
 	is => 'rw',
 	isa => HashRef[InstanceOf["PrefVote::STV::Candidate"]],
-	default => sub { return [] },
+	default => sub { return {} },
 );
 
 has results => (
