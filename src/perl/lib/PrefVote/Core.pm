@@ -44,7 +44,7 @@ has choices => (
     requred => 1,
     trigger => sub {
         my $self = shift;
-        $self->debug_print("set choices to ".join(" ", keys %{$self->choices})."\n");
+        $self->debug_print("set choices to ".join(" ", keys %{$self->choices}));
     },
 );
 
@@ -109,17 +109,10 @@ sub submit_ballot
     # Protection against casting multiple votes must be done elsewhere
     # (preferably when the vote is received) because this module doesn't
     # retain any association between the ballot and the voter.
-    my $ballot = PrefVote::Core::Ballot->new($self, items => \@ballot); # throws exception on content error
-    $self->debug_print("accepting ", $ballot->as_string(), "\n");
+    my $ballot = PrefVote::Core::Ballot->new(items => \@ballot); # throws exception on content error
+    $self->debug_print("accepting ", $ballot->as_string());
     push ( @{$self->{ballots}}, $ballot );
     return 1; # returns true, whose absence can be used to detect if an exception was thrown
-}
-
-# return string of ballot contents
-sub as_string
-{
-    my $self = shift;
-    return join " ", @{$self->items()};
 }
 
 # read YAML input
@@ -187,8 +180,11 @@ sub yaml2vote
 	my $accepted = 0;
 	foreach my $ballot (@$yaml_ballots) {
 		$submitted++;
-		eval { $vote_obj->submit_ballot(@$ballot) }
-			and $accepted++;
+		if ( eval { $vote_obj->submit_ballot(@$ballot) }) {
+			$accepted++;
+		} else {
+			$vote_obj->debug_print("ballot entry failed: $@");
+		}
 	}
 	$vote_obj->debug_print("votes: submitted=$submitted accepted=$accepted");
 

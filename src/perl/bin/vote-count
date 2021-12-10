@@ -21,7 +21,8 @@ if (not @ARGV) {
 # count votes
 my $vote_obj = PrefVote::Core::yaml2vote($ARGV[0]);
 if (PrefVote::Core->debug()) {
-	say Dumper($vote_obj);
+	say STDERR "returned vote object is a ".ref($vote_obj);
+	say STDERR Dumper($vote_obj);
 }
 
 

@@ -36,6 +36,13 @@ has items => (
     }
 );
 
+# return string of ballot contents
+sub as_string
+{
+    my $self = shift;
+    return join " ", @{$self->items()};
+}
+
 1;
 
 
