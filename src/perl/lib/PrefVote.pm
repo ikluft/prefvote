@@ -33,8 +33,8 @@ sub debug
 # print debug message
 sub debug_print
 {
-	my ($class_or_obj, @strs) = @_;
-	my $prefix = (ref $class_or_obj ? (ref $class_or_obj) : $class_or_obj);
+    my ($class_or_obj, @strs) = @_;
+    my $prefix = (ref $class_or_obj ? (ref $class_or_obj) : $class_or_obj);
     debug() and say STDERR $prefix.": ".join(" ", @strs);
     return;
 }

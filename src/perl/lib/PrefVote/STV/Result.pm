@@ -26,22 +26,22 @@ use Types::Common::String qw(SimpleStr NonEmptySimpleStr);
 extends 'PrefVote';
 
 has name => (
-	is => 'ro',
-	isa => NonEmptySimpleStr,
-	required => 1,
+    is => 'ro',
+    isa => NonEmptySimpleStr,
+    required => 1,
 );
 
 has tally => (
-	is => 'ro',
-	isa => Int,
-	default => 0,
-	required => 1,
+    is => 'ro',
+    isa => Int,
+    default => 0,
+    required => 1,
 );
 
 has desc => (
-	is => 'ro',
-	isa => SimpleStr,
-	required => 0,
+    is => 'ro',
+    isa => SimpleStr,
+    required => 0,
 );
 
 1;

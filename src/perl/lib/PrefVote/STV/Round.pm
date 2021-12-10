@@ -27,59 +27,59 @@ use Types::Common::String qw(NonEmptySimpleStr);
 extends 'PrefVote';
 
 has votes_used => (
-	is => 'rw',
-	isa => PositiveNum,
-	default => 0,
+    is => 'rw',
+    isa => PositiveNum,
+    default => 0,
 );
 
 has candidates => (
-	is => 'rw',
-	isa => ArrayRef[NonEmptySimpleStr],
+    is => 'rw',
+    isa => ArrayRef[NonEmptySimpleStr],
 );
 
 has quota => (
-	is => 'rw',
-	isa => StrictNum,
-	default => 0,
+    is => 'rw',
+    isa => StrictNum,
+    default => 0,
 );
 
 # add a candidate to a round
 sub add_candidate
 {
-	my $self = shift;
-	my $candidate = shift;
-	my $candidates_ref = $self->candidates();
-	push @$candidates_ref, $candidate;
-	return;
+    my $self = shift;
+    my $candidate = shift;
+    my $candidates_ref = $self->candidates();
+    push @$candidates_ref, $candidate;
+    return;
 }
 
 # add to total votes found/used in the round
 # this counts fractional votes for transfers above a winning candidate's quota
 sub add_votes_used
 {
-	my $self = shift;
-	my $votes = shift;
-	if ($votes < 0) {
-		PrefVote::STV::InvalidInternalData->throw({classname => __PACKAGE__,
-			attribute => 'votes_used',
-			description => "negative incrememnt is invalid",
-		});
-	}
-	my $votes_used = $self->votes_used() + $votes;
-	$self->votes_used($votes_used);
-	return $votes_used;
+    my $self = shift;
+    my $votes = shift;
+    if ($votes < 0) {
+        PrefVote::STV::InvalidInternalData->throw({classname => __PACKAGE__,
+            attribute => 'votes_used',
+            description => "negative incrememnt is invalid",
+        });
+    }
+    my $votes_used = $self->votes_used() + $votes;
+    $self->votes_used($votes_used);
+    return $votes_used;
 }
 
 # sort the round's candidates list
 # this is done manually after adding last item so we don't waste time doing it more than once
 sub sort_candidates
 {
-	my $self = shift;
-	my $round_candidates = $self->candidates();
-	@$round_candidates = sort {$round_candidates->{$b}->tally() <=> $round_candidates->{$a}->tally()}
-		@$round_candidates;
-	$self->debug_print("sorted round candidate list = ".join(" ", @$round_candidates)."\n");
-	return;
+    my $self = shift;
+    my $round_candidates = $self->candidates();
+    @$round_candidates = sort {$round_candidates->{$b}->tally() <=> $round_candidates->{$a}->tally()}
+        @$round_candidates;
+    $self->debug_print("sorted round candidate list = ".join(" ", @$round_candidates)."\n");
+    return;
 }
 
 1;

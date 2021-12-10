@@ -64,7 +64,7 @@ has ballots => (
 
 # misc additional info: storage for extra data from input file, used for testing
 has extra => (
-	is => 'ro',
+    is => 'ro',
 );
 
 # check existence of a voting choice/option
@@ -118,77 +118,77 @@ sub submit_ballot
 # read YAML input
 sub read_yaml
 {
-	my $filepath = shift;
+    my $filepath = shift;
 
-	# read YAML
-	(-e $filepath) or croak "$filepath not found";
-	(-f $filepath) or croak "$filepath not a regular file";
-	my @yaml_docs = eval { YAML::XS::LoadFile($filepath) };
+    # read YAML
+    (-e $filepath) or croak "$filepath not found";
+    (-f $filepath) or croak "$filepath not a regular file";
+    my @yaml_docs = eval { YAML::XS::LoadFile($filepath) };
     if ($@) {
-		croak "$0: error reading $filepath: $@";
-	}
-	return @yaml_docs;
+        croak "$0: error reading $filepath: $@";
+    }
+    return @yaml_docs;
 }
 
 # convert YAML input to PrefVote::Core structure and ballots
 sub yaml2vote
 {
-	my $filepath = shift;
-	my @yaml_docs = read_yaml($filepath);
+    my $filepath = shift;
+    my @yaml_docs = read_yaml($filepath);
 
-	# save the first YAML document as the definition of the vote for entry into a PrefVote::Core structure
-	my $yaml_vote_def = shift @yaml_docs;
-	if (ref $yaml_vote_def ne "HASH") {
-		croak "$0: misformatted YAML input: 1st document must be in map/hash format";
-	}
-	foreach my $key ( qw(class params)) {
-		if (not exists $yaml_vote_def->{$key}) {
-			croak "$0: misformatted YAML input: '$key' parameter missing from top level of vote definition";
-		}
-	}
+    # save the first YAML document as the definition of the vote for entry into a PrefVote::Core structure
+    my $yaml_vote_def = shift @yaml_docs;
+    if (ref $yaml_vote_def ne "HASH") {
+        croak "$0: misformatted YAML input: 1st document must be in map/hash format";
+    }
+    foreach my $key ( qw(class params)) {
+        if (not exists $yaml_vote_def->{$key}) {
+            croak "$0: misformatted YAML input: '$key' parameter missing from top level of vote definition";
+        }
+    }
 
-	# save the second YAML document as the list of ballots
-	my $yaml_ballots = shift @yaml_docs;
-	if (ref $yaml_ballots ne "ARRAY") {
-		croak "$0: misformatted YAML input: 2nd document must be in list/array format";
-	}
+    # save the second YAML document as the list of ballots
+    my $yaml_ballots = shift @yaml_docs;
+    if (ref $yaml_ballots ne "ARRAY") {
+        croak "$0: misformatted YAML input: 2nd document must be in list/array format";
+    }
 
-	my $extra_data = [@yaml_docs]; # save any additional YAML documents in extra, available for testing
+    my $extra_data = [@yaml_docs]; # save any additional YAML documents in extra, available for testing
 
-	# instantiate the voting object from 1st YAML document - enforce that it must be a subclass of this class
-	my $class = $yaml_vote_def->{class};
-	## no critic (BuiltinFunctions::ProhibitStringyEval)
-	if (not eval "require $class") {
-		croak "failed to load class $class: $@";
-	}
-	## critic (BuiltinFunctions::ProhibitStringyEval)
-	if (not $class->isa(__PACKAGE__)) {
-		croak "class $class in vote defintion is not a subclass of ".__PACKAGE__;
-	}
-	my $params = $yaml_vote_def->{params};
-	if ($extra_data) {
-		# stash extra YAML documents in "extra" for use in testing
-		$params->{extra} = $extra_data;
-	}
-	my $vote_obj = eval { $class->new(%$params) };
-	if (not defined $vote_obj) {
-		croak "failed to instantiate object of $class: $@";
-	}
+    # instantiate the voting object from 1st YAML document - enforce that it must be a subclass of this class
+    my $class = $yaml_vote_def->{class};
+    ## no critic (BuiltinFunctions::ProhibitStringyEval)
+    if (not eval "require $class") {
+        croak "failed to load class $class: $@";
+    }
+    ## critic (BuiltinFunctions::ProhibitStringyEval)
+    if (not $class->isa(__PACKAGE__)) {
+        croak "class $class in vote defintion is not a subclass of ".__PACKAGE__;
+    }
+    my $params = $yaml_vote_def->{params};
+    if ($extra_data) {
+        # stash extra YAML documents in "extra" for use in testing
+        $params->{extra} = $extra_data;
+    }
+    my $vote_obj = eval { $class->new(%$params) };
+    if (not defined $vote_obj) {
+        croak "failed to instantiate object of $class: $@";
+    }
 
-	# ingest ballots from 2nd YAML document
-	my $submitted = 0;
-	my $accepted = 0;
-	foreach my $ballot (@$yaml_ballots) {
-		$submitted++;
-		if ( eval { $vote_obj->submit_ballot(@$ballot) }) {
-			$accepted++;
-		} else {
-			$vote_obj->debug_print("ballot entry failed: $@");
-		}
-	}
-	$vote_obj->debug_print("votes: submitted=$submitted accepted=$accepted");
+    # ingest ballots from 2nd YAML document
+    my $submitted = 0;
+    my $accepted = 0;
+    foreach my $ballot (@$yaml_ballots) {
+        $submitted++;
+        if ( eval { $vote_obj->submit_ballot(@$ballot) }) {
+            $accepted++;
+        } else {
+            $vote_obj->debug_print("ballot entry failed: $@");
+        }
+    }
+    $vote_obj->debug_print("votes: submitted=$submitted accepted=$accepted");
 
-	return $vote_obj;
+    return $vote_obj;
 }
 
 1;

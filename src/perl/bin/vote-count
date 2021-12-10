@@ -14,15 +14,15 @@ use Data::Dumper;
 
 # main
 if (not @ARGV) {
-	say STDERR "usage: $0 yaml_file";
-	exit 0;
+    say STDERR "usage: $0 yaml_file";
+    exit 0;
 }
 
 # count votes
 my $vote_obj = PrefVote::Core::yaml2vote($ARGV[0]);
 if (PrefVote::Core->debug()) {
-	say STDERR "returned vote object is a ".ref($vote_obj);
-	say STDERR Dumper($vote_obj);
+    say STDERR "returned vote object is a ".ref($vote_obj);
+    say STDERR Dumper($vote_obj);
 }
 
 

@@ -25,60 +25,60 @@ use Types::Standard qw(Bool Int StrictNum Str ArrayRef);
 extends 'PrefVote';
 
 has tally => (
-	is => 'rw',
-	isa => Int,
-	default => 0,
+    is => 'rw',
+    isa => Int,
+    default => 0,
 );
 
 has winner => (
-	is => 'rw',
-	isa => Bool,
-	default => 0,
+    is => 'rw',
+    isa => Bool,
+    default => 0,
 );
 
 has eliminated => (
-	is => 'rw',
-	isa => Bool,
-	default => 0,
+    is => 'rw',
+    isa => Bool,
+    default => 0,
 );
 
 has place => (
-	is => 'rw',
-	isa => Int,
-	default => 0,
+    is => 'rw',
+    isa => Int,
+    default => 0,
 );
 
 has transfer => (
-	is => 'rw',
-	isa => Int,
-	default => 0,
+    is => 'rw',
+    isa => Int,
+    default => 0,
 );
 
 has surplus => (
-	is => 'rw',
-	isa => Int,
-	default => 0,
+    is => 'rw',
+    isa => Int,
+    default => 0,
 );
 
 # mark candidate as a winner
 # if there is a tie, call this once per winning candidate
 sub mark_as_winner
 {
-	my ($self, %opts) = @_;
-	$self->winner(1);
-	$self->place($opts{place});
-	$self->tally($opts{tally});
-	$self->surplus($opts{surplus});
-	$self->transfer($opts{transfer});
-	return;
+    my ($self, %opts) = @_;
+    $self->winner(1);
+    $self->place($opts{place});
+    $self->tally($opts{tally});
+    $self->surplus($opts{surplus});
+    $self->transfer($opts{transfer});
+    return;
 }
 
 # mark candidate as eliminated
 sub mark_as_eliminated
 {
-	my $self = shift;
-	$self->eliminated(1);
-	return;
+    my $self = shift;
+    $self->eliminated(1);
+    return;
 }
 
 1;
