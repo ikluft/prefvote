@@ -1,0 +1,22 @@
+#!/usr/bin/perl
+# random-test-votes - generate random votes for PrefVote test cases
+use Modern::Perl qw(2015); # require 5.20.0 or later
+use autodie;
+
+my @choices = qw(ABNORMAL BORING CHAOTIC DYSFUNCTIONAL EVIL FACTIOUS);
+my $total = scalar @choices;
+my $num = $ARGV[0] // 50;
+
+for (my $i=0; $i<$num; $i++) {
+	# get shuffled list of candidates
+	my @vote = sort {(rand() < 0.5) ? 1 : -1} @choices;
+	
+	# randomly discard last candidate on list up to 5 times for voters who didn't vote all choices
+	for (my $j=0; $j<$total-1; $j++) {
+		if (rand() > 0.6) {
+			last;
+		}
+		pop @vote; # discard last choice
+	}
+	say "- [".join(", ", @vote)."]";
+}
