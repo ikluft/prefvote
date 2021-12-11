@@ -1,5 +1,5 @@
 ---
-class: PrefVote::STV
+method: STV
 params:
   name: Test Vote
   seats: 1

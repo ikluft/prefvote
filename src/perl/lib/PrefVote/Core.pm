@@ -16,7 +16,12 @@ package PrefVote::Core;
 use autodie;
 use Carp qw(croak);
 use DateTime;
+use Readonly;
 use PrefVote::Core::Ballot;
+
+# supported voting methods - for constructing class names from vote definitions
+# use Core only for testing because the base class doesn't actually have voting-method code
+Readonly::Array my @voting_methods => qw(Core STV Schulze);
 
 #
 # class definitions
@@ -105,6 +110,18 @@ sub total_ballots
     return scalar @$ballots_ref;
 }
 
+# check if a string matches a supported voting method
+sub supported_method
+{
+    my $method = shift;
+    foreach my $supported (@voting_methods) {
+        if ($method eq $supported) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 #
 # data input
 #
@@ -164,7 +181,7 @@ sub yaml2vote
     if (ref $yaml_vote_def ne "HASH") {
         croak "$0: misformatted YAML input: 1st document must be in map/hash format";
     }
-    foreach my $key ( qw(class params)) {
+    foreach my $key ( qw(method params)) {
         if (not exists $yaml_vote_def->{$key}) {
             croak "$0: misformatted YAML input: '$key' parameter missing from top level of vote definition";
         }
@@ -176,10 +193,16 @@ sub yaml2vote
         croak "$0: misformatted YAML input: 2nd document must be in list/array format";
     }
 
-    my $extra_data = [@yaml_docs]; # save any additional YAML documents in extra, available for testing
+    # save any additional YAML documents in extra, available for testing
+    my $extra_data = [@yaml_docs];
 
-    # instantiate the voting object from 1st YAML document - enforce that it must be a subclass of this class
-    my $class = $yaml_vote_def->{class};
+    # translate a voting method string into a voting-method class within this hierarchy
+    # instantiate the voting object from 1st YAML document
+    my $method = $yaml_vote_def->{method};
+    if (not supported_method($method)) {
+        croak "$method is not a supported voting method";
+    }
+    my $class = "PrefVote::$method";
     ## no critic (BuiltinFunctions::ProhibitStringyEval)
     if (not eval "require $class") {
         croak "failed to load class $class: $@";

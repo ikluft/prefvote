@@ -363,7 +363,7 @@ package PrefVote::STV::InvalidInternalData;
 
 use Moo;
 use Types::Standard qw(Str);
-extends 'PrefVote::Exception';
+extends 'PrefVote::Core::Exception';
 has attribute => (is => 'ro', isa =>Str);
 
 1;

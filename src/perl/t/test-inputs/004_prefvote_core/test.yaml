@@ -1,5 +1,5 @@
 ---
-class: PrefVote::Core
+method: Core
 params:
   name: Test Vote
   seats: 1
