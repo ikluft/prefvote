@@ -97,7 +97,7 @@ sub get_choices
 }
 
 # get ballot count
-sub count_ballots
+sub total_ballots
 {
     my $class_or_obj = shift;
     my $self = class_or_obj($class_or_obj);

@@ -80,8 +80,8 @@ sub clear_candidate_tallies
     
     # clear tallies
     my $candidates_ref = $self->candidates();
-    foreach my $cand_ref ( keys %$candidates_ref ) {
-        $cand_ref->tally(0);
+    foreach my $cand_key ( keys %$candidates_ref ) {
+        $candidates_ref->{$cand_key}->tally(0);
     }
     $self->debug_print("candidate (reset) = ".join(" ",keys %$candidates_ref)."\n");
     return;
@@ -165,8 +165,8 @@ sub run_tally
         # loop through choices
         my $selection = undef;
         my $fraction = 1;
-        foreach my $choice ( @$ballot ) {
-            if ( debug() and ref($choice) ne "" ) {
+        foreach my $choice ( @{$ballot->items()} ) {
+            if ( $self->debug() and ref($choice) ne "" ) {
                 print STDERR "choice is ref "
                     .ref($choice)
                     ." in #".$round->votes_used().": "
@@ -303,7 +303,7 @@ sub count
     $self->init_candidates();
 
     # stop now if there are no votes
-    return if $self->count_ballots() == 0;
+    return if $self->total_ballots() == 0;
 
     # loop forever until a valid result is established
     for ( ;; ) {

@@ -3,7 +3,7 @@
 
 use Modern::Perl qw(2015); # require 5.20.0 or later
 use autodie;
-use Test::More tests => 49;
+use Test::More tests => 50;
 use Test::Exception;
 use File::Basename;
 use Cwd;
@@ -34,6 +34,7 @@ Readonly::Scalar my $yaml_file => "test.yaml";
 Readonly::Scalar my $yaml_ballot_count => 50;
 Readonly::Scalar my $yaml_name => "Test Vote";
 Readonly::Scalar my $yaml_seats => 1;
+Readonly::Scalar my $yaml_extra => [{extra => "test data"}];
 
 # basic instantiation tests (28 tests)
 sub basic_tests
@@ -78,8 +79,8 @@ sub ballot_tests
     isa_ok($vote_obj, "PrefVote::Core", "instance() returned correct object");
 
     # verify empty ballot box at start (2 tests)
-    is(PrefVote::Core->count_ballots(), 0, "class->count_ballots() = 0 initially");
-    is($vote_obj->count_ballots(), 0, "obj->count_ballots() = 0 initially");
+    is(PrefVote::Core->total_ballots(), 0, "class->total_ballots() = 0 initially");
+    is($vote_obj->total_ballots(), 0, "obj->total_ballots() = 0 initially");
 
     # run through array of ballot input tests (5 tests)
     foreach my $test (@ballot_tests) {
@@ -105,12 +106,12 @@ sub ballot_tests
     }
 
     # count ballots (2 tests)
-    is(PrefVote::Core->count_ballots(), 2, "class->count_ballots() = 2");
-    is($vote_obj->count_ballots(), 2, "obj->count_ballots() = 2");
+    is(PrefVote::Core->total_ballots(), 2, "class->total_ballots() = 2");
+    is($vote_obj->total_ballots(), 2, "obj->total_ballots() = 2");
     return;
 }
 
-# YAML tests (9 tests)
+# YAML tests (10 tests)
 sub yaml_tests
 {
     # locate YAML file for this test
@@ -122,7 +123,7 @@ sub yaml_tests
             BAIL_OUT("can't find YAML test input $yaml_path");
     }
 
-    # load YAML file (9 tests)
+    # load YAML file (10 tests)
     my $vote_obj;
     lives_ok( sub{ $vote_obj = PrefVote::Core::yaml2vote($yaml_path); }, "process YAML file");
     ok(defined $vote_obj, "yaml2vote() returned a defined value");
@@ -132,7 +133,8 @@ sub yaml_tests
     is($vote_obj->get_choices(), keys %{$vote_obj->{choices}}, "obj->get_choices() test - YAML");
     is($vote_obj->name(), $yaml_name, "attribute check: name");
     is($vote_obj->seats(), $yaml_seats, "attribute check: seats");
-    is($vote_obj->count_ballots(), $yaml_ballot_count, "ballot count - YAML");
+    is($vote_obj->total_ballots(), $yaml_ballot_count, "ballot total - YAML");
+    is_deeply($vote_obj->extra(), $yaml_extra, "extra YAML docs saved in extra attribute - YAML");
     return;
 }
 

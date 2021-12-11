@@ -22,13 +22,13 @@ use autodie;
 use Moo;
 use Type::Tiny;
 use Types::Standard qw(StrictNum ArrayRef);
-use Types::Common::Numeric qw(PositiveNum);
+use Types::Common::Numeric qw(PositiveOrZeroNum);
 use Types::Common::String qw(NonEmptySimpleStr);
 extends 'PrefVote';
 
 has votes_used => (
     is => 'rw',
-    isa => PositiveNum,
+    isa => PositiveOrZeroNum,
     default => 0,
 );
 
