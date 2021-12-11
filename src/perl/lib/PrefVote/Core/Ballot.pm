@@ -14,6 +14,7 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 package PrefVote::Core::Ballot;
 
 use autodie;
+use Carp qw(croak);
 
 # class definitions
 use Moo;
@@ -21,20 +22,54 @@ use Type::Tiny;
 use Types::Standard qw(Str ArrayRef);
 extends 'PrefVote';
 
+# set of valid ballot choices submitted by PrefVote::Core
+# separate copy here avoids dependency loop and helps testing the module alone
+my %choices;
+
+# per-ballot array of vote items
 has items => (
     is => 'ro',
     isa => ArrayRef[Str],
     required => 1,
     constraint => sub {
+        # if %choices is non-empty, use it to look up valid values in ballot items
         my $items_ref = $_;
-        foreach my $item (@$items_ref) {
-            if (not PrefVote::Core->choiceExists($item)) {
-                return 0;
+        if (%choices) {
+            foreach my $item (@$items_ref) {
+                if (not exists $choices{$item}) {
+                    return 0;
+                }
             }
         }
         return 1;
     }
 );
+
+# set valid ballot choices
+sub set_choices
+{
+    my @choices = @_;
+
+    # put choices in class variable hash
+    %choices = ();
+    foreach my $item (@choices) {
+        $choices{$item} = 1;
+    }
+    return;
+}
+
+# get list of choices
+sub get_choices
+{
+    return wantarray ? (keys %choices) : \%choices;
+}
+
+# return number of items on ballot
+sub total_items
+{
+    my $self = shift;
+    return scalar @{$self->{items}};
+}
 
 # return string of ballot contents
 sub as_string

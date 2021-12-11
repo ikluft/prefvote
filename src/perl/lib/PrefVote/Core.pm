@@ -28,8 +28,6 @@ use Types::Common::Numeric qw(PositiveInt);
 extends 'PrefVote';
 with 'MooX::Singleton';
 
-# constants
-
 # name of poll/vote
 has name => (
     is => 'ro',
@@ -45,6 +43,7 @@ has choices => (
     trigger => sub {
         my $self = shift;
         $self->debug_print("set choices to ".join(" ", keys %{$self->choices}));
+        PrefVote::Core::Ballot::set_choices(keys %{$self->choices});
     },
 );
 
@@ -67,22 +66,33 @@ has extra => (
     is => 'ro',
 );
 
+# utility for functions to select between class and object
+sub class_or_obj
+{
+    my $coo = shift;
+    if (not $coo->isa(__PACKAGE__)) {
+        croak "class_or_obj: parameter not in class hierarchy".((ref $coo) ? ref $coo : $coo);
+    }
+    if (ref $coo) {
+        return $coo;
+    }
+    return $coo->instance();
+}
+
 # check existence of a voting choice/option
-# class method
 sub choice_exists
 {
-    my $class = shift;
-    my $str = shift;
-    my $self = $class->instance();
-    my $choices_ref = $self->choices;
-    return exists $choices_ref->{$str};
+    my ($class_or_obj, $str) = @_;
+    return 0 if not defined $str;
+    my $self = class_or_obj($class_or_obj);
+    return (exists $self->{choices}{$str} ? 1 : 0);
 }
 
 # get list of choices
 sub get_choices
 {
     my $class_or_obj = shift;
-    my $self = ($class_or_obj->isa("PrefVote::Core")) ? $class_or_obj : $class_or_obj->instance();
+    my $self = class_or_obj($class_or_obj);
     return keys %{$self->{choices}};
 }
 
@@ -90,7 +100,7 @@ sub get_choices
 sub count_ballots
 {
     my $class_or_obj = shift;
-    my $self = ($class_or_obj->isa("PrefVote::Core")) ? $class_or_obj : $class_or_obj->instance();
+    my $self = class_or_obj($class_or_obj);
     my $ballots_ref = $self->ballots();
     return scalar @$ballots_ref;
 }
@@ -105,11 +115,24 @@ sub submit_ballot
 {
     my ($self, @ballot) = @_;
 
+    # filter out invalid items from ballot
+    my @filtered_ballot;
+    foreach my $item (@ballot) {
+        if ($self->choice_exists($item)) {
+            push @filtered_ballot, $item;
+        }
+    }
+
+    # throw exception for empty ballot after filtering
+    if ((scalar @filtered_ballot) == 0) {
+        PrefVote::Core::Exception->throw(description => "empty ballot");
+    }
+
     # Note: ballots are anonymous once this function is called.
     # Protection against casting multiple votes must be done elsewhere
     # (preferably when the vote is received) because this module doesn't
     # retain any association between the ballot and the voter.
-    my $ballot = PrefVote::Core::Ballot->new(items => \@ballot); # throws exception on content error
+    my $ballot = PrefVote::Core::Ballot->new(items => \@filtered_ballot);
     $self->debug_print("accepting ", $ballot->as_string());
     push ( @{$self->{ballots}}, $ballot );
     return 1; # returns true, whose absence can be used to detect if an exception was thrown
@@ -170,7 +193,10 @@ sub yaml2vote
         # stash extra YAML documents in "extra" for use in testing
         $params->{extra} = $extra_data;
     }
-    my $vote_obj = eval { $class->new(%$params) };
+    ## no critic (Subroutines::ProtectPrivateSubs)
+    PrefVote::Core->_clear_instance(); # replace the singleton: toss out previous instance if it exists
+    ## use critic (Subroutines::ProtectPrivateSubs)
+    my $vote_obj = eval { $class->instance(%$params) };
     if (not defined $vote_obj) {
         croak "failed to instantiate object of $class: $@";
     }
@@ -190,6 +216,18 @@ sub yaml2vote
 
     return $vote_obj;
 }
+
+## no critic (Modules::ProhibitMultiplePackages)
+
+#
+# exception classes
+#
+package PrefVote::Core::Exception;
+
+use Moo;
+use Types::Standard qw(Str);
+extends 'PrefVote::Exception';
+has classname => (is => 'ro', isa =>Str, default => __PACKAGE__);
 
 1;
 
