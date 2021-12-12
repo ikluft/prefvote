@@ -16,30 +16,48 @@ package PrefVote;
 use autodie;
 use Carp qw(croak);
 use Moo;
+use Type::Tiny;
+use Types::Standard qw(InstanceOf);
 
-# internal class variables
-my $debug=(($ENV{PREFVOTE_DEBUG} // 0) ? 1 : 0);
+has debug_flag => (
+    is => 'rw',
+    isa => InstanceOf["PrefVote::Debug"],
+    handles => [qw(debug debug_print)],
+    default => sub{ PrefVote::debug_instance() },
+);
 
-# debug flag read/write accessor
-sub debug
+# class function to get debug class/object instance
+sub debug_instance
 {
-    my $value = shift;
-    if (defined $value) {
-        $debug = $value ? 1 : 0;
-    }
-    return $debug;
+    return PrefVote::Debug->instance();
 }
+
+## no critic (Modules::ProhibitMultiplePackages)
+
+#
+# debug flag class - singleton object shared by all objects in the PrefVote class hierarchy
+#
+package PrefVote::Debug;
+
+use Moo;
+use Types::Standard qw(Bool);
+with 'MooX::Singleton';
+
+has debug => (
+    is => 'rw',
+    isa => Bool,
+    default => sub { return ($ENV{PREFVOTE_DEBUG} // 0) ? 1 : 0 },
+);
 
 # print debug message
 sub debug_print
 {
-    my ($class_or_obj, @strs) = @_;
-    my $prefix = (ref $class_or_obj ? (ref $class_or_obj) : $class_or_obj);
-    debug() and say STDERR $prefix.": ".join(" ", @strs);
+    my ($self, @strs) = @_;
+    my @caller = caller;
+    my $prefix = $caller[0]; # caller package name
+    $self->{debug} and say STDERR $prefix.": ".join(" ", @strs);
     return;
 }
-
-## no critic (Modules::ProhibitMultiplePackages)
 
 #
 # exception classes

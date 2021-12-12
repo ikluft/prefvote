@@ -18,6 +18,7 @@ use autodie;
 use PrefVote::STV::Round;
 use PrefVote::STV::Candidate;
 use PrefVote::STV::Result;
+use Data::Dumper;
 
 # class definitions
 use Moo;
@@ -326,6 +327,7 @@ sub count
         $self->candidates_in_round();
 
         # done if we've exhausted the candidates
+        $self->debug_print(Dumper("round->candidates -> ".$round->{candidates}));
         if (not @{$round->candidates()} ) {
             $self->debug_print("no candidates remaining in new round\n");
             return;

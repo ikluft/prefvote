@@ -21,9 +21,9 @@ sub test_debug
     my $capture = IO::Capture::Stderr->new();
 
     # set debugging on or off for test
-    my $retval = PrefVote::debug($debug_flag);
+    my $retval = $prefvote_obj->debug($debug_flag);
     is($retval, $debug_flag, "return value matches parameter ($debug_flag)");
-    is(PrefVote::debug(), $debug_flag, "debug mode is $debug_flag");
+    is($prefvote_obj->debug(), $debug_flag, "debug mode is $debug_flag");
     $capture->start();
     $prefvote_obj->debug_print("testing");
     $capture->stop();
@@ -40,7 +40,7 @@ sub test_debug
 # Just don't set PREFVOTE_DEBUG when you don't want it. This test adapts if it's set.
 my $debug_env_set = exists $ENV{PREFVOTE_DEBUG};
 my $debug_default = ($ENV{PREFVOTE_DEBUG} // 0) ? 1 : 0;
-is(PrefVote::debug(), $debug_default, "debug defaults to $debug_default with PREFVOTE_DEBUG ".
+is($prefvote_obj->debug(), $debug_default, "debug defaults to $debug_default with PREFVOTE_DEBUG ".
     ($debug_env_set ? "set" : "unset"));
 
 # test debug off and on

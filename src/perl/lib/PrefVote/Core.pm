@@ -47,7 +47,7 @@ has choices => (
     requred => 1,
     trigger => sub {
         my $self = shift;
-        $self->debug_print("set choices to ".join(" ", keys %{$self->choices}));
+        PrefVote::debug_instance()->debug_print("set choices to ".join(" ", keys %{$self->choices}));
         PrefVote::Core::Ballot::set_choices(keys %{$self->choices});
     },
 );

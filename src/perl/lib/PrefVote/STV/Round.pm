@@ -79,7 +79,7 @@ sub sort_candidates
     @$round_candidates = sort {$round_candidates->{$b}->tally() <=> $round_candidates->{$a}->tally()}
         @$round_candidates;
     $self->debug_print("sorted round candidate list = ".join(" ", @$round_candidates)."\n");
-    return;
+    return @$round_candidates;
 }
 
 1;
