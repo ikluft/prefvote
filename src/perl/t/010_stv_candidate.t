@@ -8,17 +8,18 @@ use PrefVote::STV::Candidate;
 
 # check type and default values (9 tests)
 my $stv_cand_ref = PrefVote::STV::Candidate->new();
-ok(defined $stv_cand_ref, "new(...) returned a defined value");
-ok(ref $stv_cand_ref, "new(...) returned a reference");
-isa_ok($stv_cand_ref, "PrefVote::STV::Candidate", "new(...) returned correct object");
-is($stv_cand_ref->tally(), 0, "check default: tally = 0");
-is($stv_cand_ref->winner(), 0, "check default: winner = 0");
-is($stv_cand_ref->eliminated(), 0, "check default: eliminated = 0");
-is($stv_cand_ref->place(), 0, "check default: place = 0");
-is($stv_cand_ref->transfer(), 0, "check default: transfer = 0");
-is($stv_cand_ref->surplus(), 0, "check default: surplus = 0");
+ok(defined $stv_cand_ref, "new() returned a defined value");
+ok(ref $stv_cand_ref, "new() returned a reference");
+isa_ok($stv_cand_ref, "PrefVote::STV::Candidate", "new() returned correct object");
+is($stv_cand_ref->tally(), 0, "default: tally = 0");
+is($stv_cand_ref->winner(), 0, "default: winner = 0");
+is($stv_cand_ref->eliminated(), 0, "default: eliminated = 0");
+is($stv_cand_ref->place(), 0, "default: place = 0");
+is($stv_cand_ref->transfer(), 0, "default: transfer = 0");
+is($stv_cand_ref->surplus(), 0, "default: surplus = 0");
 
 # modify values via methods and check results (6 tests)
+# Except for booleans, these numbers are made-up. The only significance is the test reads back the same number.
 $stv_cand_ref->mark_as_winner(place => 1, tally => 42, surplus => 12, transfer => 10);
 is($stv_cand_ref->winner(), 1, "winner: check winner = 1");
 is($stv_cand_ref->place(), 1, "winner: check place = 1");
