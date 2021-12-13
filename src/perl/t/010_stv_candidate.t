@@ -2,15 +2,16 @@
 # 010_stv_candidate.t - tests for PrefVote::STV::Candidate
 use Modern::Perl qw(2015); # require 5.20.0 or later
 use autodie;
-use Test::More tests => 21;
+use Test::More tests => 23;
 use Readonly;
 use PrefVote::STV::Candidate;
 
-# check type and default values (9 tests)
-my $stv_cand_ref = PrefVote::STV::Candidate->new();
+# check type and default values (10 tests)
+my $stv_cand_ref = PrefVote::STV::Candidate->new(name => 'test1');
 ok(defined $stv_cand_ref, "new() returned a defined value");
 ok(ref $stv_cand_ref, "new() returned a reference");
 isa_ok($stv_cand_ref, "PrefVote::STV::Candidate", "new() returned correct object");
+is($stv_cand_ref->name(), "test1", "default: name = test1");
 is($stv_cand_ref->tally(), 0, "default: tally = 0");
 is($stv_cand_ref->winner(), 0, "default: winner = 0");
 is($stv_cand_ref->eliminated(), 0, "default: eliminated = 0");
@@ -28,9 +29,10 @@ is($stv_cand_ref->surplus(), 12, "winner: check surplus = 12");
 is($stv_cand_ref->transfer(), 10, "winner: check transfer = 10");
 is($stv_cand_ref->eliminated(), 0, "winner: check eliminated = 0");
 
-# make new object and test marking it eliminated (6 tests)
-my $stv_cand_ref2 = PrefVote::STV::Candidate->new();
+# make new object and test marking it eliminated (7 tests)
+my $stv_cand_ref2 = PrefVote::STV::Candidate->new(name => 'test2');
 $stv_cand_ref2->mark_as_eliminated();
+is($stv_cand_ref2->name(), "test2", "default: name = test2");
 is($stv_cand_ref2->winner(), 0, "eliminated: check winner = 0");
 is($stv_cand_ref2->place(), 0, "eliminated: check place = 0");
 is($stv_cand_ref2->tally(), 0, "eliminated: check tally = 0");

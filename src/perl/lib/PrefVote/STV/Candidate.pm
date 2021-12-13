@@ -24,6 +24,12 @@ use Type::Tiny;
 use Types::Standard qw(Bool Int StrictNum Str ArrayRef);
 extends 'PrefVote';
 
+has 'name' => (
+    is => 'ro',
+    isa => Str,
+    required => 1,
+);
+
 has tally => (
     is => 'rw',
     isa => Int,
