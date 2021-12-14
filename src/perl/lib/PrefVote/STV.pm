@@ -260,19 +260,21 @@ sub eliminate_losers
 {
     my $self = shift;
     my $round = $self->current_round();
-    my $cands_ref = $self->candidates();
-    my @round_candidate = @{$round->candidates()};
+    my $cands_ref = $self->candidates(); # hash of candidate data
+    my @round_candidate = @{$round->candidates()}; # list of candidate names
 
-    # no quota: eliminate last-place candidate(s) and count again on next round
+    # no candidate met quota: eliminate last-place candidate(s) and count again on next round
     my $i;
     my $last_cand = $round_candidate[-1];
 
     # mark candidates tied for last as eliminated
+    $self->add_eliminated($last_cand);
     $cands_ref->{$last_cand}->mark_as_eliminated();
-    for ( $i = scalar @round_candidate; $i > 0; $i-- ) {
+    for ( $i = (scalar @round_candidate)-1; $i > 0; $i-- ) {
         my $indexed_cand = $round_candidate[$i];
         if ( $cands_ref->{$last_cand}->tally() == $cands_ref->{$indexed_cand}->tally())
         {
+            $self->add_eliminated($indexed_cand);
             $cands_ref->{$indexed_cand}->mark_as_eliminated();
             $self->debug_print("eliminated: ".$indexed_cand."\n");
         }
@@ -283,12 +285,7 @@ sub eliminate_losers
         if ( $cands_ref->{$cand_key}->eliminated())
         {
             $self->add_result({ name => $cand_key,
-                tally => $cands_ref->{$cand_key}->tally(),
                 desc => "eliminated"
-            });
-        } else {
-            $self->add_result({ name => $cand_key,
-                tally => $cands_ref->{$cand_key}->tally()
             });
         }
     }

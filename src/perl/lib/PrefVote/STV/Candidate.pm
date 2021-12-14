@@ -32,7 +32,7 @@ has 'name' => (
 
 has tally => (
     is => 'rw',
-    isa => Int,
+    isa => StrictNum,
     default => 0,
 );
 
@@ -56,13 +56,13 @@ has place => (
 
 has transfer => (
     is => 'rw',
-    isa => Int,
+    isa => StrictNum,
     default => 0,
 );
 
 has surplus => (
     is => 'rw',
-    isa => Int,
+    isa => StrictNum,
     default => 0,
 );
 

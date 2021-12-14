@@ -35,21 +35,22 @@ has votes_used => (
 has candidates => (
     is => 'rw',
     isa => ArrayRef[NonEmptySimpleStr],
+    default => sub { return [] },
 );
 
 has quota => (
     is => 'rw',
-    isa => StrictNum,
+    isa => PositiveOrZeroNum,
     default => 0,
 );
 
-# add a candidate to a round
+# add a candidate (by name only here) to a round
 sub add_candidate
 {
     my $self = shift;
-    my $candidate = shift;
+    my $candidate_name = shift;
     my $candidates_ref = $self->candidates();
-    push @$candidates_ref, $candidate;
+    push @$candidates_ref, $candidate_name;
     return;
 }
 
@@ -75,8 +76,9 @@ sub add_votes_used
 sub sort_candidates
 {
     my $self = shift;
-    my $round_candidates = $self->candidates();
-    @$round_candidates = sort {$round_candidates->{$b}->tally() <=> $round_candidates->{$a}->tally()}
+    my $round_candidates = $self->candidates(); # names of candidates
+    my $stv_candidates = PrefVote::STV->instance()->candidates(); # hash of candidate data
+    @$round_candidates = sort {$stv_candidates->{$b}->tally() <=> $stv_candidates->{$a}->tally()}
         @$round_candidates;
     $self->debug_print("sorted round candidate list = ".join(" ", @$round_candidates)."\n");
     return @$round_candidates;
