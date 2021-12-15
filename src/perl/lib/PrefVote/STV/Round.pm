@@ -61,7 +61,7 @@ sub add_votes_used
     my $self = shift;
     my $votes = shift;
     if ($votes < 0) {
-        PrefVote::STV::InvalidInternalData->throw({classname => __PACKAGE__,
+        PrefVote::Core::InternalDataException->throw({classname => __PACKAGE__,
             attribute => 'votes_used',
             description => "negative incrememnt is invalid",
         });
@@ -75,11 +75,15 @@ sub add_votes_used
 # this is done manually after adding last item so we don't waste time doing it more than once
 sub sort_candidates
 {
-    my $self = shift;
+    my ($self, $sort_fn) = @_;
     my $round_candidates = $self->candidates(); # names of candidates
-    my $stv_candidates = PrefVote::STV->instance()->candidates(); # hash of candidate data
-    @$round_candidates = sort {$stv_candidates->{$b}->tally() <=> $stv_candidates->{$a}->tally()}
-        @$round_candidates;
+    if (ref $sort_fn ne "CODE") {
+        PrefVote::Core::InternalDataException->throw({classname => __PACKAGE__,
+            attribute => 'sort_fn',
+            description => "sorting function parameter is not a CODE reference: got ".(ref $sort_fn),
+        });
+    }
+    @$round_candidates = sort $sort_fn (@$round_candidates);
     $self->debug_print("sorted round candidate list = ".join(" ", @$round_candidates)."\n");
     return @$round_candidates;
 }

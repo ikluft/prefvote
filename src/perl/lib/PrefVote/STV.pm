@@ -331,7 +331,15 @@ sub count
         }
 
         # sort in descending order
-        my @round_candidate = $round->sort_candidates();
+        my @round_candidate;
+        {
+            # provide sorting function for PrefVote::STV::Round so it avoids a circular dependency to this module
+            my $sort_fn = sub {
+                my $c = $self->{candidates};
+                return $c->{$PrefVote::STV::Round::b}->tally() <=> $c->{$PrefVote::STV::Round::a}->tally();
+            };
+            @round_candidate = $round->sort_candidates($sort_fn);
+        }
 
         # Do we have a quota?
         # In a 1-seat race, a quota is a simple 50%+1 majority.
@@ -352,18 +360,6 @@ sub count
     }
     return;
 }
-
-## no critic (Modules::ProhibitMultiplePackages)
-
-#
-# exception classes
-#
-package PrefVote::STV::InvalidInternalData;
-
-use Moo;
-use Types::Standard qw(Str);
-extends 'PrefVote::Core::Exception';
-has attribute => (is => 'ro', isa =>Str);
 
 1;
 

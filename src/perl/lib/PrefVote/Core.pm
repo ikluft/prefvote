@@ -245,12 +245,22 @@ sub yaml2vote
 #
 # exception classes
 #
+
+# general exception class for all voting methods
 package PrefVote::Core::Exception;
 
 use Moo;
 use Types::Standard qw(Str);
 extends 'PrefVote::Exception';
 has classname => (is => 'ro', isa =>Str, default => __PACKAGE__);
+
+# invalid internal data exception
+package PrefVote::Core::InternalDataException;
+
+use Moo;
+use Types::Standard qw(Str);
+extends 'PrefVote::Core::Exception';
+has attribute => (is => 'ro', isa =>Str);
 
 1;
 
