@@ -334,6 +334,7 @@ sub count
             # provide sorting function for PrefVote::STV::Round so it avoids a circular dependency to this module
             my $sort_fn = sub {
                 my $c = $self->{candidates};
+                ## no critic (Variables::ProhibitPackageVars)
                 return $c->{$PrefVote::STV::Round::b}->tally() <=> $c->{$PrefVote::STV::Round::a}->tally();
             };
             @round_candidate = $round->sort_candidates($sort_fn);
