@@ -268,8 +268,6 @@ sub eliminate_losers
     my $last_cand = $round_candidate[-1];
 
     # mark candidates tied for last as eliminated
-    $self->add_eliminated($last_cand);
-    $cands_ref->{$last_cand}->mark_as_eliminated();
     for ( $i = (scalar @round_candidate)-1; $i > 0; $i-- ) {
         my $indexed_cand = $round_candidate[$i];
         if ( $cands_ref->{$last_cand}->tally() == $cands_ref->{$indexed_cand}->tally())
