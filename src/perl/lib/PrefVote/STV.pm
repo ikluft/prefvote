@@ -17,7 +17,6 @@ package PrefVote::STV;
 use autodie;
 use PrefVote::STV::Round;
 use PrefVote::STV::Candidate;
-use PrefVote::STV::Result;
 use Data::Dumper;
 
 # class definitions
@@ -48,12 +47,6 @@ has candidates => (
     is => 'rw',
     isa => HashRef[InstanceOf["PrefVote::STV::Candidate"]],
     default => sub { return {} },
-);
-
-has results => (
-    is => 'rw',
-    isa => ArrayRef[InstanceOf["PrefVote::STV::Result"]],
-    default => sub { return [] },
 );
 
 #
@@ -106,8 +99,7 @@ sub new_round
 sub current_round
 {
     my $self = shift;
-    my $rounds_ref = $self->rounds();
-    return $rounds_ref->[-1];
+    return $self->{rounds}[-1];
 }
 
 # select current round's candidates
@@ -129,11 +121,11 @@ sub candidates_in_round
 }
 
 # add result record
-sub add_result
+sub round_result
 {
     my ($self, @opts) = @_;
-    my $results_ref = $self->results();
-    push @$results_ref, PrefVote::STV::Result->new(@opts);
+    my $round = $self->current_round();
+    $round->set_result(@opts);
     return;
 }
 
@@ -226,6 +218,8 @@ sub process_winners
     my @round_candidate = @{$round->candidates()};
 
     # quota exceeded - we have a winner!
+    my @round_winner;
+    my $place = scalar @{$self->winners()}+1;
     foreach my $curr_key ( @round_candidate ) {
         # mark all the candidates over quota who are tied at the top as winners
         if ( $cands_ref->{$curr_key}->tally() == $cands_ref->{$round_candidate[0]}->tally() ) {
@@ -235,12 +229,7 @@ sub process_winners
                 $round->quota() / $c_tally * 100.0 );
             my $pc_transfer = sprintf ( "%6.3f",
                 $c_surplus / $c_tally * 100.0 );
-            my $place = scalar @{$self->winners()}+1;
-            $self->add_result({
-                name => $curr_key,
-                tally => $cands_ref->{$curr_key}->tally(),
-                desc => "winner for Choice #$place ($pc_to_elect% of each vote used, $pc_transfer% transfers)"
-            });
+            push @round_winner, $curr_key;
 
             # mark this candidate a winner
             $self->add_winner($curr_key);
@@ -252,6 +241,11 @@ sub process_winners
         }
     }
 
+    # save result
+    $self->round_result({
+        name => \@round_winner,
+        type => "winner",
+    });
     return;
 }
 
@@ -268,6 +262,7 @@ sub eliminate_losers
     my $last_cand = $round_candidate[-1];
 
     # mark candidates tied for last as eliminated
+    my @round_eliminated;
     for ( $i = (scalar @round_candidate)-1; $i > 0; $i-- ) {
         my $indexed_cand = $round_candidate[$i];
         if ( $cands_ref->{$last_cand}->tally() == $cands_ref->{$indexed_cand}->tally())
@@ -275,18 +270,15 @@ sub eliminate_losers
             $self->add_eliminated($indexed_cand);
             $cands_ref->{$indexed_cand}->mark_as_eliminated();
             $self->debug_print("eliminated: ".$indexed_cand."\n");
+            push @round_eliminated, $indexed_cand;
         }
     }
 
     # save result
-    foreach my $cand_key ( @round_candidate ) {
-        if ( $cands_ref->{$cand_key}->eliminated())
-        {
-            $self->add_result({ name => $cand_key,
-                desc => "eliminated"
-            });
-        }
-    }
+    $self->round_result({
+        name => \@round_eliminated,
+        type => "eliminated",
+    });
     return;
 }
 

@@ -21,10 +21,12 @@ use autodie;
 # class definitions
 use Moo;
 use Type::Tiny;
-use Types::Standard qw(StrictNum ArrayRef);
+use Types::Standard qw(StrictNum ArrayRef InstanceOf);
 use Types::Common::Numeric qw(PositiveOrZeroNum);
 use Types::Common::String qw(NonEmptySimpleStr);
 extends 'PrefVote';
+use PrefVote::Core;
+use PrefVote::STV::Result;
 
 has votes_used => (
     is => 'rw',
@@ -44,13 +46,18 @@ has quota => (
     default => 0,
 );
 
+has result => (
+    is => 'rw',
+    isa => InstanceOf["PrefVote::STV::Result"],
+    required => 0,
+);
+
 # add a candidate (by name only here) to a round
 sub add_candidate
 {
     my $self = shift;
     my $candidate_name = shift;
-    my $candidates_ref = $self->candidates();
-    push @$candidates_ref, $candidate_name;
+    push @{$self->{candidates}}, $candidate_name;
     return;
 }
 
@@ -61,7 +68,7 @@ sub add_votes_used
     my $self = shift;
     my $votes = shift;
     if ($votes < 0) {
-        PrefVote::Core::InternalDataException->throw({classname => __PACKAGE__,
+        PrefVote::STV::Round::NegativeIncrementException->throw({classname => __PACKAGE__,
             attribute => 'votes_used',
             description => "negative incrememnt is invalid",
         });
@@ -78,7 +85,7 @@ sub sort_candidates
     my ($self, $sort_fn) = @_;
     my $round_candidates = $self->candidates(); # names of candidates
     if (ref $sort_fn ne "CODE") {
-        PrefVote::Core::InternalDataException->throw({classname => __PACKAGE__,
+        PrefVote::STV::Round::BadSortingFnException->throw({classname => __PACKAGE__,
             attribute => 'sort_fn',
             description => "sorting function parameter is not a CODE reference: got ".(ref $sort_fn),
         });
@@ -87,6 +94,97 @@ sub sort_candidates
     $self->debug_print("sorted round candidate list = ".join(" ", @$round_candidates)."\n");
     return @$round_candidates;
 }
+
+# instantiate a result for current round
+sub set_result
+{
+    my ($self, %opts) = @_;
+
+    # verify candidates in result are valid in this round
+    if (not exists $opts{type}) {
+        PrefVote::STV::Round::TypeMissingException->throw({classname => __PACKAGE__,
+            attribute => 'type',
+            description => "type parameter not provided",
+        });
+    }
+    if (not exists $opts{name}) {
+        PrefVote::STV::Round::NameMissingException->throw({classname => __PACKAGE__,
+            attribute => 'name',
+            description => "name parameter not provided",
+        });
+    }
+    if (ref $opts{name} ne "ARRAY") {
+        PrefVote::STV::Round::NameNotArrayException->throw({classname => __PACKAGE__,
+            attribute => 'name',
+            description => "name parameter is not an array: got ".(ref $opts{name} ? ref $opts{name} : "scalar"),
+        });
+    }
+    my @invalid_candidates;
+    foreach my $candidate_name (@{$opts{name}}) {
+        my $found=0;
+        foreach (my $i=0; $i<scalar @{$self->{candidates}}; $i++) {
+            if ($self->{candidates}[$i] eq $candidate_name) {
+                $found=1;
+                last;
+            }
+        }
+        if (not $found) {
+            push @invalid_candidates, $candidate_name;
+        }
+    }
+    if (@invalid_candidates) {
+        PrefVote::STV::Round::InvalidCandidateException->throw({classname => __PACKAGE__,
+            attribute => 'name',
+            description => "invalid candidate name ($opts{type}):".join(" ", @invalid_candidates),
+        });
+    }
+
+    # instantiate and save result object
+    $self->result(PrefVote::STV::Result->new(%opts));
+    return;
+}
+
+## no critic (Modules::ProhibitMultiplePackages)
+
+#
+# exception classes
+#
+
+package PrefVote::STV::Round::NegativeIncrementException;
+
+use Moo;
+use Types::Standard qw(Str);
+extends 'PrefVote::Core::InternalDataException';
+
+package PrefVote::STV::Round::BadSortingFnException;
+
+use Moo;
+use Types::Standard qw(Str);
+extends 'PrefVote::Core::InternalDataException';
+
+package PrefVote::STV::Round::TypeMissingException;
+
+use Moo;
+use Types::Standard qw(Str);
+extends 'PrefVote::Core::InternalDataException';
+
+package PrefVote::STV::Round::NameMissingException;
+
+use Moo;
+use Types::Standard qw(Str);
+extends 'PrefVote::Core::InternalDataException';
+
+package PrefVote::STV::Round::NameNotArrayException;
+
+use Moo;
+use Types::Standard qw(Str);
+extends 'PrefVote::Core::InternalDataException';
+
+package PrefVote::STV::Round::InvalidCandidateException;
+
+use Moo;
+use Types::Standard qw(Str);
+extends 'PrefVote::Core::InternalDataException';
 
 1;
 

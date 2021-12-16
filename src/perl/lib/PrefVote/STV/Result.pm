@@ -12,7 +12,7 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 ## use critic (Modules::RequireExplicitPackage)
 
 #
-# STV candidate record within each round
+# STV result record from each round
 #
 package PrefVote::STV::Result;
 
@@ -21,27 +21,21 @@ use autodie;
 # class definitions
 use Moo;
 use Type::Tiny;
-use Types::Standard qw(Bool Int Str ArrayRef);
-use Types::Common::String qw(SimpleStr NonEmptySimpleStr);
+use Types::Standard qw(Bool Str Enum ArrayRef);
+use Types::Common::String qw(NonEmptySimpleStr);
+use Types::Common::Numeric qw(PositiveOrZeroNum);
 extends 'PrefVote';
 
 has name => (
     is => 'ro',
-    isa => NonEmptySimpleStr,
+    isa => ArrayRef[NonEmptySimpleStr],
     required => 1,
 );
 
-has tally => (
-    is => 'ro',
-    isa => Int,
-    default => 0,
+has type => (
+    is =>'ro',
+    isa => Enum[qw(winner eliminated)],
     required => 1,
-);
-
-has desc => (
-    is => 'ro',
-    isa => SimpleStr,
-    required => 0,
 );
 
 1;
