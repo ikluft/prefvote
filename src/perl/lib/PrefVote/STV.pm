@@ -242,10 +242,10 @@ sub process_winners
     }
 
     # save result
-    $self->round_result({
+    $self->round_result(
         name => \@round_winner,
         type => "winner",
-    });
+    );
     return;
 }
 
@@ -275,10 +275,10 @@ sub eliminate_losers
     }
 
     # save result
-    $self->round_result({
+    $self->round_result(
         name => \@round_eliminated,
         type => "eliminated",
-    });
+    );
     return;
 }
 
