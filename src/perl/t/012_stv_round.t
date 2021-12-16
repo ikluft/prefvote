@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# 011_stv_round.t - tests for PrefVote::STV::Round
+# 012_stv_round.t - tests for PrefVote::STV::Round
 use Modern::Perl qw(2015); # require 5.20.0 or later
 use autodie;
 use Test::More tests => 46;
@@ -16,15 +16,15 @@ Readonly::Array my @set_result_tests => (
     {name => [qw(CHAOTIC DYSFUNCTIONAL)], type => 'winner', description => '2 winner'},
     {name => [qw(EVIL FACTIOUS)], type => 'eliminated', description => '1 eliminated'},
     {name => [qw(ABOMINABLE)], exception => 'PrefVote::STV::Round::TypeMissingException',
-        description => 'missing type parameter exception as expected'},
+        description => 'TypeMissingException as expected'},
     {type => 'eliminated', exception => 'PrefVote::STV::Round::NameMissingException',
-        description => 'missing name parameter exception as expected'},
+        description => 'NameMissingException as expected'},
     {name => 'ABOMINABLE', type => 'eliminated', exception => 'PrefVote::STV::Round::NameNotArrayException',
-        description => 'invalid scalar name parameter exception as expected'},
+        description => 'scalar -> NameNotArrayException as expected'},
     {name => sub{ return "foo" }, type => 'eliminated', exception => 'PrefVote::STV::Round::NameNotArrayException',
-        description => 'invalid CODE name parameter exception as expected'},
+        description => 'CODE -> NameNotArrayException as expected'},
     {name => [qw(ABOMINABLE)], type => 'eliminated', exception => 'PrefVote::STV::Round::InvalidCandidateException',
-        description => 'invalid candidate exception as expected'},
+        description => 'InvalidCandidateException as expected'},
 );
 
 # check type and default values (6 tests)
