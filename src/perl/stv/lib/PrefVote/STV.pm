@@ -366,6 +366,8 @@ sub result_yaml
     my $self = shift;
     my $result_out = [];
 
+    # TODO
+    return;
 }
 
 1;

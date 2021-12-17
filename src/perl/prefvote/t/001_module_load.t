@@ -9,10 +9,6 @@ my @classes = qw(
         PrefVote
         PrefVote::Core::Ballot
         PrefVote::Core
-        PrefVote::STV
-        PrefVote::STV::Round
-        PrefVote::STV::Candidate
-        PrefVote::STV::Result
         );
 plan tests => scalar @classes;
 

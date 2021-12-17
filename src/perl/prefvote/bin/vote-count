@@ -29,6 +29,7 @@ sub print_result_list
     } else {
         say "none";
     }
+    return;
 }
 
 # command-line processing

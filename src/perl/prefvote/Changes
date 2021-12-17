@@ -1,0 +1,20 @@
+Change log for PrefVote::Core
+
+{{$NEXT}}
+ [API CHANGE]
+
+ [BUG FIXES]
+
+ [DOCS]
+
+ [ENHANCEMENTS]
+
+ [MAJOR]
+
+ [MINOR]
+ - split PrefVote source tree into PrefVote::Core and PrefVote::STV so future voting methods aren't packaged together
+
+ [REVISION]
+
+ [SECURITY]
+
