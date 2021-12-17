@@ -62,4 +62,12 @@ params:
 - [FACTIOUS, EVIL, ABNORMAL]
 - [BORING, FACTIOUS, CHAOTIC, EVIL, DYSFUNCTIONAL, ABNORMAL]
 ---
-extra: test data
+results:
+  STV:
+    winners:
+      - FACTIOUS
+      - ABNORMAL
+    eliminated:
+      - [BORING, CHAOTIC]
+      - DYSFUNCTIONAL
+      - EVIL
