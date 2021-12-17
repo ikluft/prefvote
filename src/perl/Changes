@@ -17,6 +17,7 @@ Change log for PrefVote
  - code modernization and refactoring
 
  [REVISION]
+ - add unit test cases
 
  [SECURITY]
 
@@ -27,4 +28,4 @@ Change log for PrefVote
 
 0.1.0 2002-07-10T00:00:00-07:00 America/Los_Angeles
  [REVISION]
- - convert stv script as it was used since 1998 into Vote::STV module
+ - convert stv script as it was used for SBAY and SVLUG since 1998 into Vote::STV module
