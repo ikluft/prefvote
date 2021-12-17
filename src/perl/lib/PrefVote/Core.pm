@@ -21,7 +21,7 @@ use PrefVote::Core::Ballot;
 
 # supported voting methods - for constructing class names from vote definitions
 # use Core only for testing because the base class doesn't actually have voting-method code
-Readonly::Array my @voting_methods => qw(Core STV RankedPairs);
+Readonly::Array my @voting_methods => qw(Core STV Schulze);
 
 #
 # class definitions
