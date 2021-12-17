@@ -17,6 +17,7 @@ package PrefVote::STV;
 use autodie;
 use PrefVote::STV::Round;
 use PrefVote::STV::Candidate;
+use YAML::XS;
 use Data::Dumper;
 
 # class definitions
@@ -27,13 +28,13 @@ extends 'PrefVote::Core';
 
 has winners => (
     is => 'rw',
-    isa => ArrayRef[Str],
+    isa => ArrayRef[ArrayRef[Str]],
     default => sub { return [] },
 );
 
 has eliminated => (
     is => 'rw',
-    isa => ArrayRef[Str],
+    isa => ArrayRef[ArrayRef[Str]],
     default => sub { return [] },
 );
 
@@ -132,18 +133,26 @@ sub round_result
 # add winning candidate
 sub add_winner
 {
-    my ($self, $cand_key) = @_;
+    my ($self, @win_list) = @_;
     my $winners_ref = $self->winners();
-    push @$winners_ref, $cand_key;
+    push @$winners_ref, \@win_list;
+    $self->round_result(
+        name => \@win_list,
+        type => "winner",
+    );
     return;
 }
 
 # add eliminated candidate
 sub add_eliminated
 {
-    my ($self, $cand_key) = @_;
+    my ($self, @elim_list) = @_;
     my $eliminated_ref = $self->eliminated();
-    push @$eliminated_ref, $cand_key;
+    push @$eliminated_ref, \@elim_list;
+    $self->round_result(
+        name => \@elim_list,
+        type => "eliminated",
+    );
     return;
 }
 
@@ -232,7 +241,6 @@ sub process_winners
             push @round_winner, $curr_key;
 
             # mark this candidate a winner
-            $self->add_winner($curr_key);
             $cands_ref->{$curr_key}->mark_as_winner(place => $place, tally => $c_tally, surplus => $c_surplus,
                 transfer => $cands_ref->{$curr_key}->surplus() / $cands_ref->{$curr_key}->tally());
             $self->debug_print( "winner: $curr_key\n");
@@ -242,10 +250,7 @@ sub process_winners
     }
 
     # save result
-    $self->round_result(
-        name => \@round_winner,
-        type => "winner",
-    );
+    $self->add_winner(@round_winner);
     return;
 }
 
@@ -267,7 +272,6 @@ sub eliminate_losers
         my $indexed_cand = $round_candidate[$i];
         if ( $cands_ref->{$last_cand}->tally() == $cands_ref->{$indexed_cand}->tally())
         {
-            $self->add_eliminated($indexed_cand);
             $cands_ref->{$indexed_cand}->mark_as_eliminated();
             $self->debug_print("eliminated: ".$indexed_cand."\n");
             push @round_eliminated, $indexed_cand;
@@ -275,10 +279,7 @@ sub eliminate_losers
     }
 
     # save result
-    $self->round_result(
-        name => \@round_eliminated,
-        type => "eliminated",
-    );
+    $self->add_eliminated(@round_eliminated);
     return;
 }
 
@@ -305,7 +306,7 @@ sub count
         # if we didn't find any votes left, it's over
         if ( $round->votes_used() < 0.001 ) {
             $self->debug_print("no votes processed in this round - done\n");
-            return;
+            last;
         }
 
         # look for candidates meeting the quota ("majority" if two candidates)
@@ -317,7 +318,7 @@ sub count
         $self->debug_print(Dumper("round->candidates -> ".$round->{candidates}));
         if (not @{$round->candidates()} ) {
             $self->debug_print("no candidates remaining in new round\n");
-            return;
+            last;
         }
 
         # sort in descending order
@@ -350,6 +351,21 @@ sub count
         }
     }
     return;
+}
+
+# return short result list
+sub results
+{
+    my $self = shift;
+    return {winners => $self->{winners}, eliminated => $self->{eliminated}};
+}
+
+# collect result in YAML
+sub result_yaml
+{
+    my $self = shift;
+    my $result_out = [];
+
 }
 
 1;

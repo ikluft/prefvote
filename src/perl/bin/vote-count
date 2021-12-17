@@ -7,25 +7,55 @@
 
 use Modern::Perl qw(2015); # require 5.20.0 or later
 use autodie;
-use Carp;
+use Carp qw(croak);;
 use YAML::XS; # RPM: perl-YAML-LibYAML, DEB: libyaml-libyaml-perl
 use PrefVote::Core;
+use Getopt::Long;
 use Data::Dumper;
 
-# main
+# print results list (winners or eliminated) with potential ties
+sub print_result_list
+{
+    my $result_list = shift;
+    if (scalar @$result_list) {
+        foreach (my $i=0; $i < scalar @$result_list; $i++) {
+            my $place = $i+1;
+            if (scalar @{$result_list->[$i]} > 1) {
+                say "$place  tie: ".join(" ", sort @{$result_list->[$i]});
+            } else {
+                say "$place: ".$result_list->[$i][0];
+            }
+        }
+    } else {
+        say "none";
+    }
+}
+
+# command-line processing
+my ($debug, $test_mode);
+GetOptions("debug" => \$debug, "test" => \$test_mode);
 if (not @ARGV) {
-    say STDERR "usage: $0 yaml_file";
+    say STDERR "usage: $0 [--debug] [--test] yaml_file";
     exit 0;
 }
 
 # count votes
 my $vote_obj = PrefVote::Core::yaml2vote($ARGV[0]);
+if ($debug) {
+    $vote_obj->debug(1);
+}
 $vote_obj->count();
 if ($vote_obj->debug()) {
     say STDERR "returned vote object is a ".ref($vote_obj);
     say STDERR Dumper($vote_obj);
 }
 
+# print result
+my $results = $vote_obj->results();
+say "Winning order";
+print_result_list($results->{winners});
+say "Elimination order";
+print_result_list($results->{eliminated});
 
 __END__
 
