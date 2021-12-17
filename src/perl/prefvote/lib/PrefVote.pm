@@ -18,6 +18,7 @@ use Carp qw(croak);
 use Moo;
 use Type::Tiny;
 use Types::Standard qw(InstanceOf);
+use PrefVote::Exception;  # pre-load in case exception is thrown
 
 has debug_flag => (
     is => 'rw',
@@ -58,17 +59,6 @@ sub debug_print
     $self->{debug} and say STDERR $prefix.": ".join(" ", @strs);
     return;
 }
-
-#
-# exception classes
-#
-package PrefVote::Exception;
-
-use Moo;
-use Types::Standard qw(Str);
-with 'Throwable';
-has classname => (is => 'ro', isa =>Str);
-has description => (is => 'ro', isa =>Str);
 
 1;
 

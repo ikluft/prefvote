@@ -1,4 +1,4 @@
-Change log for PrefVote::Core
+Change log for PrefVote and PrefVote::Core
 
 {{$NEXT}}
  [API CHANGE]
@@ -17,4 +17,8 @@ Change log for PrefVote::Core
  [REVISION]
 
  [SECURITY]
+
+0.5.0 2021-12-17T12:50:26-07:00 America/Los_Angeles
+ [REVISION]
+ - reorg: split from PrefVote::STV 0.5.0
 

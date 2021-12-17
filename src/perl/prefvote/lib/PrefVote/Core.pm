@@ -18,6 +18,8 @@ use Carp qw(croak);
 use DateTime;
 use Readonly;
 use PrefVote::Core::Ballot;
+use PrefVote::Core::Exception;              # pre-load in case exception is thrown
+use PrefVote::Core::InternalDataException;   # pre-load in case exception is thrown
 
 # supported voting methods - for constructing class names from vote definitions
 # use Core only for testing because the base class doesn't actually have voting-method code
@@ -239,28 +241,6 @@ sub yaml2vote
 
     return $vote_obj;
 }
-
-## no critic (Modules::ProhibitMultiplePackages)
-
-#
-# exception classes
-#
-
-# general exception class for all voting methods
-package PrefVote::Core::Exception;
-
-use Moo;
-use Types::Standard qw(Str);
-extends 'PrefVote::Exception';
-has classname => (is => 'ro', isa =>Str, default => __PACKAGE__);
-
-# invalid internal data exception
-package PrefVote::Core::InternalDataException;
-
-use Moo;
-use Types::Standard qw(Str);
-extends 'PrefVote::Core::Exception';
-has attribute => (is => 'ro', isa =>Str);
 
 1;
 

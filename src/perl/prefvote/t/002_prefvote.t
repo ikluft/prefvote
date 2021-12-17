@@ -7,6 +7,7 @@ use autodie;
 use Test::More tests => 8;
 use Test::Exception;
 use PrefVote;
+use PrefVote::Exception;
 use IO::Capture::Stderr;    # rpm: perl-IO-Capture, deb: libio-capture-perl
 
 # test toggling debug flag

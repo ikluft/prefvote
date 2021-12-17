@@ -8,7 +8,10 @@ use Test::More;
 my @classes = qw(
         PrefVote
         PrefVote::Core::Ballot
+        PrefVote::Core::Exception
+        PrefVote::Core::InternalDataException
         PrefVote::Core
+        PrefVote::Exception
         );
 plan tests => scalar @classes;
 
