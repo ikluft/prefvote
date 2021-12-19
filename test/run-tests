@@ -1,0 +1,47 @@
+#!/usr/bin/perl
+# PODNAME: run-tests
+# test script launcher for PrefVote preference voting system
+
+use Modern::Perl qw(2015); # require 5.20.0 or later
+use autodie;
+use POSIX qw(WIFEXITED);
+use Getopt::Long;
+use Readonly;
+
+# configuration settings per language implementation
+Readonly::Array my @supported_languages => (qw(perl));
+Readonly::Hash my %config => (
+    "perl" => {
+        build => 'dzil build',
+        whitebox => [qw(src/perl/prefvote/t src/perl/schulze/t src/perl/stv/t)],
+        blackbox => 'src/perl/bin/vote-count',
+    },
+);
+
+# process command-line
+my (@language, $whitebox, $blackbox, $all);
+GetOptions("language:s" => \@language, "whitebox|white|w" => \$whitebox, "blackbox|black|b" => \$blackbox,
+    "all" => \$all);
+
+#
+# run tests as selected
+#
+
+# process --all
+if ($all) {
+    $whitebox = 1;
+    $blackbox = 1;
+    @language = @supported_languages;
+}
+
+# whitebox tests within each language implementation's sources
+if ($whitebox) {
+    my @dirs;
+    foreach my $lang (@language) {
+        push @dirs, @{$config{$lang}{whitebox}};
+    }
+    WIFEXITED(system("prove", @dirs));
+}
+
+# blackbox tests
+# TODO
