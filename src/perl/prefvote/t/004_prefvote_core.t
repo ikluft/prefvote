@@ -6,7 +6,6 @@ use autodie;
 use Test::More tests => 50;
 use Test::Exception;
 use File::Basename;
-use Cwd;
 use Readonly;
 use YAML::XS;
 use PrefVote::Core;
@@ -29,7 +28,7 @@ Readonly::Array my @ballot_tests => (
     {ballot => [qw(BORING DYSFUNCTIONAL CHAOTIC EVIL ABNORMAL CTHULU)], total => 5},
     {ballot => [qw(CTHULU)], exception => "PrefVote::Core::Exception"},
 );
-Readonly::Scalar my $input_dir => getcwd()."/t/test-inputs/".basename($0, ".t");
+Readonly::Scalar my $input_dir => "t/test-inputs/".basename($0, ".t");
 Readonly::Scalar my $yaml_file => "test.yaml";
 Readonly::Scalar my $yaml_ballot_count => 50;
 Readonly::Scalar my $yaml_name => "Test Vote";

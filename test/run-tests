@@ -4,19 +4,72 @@
 
 use Modern::Perl qw(2015); # require 5.20.0 or later
 use autodie;
-use POSIX qw(WIFEXITED);
-use Getopt::Long;
+use Carp qw(croak);
+use Cwd;
 use Readonly;
+use Getopt::Long;
+use TAP::Parser qw/all/;
+use TAP::Parser::Aggregator qw/all/;
 
 # configuration settings per language implementation
 Readonly::Array my @supported_languages => (qw(perl));
 Readonly::Hash my %config => (
     "perl" => {
         build => 'dzil build',
-        whitebox => [qw(src/perl/prefvote/t src/perl/schulze/t src/perl/stv/t)],
+        whitebox => {
+            dirs => [qw(src/perl/prefvote src/perl/stv)],
+            #dirs => [qw(src/perl/prefvote src/perl/stv src/perl/schulze)],
+            testdir => "t",
+            test_re => qr{\.t$},
+            tp_args => [switches => ['-I../prefvote/lib', '-Ilib']],
+        },
+        prove_params => "--lib",
         blackbox => 'src/perl/bin/vote-count',
     },
 );
+
+# run whitebox (unit) tests
+sub run_whitebox_tests
+{
+    my %opts = @_;
+    my $lang = $opts{lang};
+    my $agg = $opts{agg};
+    my $orig_cwd = getcwd();
+    foreach my $dir (@{$config{$lang}{whitebox}{dirs}}) {
+        ( -d "$dir" )
+            or croak "configure whitebox testing directory $dir is not a directory";
+        my $testdir = $config{$lang}{whitebox}{testdir};
+        my $test_re = $config{$lang}{whitebox}{test_re};
+        if ( -d "$dir/$testdir" ) {
+            # enter whitebox test directory and find test scripts
+            chdir $dir;
+            opendir(my $dh, "$testdir")
+                or croak "Can't open $dir/$testdir: $!";
+            my @files = sort grep {$_ =~ $test_re} readdir($dh);
+            say STDERR "debug ($dir/$testdir -> $test_re): ".join(" ", @files);
+            closedir $dh;
+
+            # run tests
+            foreach my $file (@files) {
+                (-f "$testdir/$file") or next;
+                my $parser = TAP::Parser->new({
+                    source => "$testdir/$file",
+                    @{$config{$lang}{whitebox}{tp_args}}
+                });
+                while ( my $result = $parser->next ) {
+                    printf "$testdir/$file results: %s\n", $result->as_string;
+                }
+                printf "\nPlanned: %s\nPassed: %s\nFailed: %s\n", 
+                $parser->tests_planned, scalar $parser->passed, scalar $parser->failed;
+                $agg->add("$testdir/$file", $parser);
+            }
+            chdir $orig_cwd;
+        } else {
+            croak("test (t) directory not found in configured directory $dir");
+        }
+    }
+    return;
+}
 
 # process command-line
 my (@language, $whitebox, $blackbox, $all);
@@ -27,6 +80,9 @@ GetOptions("language:s" => \@language, "whitebox|white|w" => \$whitebox, "blackb
 # run tests as selected
 #
 
+# aggregator collects results from all tests
+my $aggregate = TAP::Parser::Aggregator->new;
+
 # process --all
 if ($all) {
     $whitebox = 1;
@@ -35,13 +91,18 @@ if ($all) {
 }
 
 # whitebox tests within each language implementation's sources
-if ($whitebox) {
-    my @dirs;
-    foreach my $lang (@language) {
-        push @dirs, @{$config{$lang}{whitebox}};
+{
+    local $ENV{PREFVOTE_ROOT} = getcwd(); # unit tests must look for this and run relative to the project root
+    if ($whitebox) {
+        foreach my $lang (@language) {
+            run_whitebox_tests(lang => $lang, agg => $aggregate);
+        }
     }
-    WIFEXITED(system("prove", @dirs));
 }
 
 # blackbox tests
 # TODO
+
+# print results
+printf "\nTotal: %s\nPlanned: %s\nPassed: %s\nFailed: %s\n", 
+$aggregate->total, scalar $aggregate->planned, scalar $aggregate->passed, scalar $aggregate->failed;
