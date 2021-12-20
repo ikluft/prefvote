@@ -8,6 +8,8 @@ use Carp qw(croak);
 use Cwd;
 use Readonly;
 use Getopt::Long;
+use Term::ANSIColor;
+use IO::Interactive qw(is_interactive);
 use TAP::Parser qw/all/;
 use TAP::Parser::Aggregator qw/all/;
 
@@ -25,6 +27,35 @@ Readonly::Hash my %config => (
         },
         prove_params => "--lib",
         blackbox => 'src/perl/bin/vote-count',
+    },
+);
+Readonly::Hash my %callbacks => (
+    test => sub {
+        my $test = shift;
+        if ( $test->is_ok && not $test->directive ) {
+            # normal passing test
+            print color 'green';
+        }
+        elsif ( !$test->is_ok ) {    # even if it's TODO
+            print color 'red';
+        }
+        elsif ( $test->has_skip ) {
+            print color 'white on_blue';
+
+        }
+        elsif ( $test->has_todo ) {
+            print color 'white';
+        }
+    },
+    ELSE => sub {
+        # plan, comment, and so on (anything which isn't a test line)
+        print color 'bright_blue';
+    },
+    ALL => sub {
+        # now print them
+        print shift->as_string;
+        print color 'reset';
+        print "\n";
     },
 );
 
@@ -52,16 +83,20 @@ sub run_whitebox_tests
             # run tests
             foreach my $file (@files) {
                 (-f "$testdir/$file") or next;
+                say "running tests: $dir/$testdir/$file";
                 my $parser = TAP::Parser->new({
                     source => "$testdir/$file",
-                    @{$config{$lang}{whitebox}{tp_args}}
+                    @{$config{$lang}{whitebox}{tp_args}},
+                    (is_interactive() ? (callbacks => \%callbacks) : ()),
                 });
                 while ( my $result = $parser->next ) {
-                    printf "$testdir/$file results: %s\n", $result->as_string;
+                    if (not is_interactive()) {
+                        say $result->as_string;
+                    }
                 }
-                printf "\nPlanned: %s\nPassed: %s\nFailed: %s\n", 
-                $parser->tests_planned, scalar $parser->passed, scalar $parser->failed;
-                $agg->add("$testdir/$file", $parser);
+                printf "Planned: %s\nPassed: %s\nFailed: %s\n\n",
+                    $parser->tests_planned, scalar $parser->passed, scalar $parser->failed;
+                    $agg->add("$testdir/$file", $parser);
             }
             chdir $orig_cwd;
         } else {
@@ -81,7 +116,8 @@ GetOptions("language:s" => \@language, "whitebox|white|w" => \$whitebox, "blackb
 #
 
 # aggregator collects results from all tests
-my $aggregate = TAP::Parser::Aggregator->new;
+my $aggregate = TAP::Parser::Aggregator->new(
+);
 
 # process --all
 if ($all) {
@@ -104,5 +140,5 @@ if ($all) {
 # TODO
 
 # print results
-printf "\nTotal: %s\nPlanned: %s\nPassed: %s\nFailed: %s\n", 
+printf "Total: %s\nPlanned: %s\nPassed: %s\nFailed: %s\n",
 $aggregate->total, scalar $aggregate->planned, scalar $aggregate->passed, scalar $aggregate->failed;
