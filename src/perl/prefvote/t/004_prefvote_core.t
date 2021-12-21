@@ -3,7 +3,7 @@
 
 use Modern::Perl qw(2015); # require 5.20.0 or later
 use autodie;
-use Test::More tests => 50;
+use Test::More tests => 51;
 use Test::Exception;
 use File::Basename;
 use Readonly;
@@ -35,12 +35,13 @@ Readonly::Scalar my $yaml_name => "Test Vote";
 Readonly::Scalar my $yaml_seats => 1;
 Readonly::Scalar my $yaml_extra => [{extra => "test data"}];
 
-# basic instantiation tests (28 tests)
+# basic instantiation tests (29 tests)
 sub basic_tests
 {
-    # instantiate voting object (6 tests)
+    # instantiate voting object (7 tests)
     # never instantiate PrefVote::Core directly except for testing - use a subclass which implements a voting method
-    my $vote_obj = PrefVote::Core->instance(%core_params);
+    my $vote_obj;
+    lives_ok(sub {$vote_obj = PrefVote::Core->instance(%core_params)}, "instantiate PrefVote::Core");
     ok(defined $vote_obj, "instance(core_params) returned a defined value");
     ok(ref $vote_obj, "instance(core_params) returned a reference");
     isa_ok($vote_obj, "PrefVote::Core", "instance(core_params) returned correct object");
