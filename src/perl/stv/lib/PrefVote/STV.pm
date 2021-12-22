@@ -15,6 +15,7 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 package PrefVote::STV;
 
 use autodie;
+use Carp qw(croak);
 use PrefVote::STV::Round;
 use PrefVote::STV::Candidate;
 use YAML::XS;
@@ -364,10 +365,27 @@ sub results
 sub result_yaml
 {
     my $self = shift;
-    my $result_out = [];
 
-    # TODO
-    return;
+    # copy relevant round/result records into YAML result structure
+    my $result_out = [];
+    for (my $round_index=0; $round_index < scalar @{$self->{rounds}}; $round_index++) {
+        my $round_ref = $self->{rounds}[$round_index];
+        my $round_yaml = {};
+        if (exists $round_ref->{result}) {
+            my $result_ref = $round_ref->{result};
+            my $type = $result_ref->type();
+            if ($type eq "winner") {
+                $round_yaml->{winner} = $result_ref->name();
+            } elsif ($type eq "eliminated") {
+                $round_yaml->{eliminated} = $result_ref->name();
+            } else {
+                # TODO make a class to throw an exception
+                croak "unrecognized result type $type";
+            }
+        }
+    }
+
+    return $result_out;
 }
 
 1;
