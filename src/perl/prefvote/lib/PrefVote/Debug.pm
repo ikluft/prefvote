@@ -1,5 +1,5 @@
-# PrefVote
-# ABSTRACT: base class for PrefVote preference voting system
+# PrefVote::Debug
+# ABSTRACT: debug flag singleton class for PrefVote hierarchy
 # derived from Vote::STV by Ian Kluft
 # Copyright (c) 1998-2021 by Ian Kluft
 # Open Source license: Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
@@ -11,32 +11,29 @@
 use Modern::Perl qw(2015); # require 5.20.0 or later
 ## use critic (Modules::RequireExplicitPackage)
 
-package PrefVote;
+package PrefVote::Debug;
 
-use autodie;
-use Carp qw(croak);
 use Moo;
-use Type::Tiny;
-use Types::Standard qw(InstanceOf);
-use PrefVote::Debug;
-use PrefVote::Exception;  # pre-load in case exception is thrown
+use Types::Standard qw(Bool);
+with 'MooX::Singleton';
 
-# cache a class-scoped reference to the debug instance
-my $debug_ref = PrefVote::Debug->instance(debug => (($ENV{PREFVOTE_DEBUG} // 0) ? 1 : 0));
+has debug => (
+    is => 'rw',
+    isa => Bool,
+    required => 1,
+);
 
-# wrapper for PrefVote::Debug's debug method
-sub debug
-{
-    my ($self, $value) = @_;
-    return defined $value ? $debug_ref->debug($value) : $debug_ref->debug();
-}
-
-# wrapper for PrefVote::Debug's debug_print method
+# print debug message
 sub debug_print
 {
     my ($self, @args) = @_;
-    my $prefix = ref $self;
-    return $debug_ref->debug_print({prefix => $prefix}, @args);
+    my %opts;
+    if (ref $args[0] eq "HASH") {
+        %opts = %{shift @args};
+    }
+    my $prefix = $opts{prefix} // caller; # caller package name
+    $self->{debug} and say STDERR $prefix.": ".join(" ", @args);
+    return;
 }
 
 1;
@@ -47,7 +44,7 @@ __END__
 
 =head1 NAME
 
-PrefVote - Preference voting system
+PrefVote::Debug - debug flag singleton class for PrefVote hierarchy
 
 =head1 SYNOPSIS
 
