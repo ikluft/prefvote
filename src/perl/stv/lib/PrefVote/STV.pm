@@ -370,7 +370,7 @@ sub result_yaml
     my $result_out = [];
     for (my $round_index=0; $round_index < scalar @{$self->{rounds}}; $round_index++) {
         my $round_ref = $self->{rounds}[$round_index];
-        my $round_yaml = {};
+        my $round_yaml = {round => $round_index+1};
         if (exists $round_ref->{result}) {
             my $result_ref = $round_ref->{result};
             my $type = $result_ref->type();
@@ -379,8 +379,12 @@ sub result_yaml
             } elsif ($type eq "eliminated") {
                 $round_yaml->{eliminated} = $result_ref->name();
             } else {
-                # TODO make a class to throw an exception
-                croak "unrecognized result type $type";
+                # unrecognized type should not happen unless enum is changed in PrefVote::STV::Result
+                PrefVote::Core::InternalDataException->throw(
+                    classname => __PACKAGE__,
+                    attribute => 'type',
+                    description => "unrecognized result type $type",
+                );
             }
         }
     }
