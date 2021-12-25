@@ -30,8 +30,8 @@ Readonly::Array my @voting_methods => qw(Core STV Schulze);
 #
 use Moo;
 use Type::Tiny;
-use Types::Standard qw(Str Int ArrayRef HashRef InstanceOf Any);
-use Types::Common::Numeric qw(PositiveInt);
+use Types::Standard qw(Str Int ArrayRef HashRef Map InstanceOf Any);
+use Types::Common::Numeric qw(PositiveInt PositiveOrZeroInt);
 extends 'PrefVote';
 with 'MooX::Singleton';
 
@@ -61,16 +61,25 @@ has seats => (
     default => sub { return 1 },
 );
 
-# array of ballots
+# array of ballot structures
 has ballots => (
     is => 'rw',
-    isa => ArrayRef[InstanceOf["PrefVote::Core::Ballot"]],
-    default => sub { return [] },
+    isa => Map[Str,InstanceOf["PrefVote::Core::Ballot"]],
+    #isa => ArrayRef[InstanceOf["PrefVote::Core::Ballot"]],
+    default => sub { return {} },
+);
+
+# count of total ballots
+has total_ballots => (
+    is => 'rw',
+    isa => PositiveOrZeroInt,
+    default => 0,
 );
 
 # misc additional info: storage for extra data from input file, used for testing
 has extra => (
     is => 'ro',
+    isa => Any,
 );
 
 # utility for functions to select between class and object
@@ -101,15 +110,6 @@ sub get_choices
     my $class_or_obj = shift;
     my $self = class_or_obj($class_or_obj);
     return keys %{$self->{choices}};
-}
-
-# get ballot count
-sub total_ballots
-{
-    my $class_or_obj = shift;
-    my $self = class_or_obj($class_or_obj);
-    my $ballots_ref = $self->ballots();
-    return scalar @$ballots_ref;
 }
 
 # check if a string matches a supported voting method
@@ -151,10 +151,25 @@ sub submit_ballot
     # Protection against casting multiple votes must be done elsewhere
     # (preferably when the vote is received) because this module doesn't
     # retain any association between the ballot and the voter.
-    my $ballot = PrefVote::Core::Ballot->new(items => \@filtered_ballot);
-    $self->debug_print("accepting ", $ballot->as_string());
-    push ( @{$self->{ballots}}, $ballot );
-    return 1; # returns true, whose absence can be used to detect if an exception was thrown
+
+    # make a string of this ballot combination for lookup
+    my $combo = join " ", @filtered_ballot;
+
+    # check if this combination already exists and increment it if it does, if not create/save new combo
+    my $ballot;
+    my $action;
+    if (exists $self->{ballots}{$combo}) {
+        $action = "increment";
+        $ballot = $self->{ballots}{$combo};
+        $ballot->increment();
+    } else {
+        $action = "new";
+        $ballot = PrefVote::Core::Ballot->new(items => \@filtered_ballot, quantity => 1);
+        $self->{ballots}{$combo} = $ballot;
+    }
+    $self->debug_print("accepting $action: ", $ballot->as_string());
+    $self->{total_ballots}++;
+    return $combo; # returns filtered combination, whose absence can be used to detect if an exception was thrown
 }
 
 # read YAML input

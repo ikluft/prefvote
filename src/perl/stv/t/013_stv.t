@@ -69,7 +69,7 @@ sub func_tests
     is(scalar @{$vote_obj->{rounds}}, 0, "rounds begins empty");
     lives_ok(sub {$vote_obj->new_round()}, "new_round() - no exception");
     is(scalar @{$vote_obj->{rounds}}, 1, "rounds got 1 entry");
-
+    
 }
 
 # run tests

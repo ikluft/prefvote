@@ -173,7 +173,8 @@ sub run_tally
                 print STDERR "choice is ref "
                     .ref($choice)
                     ." in #".$round->votes_used().": "
-                    .join(" ",@$ballot)."\n";
+                    .$ballot->as_string()
+                    ." (x".$ballot->quantity().")\n";
             }
 
             my $cand_ref = $self->candidates()->{$choice};
@@ -212,7 +213,7 @@ sub run_tally
             my $sel_ref = $self->candidates()->{$selection};
             my $tally = $sel_ref->tally();
             $sel_ref->tally($tally + $fraction);
-            $round->add_votes_used($fraction);
+            $round->add_votes_used($fraction * $ballot->{quantity});
         }
     }
     $self->debug_print("candidate (tally) = ".join(" ", keys %{$self->candidates()})."\n");

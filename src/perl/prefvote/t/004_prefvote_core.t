@@ -3,7 +3,7 @@
 
 use Modern::Perl qw(2015); # require 5.20.0 or later
 use autodie;
-use Test::More tests => 51;
+use Test::More tests => 59;
 use Test::Exception;
 use File::Basename;
 use Readonly;
@@ -78,11 +78,10 @@ sub ballot_tests
     ok(ref $vote_obj, "instance() returned a reference");
     isa_ok($vote_obj, "PrefVote::Core", "instance() returned correct object");
 
-    # verify empty ballot box at start (2 tests)
-    is(PrefVote::Core->total_ballots(), 0, "class->total_ballots() = 0 initially");
+    # verify empty ballot box at start (1 test)
     is($vote_obj->total_ballots(), 0, "obj->total_ballots() = 0 initially");
 
-    # run through array of ballot input tests (5 tests)
+    # run through array of ballot input tests (15 tests)
     foreach my $test (@ballot_tests) {
         my @summary;
         foreach my $item (@{$test->{ballot}}) {
@@ -97,17 +96,23 @@ sub ballot_tests
             throws_ok( sub {$vote_obj->submit_ballot(@{$test->{ballot}}); }, $test->{exception},
                 "ballot $summary_str -> exception $test->{exception} as expected");
         } else {
-            lives_ok(sub {$vote_obj->submit_ballot(@{$test->{ballot}}); }, "ballot $summary_str"); 
+            my $combo;
+            lives_ok(sub {$combo = $vote_obj->submit_ballot(@{$test->{ballot}}); }, "ballot $summary_str"); 
+            my $ballot_obj = $vote_obj->{ballots}{$combo};
+            ok(defined $ballot_obj, "ballot lookup returns data");
+            isa_ok($ballot_obj, "PrefVote::Core::Ballot", "ballot lookup returns correct object");
+            is($ballot_obj->quantity(), 1, "ballot quantity starts at 1");
+            lives_ok(sub {$vote_obj->submit_ballot(@{$test->{ballot}}); }, "ballot $summary_str resubmit"); 
+            is($ballot_obj->quantity(), 2, "ballot quantity increments to 2 after identical ballot");
             if (exists $test->{total}) {
-                is($vote_obj->{ballots}[-1]->total_items(), $test->{total},
+                is($ballot_obj->total_items(), $test->{total},
                     "ballot $summary_str has $test->{total} valid items");
             }
         }
     }
 
-    # count ballots (2 tests)
-    is(PrefVote::Core->total_ballots(), 2, "class->total_ballots() = 2");
-    is($vote_obj->total_ballots(), 2, "obj->total_ballots() = 2");
+    # count ballots (1 test)
+    is($vote_obj->total_ballots(), 4, "obj->total_ballots() = 4");
     return;
 }
 

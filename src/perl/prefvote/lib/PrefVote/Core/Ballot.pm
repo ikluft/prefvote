@@ -20,6 +20,7 @@ use Carp qw(croak);
 use Moo;
 use Type::Tiny;
 use Types::Standard qw(Str ArrayRef);
+use Types::Common::Numeric qw(PositiveInt);
 extends 'PrefVote';
 
 # set of valid ballot choices submitted by PrefVote::Core
@@ -45,7 +46,16 @@ has items => (
     }
 );
 
-# set valid ballot choices
+# quantity is a multiplier for the number of times this combination of items has occurred
+has quantity => (
+    is => 'rw',
+    isa => PositiveInt,
+    required => 1,
+);
+
+# set valid ballot choices in a class variable
+# this allows testing separate from other classes
+# under normal usage this is set once initially by PrefVote::Core
 sub set_choices
 {
     my @choices = @_;
@@ -62,6 +72,14 @@ sub set_choices
 sub get_choices
 {
     return wantarray ? (keys %choices) : \%choices;
+}
+
+# increment the quantity on this ballot record
+sub increment
+{
+    my $self = shift;
+    $self->{quantity}++;
+    return;
 }
 
 # return number of items on ballot
