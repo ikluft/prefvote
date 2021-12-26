@@ -213,8 +213,9 @@ sub run_tally
         if ( defined $selection ) {
             my $sel_ref = $self->candidates()->{$selection};
             my $tally = $sel_ref->tally();
-            $sel_ref->tally($tally + $fraction);
-            $round->add_votes_used($fraction * $ballot->{quantity});
+            my $vote_increment = $fraction * $ballot->{quantity};
+            $sel_ref->tally($tally + $vote_increment);
+            $round->add_votes_used($vote_increment);
         }
     }
     $self->debug_print("candidate (tally) = ".join(" ", keys %{$self->candidates()})."\n");
