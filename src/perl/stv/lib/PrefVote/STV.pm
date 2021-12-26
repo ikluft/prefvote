@@ -164,8 +164,9 @@ sub run_tally
     my $round = $self->current_round();
 
     # loop through votes tallying with transfers
-    foreach my $ballot ( @{$self->ballots()} ) {
+    foreach my $combo ( keys %{$self->{ballots}} ) {
         # loop through choices
+        my $ballot = $self->{ballots}{$combo};
         my $selection = undef;
         my $fraction = 1;
         foreach my $choice ( @{$ballot->items()} ) {
