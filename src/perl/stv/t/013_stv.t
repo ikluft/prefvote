@@ -61,7 +61,7 @@ sub func_tests
         "init_candidates: correct number of candidates");
     foreach my $name (keys %{$stv_params{choices}}) {
         ok(exists $vote_obj->{candidates}{$name}, "init_candidates: $name entry exists");
-        isa_ok($vote_obj->{candidates}{$name}, 'PrefVote::STV::Candidate', "init_candidates: $name ref");
+        isa_ok($vote_obj->{candidates}{$name}, 'PrefVote::STV::Tally', "init_candidates: $name ref");
         is($vote_obj->{candidates}{$name}{name}, $name, "init_candidates: $name entry contains its own name");
     }
 

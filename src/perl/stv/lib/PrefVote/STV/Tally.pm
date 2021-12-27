@@ -1,5 +1,5 @@
-# PrefVote::STV::Candidate
-# ABSTRACT: internal candidate structure used by PrefVote::STV
+# PrefVote::STV::Tally
+# ABSTRACT: internal per-round candidate tally structure used by PrefVote::STV
 # derived from Vote::STV by Ian Kluft
 # Copyright (c) 1998-2021 by Ian Kluft
 # Open Source license: Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
@@ -14,7 +14,7 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 #
 # STV candidate record within each round
 #
-package PrefVote::STV::Candidate;
+package PrefVote::STV::Tally;
 
 use autodie;
 
@@ -95,7 +95,7 @@ __END__
 
 =head1 NAME
 
-PrefVote::STV::Candidate - internal candidate structure used by PrefVote::STV
+PrefVote::STV::Tally - internal per-round candidate tally structure used by PrefVote::STV
 
 =head1 SYNOPSIS
 

@@ -17,7 +17,7 @@ package PrefVote::STV;
 use autodie;
 use Carp qw(croak);
 use PrefVote::STV::Round;
-use PrefVote::STV::Candidate;
+use PrefVote::STV::Tally;
 use YAML::XS;
 use Data::Dumper;
 
@@ -45,17 +45,12 @@ has rounds => (
     default => sub { return [] },
 );
 
-has candidates => (
-    is => 'rw',
-    isa => HashRef[InstanceOf["PrefVote::STV::Candidate"]],
-    default => sub { return {} },
-);
-
 #
 # processing
 #
 
 # initialize candidate count data
+# TODO: move to PrefVote::STV::Round
 sub init_candidates
 {
     my $self = shift;
@@ -63,13 +58,14 @@ sub init_candidates
     # initialize candidates
     my $candidates_ref = $self->candidates();
     foreach my $choice ($self->get_choices()) {
-        $candidates_ref->{$choice} = PrefVote::STV::Candidate->new(name => $choice);
+        $candidates_ref->{$choice} = PrefVote::STV::Tally->new(name => $choice);
     }
     $self->debug_print("candidate (init) = ".join(" ",keys %$candidates_ref)."\n");
     return;
 }
 
 # clear candidate tallies - called once each STV counting round to reset counts
+# TODO: move this to PrefVote::STV::Tally->new()
 sub clear_candidate_tallies
 {
     my $self = shift;
@@ -88,7 +84,7 @@ sub new_round
 {
     my $self = shift;
     my $rounds_ref = $self->rounds();
-    my $round = PrefVote::STV::Round->new();
+    my $round = PrefVote::STV::Round->new(number => (scalar @$rounds_ref)+1);
     push @$rounds_ref, $round;
 
     # clear candidate tallies
@@ -105,6 +101,7 @@ sub current_round
 }
 
 # select current round's candidates
+# TODO: get round candidates from previous round instead of global structure
 sub candidates_in_round
 {
     my $self = shift;
@@ -158,6 +155,7 @@ sub add_eliminated
 }
 
 # initial tally with vote transfers
+# TODO: candidate attribute moves to current round's tally
 sub run_tally
 {
     my $self = shift;
@@ -223,6 +221,7 @@ sub run_tally
 }
 
 # process candidates over quota as winners
+# TODO: candidate attribute moves to current round's tally
 sub process_winners
 {
     my $self = shift;
@@ -259,6 +258,7 @@ sub process_winners
 }
 
 # in round with no winner, eliminate last-place candidates
+# TODO: candidate attribute moves to current round's tally
 sub eliminate_losers
 {
     my $self = shift;

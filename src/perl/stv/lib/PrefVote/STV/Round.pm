@@ -22,11 +22,18 @@ use autodie;
 use Moo;
 use Type::Tiny;
 use Types::Standard qw(StrictNum ArrayRef InstanceOf);
-use Types::Common::Numeric qw(PositiveOrZeroNum);
+use Types::Common::Numeric qw(PositiveInt PositiveOrZeroNum);
 use Types::Common::String qw(NonEmptySimpleStr);
 extends 'PrefVote';
 use PrefVote::Core;
+use PrefVote::STV::Tally;
 use PrefVote::STV::Result;
+
+has number => (
+    is => 'ro',
+    isa => PositiveInt,
+    required => 1,
+);
 
 has votes_used => (
     is => 'rw',
@@ -44,6 +51,12 @@ has quota => (
     is => 'rw',
     isa => PositiveOrZeroNum,
     default => 0,
+);
+
+has tally => (
+    is => 'rw',
+    isa => HashRef[InstanceOf["PrefVote::STV::Tally"]],
+    default => sub { return {} },
 );
 
 has result => (
