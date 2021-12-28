@@ -60,9 +60,12 @@ sub new_round
     my $number = (scalar @$rounds_ref)+1;
     
     # pick arguments for first or later rounds
-    my @args = (($number == 1)
-        ? (candidates => [$self->get_choices()])
-        : (prev => $rounds_ref->[-1]));
+    my @args;
+    if ($number == 1) {
+        @args = (candidates => [$self->get_choices()]);
+    } else {
+        @args = (prev => $rounds_ref->[-1]);
+    }
 
     # instantiate and save new round
     my $round = PrefVote::STV::Round->new(number => $number, @args);
@@ -126,7 +129,9 @@ sub run_tally
                     ." (x".$ballot->quantity().")\n";
             }
 
+            $round->tally_exists($choice) or next;
             my $cand_tally = $round->tally()->{$choice};
+            $self->debug_print("run_tally: candidate $choice tally: ".Dumper($cand_tally));
 
             # Handle vote transfers - this is a key point
             # in the STV system.  Note that fractions are
@@ -166,7 +171,7 @@ sub run_tally
             $round->add_votes_used($vote_increment);
         }
     }
-    $self->debug_print("candidate (tally) = ".join(" ", keys %{$round->tally()})."\n");
+    $self->debug_print("candidate (tally) = ".join(" ", $round->tally_keys())."\n");
     return;
 }
 
@@ -176,13 +181,13 @@ sub process_winners
     my $self = shift;
     my $round = $self->current_round();
     my $round_tally = $round->tally();
-    my @round_candidate = @{$round->candidates()};
+    my @round_candidate = $round->candidates_all();
 
     # quota exceeded - we have a winner!
     my @round_winner;
     my $place = scalar @{$self->winners()}+1;
     foreach my $curr_key ( @round_candidate ) {
-        # mark all the candidates over quota who are tied at the top as winners
+        # mark all the candidates over quota who are tied for first place as winners
         if ( $round_tally->{$curr_key}->votes() == $round_tally->{$round_candidate[0]}->votes() ) {
             my $c_votes = $round_tally->{$curr_key}->votes();
             my $c_surplus = $c_votes - $round->quota();
@@ -212,7 +217,7 @@ sub eliminate_losers
     my $self = shift;
     my $round = $self->current_round();
     my $round_tally = $round->tally(); # hash of candidate data
-    my @round_candidate = @{$round->candidates()}; # list of candidate names
+    my @round_candidate = $round->candidates_all(); # list of candidate names
 
     # no candidate met quota: eliminate last-place candidate(s) and count again on next round
     my $i;
@@ -260,27 +265,15 @@ sub count
 
         # look for candidates meeting the quota ("majority" if two candidates)
 
-        # select this round's candidates from those who haven't won or been eliminated
-        $self->candidates_in_round();
-
         # done if we've exhausted the candidates
         $self->debug_print(Dumper("round->candidates -> ".$round->{candidates}));
-        if (not @{$round->candidates()} ) {
+        if ($round->candidates_empty()) {
             $self->debug_print("no candidates remaining in new round\n");
             last;
         }
 
         # sort in descending order
-        my @round_candidate;
-        {
-            # provide sorting function for PrefVote::STV::Round so it avoids a circular dependency to this module
-            my $sort_fn = sub {
-                my $c = $round->tally();
-                ## no critic (Variables::ProhibitPackageVars)
-                return $c->{$PrefVote::STV::Round::b}->votes() <=> $c->{$PrefVote::STV::Round::a}->votes();
-            };
-            @round_candidate = $round->sort_candidates($sort_fn);
-        }
+        my @round_candidate = $round->sort_candidates();
 
         # Do we have a quota?
         # In a 1-seat race, a quota is a simple 50%+1 majority.
@@ -288,7 +281,7 @@ sub count
         # a quota is V/(N+1)
         $round->quota($round->votes_used() / ($self->seats()+1));
         my $round_tally = $round->tally();
-        if ( $round->quota() <= 0.001 ) {
+        if ( $round->quota() <= 0.0001 ) {
             last;
         }
         if ($round_tally->{$round_candidate[0]}->votes() > $round->quota() + .00001 ) {

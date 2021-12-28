@@ -20,6 +20,7 @@ use autodie;
 
 # class definitions
 use Moo;
+use MooX::HandlesVia;
 use Type::Tiny;
 use Types::Standard qw(StrictNum ArrayRef HashRef InstanceOf Map);
 use Types::Common::Numeric qw(PositiveInt PositiveOrZeroNum);
@@ -55,6 +56,15 @@ has candidates => (
     is => 'rw',
     isa => ArrayRef[NonEmptySimpleStr],
     default => sub { return [] },
+    handles_via => 'Array',
+    handles => {
+        candidates_all => 'all',
+        candidates_count => 'count',
+        candidates_empty => 'is_empty',
+        candidates_join => 'join',
+        candidates_push => 'push',
+        candidates_sort_in_place => 'sort_in_place',
+    },
 );
 
 # STV quota is the threshold to win the round as a function of seats available and candidates running
@@ -69,6 +79,13 @@ has tally => (
     is => 'rw',
     isa => Map[NonEmptySimpleStr, InstanceOf["PrefVote::STV::Tally"]],
     default => sub { return {} },
+    handles_via => 'Hash',
+    handles => {
+        tally_exists => 'exists',
+        tally_get => 'get',
+        tally_keys => 'keys',
+        tally_set => 'set',
+    },
 );
 
 # result of the current round lists either winners or eliminated candidates
@@ -85,8 +102,9 @@ sub init_candidate_tally
     my $self = shift;
 
     # throw exception if there is no candidate list and no previous round link
-    if ((not scalar @{$self->{candidates}}) and (not exists $self->{prev})) {
-        # the object wasn't provided with enough info to get started
+    if ($self->candidates_empty() and (not exists $self->{prev})) {
+        # The object wasn't provided with enough info to get started.
+        # This needs new() to get a candidate list on the first round and a link to previous rounds after that.
         PrefVote::STV::Round::PrevMissingException->throw({classname => __PACKAGE__,
             description => "prev must be set if candidates list wasn't provided to new()",
         });
@@ -96,21 +114,21 @@ sub init_candidate_tally
     # this occurs every round except the first, when the initial candidate list must be established by new()
     if (exists $self->{prev}) {
         my $prev = $self->{prev};
-        foreach my $cand_key (keys %{$prev->{tally}}) {
-            # candidate is not available for current list if they won or were eliminated
+        foreach my $cand_key ($prev->tally_keys()) {
+            # candidate is available for current round's list if they didn't win or get eliminated in previous round
             if (not $prev->{tally}{$cand_key}->winner() and not $prev->{tally}{$cand_key}->eliminated()) {
                 $self->debug_print("(round ".$self->{number}.") add $cand_key to candidate list\n");
-                push @{$self->{candidates}}, $cand_key;
+                $self->candidates_push($cand_key);
             }
         }
-        $self->debug_print("init_candidate_tally: candidates ".join(" ", @{$self->{candidates}})."\n");
+        $self->debug_print("init_candidate_tally: candidates ".$self->candidates_join(" ")."\n");
     }
 
     # initialize candidate tally structures
     foreach my $cand_name (@{$self->{candidates}}) {
-        $self->{tally}{$cand_name} = PrefVote::STV::Tally->new(name => $cand_name);
+        $self->tally_set($cand_name, PrefVote::STV::Tally->new(name => $cand_name));
     }
-    $self->debug_print("init_candidate_tally: tally structs ".join(" ", keys %{$self->{tally}})."\n");
+    $self->debug_print("init_candidate_tally: tally structs ".join(" ", $self->tally_keys())."\n");
     return;
 }
 
@@ -132,20 +150,24 @@ sub add_votes_used
 }
 
 # sort the round's candidates list
-# this is done manually after adding last item so we don't waste time doing it more than once
+# this is called after adding last item so we don't waste time sorting it more than once
 sub sort_candidates
 {
     my ($self, $sort_fn) = @_;
-    my $round_candidates = $self->candidates(); # names of candidates
-    if (ref $sort_fn ne "CODE") {
+    if (not defined $sort_fn) {
+        # default sorting function is descending order by vote tally
+        # alternative sort functions are for testing (i.e. alphabetical sort allows testing without using votes)
+        my $tally_ref = $self->tally();
+        $sort_fn = sub {return $tally_ref->{$_[1]}->votes() <=> $tally_ref->{$_[0]}->votes()};
+    } elsif (ref $sort_fn ne "CODE") {
         PrefVote::STV::Round::BadSortingFnException->throw({classname => __PACKAGE__,
             attribute => 'sort_fn',
             description => "sorting function parameter is not a CODE reference: got ".(ref $sort_fn),
         });
     }
-    @$round_candidates = sort $sort_fn (@$round_candidates);
-    $self->debug_print("sorted round candidate list = ".join(" ", @$round_candidates)."\n");
-    return @$round_candidates;
+    $self->candidates_sort_in_place($sort_fn);
+    $self->debug_print("sorted round candidate list = ".$self->candidates_join(" ")."\n");
+    return $self->candidates_all();
 }
 
 # instantiate a result for current round
@@ -175,7 +197,7 @@ sub set_result
     my @invalid_candidates;
     foreach my $candidate_name (@{$opts{name}}) {
         my $found=0;
-        foreach (my $i=0; $i<scalar @{$self->{candidates}}; $i++) {
+        foreach (my $i=0; $i<$self->candidates_count(); $i++) {
             if ($self->{candidates}[$i] eq $candidate_name) {
                 $found=1;
                 last;

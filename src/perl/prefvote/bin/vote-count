@@ -47,7 +47,7 @@ if ($debug) {
 }
 $vote_obj->count();
 if ($vote_obj->debug()) {
-    local $Data::Dumper::Deepcopy = 1;
+    # local $Data::Dumper::Deepcopy = 1; # uncomment to dump duplicates of same structures from multiple references
     say STDERR "returned vote object is a ".ref($vote_obj);
     say STDERR Dumper($vote_obj);
 }

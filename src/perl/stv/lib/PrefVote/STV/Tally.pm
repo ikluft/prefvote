@@ -84,10 +84,6 @@ sub mark_as_winner
             $self->$key($opts{$key});
         }
     }
-    #$self->place($opts{place});
-    #$self->votes($opts{votes});
-    #$self->surplus($opts{surplus});
-    #$self->transfer($opts{transfer});
     return;
 }
 

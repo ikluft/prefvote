@@ -2,7 +2,7 @@
 # 013_stv.t - tests for PrefVote::STV
 use Modern::Perl qw(2015); # require 5.20.0 or later
 use autodie;
-use Test::More tests => 43;
+use Test::More tests => 19;
 use Test::Exception;
 use Readonly;
 use PrefVote::STV;
@@ -35,7 +35,7 @@ sub basic_tests
     is($vote_obj->seats(), $stv_params{seats}, "seats attribute check");
     is_deeply($vote_obj->choices(), $stv_params{choices}, "choices hash attribute check");
     
-    # test PrefVote::STV attributes start out empty (12 tests)
+    # test PrefVote::STV attributes start out empty (9 tests)
     isa_ok($vote_obj->{winners}, "ARRAY", "attribute: winners is an array ref - direct access");
     isa_ok($vote_obj->winners(), "ARRAY", "attribute: winners is an array ref - method access");
     is(scalar @{$vote_obj->winners()}, 0, "attribute: winners is empty - method access");
@@ -45,27 +45,13 @@ sub basic_tests
     isa_ok($vote_obj->{rounds}, "ARRAY", "attribute: rounds is an array ref - direct access");
     isa_ok($vote_obj->rounds(), "ARRAY", "attribute: rounds is an array ref - method access");
     is(scalar @{$vote_obj->rounds()}, 0, "attribute: rounds is empty - method access");
-    isa_ok($vote_obj->{candidates}, "HASH", "attribute: candidates is a hash ref - direct access");
-    isa_ok($vote_obj->candidates(), "HASH", "attribute: candidates is a hash ref - method access");
-    is(scalar keys %{$vote_obj->candidates()}, 0, "attribute: candidates is empty - method access");
 }
 
 # test functions
 sub func_tests
 {
-    # init_candidates (21 tests)
-    my $vote_obj = PrefVote::STV->instance(%stv_params);
-    lives_ok(sub {$vote_obj->init_candidates()}, "init_candidates() - no exception");
-    isa_ok($vote_obj->{candidates}, "HASH", "candidates attribute is a HASH ref");
-    is(scalar keys %{$vote_obj->{candidates}}, scalar keys %{$stv_params{choices}},
-        "init_candidates: correct number of candidates");
-    foreach my $name (keys %{$stv_params{choices}}) {
-        ok(exists $vote_obj->{candidates}{$name}, "init_candidates: $name entry exists");
-        isa_ok($vote_obj->{candidates}{$name}, 'PrefVote::STV::Tally', "init_candidates: $name ref");
-        is($vote_obj->{candidates}{$name}{name}, $name, "init_candidates: $name entry contains its own name");
-    }
-
     # new_round and clear_candidate_tallies (3 tests)
+    my $vote_obj = PrefVote::STV->instance(%stv_params);
     is(scalar @{$vote_obj->{rounds}}, 0, "rounds begins empty");
     lives_ok(sub {$vote_obj->new_round()}, "new_round() - no exception");
     is(scalar @{$vote_obj->{rounds}}, 1, "rounds got 1 entry");
