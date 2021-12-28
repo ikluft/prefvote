@@ -27,18 +27,21 @@ use Type::Tiny;
 use Types::Standard qw(Str ArrayRef HashRef InstanceOf);
 extends 'PrefVote::Core';
 
+# list of names of winners in order by place, ties shown by an ArrayRef to the tied candidates
 has winners => (
     is => 'rw',
     isa => ArrayRef[ArrayRef[Str]],
     default => sub { return [] },
 );
 
+# list of names of eliminated candidates in order by occurrence, ties shown by an ArrayRef to the tied candidates
 has eliminated => (
     is => 'rw',
     isa => ArrayRef[ArrayRef[Str]],
     default => sub { return [] },
 );
 
+# list of rounds of STV counting
 has rounds => (
     is => 'rw',
     isa => ArrayRef[InstanceOf["PrefVote::STV::Round"]],
@@ -49,46 +52,22 @@ has rounds => (
 # processing
 #
 
-# initialize candidate count data
-# TODO: move to PrefVote::STV::Round
-sub init_candidates
-{
-    my $self = shift;
-
-    # initialize candidates
-    my $candidates_ref = $self->candidates();
-    foreach my $choice ($self->get_choices()) {
-        $candidates_ref->{$choice} = PrefVote::STV::Tally->new(name => $choice);
-    }
-    $self->debug_print("candidate (init) = ".join(" ",keys %$candidates_ref)."\n");
-    return;
-}
-
-# clear candidate tallies - called once each STV counting round to reset counts
-# TODO: move this to PrefVote::STV::Tally->new()
-sub clear_candidate_tallies
-{
-    my $self = shift;
-    
-    # clear tallies
-    my $candidates_ref = $self->candidates();
-    foreach my $cand_key ( keys %$candidates_ref ) {
-        $candidates_ref->{$cand_key}->tally(0);
-    }
-    $self->debug_print("candidate (reset) = ".join(" ",keys %$candidates_ref)."\n");
-    return;
-}
-
 # start a new round
 sub new_round
 {
     my $self = shift;
     my $rounds_ref = $self->rounds();
-    my $round = PrefVote::STV::Round->new(number => (scalar @$rounds_ref)+1);
-    push @$rounds_ref, $round;
+    my $number = (scalar @$rounds_ref)+1;
+    
+    # pick arguments for first or later rounds
+    my @args = (($number == 1)
+        ? (candidates => [$self->get_choices()])
+        : (prev => $rounds_ref->[-1]));
 
-    # clear candidate tallies
-    $self->clear_candidate_tallies();
+    # instantiate and save new round
+    my $round = PrefVote::STV::Round->new(number => $number, @args);
+    $round->init_candidate_tally();
+    push @$rounds_ref, $round;
 
     return $round;
 }
@@ -100,41 +79,13 @@ sub current_round
     return $self->{rounds}[-1];
 }
 
-# select current round's candidates
-# TODO: get round candidates from previous round instead of global structure
-sub candidates_in_round
-{
-    my $self = shift;
-    my $round = $self->current_round();
-
-    # assemble and sort this round's candidate names by vote count
-    my $cands_ref = $self->candidates();
-    foreach my $cand_key ( keys %$cands_ref ) {
-        # candidate is not available for current list if they won or were eliminated
-        if (not $cands_ref->{$cand_key}->winner() and not $cands_ref->{$cand_key}->eliminated()) {
-            $self->debug_print("add $cand_key to candidate list\n");
-            $round->add_candidate($cand_key);
-        }
-    }
-    return;
-}
-
-# add result record
-sub round_result
-{
-    my ($self, @opts) = @_;
-    my $round = $self->current_round();
-    $round->set_result(@opts);
-    return;
-}
-
 # add winning candidate
 sub add_winner
 {
     my ($self, @win_list) = @_;
-    my $winners_ref = $self->winners();
-    push @$winners_ref, \@win_list;
-    $self->round_result(
+    push @{$self->{winners}}, \@win_list;
+    my $round = $self->current_round();
+    $round->set_result(
         name => \@win_list,
         type => "winner",
     );
@@ -145,9 +96,9 @@ sub add_winner
 sub add_eliminated
 {
     my ($self, @elim_list) = @_;
-    my $eliminated_ref = $self->eliminated();
-    push @$eliminated_ref, \@elim_list;
-    $self->round_result(
+    push @{$self->{eliminated}}, \@elim_list;
+    my $round = $self->current_round();
+    $round->set_result(
         name => \@elim_list,
         type => "eliminated",
     );
@@ -155,7 +106,6 @@ sub add_eliminated
 }
 
 # initial tally with vote transfers
-# TODO: candidate attribute moves to current round's tally
 sub run_tally
 {
     my $self = shift;
@@ -176,7 +126,7 @@ sub run_tally
                     ." (x".$ballot->quantity().")\n";
             }
 
-            my $cand_ref = $self->candidates()->{$choice};
+            my $cand_tally = $round->tally()->{$choice};
 
             # Handle vote transfers - this is a key point
             # in the STV system.  Note that fractions are
@@ -195,38 +145,37 @@ sub run_tally
             # this loop to find each candidate's place
             # in the results) then individual ballots
             # may be cut in fractions more than once.
-            if ( $cand_ref->winner() and defined $cand_ref->transfer())
+            if ( $cand_tally->winner() and defined $cand_tally->transfer())
             {
-                $fraction *= $cand_ref->transfer();
+                $fraction *= $cand_tally->transfer();
                 next;
             }
 
             # vote transfer not available to eliminated candidates
-            if (not $cand_ref->eliminated()) {
+            if (not $cand_tally->eliminated()) {
                 $selection = $choice;
                 last;
             }
         }
 
         if ( defined $selection ) {
-            my $sel_ref = $self->candidates()->{$selection};
-            my $tally = $sel_ref->tally();
+            my $sel_ref = $round->tally()->{$selection};
+            my $votes = $sel_ref->votes();
             my $vote_increment = $fraction * $ballot->{quantity};
-            $sel_ref->tally($tally + $vote_increment);
+            $sel_ref->votes($votes + $vote_increment);
             $round->add_votes_used($vote_increment);
         }
     }
-    $self->debug_print("candidate (tally) = ".join(" ", keys %{$self->candidates()})."\n");
+    $self->debug_print("candidate (tally) = ".join(" ", keys %{$round->tally()})."\n");
     return;
 }
 
 # process candidates over quota as winners
-# TODO: candidate attribute moves to current round's tally
 sub process_winners
 {
     my $self = shift;
     my $round = $self->current_round();
-    my $cands_ref = $self->candidates();
+    my $round_tally = $round->tally();
     my @round_candidate = @{$round->candidates()};
 
     # quota exceeded - we have a winner!
@@ -234,18 +183,18 @@ sub process_winners
     my $place = scalar @{$self->winners()}+1;
     foreach my $curr_key ( @round_candidate ) {
         # mark all the candidates over quota who are tied at the top as winners
-        if ( $cands_ref->{$curr_key}->tally() == $cands_ref->{$round_candidate[0]}->tally() ) {
-            my $c_tally = $cands_ref->{$curr_key}->tally();
-            my $c_surplus = $c_tally - $round->quota();
+        if ( $round_tally->{$curr_key}->votes() == $round_tally->{$round_candidate[0]}->votes() ) {
+            my $c_votes = $round_tally->{$curr_key}->votes();
+            my $c_surplus = $c_votes - $round->quota();
             my $pc_to_elect = sprintf ( "%6.3f",
-                $round->quota() / $c_tally * 100.0 );
+                $round->quota() / $c_votes * 100.0 );
             my $pc_transfer = sprintf ( "%6.3f",
-                $c_surplus / $c_tally * 100.0 );
+                $c_surplus / $c_votes * 100.0 );
             push @round_winner, $curr_key;
 
             # mark this candidate a winner
-            $cands_ref->{$curr_key}->mark_as_winner(place => $place, tally => $c_tally, surplus => $c_surplus,
-                transfer => $cands_ref->{$curr_key}->surplus() / $cands_ref->{$curr_key}->tally());
+            $round_tally->{$curr_key}->mark_as_winner(place => $place, votes => $c_votes, surplus => $c_surplus,
+                transfer => $round_tally->{$curr_key}->surplus() / $round_tally->{$curr_key}->votes());
             $self->debug_print( "winner: $curr_key\n");
         } else {
             last;
@@ -258,12 +207,11 @@ sub process_winners
 }
 
 # in round with no winner, eliminate last-place candidates
-# TODO: candidate attribute moves to current round's tally
 sub eliminate_losers
 {
     my $self = shift;
     my $round = $self->current_round();
-    my $cands_ref = $self->candidates(); # hash of candidate data
+    my $round_tally = $round->tally(); # hash of candidate data
     my @round_candidate = @{$round->candidates()}; # list of candidate names
 
     # no candidate met quota: eliminate last-place candidate(s) and count again on next round
@@ -274,9 +222,9 @@ sub eliminate_losers
     my @round_eliminated;
     for ( $i = (scalar @round_candidate)-1; $i > 0; $i-- ) {
         my $indexed_cand = $round_candidate[$i];
-        if ( $cands_ref->{$last_cand}->tally() == $cands_ref->{$indexed_cand}->tally())
+        if ( $round_tally->{$last_cand}->votes() == $round_tally->{$indexed_cand}->votes())
         {
-            $cands_ref->{$indexed_cand}->mark_as_eliminated();
+            $round_tally->{$indexed_cand}->mark_as_eliminated();
             $self->debug_print("eliminated: ".$indexed_cand."\n");
             push @round_eliminated, $indexed_cand;
         }
@@ -291,9 +239,6 @@ sub eliminate_losers
 sub count
 {
     my $self = shift;
-
-    # initialize candidates
-    $self->init_candidates();
 
     # stop now if there are no votes
     return if $self->total_ballots() == 0;
@@ -330,9 +275,9 @@ sub count
         {
             # provide sorting function for PrefVote::STV::Round so it avoids a circular dependency to this module
             my $sort_fn = sub {
-                my $c = $self->{candidates};
+                my $c = $round->tally();
                 ## no critic (Variables::ProhibitPackageVars)
-                return $c->{$PrefVote::STV::Round::b}->tally() <=> $c->{$PrefVote::STV::Round::a}->tally();
+                return $c->{$PrefVote::STV::Round::b}->votes() <=> $c->{$PrefVote::STV::Round::a}->votes();
             };
             @round_candidate = $round->sort_candidates($sort_fn);
         }
@@ -342,11 +287,11 @@ sub count
         # If N seats are up for election and V votes were cast,
         # a quota is V/(N+1)
         $round->quota($round->votes_used() / ($self->seats()+1));
-        my $cands_ref = $self->candidates();
+        my $round_tally = $round->tally();
         if ( $round->quota() <= 0.001 ) {
             last;
         }
-        if ($cands_ref->{$round_candidate[0]}->tally() > $round->quota() + .00001 ) {
+        if ($round_tally->{$round_candidate[0]}->votes() > $round->quota() + .00001 ) {
             # quota exceeded - we have a winner!
             $self->process_winners();
         } else {

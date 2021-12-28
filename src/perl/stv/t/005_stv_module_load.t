@@ -8,7 +8,7 @@ use Test::More;
 my @classes = qw(
         PrefVote::STV
         PrefVote::STV::Round
-        PrefVote::STV::Candidate
+        PrefVote::STV::Tally
         PrefVote::STV::Result
         );
 plan tests => scalar @classes;

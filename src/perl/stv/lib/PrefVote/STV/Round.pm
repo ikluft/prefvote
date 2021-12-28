@@ -21,7 +21,7 @@ use autodie;
 # class definitions
 use Moo;
 use Type::Tiny;
-use Types::Standard qw(StrictNum ArrayRef InstanceOf);
+use Types::Standard qw(StrictNum ArrayRef HashRef InstanceOf Map);
 use Types::Common::Numeric qw(PositiveInt PositiveOrZeroNum);
 use Types::Common::String qw(NonEmptySimpleStr);
 extends 'PrefVote';
@@ -29,48 +29,88 @@ use PrefVote::Core;
 use PrefVote::STV::Tally;
 use PrefVote::STV::Result;
 
+# round number (1=1st, etc)
 has number => (
     is => 'ro',
     isa => PositiveInt,
     required => 1,
 );
 
+# link to previous round - makes it available here without access to PrefVote::STV's data
+# If not set, it indicates the object is for the first round and therefore there is no previous round.
+has prev => (
+    is => 'ro',
+    isa => InstanceOf["PrefVote::STV::Round"],
+);
+
+# count of votes used/consumed in counting so far
 has votes_used => (
     is => 'rw',
     isa => PositiveOrZeroNum,
     default => 0,
 );
 
+# active candidates in the current round (which this object tracks)
 has candidates => (
     is => 'rw',
     isa => ArrayRef[NonEmptySimpleStr],
     default => sub { return [] },
 );
 
+# STV quota is the threshold to win the round as a function of seats available and candidates running
 has quota => (
     is => 'rw',
     isa => PositiveOrZeroNum,
     default => 0,
 );
 
+# candidate vote counts in the current round
 has tally => (
     is => 'rw',
-    isa => HashRef[InstanceOf["PrefVote::STV::Tally"]],
+    isa => Map[NonEmptySimpleStr, InstanceOf["PrefVote::STV::Tally"]],
     default => sub { return {} },
 );
 
+# result of the current round lists either winners or eliminated candidates
 has result => (
     is => 'rw',
     isa => InstanceOf["PrefVote::STV::Result"],
     required => 0,
 );
 
-# add a candidate (by name only here) to a round
-sub add_candidate
+# set candidate tallies
+# candidates must be provided by new() for first round, later rounds this populates it from previous round
+sub init_candidate_tally
 {
     my $self = shift;
-    my $candidate_name = shift;
-    push @{$self->{candidates}}, $candidate_name;
+
+    # throw exception if there is no candidate list and no previous round link
+    if ((not scalar @{$self->{candidates}}) and (not exists $self->{prev})) {
+        # the object wasn't provided with enough info to get started
+        PrefVote::STV::Round::PrevMissingException->throw({classname => __PACKAGE__,
+            description => "prev must be set if candidates list wasn't provided to new()",
+        });
+    }
+
+    # collect candidates from previous round for this round
+    # this occurs every round except the first, when the initial candidate list must be established by new()
+    if (exists $self->{prev}) {
+        my $prev = $self->{prev};
+        foreach my $cand_key (keys %{$prev->{tally}}) {
+            # candidate is not available for current list if they won or were eliminated
+            if (not $prev->{tally}{$cand_key}->winner() and not $prev->{tally}{$cand_key}->eliminated()) {
+                $self->debug_print("(round ".$self->{number}.") add $cand_key to candidate list\n");
+                push @{$self->{candidates}}, $cand_key;
+            }
+        }
+        $self->debug_print("init_candidate_tally: candidates ".join(" ", @{$self->{candidates}})."\n");
+    }
+
+    # initialize candidate tally structures
+    foreach my $cand_name (@{$self->{candidates}}) {
+        $self->{tally}{$cand_name} = PrefVote::STV::Tally->new(name => $cand_name);
+    }
+    $self->debug_print("init_candidate_tally: tally structs ".join(" ", keys %{$self->{tally}})."\n");
     return;
 }
 
@@ -176,6 +216,12 @@ use Types::Standard qw(Str);
 extends 'PrefVote::Core::InternalDataException';
 
 package PrefVote::STV::Round::TypeMissingException;
+
+use Moo;
+use Types::Standard qw(Str);
+extends 'PrefVote::Core::InternalDataException';
+
+package PrefVote::STV::Round::PrevMissingException;
 
 use Moo;
 use Types::Standard qw(Str);

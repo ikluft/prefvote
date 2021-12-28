@@ -24,42 +24,49 @@ use Type::Tiny;
 use Types::Standard qw(Bool Int StrictNum Str ArrayRef);
 extends 'PrefVote';
 
+# candidate name (identifier string)
 has 'name' => (
     is => 'ro',
     isa => Str,
     required => 1,
 );
 
-has tally => (
+# candidate vote total
+has votes => (
     is => 'rw',
     isa => StrictNum,
     default => 0,
 );
 
+# flag: winner of current or previous round (exclude from later rounds)
 has winner => (
     is => 'rw',
     isa => Bool,
     default => 0,
 );
 
+# flag: eliminated in current or previous round (exclude from later rounds)
 has eliminated => (
     is => 'rw',
     isa => Bool,
     default => 0,
 );
 
+# result: finished in nth place
 has place => (
     is => 'rw',
     isa => Int,
     default => 0,
 );
 
+# total votes available for transfer
 has transfer => (
     is => 'rw',
     isa => StrictNum,
     default => 0,
 );
 
+# fraction of votes which exceed the quota needed to win, and are available for transfer
 has surplus => (
     is => 'rw',
     isa => StrictNum,
@@ -72,10 +79,15 @@ sub mark_as_winner
 {
     my ($self, %opts) = @_;
     $self->winner(1);
-    $self->place($opts{place});
-    $self->tally($opts{tally});
-    $self->surplus($opts{surplus});
-    $self->transfer($opts{transfer});
+    foreach my $key (qw(place votes surplus transfer)) {
+        if (exists $opts{$key}) {
+            $self->$key($opts{$key});
+        }
+    }
+    #$self->place($opts{place});
+    #$self->votes($opts{votes});
+    #$self->surplus($opts{surplus});
+    #$self->transfer($opts{transfer});
     return;
 }
 
