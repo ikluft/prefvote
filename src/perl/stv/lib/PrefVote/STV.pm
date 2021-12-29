@@ -19,6 +19,7 @@ use Carp qw(croak);
 use PrefVote::STV::Round;
 use PrefVote::STV::Tally;
 use YAML::XS;
+use Clone qw(clone);
 use Data::Dumper;
 
 # class definitions
@@ -104,7 +105,7 @@ sub add_winner
     $self->winners_push(\@win_list);
     my $round = $self->current_round();
     $round->set_result(
-        name => \@win_list,
+        name => clone(\@win_list),
         type => "winner",
     );
     return;
@@ -117,7 +118,7 @@ sub add_eliminated
     $self->eliminated_push(\@elim_list);
     my $round = $self->current_round();
     $round->set_result(
-        name => \@elim_list,
+        name => clone(\@elim_list),
         type => "eliminated",
     );
     return;
