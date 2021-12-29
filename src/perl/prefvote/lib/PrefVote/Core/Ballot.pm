@@ -22,6 +22,7 @@ use MooX::HandlesVia;
 use Type::Tiny;
 use Types::Standard qw(Str ArrayRef);
 use Types::Common::Numeric qw(PositiveInt);
+use Types::Common::String qw(NonEmptySimpleStr);
 extends 'PrefVote';
 
 # set of valid ballot choices submitted by PrefVote::Core
@@ -57,6 +58,13 @@ has items => (
 has quantity => (
     is => 'rw',
     isa => PositiveInt,
+    required => 1,
+);
+
+# hexadecimal identifier string used to cross-check hash lookups from PrefVote::Core
+has hex_id => (
+    is => 'ro',
+    isa => NonEmptySimpleStr,
     required => 1,
 );
 

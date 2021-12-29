@@ -9,8 +9,8 @@ use PrefVote::Core::Ballot;
 # constants for test fixtures
 Readonly::Array my @choices_af => qw(ABNORMAL BORING CHAOTIC DYSFUNCTIONAL EVIL FACTIOUS);
 Readonly::Array my @ballot_tests => (
-    {ballot => [qw(EVIL FACTIOUS DYSFUNCTIONAL CHAOTIC ABNORMAL BORING)], total => 6},
-    {ballot => [qw(BORING DYSFUNCTIONAL CHAOTIC EVIL ABNORMAL)], total => 5},
+    {ballot => [qw(EVIL FACTIOUS DYSFUNCTIONAL CHAOTIC ABNORMAL BORING)], total => 6, hex => '453201'},
+    {ballot => [qw(BORING DYSFUNCTIONAL CHAOTIC EVIL ABNORMAL)], total => 5, hex => '13240'},
 );
 
 # choices should start empty (1 test)
@@ -22,7 +22,7 @@ PrefVote::Core::Ballot::set_choices(qw(FOO BAR));
 my @choice_test_foobar = PrefVote::Core::Ballot::get_choices();
 is(scalar @choice_test_foobar, 2, "choices=2 for foo/bar test");
 my @foobar_choices = qw(FOO BAR);
-my $test_obj = PrefVote::Core::Ballot->new(items => \@foobar_choices, quantity => 1);
+my $test_obj = PrefVote::Core::Ballot->new(items => \@foobar_choices, quantity => 1, hex_id => '10');
 ok(defined $test_obj, "new(...) returned a defined value");
 ok(ref $test_obj, "new(...) returned a reference");
 isa_ok($test_obj, "PrefVote::Core::Ballot", "new(...) returned correct object");
@@ -46,7 +46,7 @@ foreach my $test (@ballot_tests) {
         }
         my $summary_str = join "-", @summary;
 
-        my $ballot_obj = PrefVote::Core::Ballot->new(items => $test->{ballot}, quantity => 1);
+        my $ballot_obj = PrefVote::Core::Ballot->new(items => $test->{ballot}, quantity => 1, hex_id => $test->{hex});
         is_deeply($ballot_obj->items(), $test->{ballot}, "ballot $summary_str contents test");
         is($ballot_obj->items_count(), $test->{total}, "ballot $summary_str has test->{total} valid items");
         is($ballot_obj->quantity(), 1, "ballot $summary_str starts with quantity=1");

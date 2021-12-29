@@ -33,6 +33,7 @@ use MooX::HandlesVia;
 use Type::Tiny;
 use Types::Standard qw(Str Int ArrayRef HashRef Map InstanceOf Any);
 use Types::Common::Numeric qw(PositiveInt PositiveOrZeroInt);
+use Types::Common::String qw(NonEmptySimpleStr);
 extends 'PrefVote';
 with 'MooX::Singleton';
 
@@ -43,6 +44,28 @@ has name => (
     required => 1,
 );
 
+# bidirectional hashes for converting between index strings and choice identifier strings
+has choice_to_index => (
+    is => 'rw',
+    isa => Map[NonEmptySimpleStr, NonEmptySimpleStr],
+    handles_via => 'Hash',
+    handles => {
+        c2i_exists => 'exists',
+        c2i_get => 'get',
+        c2i_set => 'set',
+    },
+);
+has index_to_choice => (
+    is => 'rw',
+    isa => Map[NonEmptySimpleStr, NonEmptySimpleStr],
+    handles_via => 'Hash',
+    handles => {
+        i2c_exists => 'exists',
+        i2c_get => 'get',
+        i2c_set => 'set',
+    },
+);
+
 # strings identifying poll/vote choices
 has choices => (
     is => 'ro',
@@ -51,12 +74,15 @@ has choices => (
     trigger => sub {
         my $self = shift;
         $self->debug_print("set choices to ".join(" ", $self->choices_keys()));
+        $self->gen_choice_hex();
         PrefVote::Core::Ballot::set_choices($self->choices_keys());
     },
     handles_via => 'Hash',
     handles => {
-        choices_keys => 'keys',
+        choices_count => 'count',
         choices_exists => 'exists',
+        choices_get => 'get',
+        choices_keys => 'keys',
     },
 );
 
@@ -136,6 +162,44 @@ sub supported_method
     return 0;
 }
 
+# generate choice hexadecimal index values and bidirectional hash lookup tables
+# hexadecimal number indexes substantially shorten the hash key strings used to look up unique ballot combinations
+sub gen_choice_hex
+{
+    my $self = shift;
+
+    # compute how many hex digits are needed for all the choices
+    my $count = $self->choices_count();
+    my $hexdigits = int(log($count)/log(16)); # compute number of hex digits necessary to contain total choices
+
+    # initialize lookup tables - we can't count a default value being set yet since this is called from a trigger
+    $self->choice_to_index({});
+    $self->index_to_choice({});
+
+    # populate lookup tables in both directions: choice id <-> hex index
+    my @sorted_keys = sort $self->choices_keys();
+    for (my $i=0; $i<$count; $i++) {
+        my $choice_str = $sorted_keys[$i];
+        my $index_str = sprintf("%0*x", $hexdigits, $i);
+        $self->c2i_set($choice_str, $index_str);
+        $self->i2c_set($index_str, $choice_str);
+    }
+    return;
+}
+
+# convert a ballot combination to a hex index string
+sub ballot_to_hex
+{
+    my ($self, @ballot) = @_;
+    my $hex_id = "";
+    foreach my $item (@ballot) {
+        if ($self->c2i_exists($item)) {
+            $hex_id .= $self->c2i_get($item);
+        }
+    }
+    return $hex_id;
+}
+
 #
 # data input
 #
@@ -165,23 +229,23 @@ sub submit_ballot
     # retain any association between the ballot and the voter.
 
     # make a string of this ballot combination for lookup
-    my $combo = join " ", @filtered_ballot;
+    my $hex_id = $self->ballot_to_hex(@filtered_ballot);
 
     # check if this combination already exists and increment it if it does, if not create/save new combo
     my $ballot;
     my $action;
-    if ($self->ballots_exists($combo)) {
+    if ($self->ballots_exists($hex_id)) {
         $action = "increment";
-        $ballot = $self->ballots_get($combo);
+        $ballot = $self->ballots_get($hex_id);
         $ballot->increment();
     } else {
         $action = "new";
-        $ballot = PrefVote::Core::Ballot->new(items => \@filtered_ballot, quantity => 1);
-        $self->ballots_set($combo, $ballot);
+        $ballot = PrefVote::Core::Ballot->new(items => \@filtered_ballot, hex_id => $hex_id, quantity => 1);
+        $self->ballots_set($hex_id, $ballot);
     }
     $self->debug_print("accepting $action: ", $ballot->as_string());
     $self->{total_ballots}++;
-    return $combo; # returns filtered combination, whose absence can be used to detect if an exception was thrown
+    return $hex_id; # returns index key, whose absence can be used to detect if an exception was thrown
 }
 
 # read YAML input

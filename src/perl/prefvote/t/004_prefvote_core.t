@@ -3,7 +3,7 @@
 
 use Modern::Perl qw(2015); # require 5.20.0 or later
 use autodie;
-use Test::More tests => 59;
+use Test::More tests => 65;
 use Test::Exception;
 use File::Basename;
 use Readonly;
@@ -24,8 +24,8 @@ Readonly::Hash my %core_params => (
     },
 );
 Readonly::Array my @ballot_tests => (
-    {ballot => [qw(EVIL FACTIOUS DYSFUNCTIONAL CHAOTIC ABNORMAL BORING)], total => 6},
-    {ballot => [qw(BORING DYSFUNCTIONAL CHAOTIC EVIL ABNORMAL CTHULU)], total => 5},
+    {ballot => [qw(EVIL FACTIOUS DYSFUNCTIONAL CHAOTIC ABNORMAL BORING)], total => 6, hex => '453201'},
+    {ballot => [qw(BORING DYSFUNCTIONAL CHAOTIC EVIL ABNORMAL CTHULU)], total => 5, hex => '13240'},
     {ballot => [qw(CTHULU)], exception => "PrefVote::Core::Exception"},
 );
 Readonly::Scalar my $input_dir => "t/test-inputs/".basename($0, ".t");
@@ -81,7 +81,7 @@ sub ballot_tests
     # verify empty ballot box at start (1 test)
     is($vote_obj->total_ballots(), 0, "obj->total_ballots() = 0 initially");
 
-    # run through array of ballot input tests (15 tests)
+    # run through array of ballot input tests (19 tests)
     foreach my $test (@ballot_tests) {
         my @summary;
         foreach my $item (@{$test->{ballot}}) {
@@ -97,7 +97,10 @@ sub ballot_tests
                 "ballot $summary_str -> exception $test->{exception} as expected");
         } else {
             my $combo;
-            lives_ok(sub {$combo = $vote_obj->submit_ballot(@{$test->{ballot}}); }, "ballot $summary_str"); 
+            lives_ok(sub {$combo = $vote_obj->submit_ballot(@{$test->{ballot}}); }, "ballot $summary_str");
+            my $hex_index = $vote_obj->ballot_to_hex(@{$test->{ballot}});
+            is($hex_index, $test->{hex}, "computed hex_index $hex_index as expected");
+            is($combo, $hex_index, "combo $combo from submit_ballot matches hex_index");
             my $ballot_obj = $vote_obj->{ballots}{$combo};
             ok(defined $ballot_obj, "ballot lookup returns data");
             isa_ok($ballot_obj, "PrefVote::Core::Ballot", "ballot lookup returns correct object");
@@ -109,6 +112,11 @@ sub ballot_tests
                     "ballot $summary_str has $test->{total} valid items");
             }
         }
+    }
+
+    # verify all ballot objects contain a hex_id matching their hash key (2 tests)
+    foreach my $key ($vote_obj->ballots_keys()) {
+        is($key, $vote_obj->ballots_get($key)->hex_id(), "ballot hex_id $key matches its hash key");
     }
 
     # count ballots (1 test)
