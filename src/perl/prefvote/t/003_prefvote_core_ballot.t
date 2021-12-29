@@ -48,7 +48,7 @@ foreach my $test (@ballot_tests) {
 
         my $ballot_obj = PrefVote::Core::Ballot->new(items => $test->{ballot}, quantity => 1);
         is_deeply($ballot_obj->items(), $test->{ballot}, "ballot $summary_str contents test");
-        is($ballot_obj->total_items(), $test->{total}, "ballot $summary_str has test->{total} valid items");
+        is($ballot_obj->items_count(), $test->{total}, "ballot $summary_str has test->{total} valid items");
         is($ballot_obj->quantity(), 1, "ballot $summary_str starts with quantity=1");
         $ballot_obj->increment();
         is($ballot_obj->quantity(), 2, "ballot $summary_str increments to quantity=2");

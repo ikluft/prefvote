@@ -105,7 +105,7 @@ sub ballot_tests
             lives_ok(sub {$vote_obj->submit_ballot(@{$test->{ballot}}); }, "ballot $summary_str resubmit"); 
             is($ballot_obj->quantity(), 2, "ballot quantity increments to 2 after identical ballot");
             if (exists $test->{total}) {
-                is($ballot_obj->total_items(), $test->{total},
+                is($ballot_obj->items_count(), $test->{total},
                     "ballot $summary_str has $test->{total} valid items");
             }
         }

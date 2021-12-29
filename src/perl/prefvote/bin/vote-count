@@ -7,7 +7,7 @@
 
 use Modern::Perl qw(2015); # require 5.20.0 or later
 use autodie;
-use Carp qw(croak);;
+use Carp qw(croak confess);;
 use YAML::XS; # RPM: perl-YAML-LibYAML, DEB: libyaml-libyaml-perl
 use PrefVote::Core;
 use Getopt::Long;
@@ -43,7 +43,12 @@ if (not @ARGV) {
 # count votes
 my $vote_obj = PrefVote::Core::yaml2vote($ARGV[0]);
 if ($debug) {
+    # set debugging in PrefVote hierarchy
     $vote_obj->debug(1);
+
+    # turn on stack traces for unexpected errors
+    ## no critic (Variables::RequireLocalizedPunctuationVars)
+    $SIG{ __DIE__ } = sub { Carp::confess( @_ ); };
 }
 $vote_obj->count();
 if ($vote_obj->debug()) {

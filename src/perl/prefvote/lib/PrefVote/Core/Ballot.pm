@@ -18,6 +18,7 @@ use Carp qw(croak);
 
 # class definitions
 use Moo;
+use MooX::HandlesVia;
 use Type::Tiny;
 use Types::Standard qw(Str ArrayRef);
 use Types::Common::Numeric qw(PositiveInt);
@@ -43,7 +44,13 @@ has items => (
             }
         }
         return 1;
-    }
+    },
+    handles_via => 'Array',
+    handles => {
+        items_all => 'all',
+        items_join => 'join',
+        items_count => 'count',
+    },
 );
 
 # quantity is a multiplier for the number of times this combination of items has occurred
@@ -82,18 +89,11 @@ sub increment
     return;
 }
 
-# return number of items on ballot
-sub total_items
-{
-    my $self = shift;
-    return scalar @{$self->{items}};
-}
-
 # return string of ballot contents
 sub as_string
 {
     my $self = shift;
-    return join " ", @{$self->items()};
+    return $self->items_join(" ");
 }
 
 1;

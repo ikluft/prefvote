@@ -29,6 +29,7 @@ Readonly::Array my @voting_methods => qw(Core STV Schulze);
 # class definitions
 #
 use Moo;
+use MooX::HandlesVia;
 use Type::Tiny;
 use Types::Standard qw(Str Int ArrayRef HashRef Map InstanceOf Any);
 use Types::Common::Numeric qw(PositiveInt PositiveOrZeroInt);
@@ -49,8 +50,13 @@ has choices => (
     requred => 1,
     trigger => sub {
         my $self = shift;
-        $self->debug_print("set choices to ".join(" ", keys %{$self->choices}));
-        PrefVote::Core::Ballot::set_choices(keys %{$self->choices});
+        $self->debug_print("set choices to ".join(" ", $self->choices_keys()));
+        PrefVote::Core::Ballot::set_choices($self->choices_keys());
+    },
+    handles_via => 'Hash',
+    handles => {
+        choices_keys => 'keys',
+        choices_exists => 'exists',
     },
 );
 
@@ -65,8 +71,14 @@ has seats => (
 has ballots => (
     is => 'rw',
     isa => Map[Str,InstanceOf["PrefVote::Core::Ballot"]],
-    #isa => ArrayRef[InstanceOf["PrefVote::Core::Ballot"]],
     default => sub { return {} },
+    handles_via => 'Hash',
+    handles => {
+        ballots_exists => 'exists',
+        ballots_get => 'get',
+        ballots_keys => 'keys',
+        ballots_set => 'set',
+    },
 );
 
 # count of total ballots
@@ -101,7 +113,7 @@ sub choice_exists
     my ($class_or_obj, $str) = @_;
     return 0 if not defined $str;
     my $self = class_or_obj($class_or_obj);
-    return (exists $self->{choices}{$str} ? 1 : 0);
+    return $self->choices_exists($str) ? 1 : 0;
 }
 
 # get list of choices
@@ -109,7 +121,7 @@ sub get_choices
 {
     my $class_or_obj = shift;
     my $self = class_or_obj($class_or_obj);
-    return keys %{$self->{choices}};
+    return $self->choices_keys();
 }
 
 # check if a string matches a supported voting method
@@ -158,14 +170,14 @@ sub submit_ballot
     # check if this combination already exists and increment it if it does, if not create/save new combo
     my $ballot;
     my $action;
-    if (exists $self->{ballots}{$combo}) {
+    if ($self->ballots_exists($combo)) {
         $action = "increment";
-        $ballot = $self->{ballots}{$combo};
+        $ballot = $self->ballots_get($combo);
         $ballot->increment();
     } else {
         $action = "new";
         $ballot = PrefVote::Core::Ballot->new(items => \@filtered_ballot, quantity => 1);
-        $self->{ballots}{$combo} = $ballot;
+        $self->ballots_set($combo, $ballot);
     }
     $self->debug_print("accepting $action: ", $ballot->as_string());
     $self->{total_ballots}++;
