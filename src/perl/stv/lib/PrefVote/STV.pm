@@ -321,10 +321,21 @@ sub result_yaml
     my $self = shift;
 
     # copy relevant round/result records into YAML result structure
-    my $result_out = [];
+    my $result_out = {
+        winners => $self->winners(),
+        eliminated => $self->eliminated(),
+        rounds => [],
+    };
     for (my $round_index=0; $round_index < $self->rounds_count(); $round_index++) {
         my $round_ref = $self->rounds_get($round_index);
-        my $round_yaml = {round => $round_index+1};
+        my $round_yaml = {
+            round => $round_index+1,
+            total_votes => $round_ref->votes_used(),
+            quota => $round_ref->quota(),
+            candidates => [],
+        };
+
+        # if the round had a result (win or elimination) then record it
         if (exists $round_ref->{result}) {
             my $result_ref = $round_ref->{result};
             my $type = $result_ref->type();
@@ -341,6 +352,25 @@ sub result_yaml
                 );
             }
         }
+
+        # list candidate tallies for the round in order of descending result
+        foreach my $cand_name ($round_ref->candidates_all()) {
+            my $tally_ref = $round_ref->tally_get($cand_name);
+            my $tally_yaml = {
+                name => $cand_name,
+                votes => $tally_ref->{votes},
+            };
+            if ($tally_ref->winner()) {
+                $tally_yaml->{winner} = 1;
+                $tally_yaml->{place} = $tally_ref->{place};
+                $tally_yaml->{surplus} = $tally_ref->{surplus};
+                $tally_yaml->{transfer} = $tally_ref->{transfer};
+            } elsif ($tally_ref->eliminated()) {
+                $tally_yaml->{eliminated} = 1;
+            }
+            push @{$round_yaml->{candidates}}, $tally_yaml;
+        }
+        push @{$result_out->{rounds}}, $round_yaml;
     }
 
     return $result_out;

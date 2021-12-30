@@ -33,8 +33,8 @@ sub print_result_list
 }
 
 # command-line processing
-my ($debug, $test_mode);
-GetOptions("debug" => \$debug, "test" => \$test_mode);
+my ($debug, $test_mode, $yaml_format);
+GetOptions("debug" => \$debug, "test" => \$test_mode, "yaml" => \$yaml_format);
 if (not @ARGV) {
     say STDERR "usage: $0 [--debug] [--test] yaml_file";
     exit 0;
@@ -58,11 +58,15 @@ if ($vote_obj->debug()) {
 }
 
 # print result
-my $results = $vote_obj->results();
-say "Winning order";
-print_result_list($results->{winners});
-say "Elimination order";
-print_result_list($results->{eliminated});
+if ($yaml_format) {
+    print YAML::XS::Dump($vote_obj->result_yaml());
+} else {
+    my $results = $vote_obj->results();
+    say "Winning order";
+    print_result_list($results->{winners});
+    say "Elimination order";
+    print_result_list($results->{eliminated});
+}
 
 __END__
 
