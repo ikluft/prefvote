@@ -52,6 +52,7 @@ if ($debug) {
 }
 $vote_obj->count();
 if ($vote_obj->debug()) {
+    local $Data::Dumper::Sortkeys = 1;
     say STDERR "returned vote object is a ".ref($vote_obj);
     say STDERR Dumper($vote_obj);
 }
