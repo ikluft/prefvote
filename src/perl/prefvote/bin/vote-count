@@ -11,6 +11,7 @@ use Carp qw(croak confess);;
 use YAML::XS; # RPM: perl-YAML-LibYAML, DEB: libyaml-libyaml-perl
 use PrefVote::Core;
 use Getopt::Long;
+use Scalar::Util 'reftype';
 use Data::Dumper;
 
 # print results list (winners or eliminated) with potential ties
@@ -30,6 +31,25 @@ sub print_result_list
         say "none";
     }
     return;
+}
+
+# count tests from YAML extra document's endpoint nodes
+sub count_tests
+{
+    my $node = shift;
+    my $total = 0;
+    if (not ref $node) {
+        $total++;
+    } elsif (reftype $node eq "HASH") {
+        foreach my $key (keys %$node) {
+            $total += count_tests($node->{$key});
+        }
+    } elsif (reftype $node eq "ARRAY") {
+        foreach my $item (@$node) {
+            $total += count_tests($item);
+        }
+    }
+    return $total;
 }
 
 # command-line processing
@@ -57,10 +77,29 @@ if ($vote_obj->debug()) {
     say STDERR Dumper($vote_obj);
 }
 
-# print result
-if ($yaml_format) {
+# check for test, YAML or default modes
+if ($test_mode) {
+    # test mode - run black-box tests
+    use Test::More;
+
+    # count tests from endpoint nodes in extra doc from YAML input
+    my $extra = $vote_obj->extra();
+    my $test_count = count_tests($extra);
+    plan tests => $test_count;
+
+    # run tests
+    foreach my $test (@$extra) {
+        if (exists $extra->{results}) {
+            foreach my $winner (@{$extra->{results}}) {
+                # TODO
+            }
+        }
+    }
+} elsif ($yaml_format) {
+    # output YAML results
     print YAML::XS::Dump($vote_obj->result_yaml());
 } else {
+    # print result
     my $results = $vote_obj->results();
     say "Winning order";
     print_result_list($results->{winners});
