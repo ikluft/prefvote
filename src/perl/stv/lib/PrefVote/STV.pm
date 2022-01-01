@@ -376,6 +376,64 @@ sub result_yaml
     return $result_out;
 }
 
+#
+# perform STV-specific black-box tests from external file against this object's data
+#
+
+# generate test results from comparing winner/eliminated lists
+sub blackbox_we_list_cmp
+{
+    my ($path, $list, $values) = @-;
+    my @tests;
+
+    # catch scalar values and return a single test for it
+    if (not ref $list or not ref $values) {
+            push @tests, ["is", $list, $values, join("-", @$path)." match"];
+    }
+    
+    # generate tests for list comparison
+    my $cl_count = scalar @$list;
+    my $value_count = scalar @$values;
+    my $count_cmp = $cl_count <=> $value_count;
+    if ($cl_count==1) {
+        push @tests, blackbox_we_list_cmp( [ @$path, 0 ], $list->[0], $values->[0]);
+    }
+    for (my $i=0; $i<$cl_count-1; $i++) {
+        push @tests, blackbox_we_list_cmp( [ @$path, $i ], $list->[$i], $values->[$i]);
+    }
+    if ($count_cmp == 0) {
+        push @tests, blackbox_we_list_cmp( [ @$path, -1 ], $list->[-1], $values->[-1]);
+    } else {
+        # if the lists are different length, replace the last test with a failure on list length
+        push @tests, ["is", $cl_count, $value_count, join("-", @$path)." list length match"];
+
+        # if there was a list at the last item, insert failed tests
+        if (ref $list->[-1] eq "ARRAY") {
+            my $len = (scalar @{$list->[-1]})-1;
+            for (my $j=0; $j<$len; $j++) {
+                push @tests, ["fail", join("-", @$path, $j)." placeholder"];
+            }
+        }
+    }
+    return @tests;
+}
+
+# top-level tree traversal for blackbox tests
+sub blackbox_check
+{
+    my ($self, $checklist) = @_;
+    my (@tests, @path);
+    foreach my $key (sort keys %$checklist) {
+        push @path, $key;
+        if ($key eq "winners" or $key eq "eliminated" or $key eq "rounds") {
+            push @tests, blackbox_we_list_cmp( \@path, $checklist->{$key}, $self->{$key});
+        } else {
+            croak "unrecognized test key $key";
+        }
+    }
+    return @tests;
+}
+
 1;
 
 __END__
