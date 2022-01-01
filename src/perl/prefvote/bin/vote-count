@@ -33,7 +33,16 @@ sub print_result_list
     return;
 }
 
-# count tests from YAML extra document's endpoint nodes
+# get class suffix string
+sub suffix
+{
+    my $class = shift;
+    my $class_suffix = $class;
+    $class_suffix =~ s/^.*:://x; # remove everything except the last part of the class name
+    return $class_suffix;
+}
+
+# count tests recursively in blackbox test tree
 sub count_tests
 {
     my $node = shift;
@@ -42,14 +51,37 @@ sub count_tests
         $total++;
     } elsif (reftype $node eq "HASH") {
         foreach my $key (keys %$node) {
-            $total += count_tests($node->{$key});
+            if (not ref $node) {
+                $total++; # redundant but saves a function call
+            } else {
+                $total += count_tests($node->{$key});
+            }
         }
     } elsif (reftype $node eq "ARRAY") {
         foreach my $item (@$node) {
-            $total += count_tests($item);
+            if (not ref $node) {
+                $total++; # redundant but saves a function call
+            } else {
+                $total += count_tests($item);
+            }
         }
     }
     return $total;
+}
+
+# count tests for the currently-loaded PrefVote class
+sub count_tests_byclass
+{
+    my ($class, $test_root) = @_;
+    my $class_suffix = suffix($class);
+    if (exists $test_root->{results} and reftype $test_root->{results} eq "HASH") {
+        if (exists $test_root->{results}{$class_suffix} and reftype $test_root->{results}{$class_suffix} eq "HASH") {
+            return count_tests($test_root->{results}{$class_suffix});
+        }
+    } else {
+        croak "black box test definition 'results' map not found";
+    }
+    return 0;
 }
 
 # command-line processing
@@ -68,7 +100,7 @@ if ($debug) {
 
     # turn on stack traces for unexpected errors
     ## no critic (Variables::RequireLocalizedPunctuationVars)
-    $SIG{ __DIE__ } = sub { Carp::confess( @_ ); };
+    $SIG{ __DIE__ } = sub {confess(@_)};
 }
 $vote_obj->count();
 if ($vote_obj->debug()) {
@@ -80,18 +112,41 @@ if ($vote_obj->debug()) {
 # check for test, YAML or default modes
 if ($test_mode) {
     # test mode - run black-box tests
-    use Test::More;
+    require Test::More;
+
+    # determine the type of results to process from the vote object
+
 
     # count tests from endpoint nodes in extra doc from YAML input
     my $extra = $vote_obj->extra();
+    if (ref $extra eq "ARRAY") {
+        $extra = $extra->[0];
+    }
     my $test_count = count_tests($extra);
-    plan tests => $test_count;
+    Test::More::plan(tests => $test_count);
 
-    # run tests
-    foreach my $test (@$extra) {
-        if (exists $extra->{results}) {
-            foreach my $winner (@{$extra->{results}}) {
-                # TODO
+    # run tests - everything is in a results map item for readability
+    
+    if (exists $extra->{results}) {
+        # 1st layer within the results test is classes to test against
+        # use only tests for the current voting-method class - that's also all we counted in count_tests_byclass()
+        my $class_suffix = suffix(ref $vote_obj);
+        foreach my $test_class (keys %{$extra->{results}}) {
+            if (ref $vote_obj ne "PrefVote::$test_class") {
+                my @tests = $vote_obj->blackbox_check($extra->{results}{$test_class});
+                foreach my $test (@tests) {
+                    # process test case parameters as hashes
+                    ## no critic (ControlStructures::ProhibitCascadingIfElse ControlStructures::ProhibitDeepNests)
+                    if ($test->{type} eq "is") {
+                        is($test->{value}, $test->{expected}, $test->{description}); # feed it to Test::More::is()
+                    } elsif ($test->{type} eq "ok") {
+                        ok($test->{value}, $test->{description}); # feed it to Test::More::ok()
+                    } elsif ($test->{type} eq "pass") {
+                        pass($test->{description}); # feed it to Test::More::pass()
+                    } elsif ($test->{type} eq "fail") {
+                        fail($test->{description}); # feed it to Test::More::fail()
+                    }
+                }
             }
         }
     }
