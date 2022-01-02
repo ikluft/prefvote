@@ -42,48 +42,6 @@ sub suffix
     return $class_suffix;
 }
 
-# count tests recursively in blackbox test tree
-sub count_tests
-{
-    my $node = shift;
-    my $total = 0;
-    if (not ref $node) {
-        $total++;
-    } elsif (reftype $node eq "HASH") {
-        foreach my $key (keys %$node) {
-            if (not ref $node) {
-                $total++; # redundant but saves a function call
-            } else {
-                $total += count_tests($node->{$key});
-            }
-        }
-    } elsif (reftype $node eq "ARRAY") {
-        foreach my $item (@$node) {
-            if (not ref $node) {
-                $total++; # redundant but saves a function call
-            } else {
-                $total += count_tests($item);
-            }
-        }
-    }
-    return $total;
-}
-
-# count tests for the currently-loaded PrefVote class
-sub count_tests_byclass
-{
-    my ($class, $test_root) = @_;
-    my $class_suffix = suffix($class);
-    if (exists $test_root->{results} and reftype $test_root->{results} eq "HASH") {
-        if (exists $test_root->{results}{$class_suffix} and reftype $test_root->{results}{$class_suffix} eq "HASH") {
-            return count_tests($test_root->{results}{$class_suffix});
-        }
-    } else {
-        croak "black box test definition 'results' map not found";
-    }
-    return 0;
-}
-
 # command-line processing
 my ($debug, $test_mode, $yaml_format);
 GetOptions("debug" => \$debug, "test" => \$test_mode, "yaml" => \$yaml_format);
@@ -112,42 +70,42 @@ if ($vote_obj->debug()) {
 # check for test, YAML or default modes
 if ($test_mode) {
     # test mode - run black-box tests
-    require Test::More;
-
-    # determine the type of results to process from the vote object
-
-
-    # count tests from endpoint nodes in extra doc from YAML input
     my $extra = $vote_obj->extra();
-    if (ref $extra eq "ARRAY") {
-        $extra = $extra->[0];
-    }
-    my $test_count = count_tests($extra);
-    Test::More::plan(tests => $test_count);
+    my @tests;
 
-    # run tests - everything is in a results map item for readability
-    
-    if (exists $extra->{results}) {
-        # 1st layer within the results test is classes to test against
-        # use only tests for the current voting-method class - that's also all we counted in count_tests_byclass()
-        my $class_suffix = suffix(ref $vote_obj);
-        foreach my $test_class (keys %{$extra->{results}}) {
-            if (ref $vote_obj ne "PrefVote::$test_class") {
-                my @tests = $vote_obj->blackbox_check($extra->{results}{$test_class});
-                foreach my $test (@tests) {
-                    # process test case parameters as hashes
-                    ## no critic (ControlStructures::ProhibitCascadingIfElse ControlStructures::ProhibitDeepNests)
-                    if ($test->{type} eq "is") {
-                        is($test->{value}, $test->{expected}, $test->{description}); # feed it to Test::More::is()
-                    } elsif ($test->{type} eq "ok") {
-                        ok($test->{value}, $test->{description}); # feed it to Test::More::ok()
-                    } elsif ($test->{type} eq "pass") {
-                        pass($test->{description}); # feed it to Test::More::pass()
-                    } elsif ($test->{type} eq "fail") {
-                        fail($test->{description}); # feed it to Test::More::fail()
-                    }
+    # collect tests from PrefVote subclass
+    $vote_obj->debug_print("extra: ".Dumper($extra));
+    foreach my $group (@$extra) {
+        if (exists $group->{results}) {
+            # 1st layer within the results test is classes to test against
+            # use only tests for the current voting-method class
+            my $class_suffix = suffix(ref $vote_obj);
+            foreach my $test_class (keys %{$group->{results}}) {
+                my $subclass_name = "PrefVote::$test_class";
+                $vote_obj->debug_print("checking $test_class tests: ".(ref $vote_obj)." vs $subclass_name");
+                if (ref $vote_obj eq $subclass_name) {
+                    push @tests, $vote_obj->blackbox_check($group->{results}{$test_class});
                 }
             }
+        }
+    }
+
+    # feed the tests gathered from the subclass to Test::More
+    $vote_obj->debug_print("tests ".Dumper(\@tests));
+    require Test::More;
+    Test::More::plan(tests => scalar @tests);
+    foreach my $test (@tests) {
+        # process test case parameters as hashes
+        ## no critic (ControlStructures::ProhibitCascadingIfElse ControlStructures::ProhibitDeepNests)
+
+        if ($test->{type} eq "is") {
+            Test::More::is($test->{value}, $test->{expected}, $test->{description});
+        } elsif ($test->{type} eq "ok") {
+            Test::More::ok($test->{value}, $test->{description});
+        } elsif ($test->{type} eq "pass") {
+            Test::More::pass($test->{description});
+        } elsif ($test->{type} eq "fail") {
+            Test::More::fail($test->{description});
         }
     }
 } elsif ($yaml_format) {

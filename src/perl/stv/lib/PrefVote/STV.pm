@@ -383,37 +383,53 @@ sub result_yaml
 # generate test results from comparing winner/eliminated lists
 sub blackbox_we_list_cmp
 {
-    my ($path, $list, $values) = @-;
+    my ($path, $list, $value, $level) = @_;
     my @tests;
 
-    # catch scalar values and return a single test for it
-    if (not ref $list or not ref $values) {
-            push @tests, ["is", $list, $values, join("-", @$path)." match"];
+    # catch scalar value and return a single test for it
+    if ((not ref $list) or (not ref $value)) {
+        # short-circuit the search if the expected value is a scalar
+        return ({type => "is", expected => $list, value => $value, description => join("-", @$path)."=$list"});
     }
-    
+
     # generate tests for list comparison
     my $cl_count = scalar @$list;
-    my $value_count = scalar @$values;
+    my $value_count = scalar @$value;
     my $count_cmp = $cl_count <=> $value_count;
+    push @tests, {type => "is", expected => $cl_count, value => $value_count,
+        description => join("-", @$path)." list length=$cl_count"};
     if ($cl_count==1) {
-        push @tests, blackbox_we_list_cmp( [ @$path, 0 ], $list->[0], $values->[0]);
+        # short-circuit the search if there's only one item in the list
+        return blackbox_we_list_cmp([@$path, 0], $list->[0], $value->[0], $level+1);
     }
-    for (my $i=0; $i<$cl_count-1; $i++) {
-        push @tests, blackbox_we_list_cmp( [ @$path, $i ], $list->[$i], $values->[$i]);
-    }
-    if ($count_cmp == 0) {
-        push @tests, blackbox_we_list_cmp( [ @$path, -1 ], $list->[-1], $values->[-1]);
-    } else {
-        # if the lists are different length, replace the last test with a failure on list length
-        push @tests, ["is", $cl_count, $value_count, join("-", @$path)." list length match"];
+    for (my $i=0; $i<$cl_count; $i++) {
+        if (ref $list->[$i] eq "ARRAY") {
+            push @tests, blackbox_we_list_cmp([@$path, $i], $list->[$i], $value->[$i], $level+1);
+            next;
+        }
 
-        # if there was a list at the last item, insert failed tests
-        if (ref $list->[-1] eq "ARRAY") {
-            my $len = (scalar @{$list->[-1]})-1;
-            for (my $j=0; $j<$len; $j++) {
-                push @tests, ["fail", join("-", @$path, $j)." placeholder"];
+        # search for match: lists of scalars indicate ties so matches aren't necessarily at the same index
+        my $index;
+        if ($level == 0) {
+            # at result level, matches must be the same index
+            $index=$i;
+        } else {
+            # on sub-lists, lists indicate ties so matches don't necessarily have to be at the same index
+            for (my $pos=0; $pos<scalar @$value; $pos++) {
+                if ($value->[$pos] eq $list->[$i]) {
+                    $index = $pos;
+                    last;
+                }
             }
         }
+        my $description = join("-", @$path, $i)." matches ".$list->[$i];
+        __PACKAGE__->debug_print("list compare (index=".($index // "undef")."): $description from ".join(" ",@$list));
+        push @tests, blackbox_we_list_cmp([@$path, $i], $list->[$i], $value->[$index], $level+1);
+        #if (defined $index) {
+        #    push @tests, {type => "is", expected => $list->[$i], value => $value->[$index], description => $description};
+        #} else {
+        #    push @tests, {type => "is", expected => $list->[$i], value => undef, description => $description};
+        #}
     }
     return @tests;
 }
@@ -422,11 +438,10 @@ sub blackbox_we_list_cmp
 sub blackbox_check
 {
     my ($self, $checklist) = @_;
-    my (@tests, @path);
+    my @tests;
     foreach my $key (sort keys %$checklist) {
-        push @path, $key;
         if ($key eq "winners" or $key eq "eliminated" or $key eq "rounds") {
-            push @tests, blackbox_we_list_cmp( \@path, $checklist->{$key}, $self->{$key});
+            push @tests, blackbox_we_list_cmp( [$key], $checklist->{$key}, $self->{$key}, 0);
         } else {
             croak "unrecognized test key $key";
         }

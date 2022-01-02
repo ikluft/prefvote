@@ -65,9 +65,9 @@ params:
 results:
   STV:
     winners:
-      - FACTIOUS
-      - ABNORMAL
+      - [ FACTIOUS ]
+      - [ ABNORMAL ]
     eliminated:
       - [BORING, CHAOTIC]
-      - DYSFUNCTIONAL
-      - EVIL
+      - [ DYSFUNCTIONAL ]
+      - [ EVIL ]
