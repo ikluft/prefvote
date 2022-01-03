@@ -16,6 +16,9 @@ use TAP::Parser::Aggregator qw/all/;
 # configuration settings per language implementation
 Readonly::Array my @supported_languages => (qw(perl));
 Readonly::Hash my %config => (
+    blackbox => {
+       data => "test/inputs", 
+    },
     "perl" => {
         build => 'dzil build',
         whitebox => {
@@ -106,6 +109,17 @@ sub run_whitebox_tests
     return;
 }
 
+# run blackbox tests (applicable across languages, can't use knowledge of implementation)
+sub run_blackbox_tests
+{
+    my %opts = @_;
+    my $lang = $opts{lang};
+    my $agg = $opts{agg};
+    my $orig_cwd = getcwd();
+    foreach my $dir (@{$config{$lang}{blackbox}{dirs}}) {
+    }
+}
+
 # process command-line
 my (@language, $whitebox, $blackbox, $all);
 GetOptions("language:s" => \@language, "whitebox|white|w" => \$whitebox, "blackbox|black|b" => \$blackbox,
@@ -126,18 +140,18 @@ if ($all) {
     @language = @supported_languages;
 }
 
-# whitebox tests within each language implementation's sources
+# whitebox and blackbox tests within each language implementation's sources
 {
     local $ENV{PREFVOTE_ROOT} = getcwd(); # unit tests must look for this and run relative to the project root
-    if ($whitebox) {
-        foreach my $lang (@language) {
+    foreach my $lang (@language) {
+        if ($whitebox) {
             run_whitebox_tests(lang => $lang, agg => $aggregate);
+        }
+        if ($blackbox) {
+            run_blackbox_tests(lang => $lang, agg => $aggregate);
         }
     }
 }
-
-# blackbox tests
-# TODO
 
 # print results
 printf "Total: %s\nPlanned: %s\nPassed: %s\nFailed: %s\n",
