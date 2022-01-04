@@ -19,7 +19,7 @@ use Carp qw(croak);
 # class definitions
 use Moo;
 use MooX::HandlesVia;
-use Type::Tiny;
+use MooX::TypeTiny;
 use Types::Standard qw(Str ArrayRef);
 use Types::Common::Numeric qw(PositiveInt);
 use Types::Common::String qw(NonEmptySimpleStr);

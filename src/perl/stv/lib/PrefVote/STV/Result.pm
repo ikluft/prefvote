@@ -20,7 +20,7 @@ use autodie;
 
 # class definitions
 use Moo;
-use Type::Tiny;
+use MooX::TypeTiny;
 use Types::Standard qw(Bool Str Enum ArrayRef);
 use Types::Common::String qw(NonEmptySimpleStr);
 use Types::Common::Numeric qw(PositiveOrZeroNum);

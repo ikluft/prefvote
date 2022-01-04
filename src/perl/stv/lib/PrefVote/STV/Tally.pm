@@ -20,7 +20,7 @@ use autodie;
 
 # class definitions
 use Moo;
-use Type::Tiny;
+use MooX::TypeTiny;
 use Types::Standard qw(Bool Int StrictNum Str ArrayRef);
 extends 'PrefVote';
 
