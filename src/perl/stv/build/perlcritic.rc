@@ -19,3 +19,6 @@ script_sections = NAME | USAGE | OPTIONS | EXIT STATUS | BUGS AND LIMITATIONS | 
 
 [Subroutines::ProhibitExcessComplexity]
 max_mccabe = 20
+
+[Subroutines::RequireFinalReturn]
+terminal_methods = throw
