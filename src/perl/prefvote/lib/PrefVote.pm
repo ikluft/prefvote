@@ -34,8 +34,8 @@ sub debug
 # wrapper for PrefVote::Debug's debug_print method
 sub debug_print
 {
-    my ($self, @args) = @_;
-    my $prefix = ref $self;
+    my ($self_or_class, @args) = @_;
+    my $prefix = (ref $self_or_class) ? ref $self_or_class : $self_or_class;
     return $debug_ref->debug_print({prefix => $prefix}, @args);
 }
 
