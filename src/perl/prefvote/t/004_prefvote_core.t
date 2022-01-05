@@ -33,7 +33,7 @@ Readonly::Scalar my $yaml_file => "test.yaml";
 Readonly::Scalar my $yaml_ballot_count => 50;
 Readonly::Scalar my $yaml_name => "Test Vote";
 Readonly::Scalar my $yaml_seats => 1;
-Readonly::Scalar my $yaml_extra => [{extra => "test data"}];
+Readonly::Scalar my $yaml_testspec => {extra => "test data"};
 
 # basic instantiation tests (29 tests)
 sub basic_tests
@@ -147,7 +147,8 @@ sub yaml_tests
     is($vote_obj->name(), $yaml_name, "attribute check: name");
     is($vote_obj->seats(), $yaml_seats, "attribute check: seats");
     is($vote_obj->total_ballots(), $yaml_ballot_count, "ballot total - YAML");
-    is_deeply($vote_obj->extra(), $yaml_extra, "extra YAML docs saved in extra attribute - YAML");
+    is_deeply($vote_obj->testspec(), PrefVote::Core::TestSpec->new(checklist => $yaml_testspec),
+        "extra YAML docs saved in extra attribute - YAML");
     return;
 }
 

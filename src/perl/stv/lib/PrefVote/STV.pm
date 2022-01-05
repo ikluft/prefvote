@@ -2,7 +2,7 @@
 # ABSTRACT: single-transferable vote counting module for PrefVote
 # Single Transferable Vote (STV) voting and counting module
 # derived from Vote::STV by Ian Kluft
-# Copyright (c) 1998-2021 by Ian Kluft
+# Copyright (c) 1998-2022 by Ian Kluft
 # Open Source license: Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
 
 # pragmas to silence some warnings from Perl::Critic
@@ -16,16 +16,24 @@ package PrefVote::STV;
 
 use autodie;
 use Carp qw(croak);
-use PrefVote::STV::Round;
-use PrefVote::STV::Tally;
 use YAML::XS;
 use Clone qw(clone);
 use Data::Dumper;
+use Readonly;
+use PrefVote::STV::Round;
+use PrefVote::STV::Tally;
+
+# constants
+Readonly::Hash my %blackbox_spec => (
+    winner => [qw(ordered unordered string)],
+    eliminated => [qw(ordered unordered string)],
+    rounds => [qw(ordered PrefVote::STV::Round)],
+);
 
 # class definitions
 use Moo;
+use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Type::Tiny;
 use Types::Standard qw(Str ArrayRef HashRef InstanceOf);
 extends 'PrefVote::Core';
 
@@ -380,73 +388,11 @@ sub result_yaml
 # perform STV-specific black-box tests from external file against this object's data
 #
 
-# generate test results from comparing winner/eliminated lists
-sub blackbox_we_list_cmp
+# list of blackbox tests by attribute
+# the presence of this method enables blackbox tests via PrefVote::Core::TestSpec
+sub blackbox_spec
 {
-    my ($path, $list, $value, $level) = @_;
-    my @tests;
-
-    # catch scalar value and return a single test for it
-    if ((not ref $list) or (not ref $value)) {
-        # short-circuit the search if the expected value is a scalar
-        return ({type => "is", expected => $list, value => $value, description => join("-", @$path)."=$list"});
-    }
-
-    # generate tests for list comparison
-    my $cl_count = scalar @$list;
-    my $value_count = scalar @$value;
-    my $count_cmp = $cl_count <=> $value_count;
-    push @tests, {type => "is", expected => $cl_count, value => $value_count,
-        description => join("-", @$path)." list length=$cl_count"};
-    if ($cl_count==1) {
-        # short-circuit the search if there's only one item in the list
-        return blackbox_we_list_cmp([@$path, 0], $list->[0], $value->[0], $level+1);
-    }
-    for (my $i=0; $i<$cl_count; $i++) {
-        if (ref $list->[$i] eq "ARRAY") {
-            push @tests, blackbox_we_list_cmp([@$path, $i], $list->[$i], $value->[$i], $level+1);
-            next;
-        }
-
-        # search for match: lists of scalars indicate ties so matches aren't necessarily at the same index
-        my $index;
-        if ($level == 0) {
-            # at result level, matches must be the same index
-            $index=$i;
-        } else {
-            # on sub-lists, lists indicate ties so matches don't necessarily have to be at the same index
-            for (my $pos=0; $pos<scalar @$value; $pos++) {
-                if ($value->[$pos] eq $list->[$i]) {
-                    $index = $pos;
-                    last;
-                }
-            }
-        }
-        my $description = join("-", @$path, $i)." matches ".$list->[$i];
-        __PACKAGE__->debug_print("list compare (index=".($index // "undef")."): $description from ".join(" ",@$list));
-        push @tests, blackbox_we_list_cmp([@$path, $i], $list->[$i], $value->[$index], $level+1);
-        #if (defined $index) {
-        #    push @tests, {type => "is", expected => $list->[$i], value => $value->[$index], description => $description};
-        #} else {
-        #    push @tests, {type => "is", expected => $list->[$i], value => undef, description => $description};
-        #}
-    }
-    return @tests;
-}
-
-# top-level tree traversal for blackbox tests
-sub blackbox_check
-{
-    my ($self, $checklist) = @_;
-    my @tests;
-    foreach my $key (sort keys %$checklist) {
-        if ($key eq "winners" or $key eq "eliminated" or $key eq "rounds") {
-            push @tests, blackbox_we_list_cmp( [$key], $checklist->{$key}, $self->{$key}, 0);
-        } else {
-            croak "unrecognized test key $key";
-        }
-    }
-    return @tests;
+    return \%blackbox_spec;
 }
 
 1;

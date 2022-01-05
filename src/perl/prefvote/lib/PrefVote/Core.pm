@@ -1,7 +1,7 @@
 # PrefVote::Core
 # ABSTRACT: core code for all PrefVote voting methods
 # derived from Vote::STV by Ian Kluft
-# Copyright (c) 1998-2021 by Ian Kluft
+# Copyright (c) 1998-2022 by Ian Kluft
 # Open Source license: Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
 
 # pragmas to silence some warnings from Perl::Critic
@@ -20,6 +20,7 @@ use Readonly;
 use PrefVote::Core::Ballot;
 use PrefVote::Core::Exception;              # pre-load in case exception is thrown
 use PrefVote::Core::InternalDataException;   # pre-load in case exception is thrown
+use PrefVote::Core::TestSpec;
 
 # supported voting methods - for constructing class names from vote definitions
 # use Core only for testing because the base class doesn't actually have voting-method code
@@ -29,8 +30,8 @@ Readonly::Array my @voting_methods => qw(Core STV Schulze);
 # class definitions
 #
 use Moo;
+use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Type::Tiny;
 use Types::Standard qw(Str Int ArrayRef HashRef Map InstanceOf Any);
 use Types::Common::Numeric qw(PositiveInt PositiveOrZeroInt);
 use Types::Common::String qw(NonEmptySimpleStr);
@@ -114,10 +115,15 @@ has total_ballots => (
     default => 0,
 );
 
-# misc additional info: storage for extra data from input file, used for testing
-has extra => (
+# blackbox testing checklist structure
+# this is filled from the extra data from YAML input file, used for testing all PrefVote language implementations
+has testspec => (
     is => 'ro',
-    isa => Any,
+    isa => InstanceOf["PrefVote::Core::TestSpec"],
+    handles => {
+        blackbox_check => 'check',
+    },
+    required => 0,
 );
 
 # utility for functions to select between class and object
@@ -305,9 +311,10 @@ sub yaml2vote
         croak "class $class in vote defintion is not a subclass of ".__PACKAGE__;
     }
     my $params = $yaml_vote_def->{params};
-    if ($extra_data) {
-        # stash extra YAML documents in "extra" for use in testing
-        $params->{extra} = $extra_data;
+    if (scalar @$extra_data) {
+        # use extra YAML documents as TestSpec for blackbox testing checklist
+        my $testspec = shift @$extra_data;
+        $params->{testspec} = PrefVote::Core::TestSpec->new(checklist => $testspec);
     }
     ## no critic (Subroutines::ProtectPrivateSubs)
     PrefVote::Core->_clear_instance(); # replace the singleton: toss out previous instance if it exists

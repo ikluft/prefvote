@@ -1,7 +1,7 @@
 # PrefVote::STV::Round
 # ABSTRACT: internal voting-round structure used by PrefVote::STV
 # derived from Vote::STV by Ian Kluft
-# Copyright (c) 1998-2021 by Ian Kluft
+# Copyright (c) 1998-2022 by Ian Kluft
 # Open Source license: Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
 
 # pragmas to silence some warnings from Perl::Critic
@@ -17,18 +17,29 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 package PrefVote::STV::Round;
 
 use autodie;
+use Readonly;
+use PrefVote::Core;
+use PrefVote::STV::Tally;
+use PrefVote::STV::Result;
 
 # class definitions
 use Moo;
+use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Type::Tiny;
 use Types::Standard qw(StrictNum ArrayRef HashRef InstanceOf Map);
 use Types::Common::Numeric qw(PositiveInt PositiveOrZeroNum);
 use Types::Common::String qw(NonEmptySimpleStr);
 extends 'PrefVote';
-use PrefVote::Core;
-use PrefVote::STV::Tally;
-use PrefVote::STV::Result;
+
+# constants
+Readonly::Hash my %blackbox_spec => (
+    number => [qw(int)],
+    votes_used => [qw(fp)],
+    candidates => [qw(unordered string)],
+    quota => [qw(fp)],
+    tally => [qw(hash PrefVote::STV::Tally)],
+    result => [qw(PrefVote::STV::Result)],
+);
 
 # round number (1=1st, etc)
 has number => (
@@ -217,6 +228,13 @@ sub set_result
     # instantiate and save result object
     $self->result(PrefVote::STV::Result->new(%opts));
     return;
+}
+
+# list of blackbox tests by attribute
+# the presence of this method enables blackbox tests via PrefVote::Core::TestSpec
+sub blackbox_spec
+{
+    return \%blackbox_spec;
 }
 
 ## no critic (Modules::ProhibitMultiplePackages)
