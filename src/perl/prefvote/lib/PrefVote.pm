@@ -17,7 +17,6 @@ use autodie;
 use Carp qw(croak);
 use Moo;
 use MooX::TypeTiny;
-use Types::Standard qw(InstanceOf);
 use PrefVote::Debug;
 use PrefVote::Exception;  # pre-load in case exception is thrown
 
