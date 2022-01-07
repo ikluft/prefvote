@@ -41,83 +41,89 @@ sub suffix
     return $class_suffix;
 }
 
-# command-line processing
-my ($debug, $test_mode, $yaml_format);
-GetOptions("debug" => \$debug, "test" => \$test_mode, "yaml" => \$yaml_format);
-if (not @ARGV) {
-    say STDERR "usage: $0 [--debug] [--test] yaml_file";
-    exit 0;
-}
-
-# count votes
-my $vote_obj = PrefVote::Core::yaml2vote($ARGV[0]);
-if ($debug) {
-    # set debugging in PrefVote hierarchy
-    $vote_obj->debug(1);
-
-    # turn on stack traces for unexpected errors
-    ## no critic (Variables::RequireLocalizedPunctuationVars)
-    $SIG{ __DIE__ } = sub {confess(@_)};
-}
-$vote_obj->count();
-if ($vote_obj->debug()) {
-    local $Data::Dumper::Sortkeys = 1;
-    say STDERR "returned vote object is a ".ref($vote_obj);
-    say STDERR Dumper($vote_obj);
-}
-
-# check for test, YAML or default modes
-if ($test_mode) {
-    # test mode - run black-box tests
-    my $testspec = $vote_obj->testspec();
-    $vote_obj->debug_print("testspec: ".Dumper($testspec // "undef"));
-
-    # collect tests from PrefVote subclass
-    if (defined $testspec) {
-        # 1st level in testspec is classes (by basename) to test against
-        # use only tests for the current voting-method class
-        my @tests;
-        my $class_suffix = suffix(ref $vote_obj);
-        my $checklist = $testspec->checklist();
-        foreach my $test_class (keys %$checklist) {
-            my $subclass_name = "PrefVote::$test_class";
-            $vote_obj->debug_print("checking $test_class tests: ".(ref $vote_obj)." vs $subclass_name");
-            if (ref $vote_obj eq $subclass_name) {
-                push @tests, $vote_obj->blackbox_check($checklist->{$test_class}, $vote_obj);
-            }
-        }
-
-        # feed the tests gathered from the subclass to Test::More
-        $vote_obj->debug_print("tests ".Dumper(\@tests));
-        require Test::More;
-        Test::More::plan(tests => scalar @tests);
-        foreach my $test (@tests) {
-            # process test case parameters as hashes
-            ## no critic (ControlStructures::ProhibitCascadingIfElse ControlStructures::ProhibitDeepNests)
-
-            if ($test->{type} eq "is") {
-                Test::More::is($test->{value}, $test->{expected}, $test->{description});
-            } elsif ($test->{type} eq "cmp_ok") {
-                Test::More::ok($test->{value}, $test->{op}, $test->{expected}, $test->{description});
-            } elsif ($test->{type} eq "ok") {
-                Test::More::ok($test->{value}, $test->{description});
-            } elsif ($test->{type} eq "pass") {
-                Test::More::pass($test->{description});
-            } elsif ($test->{type} eq "fail") {
-                Test::More::fail($test->{description});
-            }
-        }
+# mainline function for exception-catching
+sub main
+{
+    # command-line processing
+    my ($debug, $test_mode, $yaml_format);
+    GetOptions("debug" => \$debug, "test" => \$test_mode, "yaml" => \$yaml_format);
+    if (not @ARGV) {
+        say STDERR "usage: $0 [--debug] [--test] yaml_file";
+        exit 0;
     }
-} elsif ($yaml_format) {
-    # output YAML results
-    print YAML::XS::Dump($vote_obj->result_yaml());
-} else {
-    # print result
-    my $results = $vote_obj->results();
-    say "Winning order";
-    print_result_list($results->{winners});
-    say "Elimination order";
-    print_result_list($results->{eliminated});
+
+    # count votes
+    my $vote_obj = PrefVote::Core::yaml2vote($ARGV[0]);
+    if ($debug) {
+        # set debugging in PrefVote hierarchy
+        $vote_obj->debug(1);
+    }
+    $vote_obj->count();
+    if ($vote_obj->debug()) {
+        local $Data::Dumper::Sortkeys = 1;
+        say STDERR "returned vote object is a ".ref($vote_obj);
+        say STDERR Dumper($vote_obj);
+    }
+
+    # check for test, YAML or default modes
+    if ($test_mode) {
+        # test mode - run black-box tests
+        my $testspec = $vote_obj->testspec();
+        $vote_obj->debug_print("testspec: ".Dumper($testspec // "undef"));
+
+        # collect tests from PrefVote subclass
+        if (defined $testspec) {
+            # 1st level in testspec is classes (by basename) to test against
+            # use only tests for the current voting-method class
+            $vote_obj->debug_print("checking tests: ".(ref $vote_obj));
+            my @tests = $vote_obj->blackbox_check();
+
+            # feed the tests gathered from the subclass to Test::More
+            $vote_obj->debug_print("tests ".Dumper(\@tests));
+            require Test::More;
+            Test::More::plan(tests => scalar @tests);
+            foreach my $test (@tests) {
+                # process test case parameters as hashes
+                ## no critic (ControlStructures::ProhibitCascadingIfElse ControlStructures::ProhibitDeepNests)
+
+                if ($test->{type} eq "is") {
+                    Test::More::is($test->{value}, $test->{expected}, $test->{description});
+                } elsif ($test->{type} eq "cmp_ok") {
+                    Test::More::ok($test->{value}, $test->{op}, $test->{expected}, $test->{description});
+                } elsif ($test->{type} eq "ok") {
+                    Test::More::ok($test->{value}, $test->{description});
+                } elsif ($test->{type} eq "pass") {
+                    Test::More::pass($test->{description});
+                } elsif ($test->{type} eq "fail") {
+                    Test::More::fail($test->{description});
+                }
+            }
+        }
+    } elsif ($yaml_format) {
+        # output YAML results
+        print YAML::XS::Dump($vote_obj->result_yaml());
+    } else {
+        # print result
+        my $results = $vote_obj->results();
+        say "Winning order";
+        print_result_list($results->{winners});
+        say "Elimination order";
+        print_result_list($results->{eliminated});
+    }
+    return;
+}
+
+# mainline exception-catching wrapper
+if (not eval { main() }) {
+    my $e = $@;
+    if ($e->isa("PrefVote::Exception")) {
+        say "exception: ".$e->{description};
+        #say $e->stack_trace();
+        say Dumper($e);
+    } else {
+        confess $e;
+    }
+    exit 1;
 }
 
 __END__

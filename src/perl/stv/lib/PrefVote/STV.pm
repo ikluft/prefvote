@@ -34,7 +34,7 @@ Readonly::Hash my %blackbox_spec => (
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Standard qw(Str ArrayRef HashRef Ref);
+use Types::Standard qw(Str ArrayRef HashRef InstanceOf);
 extends 'PrefVote::Core';
 
 # list of names of winners in order by place, ties shown by an ArrayRef to the tied candidates
@@ -63,7 +63,7 @@ has eliminated => (
 # list of rounds of STV counting
 has rounds => (
     is => 'rw',
-    isa => ArrayRef[Ref["PrefVote::STV::Round"]],
+    isa => ArrayRef[InstanceOf["PrefVote::STV::Round"]],
     default => sub { return [] },
     handles_via => 'Array',
     handles => {

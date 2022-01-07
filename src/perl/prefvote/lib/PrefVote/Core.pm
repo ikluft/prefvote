@@ -120,9 +120,6 @@ has total_ballots => (
 has testspec => (
     is => 'ro',
     isa => InstanceOf["PrefVote::Core::TestSpec"],
-    handles => {
-        blackbox_check => 'check',
-    },
     required => 0,
 );
 
@@ -313,8 +310,11 @@ sub yaml2vote
     my $params = $yaml_vote_def->{params};
     if (scalar @$extra_data) {
         # use extra YAML documents as TestSpec for blackbox testing checklist
-        my $testspec = shift @$extra_data;
-        $params->{testspec} = PrefVote::Core::TestSpec->new(checklist => $testspec);
+        my $testdoc = shift @$extra_data;
+        if (ref $testdoc eq "HASH" and exists $testdoc->{$method}) {
+            my $testspec = $testdoc->{$method};
+            $params->{testspec} = PrefVote::Core::TestSpec->new(checklist => $testspec);
+        }
     }
     ## no critic (Subroutines::ProtectPrivateSubs)
     PrefVote::Core->_clear_instance(); # replace the singleton: toss out previous instance if it exists
@@ -338,6 +338,13 @@ sub yaml2vote
     $vote_obj->debug_print("votes: submitted=$submitted accepted=$accepted");
 
     return $vote_obj;
+}
+
+# perform blackbox tests from current voting-method object
+sub blackbox_check
+{
+    my $self = shift;
+    return $self->{testspec}->check($self);
 }
 
 1;

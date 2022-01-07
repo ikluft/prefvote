@@ -26,7 +26,7 @@ use PrefVote::STV::Result;
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Standard qw(StrictNum ArrayRef HashRef Ref Map);
+use Types::Standard qw(StrictNum ArrayRef HashRef InstanceOf Map);
 use Types::Common::Numeric qw(PositiveInt PositiveOrZeroNum);
 use Types::Common::String qw(NonEmptySimpleStr);
 extends 'PrefVote';
@@ -52,7 +52,7 @@ has number => (
 # If not set, it indicates the object is for the first round and therefore there is no previous round.
 has prev => (
     is => 'ro',
-    isa => Ref["PrefVote::STV::Round"],
+    isa => InstanceOf["PrefVote::STV::Round"],
 );
 
 # count of votes used/consumed in counting so far
@@ -88,7 +88,7 @@ has quota => (
 # candidate vote counts in the current round
 has tally => (
     is => 'rw',
-    isa => Map[NonEmptySimpleStr, Ref["PrefVote::STV::Tally"]],
+    isa => Map[NonEmptySimpleStr, InstanceOf["PrefVote::STV::Tally"]],
     default => sub { return {} },
     handles_via => 'Hash',
     handles => {
@@ -102,7 +102,7 @@ has tally => (
 # result of the current round lists either winners or eliminated candidates
 has result => (
     is => 'rw',
-    isa => Ref["PrefVote::STV::Result"],
+    isa => InstanceOf["PrefVote::STV::Result"],
     required => 0,
 );
 
