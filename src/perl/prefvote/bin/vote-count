@@ -60,7 +60,8 @@ sub main
     }
     $vote_obj->count();
     if ($vote_obj->debug()) {
-        local $Data::Dumper::Sortkeys = 1;
+        $Data::Dumper::Sortkeys = 1;
+        $Data::Dumper::Indent = 1;
         say STDERR "returned vote object is a ".ref($vote_obj);
         say STDERR Dumper($vote_obj);
     }
@@ -110,13 +111,13 @@ sub main
         say "Elimination order";
         print_result_list($results->{eliminated});
     }
-    return;
+    return 1;
 }
 
 # mainline exception-catching wrapper
 if (not eval { main() }) {
     my $e = $@;
-    if ($e->isa("PrefVote::Exception")) {
+    if (ref $e and $e->isa("PrefVote::Exception")) {
         say "exception: ".$e->{description};
         #say $e->stack_trace();
         say Dumper($e);

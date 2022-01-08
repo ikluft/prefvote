@@ -44,7 +44,7 @@ has name => (
 # checklist/plan item reference - this data comes from a test script such as in a YAML file
 has plan => (
     is => 'ro',
-    isa => Ref,
+    isa => Any,
     required => 1,
 );
 
@@ -70,13 +70,6 @@ has objpath => (
     },
 );
 
-# override value for comparison of unordered lists (otherwise it should not be set)
-has override => (
-    is => 'ro',
-    isa => Any,
-    required => 0,
-);
-
 # tree navigation references: parent node, child nodes
 # uses Maybe because it's undef for root node
 has parent => (
@@ -93,6 +86,7 @@ has child => (
     handles => {
         children => 'all',
         add_child => 'push',
+        search_child => 'first',
     },
 );
 
@@ -113,21 +107,26 @@ sub fp_equal {
     return ($x-$y > -$fp_epsilon and $x-$y < $fp_epsilon);
 }
 
+# get a child node by name/index
+sub child_by_name
+{
+    my ($self, $name) = @_;
+    return $self->search_child(sub{ $_->{name} eq $name });
+}
+
+
 # lookup value based on the node's position within an object
+# @extra_path is optional additional path components to look up values of child nodes
 sub value
 {
-    my $self = shift;
-
-    # if an override value exists (for comparison of unordered lists) then use it
-    if (exists $self->{override}) {
-        return $self->{override};
-    }
+    my ($self, @extra_path) = @_;
 
     # to start, the value is the object itself - then descend into it
     my $objpos = $self->objref();
 
     # traverse object spec from top level to find value
-    my @path = $self->objpath_all();
+    my @path = ($self->objpath_all(), @extra_path);
+    $self->debug_print("value path=".join("-", @path));
     while (scalar @path > 0) {
         my $key = shift @path;
         if (reftype $objpos eq "HASH") {
@@ -140,35 +139,52 @@ sub value
                 .(ref $self->objref())."-".$self->objpath_join("-"));
         }
     }
+    $self->debug_print("value result=".($objpos // "undef"));
     return $objpos;
 }
 
 # lookup test spec (data type) based on the node's position within an object
+# @extra_path is optional additional path components to look up types of child nodes
 sub spectype
 {
-    my $self = shift;
+    my ($self, @extra_path) = @_;
 
-    # to start, the type is the class itself - then descend into it
-    my $spectype = ref $self->objref();
-    my %spec = %{$self->objref()->blackbox_spec()};
-    my $objpos = $self->objref();
-    my $specindex = 0;
+    # if the path within the object is empty, the type is the class itself
+    if ($self->objpath_empty()) {
+        return ref $self->objref();
+    }
 
     # traverse object spec from top level to find spec type
-    my @path = $self->objpath_all();
+    # get object path
+    my @path = ($self->objpath_all(), @extra_path);
+    $self->debug_print("spectype path=".join("-", @path));
+    my %spec = %{$self->objref()->blackbox_spec()};
+    my $spectype = ref $self->objref();
+    my $specindex = 0;
+    #$self->debug_print("spectype spec=".Dumper(\%spec));
+
+    # special treatment for first item in path it's the attribute name used in hash lookup
+    my $attr = shift @path;
+    my $objpos = $self->objref()->{$attr};
+    $spectype = $spec{$attr}[$specindex++];
+
+    # descend in spec to find data type of current node
     while (scalar @path > 0) {
         my $key = shift @path;
-        if (reftype $objpos eq "HASH") {
+        my $objtype = ref $objpos;
+        $self->debug_print("spectype attr=$attr key=$key spectype=$spectype");
+        if ($objtype eq "HASH") {
             $objpos = $objpos->{$key};
-        } elsif (reftype $objpos eq "ARRAY") {
+        } elsif ($objtype eq "ARRAY") {
             $objpos = $objpos->[$key];
         } else {
-            PrefVote::Core::InternalDataException->throw(classname => __PACKAGE__, attribute => $key,
+            PrefVote::Core::InternalDataException->throw(classname => __PACKAGE__, attribute => $attr,
                 description => "spectype: attempt to descend into non-container at "
                 .$spectype."-".$self->objpath_join("-"));
         }
-        $spectype = $spec{$key}[$specindex++];
+        $spectype = $spec{$attr}[$specindex++];
     }
+    $self->debug_print("spectype result=".($spectype // "undef"));
     return $spectype;
 }
 
@@ -192,7 +208,7 @@ sub subnode
     my %params; # only pass expected params to new()
 
     # check for required options
-    __PACKAGE__->debug_print("subnode ".Dumper(\%opts));
+    $self->debug_print("subnode ".Dumper(\%opts));
     {
         my @missing;
         foreach my $param (qw(name plan objref objpath)) {
@@ -208,8 +224,21 @@ sub subnode
         }
     }
 
+    # intercept parameters which point to a new object with its own testspec structure
+    my $value = $self->value($opts{name});
+    my $value_type = ref $value;
+    if ($value_type =~ /^PrefVote/x) {
+        if ($value->can("blackbox_spec")) {
+            my $spectype = $self->spectype($opts{name});
+            if (defined $spectype and $spectype->isa("PrefVote") and $spectype->can("blackbox_spec")) {
+                return $self->subnode(name => $spectype, plan => $spectype->blackbox_spec(),
+                    objref => $value, objpath => []);
+            }
+        }
+    }
+
     # instantiate new node
-    my $subnode = __PACKAGE__->new(%params, parent => $self);
+    my $subnode = $self->new(%params, parent => $self);
 
     # save the sub-node under this node
     $self->add_child($subnode);
@@ -224,11 +253,11 @@ sub node_obj
     my $self = shift;
     my @tests;
 
-    __PACKAGE__->debug_print("node_obj(".(ref $self->objref())."-".$self->objpath_join("-").")");
+    $self->debug_print("node_obj(".(ref $self->objref())."-".$self->objpath_join("-").")");
     my $spec = $self->{objref}->blackbox_spec();
     foreach my $attr (keys %$spec) {
         if (exists $self->{plan}{$attr}) {
-            push @tests, $self->subnode(name => ref $self->{objref}, plan => $self->{plan}{$attr},
+            push @tests, $self->subnode(name => $attr, plan => $self->{plan}{$attr},
                 objref => $self->{objref}, objpath => [$attr]);
         }
     }
@@ -241,7 +270,7 @@ sub node_hash
     my $self = shift;
     my @tests;
 
-    __PACKAGE__->debug_print("node_hash(".join(" ", sort keys %{$self->{plan}}).")");
+    $self->debug_print("node_hash(".join(" ", sort keys %{$self->{plan}}).")");
     foreach my $key (sort keys %{$self->{plan}}) {
         push @tests, {type => "ok", value => (exists $self->value()->{$key}),
             description => join("-", $self->path(), $key)." exists"};
@@ -263,9 +292,17 @@ sub node_list
     my @tests;
 
     # generate tests for list comparison
-    __PACKAGE__->debug_print("node_list(".join(" ", @{$self->value()}).")");
+    my $value = $self->value();
+    if (reftype $value ne "ARRAY") {
+        # throw exception for incorrect data type (should be a list)
+        $self->debug_print("node_hash(".join(" ", sort keys %{$self->{plan}}).")");
+        PrefVote::Core::InternalDataException->throw(classname => __PACKAGE__, attribute => "value",
+            description => "node_list expected a list value (got ".((ref $value) ? ref $value : "scalar").") at "
+                .join("-", $self->path()));
+    }
+    $self->debug_print("node_list(".join(" ", @$value).")");
     my $cl_count = scalar @{$self->{plan}};
-    my $value_count = scalar @{$self->value()};
+    my $value_count = scalar @$value;
     my $count_cmp = $cl_count <=> $value_count;
     push @tests, {type => "is", expected => $cl_count, value => $value_count,
         description => join("-", $self->path())." list length=$cl_count"};
@@ -283,23 +320,33 @@ sub node_list
             next;
         }
 
-        # if it's an unordered list, look for the same value anywhere in the list and set node's override if found
+        # create description text for test
+        my $description = join("-", $self->path(), $i)." matches ".$self->{plan}[$i];
+        $self->debug_print("node_list compare): $description from ".join(" ",@{$self->{plan}}));
+
+        # if it's an unordered list, look for the same value anywhere in the list
         if ($self->spectype() eq "unordered") {
             # on sub-lists, lists indicate ties so matches don't necessarily have to be at the same index
-            for (my $pos=0; $pos<scalar @{$self->value()}; $pos++) {
-                if ($self->value()->[$pos] eq $self->{plan}[$i]) {
-                    $self->{override} = $self->value()->[$pos];
+            my $index;
+            for (my $pos=0; $pos<scalar @$value; $pos++) {
+                if ($value->[$pos] eq $self->{plan}[$i]) {
+                    $index = $pos;
                     last;
                 }
             }
+            if (defined $index) {
+                # list item comparison
+                push @tests, $self->subnode(name => $i, plan => $self->{plan}[$index], objref => $self->{objref},
+                    objpath => [$self->objpath_all(), $i]);
+            } else {
+                push @tests, {type => "fail", expected => $self->{plan}[$i], value => undef,
+                    description => $description};
+            }
+        } else {
+            # list item comparison
+            push @tests, $self->subnode(name => $i, plan => $self->{plan}[$i], objref => $self->{objref},
+                objpath => [$self->objpath_all(), $i]);
         }
-
-        # list item comparison
-        my $description = join("-", $self->path(), $i)." matches ".$self->{plan}[$i];
-        __PACKAGE__->debug_print("node_list compare): $description from "
-            .join(" ",@{$self->{plan}}));
-        push @tests, $self->subnode(name => $i, plan => $self->{plan}[$i], objref => $self->{objref},
-            objpath => [$self->objpath_all(), $i]);
     }
     return @tests;
 }
@@ -309,7 +356,7 @@ sub node_list
 sub check
 {
     my $self = shift;
-    $self->debug_print("check: ".Dumper($self));
+    #$self->debug_print("check: ".Dumper($self));
 
     # handle checklists for subclasses with their own blackbox test specs
     if ($self->objpath_empty()) {
@@ -317,8 +364,9 @@ sub check
     }
 
     # select specification entry for the current test
+    $self->debug_print("check(path=".join('-',$self->path()));
     my $spec = $self->spectype();
-    $self->debug_print("check(path=".join('-',$self->path())." -> ".$spec);
+    $self->debug_print("check(spec=".($spec // "undef"));
 
     # test a scalar value
     if ($spec eq "string") {
@@ -346,7 +394,7 @@ sub check
     if ($spec eq "ordered" or $spec eq "unordered") {
         return $self->node_list();
     }
- 
+
     # throw exception for unrecognized spec
     PrefVote::Core::InternalDataException->throw(classname => __PACKAGE__, attribute => "spec",
         description => "unrecognized test spec '$spec' for ".join("-", $self->path()));

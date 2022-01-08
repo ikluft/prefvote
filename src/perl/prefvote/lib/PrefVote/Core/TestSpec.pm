@@ -55,7 +55,6 @@ sub check
 
     # return list of tests collected from traversing the tree from the root node
     $self->debug_print("check(".(ref $value).")");
-    #return node(path => [], list => $checklist, value => $value, level => 0);
     my $root_node = PrefVote::Core::TestNode->new(name => ref $value, plan => $self->{checklist},
         objref => $value, objpath => [], parent => undef);
     $self->testroot($root_node); # save test tree for later inspection/troubleshooting if necessary

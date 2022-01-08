@@ -64,9 +64,90 @@ params:
 ---
 STV:
   winners:
-    - [ FACTIOUS ]
-    - [ ABNORMAL ]
+  - [ FACTIOUS ]
+  - [ ABNORMAL ]
   eliminated:
-    - [BORING, CHAOTIC]
-    - [ DYSFUNCTIONAL ]
-    - [ EVIL ]
+  - [BORING, CHAOTIC]
+  - [ DYSFUNCTIONAL ]
+  - [ EVIL ]
+  rounds:
+  - candidates:
+    - name: FACTIOUS
+      votes: 12
+    - name: EVIL
+      votes: 8
+    - name: DYSFUNCTIONAL
+      votes: 8
+    - name: ABNORMAL
+      votes: 8
+    - eliminated: 1
+      name: CHAOTIC
+      votes: 7
+    - eliminated: 1
+      name: BORING
+      votes: 7
+    eliminated:
+    - BORING
+    - CHAOTIC
+    quota: 25
+    round: 1
+    total_votes: 50
+  - candidates:
+    - name: FACTIOUS
+      votes: 17
+    - name: ABNORMAL
+      votes: 11
+    - name: EVIL
+      votes: 11
+    - eliminated: 1
+      name: DYSFUNCTIONAL
+      votes: 10
+    eliminated:
+    - DYSFUNCTIONAL
+    quota: 24.5
+    round: 2
+    total_votes: 49
+  - candidates:
+    - name: FACTIOUS
+      votes: 24
+    - name: ABNORMAL
+      votes: 13
+    - eliminated: 1
+      name: EVIL
+      votes: 12
+    eliminated:
+    - EVIL
+    quota: 24.5
+    round: 3
+    total_votes: 49
+  - candidates:
+    - name: FACTIOUS
+      place: 1
+      surplus: 7
+      transfer: 0
+      votes: 31
+      winner: 1
+    - name: ABNORMAL
+      votes: 17
+    quota: 24
+    round: 4
+    total_votes: 48
+    winner:
+    - FACTIOUS
+  - candidates:
+    - name: ABNORMAL
+      place: 2
+      surplus: 19.5
+      transfer: 0
+      votes: 39
+      winner: 1
+    quota: 19.5
+    round: 5
+    total_votes: 39
+    winner:
+    - ABNORMAL
+  - candidates: []
+    quota: 0
+    round: 6
+    total_votes: 0
+
