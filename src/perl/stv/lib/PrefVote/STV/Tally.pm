@@ -17,12 +17,24 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 package PrefVote::STV::Tally;
 
 use autodie;
+use Readonly;
 
 # class definitions
 use Moo;
 use MooX::TypeTiny;
 use Types::Standard qw(Bool Int StrictNum Str ArrayRef);
 extends 'PrefVote';
+
+# constants
+Readonly::Hash my %blackbox_spec => (
+    name => [qw(string)],
+    votes => [qw(fp)],
+    winner => [qw(bool)],
+    eliminated => [qw(bool)],
+    place => [qw(int)],
+    transfer => [qw(fp)],
+    surplus => [qw(fp)],
+);
 
 # candidate name (identifier string)
 has 'name' => (
@@ -93,6 +105,13 @@ sub mark_as_eliminated
     my $self = shift;
     $self->eliminated(1);
     return;
+}
+
+# list of blackbox tests by attribute
+# the presence of this method enables blackbox tests via PrefVote::Core::TestSpec
+sub blackbox_spec
+{
+    return \%blackbox_spec;
 }
 
 1;

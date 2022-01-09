@@ -17,6 +17,7 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 package PrefVote::STV::Result;
 
 use autodie;
+use Readonly;
 
 # class definitions
 use Moo;
@@ -25,6 +26,12 @@ use Types::Standard qw(Bool Str Enum ArrayRef);
 use Types::Common::String qw(NonEmptySimpleStr);
 use Types::Common::Numeric qw(PositiveOrZeroNum);
 extends 'PrefVote';
+
+# constants
+Readonly::Hash my %blackbox_spec => (
+    name => [qw(ordered string)],
+    type => [qw(string)],
+);
 
 has name => (
     is => 'ro',
@@ -37,6 +44,13 @@ has type => (
     isa => Enum[qw(winner eliminated)],
     required => 1,
 );
+
+# list of blackbox tests by attribute
+# the presence of this method enables blackbox tests via PrefVote::Core::TestSpec
+sub blackbox_spec
+{
+    return \%blackbox_spec;
+}
 
 1;
 

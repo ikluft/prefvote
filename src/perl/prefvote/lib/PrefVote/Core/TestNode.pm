@@ -368,19 +368,24 @@ sub check
     my $spec = $self->spectype();
     $self->debug_print("check(spec=".($spec // "undef"));
 
-    # test a scalar value
+    # short-circuit the search if the expected value is a scalar
     if ($spec eq "string") {
-        # short-circuit the search if the expected value is a scalar
+        # return a string comparison test
         return ({type => "is", expected => $self->{plan}, value => $self->value(),
             description => join("-", $self->path())."=".$self->{plan}." (str)"});
     }
+    if ($spec eq "bool" ) {
+        # return a simple boolean test
+        return ({type => "ok", value => $self->value(),
+            description => join("-", $self->path())." (bool)"});
+    }
     if ($spec eq "int" ) {
-        # short-circuit the search if the expected value is a scalar
+        # return integer comparison test
         return ({type => "cmp_ok", expected => $self->{plan}, op => "==", value => $self->value(),
             description => join("-", $self->path())."=".$self->{plan}." (int)"});
     }
     if ($spec eq "fp" ) {
-        # short-circuit the search if the expected value is a scalar
+        # return floating point comparison test - use fp_equal() since == operator doesn't work right for fp
         return ({type => "ok", value => fp_equal($self->value(), $self->{plan}),
             description => join("-", $self->path())."=".$self->{plan}." (fp)"});
     }
