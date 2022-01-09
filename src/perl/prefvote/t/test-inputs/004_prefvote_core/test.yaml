@@ -62,4 +62,5 @@ params:
 - [FACTIOUS, EVIL, ABNORMAL]
 - [BORING, FACTIOUS, CHAOTIC, EVIL, DYSFUNCTIONAL, ABNORMAL]
 ---
-extra: test data
+Core:
+  extra: test data

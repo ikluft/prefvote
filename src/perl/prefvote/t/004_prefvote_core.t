@@ -148,7 +148,7 @@ sub yaml_tests
     is($vote_obj->seats(), $yaml_seats, "attribute check: seats");
     is($vote_obj->total_ballots(), $yaml_ballot_count, "ballot total - YAML");
     is_deeply($vote_obj->testspec(), PrefVote::Core::TestSpec->new(checklist => $yaml_testspec),
-        "extra YAML docs saved in extra attribute - YAML");
+        "extra YAML docs saved in testspec attribute - YAML");
     return;
 }
 
