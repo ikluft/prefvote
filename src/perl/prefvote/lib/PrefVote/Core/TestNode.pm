@@ -114,18 +114,22 @@ sub child_by_name
     return $self->search_child(sub{ $_->{name} eq $name });
 }
 
+sub in_hierarchy
+{
+    my $str = shift;
+    return (($str =~ /^PrefVote/x) and ($str->isa("PrefVote")));
+}
 
 # lookup value based on the node's position within an object
-# @extra_path is optional additional path components to look up values of child nodes
 sub value
 {
-    my ($self, @extra_path) = @_;
+    my $self = shift;
 
     # to start, the value is the object itself - then descend into it
     my $objpos = $self->objref();
 
     # traverse object spec from top level to find value
-    my @path = ($self->objpath_all(), @extra_path);
+    my @path = $self->objpath_all();
     $self->debug_print("value path=".join("-", @path));
     while (scalar @path > 0) {
         my $key = shift @path;
@@ -144,19 +148,14 @@ sub value
 }
 
 # lookup test spec (data type) based on the node's position within an object
-# @extra_path is optional additional path components to look up types of child nodes
+# optional $lookahead parameter can query children of current node, since no other data links exist
 sub spectype
 {
-    my ($self, @extra_path) = @_;
-
-    # if the path within the object is empty, the type is the class itself
-    if ($self->objpath_empty()) {
-        return ref $self->objref();
-    }
+    my ($self, $lookahead) = @_;
 
     # traverse object spec from top level to find spec type
     # get object path
-    my @path = ($self->objpath_all(), @extra_path);
+    my @path = ($self->objpath_all(), (defined $lookahead ? ($lookahead) : ()));
     $self->debug_print("spectype path=".join("-", @path));
     my %spec = %{$self->objref()->blackbox_spec()};
     my $spectype = ref $self->objref();
@@ -225,15 +224,46 @@ sub subnode
     }
 
     # intercept parameters which point to a new object with its own testspec structure
-    my $value = $self->value($opts{name});
-    my $value_type = ref $value;
-    if ($value_type =~ /^PrefVote/x) {
-        if ($value->can("blackbox_spec")) {
-            my $spectype = $self->spectype($opts{name});
-            if (defined $spectype and $spectype->isa("PrefVote") and $spectype->can("blackbox_spec")) {
-                return $self->subnode(name => $spectype, plan => $spectype->blackbox_spec(),
-                    objref => $value, objpath => []);
+    my $value = $self->value();
+    if ((scalar @{$opts{objpath}} > 0) and not in_hierarchy($opts{name})
+        and (reftype $value eq "HASH" or reftype $value eq "ARRAY"))
+    {
+        # get the value of the child node
+        my $subvalue;
+        if (reftype $value eq "HASH") {
+            # check hash node's child node
+            if (not exists $value->{$opts{name}}) {
+                PrefVote::Core::InternalDataException->throw(classname => __PACKAGE__, attribute => "name",
+                    description => "hash node does not contain ".$value->{$opts{name}}." at "
+                        .join("-", $self->path()));
             }
+            $subvalue = $value->{$opts{name}};
+        } else {
+            # check array node's child node
+            if ($opts{name} !~ /^[0-9]+$/) {
+                PrefVote::Core::InternalDataException->throw(classname => __PACKAGE__, attribute => "name",
+                    description => "array node node index is not numeric ".$value->[$opts{name}]." at "
+                        .join("-", $self->path()));
+            }
+            if (not exists $value->[$opts{name}]) {
+                PrefVote::Core::InternalDataException->throw(classname => __PACKAGE__, attribute => "name",
+                    description => "array node does not contain ".$value->[$opts{name}]." at "
+                        .join("-", $self->path()));
+            }
+            $subvalue = $value->[$opts{name}];
+        }
+
+        # verify the type of the child node and if it's in PrefVote hierarchy, enter its test spec tree
+        my $subvalue_type = ref $subvalue;
+        if (in_hierarchy($subvalue_type)) {
+            my $lookahead_spec = $self->spectype($opts{name});
+            if ($subvalue_type ne $lookahead_spec) {
+                PrefVote::Core::InternalDataException->throw(classname => __PACKAGE__, attribute => "name",
+                    description => "node type mismatch $subvalue_type vs $lookahead_spec at "
+                        .join("-", $self->path(), $opts{name}));
+            }
+            return $self->subnode(name => $subvalue_type, plan => $opts{plan},
+                objref => $subvalue, objpath => []);
         }
     }
 
@@ -270,7 +300,7 @@ sub node_hash
     my $self = shift;
     my @tests;
 
-    $self->debug_print("node_hash(".join(" ", sort keys %{$self->{plan}}).")");
+    $self->debug_print("node_hash: plan=".Dumper($self->{plan}));
     foreach my $key (sort keys %{$self->{plan}}) {
         push @tests, {type => "ok", value => (exists $self->value()->{$key}),
             description => join("-", $self->path(), $key)." exists"};

@@ -27,7 +27,7 @@ extends 'PrefVote';
 
 # blackbox test checklist tree structure
 # This defines the tests to perform
-# loaded from YAML - must provide data expected by voting-method subclasses
+# loaded from YAML - includes tests to examine data structures of the currently-loaded voting-method subclass
 has checklist => (
     is => 'ro',
     isa => HashRef,
