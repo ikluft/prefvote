@@ -17,6 +17,8 @@ use autodie;
 use Carp qw(croak);
 use DateTime;
 use Readonly;
+use Scalar::Util 'reftype';
+use YAML::XS;
 use PrefVote::Core::Ballot;
 use PrefVote::Core::Exception;              # pre-load in case exception is thrown
 use PrefVote::Core::InternalDataException;   # pre-load in case exception is thrown

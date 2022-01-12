@@ -16,7 +16,6 @@ package PrefVote::STV;
 
 use autodie;
 use Carp qw(croak);
-use YAML::XS;
 use Clone qw(clone);
 use Data::Dumper;
 use Readonly;
@@ -155,7 +154,7 @@ sub run_tally
 
             $round->tally_exists($choice) or next;
             my $cand_tally = $round->tally_get($choice);
-            $self->debug_print("run_tally: candidate $choice tally: ".Dumper($cand_tally));
+            #$self->debug_print("run_tally: candidate $choice tally: ".Dumper($cand_tally));
 
             # Handle vote transfers - this is a key point
             # in the STV system.  Note that fractions are
@@ -323,7 +322,8 @@ sub results
     return {winners => $self->{winners}, eliminated => $self->{eliminated}};
 }
 
-# collect result in YAML
+# collect result structure
+# this is for conversion into YAML. But the conversion is not done here.
 sub result_yaml
 {
     my $self = shift;

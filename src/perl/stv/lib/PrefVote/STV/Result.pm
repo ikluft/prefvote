@@ -29,7 +29,7 @@ extends 'PrefVote';
 
 # constants
 Readonly::Hash my %blackbox_spec => (
-    name => [qw(ordered string)],
+    name => [qw(unordered string)],
     type => [qw(string)],
 );
 

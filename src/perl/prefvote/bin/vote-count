@@ -45,10 +45,10 @@ sub suffix
 sub main
 {
     # command-line processing
-    my ($debug, $test_mode, $yaml_format);
-    GetOptions("debug" => \$debug, "test" => \$test_mode, "yaml" => \$yaml_format);
+    my ($debug, $test_mode, $yaml_format, $rawyaml_format);
+    GetOptions("debug" => \$debug, "test" => \$test_mode, "yaml" => \$yaml_format, "rawyaml" => \$rawyaml_format);
     if (not @ARGV) {
-        say STDERR "usage: $0 [--debug] [--test] yaml_file";
+        say STDERR "usage: $0 [--debug] [--test] [--yaml|--rawyaml] yaml_file";
         exit 0;
     }
 
@@ -90,7 +90,7 @@ sub main
                 if ($test->{type} eq "is") {
                     Test::More::is($test->{value}, $test->{expected}, $test->{description});
                 } elsif ($test->{type} eq "cmp_ok") {
-                    Test::More::ok($test->{value}, $test->{op}, $test->{expected}, $test->{description});
+                    Test::More::cmp_ok($test->{value}, $test->{op}, $test->{expected}, $test->{description});
                 } elsif ($test->{type} eq "ok") {
                     Test::More::ok($test->{value}, $test->{description});
                 } elsif ($test->{type} eq "pass") {
@@ -103,6 +103,9 @@ sub main
     } elsif ($yaml_format) {
         # output YAML results
         print YAML::XS::Dump($vote_obj->result_yaml());
+    } elsif ($rawyaml_format) {
+        # output YAML results
+        print YAML::XS::Dump($vote_obj);
     } else {
         # print result
         my $results = $vote_obj->results();

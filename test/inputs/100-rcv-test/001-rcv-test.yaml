@@ -62,92 +62,669 @@ params:
 - [FACTIOUS, EVIL, ABNORMAL]
 - [BORING, FACTIOUS, CHAOTIC, EVIL, DYSFUNCTIONAL, ABNORMAL]
 ---
-STV:
-  winners:
-  - [ FACTIOUS ]
-  - [ ABNORMAL ]
+STV: !!perl/hash:PrefVote::STV
+  ballots:
+    '0': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '0'
+      items:
+      - ABNORMAL
+      quantity: 1
+    '01543': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '01543'
+      items:
+      - ABNORMAL
+      - BORING
+      - FACTIOUS
+      - EVIL
+      - DYSFUNCTIONAL
+      quantity: 1
+    '024135': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '024135'
+      items:
+      - ABNORMAL
+      - CHAOTIC
+      - EVIL
+      - BORING
+      - DYSFUNCTIONAL
+      - FACTIOUS
+      quantity: 1
+    '0254': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '0254'
+      items:
+      - ABNORMAL
+      - CHAOTIC
+      - FACTIOUS
+      - EVIL
+      quantity: 1
+    '034512': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '034512'
+      items:
+      - ABNORMAL
+      - DYSFUNCTIONAL
+      - EVIL
+      - FACTIOUS
+      - BORING
+      - CHAOTIC
+      quantity: 1
+    '035241': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '035241'
+      items:
+      - ABNORMAL
+      - DYSFUNCTIONAL
+      - FACTIOUS
+      - CHAOTIC
+      - EVIL
+      - BORING
+      quantity: 1
+    '04531': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '04531'
+      items:
+      - ABNORMAL
+      - EVIL
+      - FACTIOUS
+      - DYSFUNCTIONAL
+      - BORING
+      quantity: 1
+    '052': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '052'
+      items:
+      - ABNORMAL
+      - FACTIOUS
+      - CHAOTIC
+      quantity: 1
+    '1': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '1'
+      items:
+      - BORING
+      quantity: 1
+    '104352': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '104352'
+      items:
+      - BORING
+      - ABNORMAL
+      - EVIL
+      - DYSFUNCTIONAL
+      - FACTIOUS
+      - CHAOTIC
+      quantity: 1
+    '130245': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '130245'
+      items:
+      - BORING
+      - DYSFUNCTIONAL
+      - ABNORMAL
+      - CHAOTIC
+      - EVIL
+      - FACTIOUS
+      quantity: 1
+    '135420': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '135420'
+      items:
+      - BORING
+      - DYSFUNCTIONAL
+      - FACTIOUS
+      - EVIL
+      - CHAOTIC
+      - ABNORMAL
+      quantity: 1
+    '14502': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '14502'
+      items:
+      - BORING
+      - EVIL
+      - FACTIOUS
+      - ABNORMAL
+      - CHAOTIC
+      quantity: 1
+    '14520': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '14520'
+      items:
+      - BORING
+      - EVIL
+      - FACTIOUS
+      - CHAOTIC
+      - ABNORMAL
+      quantity: 1
+    '152430': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '152430'
+      items:
+      - BORING
+      - FACTIOUS
+      - CHAOTIC
+      - EVIL
+      - DYSFUNCTIONAL
+      - ABNORMAL
+      quantity: 1
+    '20153': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '20153'
+      items:
+      - CHAOTIC
+      - ABNORMAL
+      - BORING
+      - FACTIOUS
+      - DYSFUNCTIONAL
+      quantity: 1
+    '2051': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '2051'
+      items:
+      - CHAOTIC
+      - ABNORMAL
+      - FACTIOUS
+      - BORING
+      quantity: 1
+    '241503': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '241503'
+      items:
+      - CHAOTIC
+      - EVIL
+      - BORING
+      - FACTIOUS
+      - ABNORMAL
+      - DYSFUNCTIONAL
+      quantity: 1
+    '251034': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '251034'
+      items:
+      - CHAOTIC
+      - FACTIOUS
+      - BORING
+      - ABNORMAL
+      - DYSFUNCTIONAL
+      - EVIL
+      quantity: 1
+    '2531': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '2531'
+      items:
+      - CHAOTIC
+      - FACTIOUS
+      - DYSFUNCTIONAL
+      - BORING
+      quantity: 1
+    '2541': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '2541'
+      items:
+      - CHAOTIC
+      - FACTIOUS
+      - EVIL
+      - BORING
+      quantity: 1
+    '2543': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '2543'
+      items:
+      - CHAOTIC
+      - FACTIOUS
+      - EVIL
+      - DYSFUNCTIONAL
+      quantity: 1
+    '301542': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '301542'
+      items:
+      - DYSFUNCTIONAL
+      - ABNORMAL
+      - BORING
+      - FACTIOUS
+      - EVIL
+      - CHAOTIC
+      quantity: 1
+    '312540': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '312540'
+      items:
+      - DYSFUNCTIONAL
+      - BORING
+      - CHAOTIC
+      - FACTIOUS
+      - EVIL
+      - ABNORMAL
+      quantity: 1
+    '325': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '325'
+      items:
+      - DYSFUNCTIONAL
+      - CHAOTIC
+      - FACTIOUS
+      quantity: 1
+    '341025': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '341025'
+      items:
+      - DYSFUNCTIONAL
+      - EVIL
+      - BORING
+      - ABNORMAL
+      - CHAOTIC
+      - FACTIOUS
+      quantity: 1
+    '350241': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '350241'
+      items:
+      - DYSFUNCTIONAL
+      - FACTIOUS
+      - ABNORMAL
+      - CHAOTIC
+      - EVIL
+      - BORING
+      quantity: 1
+    '352014': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '352014'
+      items:
+      - DYSFUNCTIONAL
+      - FACTIOUS
+      - CHAOTIC
+      - ABNORMAL
+      - BORING
+      - EVIL
+      quantity: 1
+    '354': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '354'
+      items:
+      - DYSFUNCTIONAL
+      - FACTIOUS
+      - EVIL
+      quantity: 1
+    '354201': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '354201'
+      items:
+      - DYSFUNCTIONAL
+      - FACTIOUS
+      - EVIL
+      - CHAOTIC
+      - ABNORMAL
+      - BORING
+      quantity: 1
+    '4': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '4'
+      items:
+      - EVIL
+      quantity: 1
+    '40': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '40'
+      items:
+      - EVIL
+      - ABNORMAL
+      quantity: 1
+    '4103': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '4103'
+      items:
+      - EVIL
+      - BORING
+      - ABNORMAL
+      - DYSFUNCTIONAL
+      quantity: 1
+    '420531': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '420531'
+      items:
+      - EVIL
+      - CHAOTIC
+      - ABNORMAL
+      - FACTIOUS
+      - DYSFUNCTIONAL
+      - BORING
+      quantity: 1
+    '435': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '435'
+      items:
+      - EVIL
+      - DYSFUNCTIONAL
+      - FACTIOUS
+      quantity: 1
+    '4351': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '4351'
+      items:
+      - EVIL
+      - DYSFUNCTIONAL
+      - FACTIOUS
+      - BORING
+      quantity: 1
+    '45012': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '45012'
+      items:
+      - EVIL
+      - FACTIOUS
+      - ABNORMAL
+      - BORING
+      - CHAOTIC
+      quantity: 1
+    '45302': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '45302'
+      items:
+      - EVIL
+      - FACTIOUS
+      - DYSFUNCTIONAL
+      - ABNORMAL
+      - CHAOTIC
+      quantity: 1
+    '504132': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '504132'
+      items:
+      - FACTIOUS
+      - ABNORMAL
+      - EVIL
+      - BORING
+      - DYSFUNCTIONAL
+      - CHAOTIC
+      quantity: 1
+    '514023': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '514023'
+      items:
+      - FACTIOUS
+      - BORING
+      - EVIL
+      - ABNORMAL
+      - CHAOTIC
+      - DYSFUNCTIONAL
+      quantity: 1
+    '524130': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '524130'
+      items:
+      - FACTIOUS
+      - CHAOTIC
+      - EVIL
+      - BORING
+      - DYSFUNCTIONAL
+      - ABNORMAL
+      quantity: 1
+    '53': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '53'
+      items:
+      - FACTIOUS
+      - DYSFUNCTIONAL
+      quantity: 1
+    '53420': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '53420'
+      items:
+      - FACTIOUS
+      - DYSFUNCTIONAL
+      - EVIL
+      - CHAOTIC
+      - ABNORMAL
+      quantity: 1
+    '540': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '540'
+      items:
+      - FACTIOUS
+      - EVIL
+      - ABNORMAL
+      quantity: 1
+    '54120': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '54120'
+      items:
+      - FACTIOUS
+      - EVIL
+      - BORING
+      - CHAOTIC
+      - ABNORMAL
+      quantity: 2
+    '541320': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '541320'
+      items:
+      - FACTIOUS
+      - EVIL
+      - BORING
+      - DYSFUNCTIONAL
+      - CHAOTIC
+      - ABNORMAL
+      quantity: 1
+    '5420': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '5420'
+      items:
+      - FACTIOUS
+      - EVIL
+      - CHAOTIC
+      - ABNORMAL
+      quantity: 1
+    '54230': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '54230'
+      items:
+      - FACTIOUS
+      - EVIL
+      - CHAOTIC
+      - DYSFUNCTIONAL
+      - ABNORMAL
+      quantity: 1
+    '54231': !!perl/hash:PrefVote::Core::Ballot
+      hex_id: '54231'
+      items:
+      - FACTIOUS
+      - EVIL
+      - CHAOTIC
+      - DYSFUNCTIONAL
+      - BORING
+      quantity: 1
+  choice_to_index:
+    ABNORMAL: '0'
+    BORING: '1'
+    CHAOTIC: '2'
+    DYSFUNCTIONAL: '3'
+    EVIL: '4'
+    FACTIOUS: '5'
+  choices:
+    ABNORMAL: abnormal and antisocial
+    BORING: boring as anything
+    CHAOTIC: chaotic unpredictable
+    DYSFUNCTIONAL: dysfunctional incompetent
+    EVIL: evil villain
+    FACTIOUS: factious/divisive candidate
   eliminated:
-  - [BORING, CHAOTIC]
-  - [ DYSFUNCTIONAL ]
-  - [ EVIL ]
-  rounds:
-  - candidates:
-    - name: FACTIOUS
-      votes: 12
-    - name: EVIL
-      votes: 8
-    - name: DYSFUNCTIONAL
-      votes: 8
-    - name: ABNORMAL
-      votes: 8
-    - eliminated: 1
-      name: CHAOTIC
-      votes: 7
-    - eliminated: 1
-      name: BORING
-      votes: 7
-    eliminated:
-    - BORING
+  - - BORING
     - CHAOTIC
-    quota: 25
-    round: 1
-    total_votes: 50
-  - candidates:
-    - name: FACTIOUS
-      votes: 17
-    - name: ABNORMAL
-      votes: 11
-    - name: EVIL
-      votes: 11
-    - eliminated: 1
-      name: DYSFUNCTIONAL
-      votes: 10
-    eliminated:
-    - DYSFUNCTIONAL
-    quota: 24.5
-    round: 2
-    total_votes: 49
-  - candidates:
-    - name: FACTIOUS
-      votes: 24
-    - name: ABNORMAL
-      votes: 13
-    - eliminated: 1
-      name: EVIL
-      votes: 12
-    eliminated:
-    - EVIL
-    quota: 24.5
-    round: 3
-    total_votes: 49
-  - candidates:
-    - name: FACTIOUS
-      place: 1
-      surplus: 7
-      transfer: 0
-      votes: 31
-      winner: 1
-    - name: ABNORMAL
-      votes: 17
-    quota: 24
-    round: 4
-    total_votes: 48
-    winner:
+  - - DYSFUNCTIONAL
+  - - EVIL
+  index_to_choice:
+    '0': ABNORMAL
+    '1': BORING
+    '2': CHAOTIC
+    '3': DYSFUNCTIONAL
+    '4': EVIL
+    '5': FACTIOUS
+  name: Test Vote
+  rounds:
+  - &1 !!perl/hash:PrefVote::STV::Round
+    candidates:
     - FACTIOUS
-  - candidates:
-    - name: ABNORMAL
-      place: 2
-      surplus: 19.5
-      transfer: 0
-      votes: 39
-      winner: 1
-    quota: 19.5
-    round: 5
-    total_votes: 39
-    winner:
     - ABNORMAL
-  - candidates: []
+    - EVIL
+    - DYSFUNCTIONAL
+    - CHAOTIC
+    - BORING
+    number: 1
+    quota: 25
+    result: !!perl/hash:PrefVote::STV::Result
+      name:
+      - BORING
+      - CHAOTIC
+      type: eliminated
+    tally:
+      ABNORMAL: !!perl/hash:PrefVote::STV::Tally
+        eliminated: 0
+        name: ABNORMAL
+        place: 0
+        surplus: 0
+        transfer: 0
+        votes: 8
+        winner: 0
+      BORING: !!perl/hash:PrefVote::STV::Tally
+        eliminated: 1
+        name: BORING
+        place: 0
+        surplus: 0
+        transfer: 0
+        votes: 7
+        winner: 0
+      CHAOTIC: !!perl/hash:PrefVote::STV::Tally
+        eliminated: 1
+        name: CHAOTIC
+        place: 0
+        surplus: 0
+        transfer: 0
+        votes: 7
+        winner: 0
+      DYSFUNCTIONAL: !!perl/hash:PrefVote::STV::Tally
+        eliminated: 0
+        name: DYSFUNCTIONAL
+        place: 0
+        surplus: 0
+        transfer: 0
+        votes: 8
+        winner: 0
+      EVIL: !!perl/hash:PrefVote::STV::Tally
+        eliminated: 0
+        name: EVIL
+        place: 0
+        surplus: 0
+        transfer: 0
+        votes: 8
+        winner: 0
+      FACTIOUS: !!perl/hash:PrefVote::STV::Tally
+        eliminated: 0
+        name: FACTIOUS
+        place: 0
+        surplus: 0
+        transfer: 0
+        votes: 12
+        winner: 0
+    votes_used: 50
+  - &2 !!perl/hash:PrefVote::STV::Round
+    candidates:
+    - FACTIOUS
+    - ABNORMAL
+    - EVIL
+    - DYSFUNCTIONAL
+    number: 2
+    prev: *1
+    quota: 24.5
+    result: !!perl/hash:PrefVote::STV::Result
+      name:
+      - DYSFUNCTIONAL
+      type: eliminated
+    tally:
+      ABNORMAL: !!perl/hash:PrefVote::STV::Tally
+        eliminated: 0
+        name: ABNORMAL
+        place: 0
+        surplus: 0
+        transfer: 0
+        votes: 11
+        winner: 0
+      DYSFUNCTIONAL: !!perl/hash:PrefVote::STV::Tally
+        eliminated: 1
+        name: DYSFUNCTIONAL
+        place: 0
+        surplus: 0
+        transfer: 0
+        votes: 10
+        winner: 0
+      EVIL: !!perl/hash:PrefVote::STV::Tally
+        eliminated: 0
+        name: EVIL
+        place: 0
+        surplus: 0
+        transfer: 0
+        votes: 11
+        winner: 0
+      FACTIOUS: !!perl/hash:PrefVote::STV::Tally
+        eliminated: 0
+        name: FACTIOUS
+        place: 0
+        surplus: 0
+        transfer: 0
+        votes: 17
+        winner: 0
+    votes_used: 49
+  - &3 !!perl/hash:PrefVote::STV::Round
+    candidates:
+    - FACTIOUS
+    - ABNORMAL
+    - EVIL
+    number: 3
+    prev: *2
+    quota: 24.5
+    result: !!perl/hash:PrefVote::STV::Result
+      name:
+      - EVIL
+      type: eliminated
+    tally:
+      ABNORMAL: !!perl/hash:PrefVote::STV::Tally
+        eliminated: 0
+        name: ABNORMAL
+        place: 0
+        surplus: 0
+        transfer: 0
+        votes: 13
+        winner: 0
+      EVIL: !!perl/hash:PrefVote::STV::Tally
+        eliminated: 1
+        name: EVIL
+        place: 0
+        surplus: 0
+        transfer: 0
+        votes: 12
+        winner: 0
+      FACTIOUS: !!perl/hash:PrefVote::STV::Tally
+        eliminated: 0
+        name: FACTIOUS
+        place: 0
+        surplus: 0
+        transfer: 0
+        votes: 24
+        winner: 0
+    votes_used: 49
+  - &4 !!perl/hash:PrefVote::STV::Round
+    candidates:
+    - FACTIOUS
+    - ABNORMAL
+    number: 4
+    prev: *3
+    quota: 24
+    result: !!perl/hash:PrefVote::STV::Result
+      name:
+      - FACTIOUS
+      type: winner
+    tally:
+      ABNORMAL: !!perl/hash:PrefVote::STV::Tally
+        eliminated: 0
+        name: ABNORMAL
+        place: 0
+        surplus: 0
+        transfer: 0
+        votes: 17
+        winner: 0
+      FACTIOUS: !!perl/hash:PrefVote::STV::Tally
+        eliminated: 0
+        name: FACTIOUS
+        place: 1
+        surplus: 7
+        transfer: 0
+        votes: 31
+        winner: 1
+    votes_used: 48
+  - &5 !!perl/hash:PrefVote::STV::Round
+    candidates:
+    - ABNORMAL
+    number: 5
+    prev: *4
+    quota: 19.5
+    result: !!perl/hash:PrefVote::STV::Result
+      name:
+      - ABNORMAL
+      type: winner
+    tally:
+      ABNORMAL: !!perl/hash:PrefVote::STV::Tally
+        eliminated: 0
+        name: ABNORMAL
+        place: 2
+        surplus: 19.5
+        transfer: 0
+        votes: 39
+        winner: 1
+    votes_used: 39
+  - !!perl/hash:PrefVote::STV::Round
+    candidates: []
+    number: 6
+    prev: *5
     quota: 0
-    round: 6
-    total_votes: 0
-
+    tally: {}
+    votes_used: 0
+  seats: 1
+  total_ballots: 50
+  winners:
+  - - FACTIOUS
+  - - ABNORMAL
