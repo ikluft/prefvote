@@ -406,7 +406,7 @@ sub check
     }
     if ($spec eq "bool" ) {
         # return a simple boolean test
-        return ({type => "ok", value => $self->value(),
+        return ({type => "cmp_ok", expected => $self->{plan}, op => "==", value => $self->value(),
             description => join("-", $self->path())." (bool)"});
     }
     if ($spec eq "int" ) {
