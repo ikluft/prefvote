@@ -22,20 +22,21 @@ use Readonly;
 # class definitions
 use Moo;
 use MooX::TypeTiny;
-use Types::Standard qw(Bool Str Enum ArrayRef);
+use Types::Standard qw(Enum);
 use Types::Common::String qw(NonEmptySimpleStr);
 use Types::Common::Numeric qw(PositiveOrZeroNum);
+use PrefVote::Core::Types qw(Set);
 extends 'PrefVote';
 
 # constants
 Readonly::Hash my %blackbox_spec => (
-    name => [qw(unordered string)],
+    name => [qw(set string)],
     type => [qw(string)],
 );
 
 has name => (
     is => 'ro',
-    isa => ArrayRef[NonEmptySimpleStr],
+    isa => Set[NonEmptySimpleStr],
     required => 1,
 );
 

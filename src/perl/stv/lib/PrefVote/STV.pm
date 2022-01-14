@@ -24,9 +24,9 @@ use PrefVote::STV::Tally;
 
 # constants
 Readonly::Hash my %blackbox_spec => (
-    winner => [qw(ordered unordered string)],
-    eliminated => [qw(ordered unordered string)],
-    rounds => [qw(ordered PrefVote::STV::Round)],
+    winner => [qw(list set string)],
+    eliminated => [qw(list set string)],
+    rounds => [qw(list PrefVote::STV::Round)],
 );
 
 # class definitions
@@ -34,12 +34,13 @@ use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
 use Types::Standard qw(Str ArrayRef HashRef InstanceOf);
+use PrefVote::Core::Types qw(Set);
 extends 'PrefVote::Core';
 
 # list of names of winners in order by place, ties shown by an ArrayRef to the tied candidates
 has winners => (
     is => 'rw',
-    isa => ArrayRef[ArrayRef[Str]],
+    isa => ArrayRef[Set[Str]],
     default => sub { return [] },
     handles_via => 'Array',
     handles => {
@@ -51,7 +52,7 @@ has winners => (
 # list of names of eliminated candidates in order by occurrence, ties shown by an ArrayRef to the tied candidates
 has eliminated => (
     is => 'rw',
-    isa => ArrayRef[ArrayRef[Str]],
+    isa => ArrayRef[Set[Str]],
     default => sub { return [] },
     handles_via => 'Array',
     handles => {

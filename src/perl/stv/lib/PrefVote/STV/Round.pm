@@ -35,7 +35,7 @@ extends 'PrefVote';
 Readonly::Hash my %blackbox_spec => (
     number => [qw(int)],
     votes_used => [qw(fp)],
-    candidates => [qw(unordered string)],
+    candidates => [qw(list string)],
     quota => [qw(fp)],
     tally => [qw(hash PrefVote::STV::Tally)],
     result => [qw(PrefVote::STV::Result)],
