@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# 004_prefvote_core.t - tests for PrefVote::Core
+# 009_prefvote_core.t - tests for PrefVote::Core
 
 use Modern::Perl qw(2015); # require 5.20.0 or later
 use autodie;

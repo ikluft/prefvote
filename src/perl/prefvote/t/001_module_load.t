@@ -7,6 +7,7 @@ use Test::More;
 
 my @classes = qw(
         PrefVote
+        PrefVote::Core::Types
         PrefVote::Core::Ballot
         PrefVote::Core::Exception
         PrefVote::Core::InternalDataException
