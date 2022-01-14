@@ -21,7 +21,7 @@ use Type::Utils qw(assert);
 use Set::Tiny qw(set);
 
 # define Set type to use Set::Tiny under the umbrella of Type::Tiny & Type::Library
-my $set = __PACKAGE__->add_type(
+__PACKAGE__->add_type(
     Type::Tiny::Class->new(
         name => "Set",
         class => "Set::Tiny",
