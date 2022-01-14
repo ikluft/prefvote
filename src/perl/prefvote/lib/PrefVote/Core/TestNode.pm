@@ -23,7 +23,8 @@ use Scalar::Util 'reftype';
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Standard qw(Any Value Str Ref ScalarRef ArrayRef InstanceOf Maybe);
+use Set::Tiny;
+use Types::Standard qw(Any Value Str Ref ScalarRef ArrayRef InstanceOf Maybe is_Int);
 use Types::Common::Numeric qw(PositiveOrZeroInt);
 extends 'PrefVote';
 
@@ -170,11 +171,10 @@ sub spectype
     # descend in spec to find data type of current node
     while (scalar @path > 0) {
         my $key = shift @path;
-        my $objtype = ref $objpos;
         $self->debug_print("spectype attr=$attr key=$key spectype=$spectype");
-        if ($objtype eq "HASH") {
+        if (reftype $objpos eq "HASH") {
             $objpos = $objpos->{$key};
-        } elsif ($objtype eq "ARRAY") {
+        } elsif (reftype $objpos eq "ARRAY") {
             $objpos = $objpos->[$key];
         } else {
             PrefVote::Core::InternalDataException->throw(classname => __PACKAGE__, attribute => $attr,
@@ -240,14 +240,14 @@ sub subnode
             $subvalue = $value->{$opts{name}};
         } else {
             # check array node's child node
-            if ($opts{name} !~ /^[0-9]+$/) {
+            if (not is_Int $opts{name}) {
                 PrefVote::Core::InternalDataException->throw(classname => __PACKAGE__, attribute => "name",
                     description => "array node node index is not numeric ".$value->[$opts{name}]." at "
                         .join("-", $self->path()));
             }
             if (not exists $value->[$opts{name}]) {
                 PrefVote::Core::InternalDataException->throw(classname => __PACKAGE__, attribute => "name",
-                    description => "array node does not contain ".$value->[$opts{name}]." at "
+                    description => "array node does not contain ".$opts{name}." at "
                         .join("-", $self->path()));
             }
             $subvalue = $value->[$opts{name}];
@@ -344,7 +344,7 @@ sub node_list
     }
     for (my $i=0; $i<$cl_count; $i++) {
         # process sub-lists recursively
-        if (ref $self->{plan}[$i] eq "ARRAY") {
+        if (reftype $self->{plan}[$i] eq "ARRAY") {
             push @tests, $self->subnode(name => $i, plan => $self->{plan}[$i], objref => $self->{objref},
             objpath => [$self->objpath_all(), $i]);
             next;
@@ -354,28 +354,54 @@ sub node_list
         my $description = join("-", $self->path(), $i)." matches ".$self->{plan}[$i];
         $self->debug_print("node_list compare): $description from ".join(" ",@{$self->{plan}}));
 
-        # if it's an unordered list, look for the same value anywhere in the list
-        if ($self->spectype() eq "unordered") {
-            # on sub-lists, lists indicate ties so matches don't necessarily have to be at the same index
-            my $index;
-            for (my $pos=0; $pos<scalar @$value; $pos++) {
-                if ($value->[$pos] eq $self->{plan}[$i]) {
-                    $index = $pos;
-                    last;
-                }
-            }
-            if (defined $index) {
-                # list item comparison
-                push @tests, $self->subnode(name => $i, plan => $self->{plan}[$index], objref => $self->{objref},
-                    objpath => [$self->objpath_all(), $i]);
-            } else {
-                push @tests, {type => "fail", expected => $self->{plan}[$i], value => undef,
-                    description => $description};
-            }
+        # list item comparison
+        push @tests, $self->subnode(name => $i, plan => $self->{plan}[$i], objref => $self->{objref},
+            objpath => [$self->objpath_all(), $i]);
+    }
+    return @tests;
+}
+
+# process blackbox test spec for a set (unordered list)
+sub node_set
+{
+    my $self = shift;
+    my @tests;
+
+    # generate tests for set comparison
+    my $value = $self->value();
+    if (ref $value ne "Set::Tiny") {
+        # throw exception for incorrect data type (should be a set)
+        $self->debug_print("node_set(".join(" ", sort keys %{$self->{plan}}).")");
+        PrefVote::Core::InternalDataException->throw(classname => __PACKAGE__, attribute => "value",
+            description => "node_set expected a set value (got ".((ref $value) ? ref $value : "scalar").") at "
+                .join("-", $self->path()));
+    }
+    $self->debug_print("node_set(".join(" ", @$value).")");
+    my $cl_count = scalar @{$self->{plan}};
+    my $value_count = $value->size();
+    my $count_cmp = $cl_count <=> $value_count;
+    push @tests, {type => "is", expected => $cl_count, value => $value_count,
+        description => join("-", $self->path())." set length=$cl_count"};
+    if ($cl_count==1) {
+        # short-circuit the search if there's only one item in the set
+        push @tests, $self->subnode(name => 0, plan => $self->{plan}[0], objref => $self->{objref},
+            objpath => [$self->objpath_all(), 0]);
+        return @tests;
+    }
+    for (my $i=0; $i<$cl_count; $i++) {
+        # create description text for test
+        my $item = $self->{plan}[$i];
+        my $description = join("-", $self->path(), $item)." matches $item";
+        $self->debug_print("node_set compare): $description from ".join(" ",@{$self->{plan}}));
+
+        # return tests depending on whether the item was found
+        if ($value->contains($item)) {
+            # set item comparison
+            push @tests, $self->subnode(name => $item, plan => $self->{plan}[$i], objref => $self->{objref},
+                objpath => [$self->objpath_all(), $item]);
         } else {
-            # list item comparison
-            push @tests, $self->subnode(name => $i, plan => $self->{plan}[$i], objref => $self->{objref},
-                objpath => [$self->objpath_all(), $i]);
+            # if it isn't found in the set, there's no value to point at for comparison so just fail it
+            push @tests, {type => "fail", expected => $item, value => undef, description => $description};
         }
     }
     return @tests;
@@ -386,9 +412,9 @@ sub node_list
 sub check
 {
     my $self = shift;
-    #$self->debug_print("check: ".Dumper($self));
 
     # handle checklists for subclasses with their own blackbox test specs
+    # this catches when the current node has already descended into the root of an object
     if ($self->objpath_empty()) {
         return $self->node_obj();
     }
@@ -425,12 +451,18 @@ sub check
         return $self->node_hash();
     }
 
-    # generate tests for ordered or unordered lists
-    if ($spec eq "ordered" or $spec eq "unordered") {
+    # generate tests for ordered lists
+    if ($spec eq "list") {
         return $self->node_list();
     }
 
+    # generate tests for sets (unordered lists)
+    if ($spec eq "set") {
+        return $self->node_set();
+    }
+
     # throw exception for unrecognized spec
+    $self->debug_print("check (exception): self=".Dumper($self));
     PrefVote::Core::InternalDataException->throw(classname => __PACKAGE__, attribute => "spec",
         description => "unrecognized test spec '$spec' for ".join("-", $self->path()));
 }
