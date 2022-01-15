@@ -18,6 +18,7 @@ package PrefVote::STV::Round;
 
 use autodie;
 use Readonly;
+use Set::Tiny qw(set);
 use PrefVote::Core;
 use PrefVote::STV::Tally;
 use PrefVote::STV::Result;
@@ -226,7 +227,7 @@ sub set_result
     }
 
     # instantiate and save result object
-    $self->result(PrefVote::STV::Result->new(%opts));
+    $self->result(PrefVote::STV::Result->new(type => $opts{type}, name => set(@{$opts{name}})));
     return;
 }
 

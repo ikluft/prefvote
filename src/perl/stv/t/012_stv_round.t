@@ -87,7 +87,7 @@ foreach my $test (@set_result_tests) {
             (exists $test->{type} ? (type => $test->{type}) : ()))},
             $test->{description}." - no exception");
         is($round_ref->{result}{type}, $test->{type}, $test->{description}." - type");
-        is_deeply($round_ref->{result}{name}, $test->{name}, $test->{description}." - name");
+        ok($round_ref->{result}{name}->contains(@{$test->{name}}), $test->{description}." - name");
         isa_ok($round_ref->{prev}, "PrefVote::STV::Round", "prev points to a round");
         is($round_ref->{prev}, $stv_round_ref2, "prev points to the round that was given to it");
     }

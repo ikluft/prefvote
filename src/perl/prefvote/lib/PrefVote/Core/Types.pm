@@ -13,42 +13,73 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 package PrefVote::Core::Types;
 
 use autodie;
+use Data::Dumper;
+use Scalar::Util qw(reftype);
 use Type::Library -base, -declare => qw(Set);
 use Types::Standard qw(Undef Value ArrayRef assert_Value);
 use Types::TypeTiny ();
 use Type::Tiny::Class;
 use Type::Utils qw(assert);
+use Type::Coercion ();
 use Set::Tiny qw(set);
 
 # define Set type to use Set::Tiny under the umbrella of Type::Tiny & Type::Library
-__PACKAGE__->add_type(
-    Type::Tiny::Class->new(
-        name => "Set",
-        class => "Set::Tiny",
+my $set_type = Type::Tiny::Class->new(
+    name => "Set",
+    class => "Set::Tiny",
 
-        constraint_generator => sub {
-            my $param = shift;
-            if (not defined $param) {
-                return Set;
-            }
-            Types::TypeTiny::assert_TypeTiny($param);
-            return sub {
-                return 0 unless ref $_;
-                return 0 unless $_->isa(Set);
-                foreach my $value ($_->elements()) {
-                    $param->check($value) or return 0;
-                };
-                return 1;
+    constraint_generator => sub {
+        my $param = shift;
+        if (not defined $param) {
+            ## no critic (Variables::ProhibitPackageVars)
+            return $Type::Tiny::parameterize_type;
+        }
+        Types::TypeTiny::assert_TypeTiny($param);
+        return sub {
+            return unless ref $_;
+            return unless $_->isa("Set::Tiny");
+            foreach my $value ($_->elements()) {
+                $param->check($value) or return;
             };
-        },
+            return !!1;
+        };
+    },
 
-        type_coercion_map => [
-            Undef, q{ set() },
-            Value, q{ set($_) },
-            ArrayRef, q{ set(@$_) },
-        ],
-    )
+    coercion_generator => sub {
+        my ( $parent, $child, $param ) = @_;
+        Types::TypeTiny::assert_TypeTiny($parent);
+        Types::TypeTiny::assert_TypeTiny($child);
+        Types::TypeTiny::assert_TypeTiny($param);
+        if (not $param->has_coercion) {
+            return;
+        }
+
+        my $coercion = Type::Coercion->new(type_constraint => $child);
+        $coercion->add_type_coercions(
+            $parent => sub {
+                my $value = @_ ? $_[0] : $_;
+
+                my $new_set = set();
+                if (reftype $value eq "ARRAY") {
+                    for my $item ( @$value ) {
+                        $new_set->insert($param->coerce($item));
+                    }
+                } else {
+                    $new_set->insert($param->coerce($value));
+                }
+                return $new_set;
+            },
+        );
+        return $coercion;
+    },
 );
+$set_type->coercion->add_type_coercions(
+    Undef, sub { return set() },
+    Value, sub { return set($_) },
+    ArrayRef, sub { return set(@$_) },
+);
+
+__PACKAGE__->add_type($set_type);
 
 # make the package immutable so Type::Tiny knows it won't be changed further
 __PACKAGE__->make_immutable;
