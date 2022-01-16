@@ -134,7 +134,9 @@ sub value
     $self->debug_print("value path=".join("-", @path));
     while (scalar @path > 0) {
         my $key = shift @path;
-        if (reftype $objpos eq "HASH") {
+        if (ref $objpos eq "Set::Tiny") {
+            $objpos = $objpos->member($key);
+        } elsif (reftype $objpos eq "HASH") {
             $objpos = $objpos->{$key};
         } elsif (reftype $objpos eq "ARRAY") {
             $objpos = $objpos->[$key];
@@ -172,7 +174,9 @@ sub spectype
     while (scalar @path > 0) {
         my $key = shift @path;
         $self->debug_print("spectype attr=$attr key=$key spectype=$spectype");
-        if (reftype $objpos eq "HASH") {
+        if (ref $objpos eq "Set::Tiny") {
+            $objpos = $objpos->member($key);
+        } elsif (reftype $objpos eq "HASH") {
             $objpos = $objpos->{$key};
         } elsif (reftype $objpos eq "ARRAY") {
             $objpos = $objpos->[$key];
@@ -225,16 +229,21 @@ sub subnode
 
     # intercept parameters which point to a new object with its own testspec structure
     my $value = $self->value();
-    if ((scalar @{$opts{objpath}} > 0) and not in_hierarchy($opts{name})
-        and (reftype $value eq "HASH" or reftype $value eq "ARRAY"))
-    {
+    if ((scalar @{$opts{objpath}} > 0) and ref $value and not in_hierarchy($opts{name})) {
         # get the value of the child node
         my $subvalue;
-        if (reftype $value eq "HASH") {
+        if (ref $value eq "Set::Tiny") {
+            if (not $value->contains($opts{name})) {
+                PrefVote::Core::InternalDataException->throw(classname => __PACKAGE__, attribute => "name",
+                    description => "set node does not contain ".$opts{name}." at "
+                        .join("-", $self->path()));
+            }
+            $subvalue = $value->element($opts{name});
+        } elsif (reftype $value eq "HASH") {
             # check hash node's child node
             if (not exists $value->{$opts{name}}) {
                 PrefVote::Core::InternalDataException->throw(classname => __PACKAGE__, attribute => "name",
-                    description => "hash node does not contain ".$value->{$opts{name}}." at "
+                    description => "hash node does not contain ".$opts{name}." at "
                         .join("-", $self->path()));
             }
             $subvalue = $value->{$opts{name}};
@@ -371,23 +380,17 @@ sub node_set
     my $value = $self->value();
     if (ref $value ne "Set::Tiny") {
         # throw exception for incorrect data type (should be a set)
-        $self->debug_print("node_set(".join(" ", sort keys %{$self->{plan}}).")");
+        $self->debug_print("node_set plan: ".Dumper($self->{plan}));
         PrefVote::Core::InternalDataException->throw(classname => __PACKAGE__, attribute => "value",
             description => "node_set expected a set value (got ".((ref $value) ? ref $value : "scalar").") at "
                 .join("-", $self->path()));
     }
-    $self->debug_print("node_set(".join(" ", @$value).")");
+    $self->debug_print("node_set(".join(" ", $value->elements()).")");
     my $cl_count = scalar @{$self->{plan}};
     my $value_count = $value->size();
     my $count_cmp = $cl_count <=> $value_count;
     push @tests, {type => "is", expected => $cl_count, value => $value_count,
         description => join("-", $self->path())." set length=$cl_count"};
-    if ($cl_count==1) {
-        # short-circuit the search if there's only one item in the set
-        push @tests, $self->subnode(name => 0, plan => $self->{plan}[0], objref => $self->{objref},
-            objpath => [$self->objpath_all(), 0]);
-        return @tests;
-    }
     for (my $i=0; $i<$cl_count; $i++) {
         # create description text for test
         my $item = $self->{plan}[$i];

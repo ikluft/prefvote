@@ -19,6 +19,7 @@ use Carp qw(croak);
 use Clone qw(clone);
 use Data::Dumper;
 use Readonly;
+use Set::Tiny qw(set);
 use PrefVote::STV::Round;
 use PrefVote::STV::Tally;
 
@@ -110,7 +111,7 @@ sub current_round
 sub add_winner
 {
     my ($self, @win_list) = @_;
-    $self->winners_push(\@win_list);
+    $self->winners_push(set(@win_list));
     my $round = $self->current_round();
     $round->set_result(
         name => clone(\@win_list),
@@ -123,7 +124,7 @@ sub add_winner
 sub add_eliminated
 {
     my ($self, @elim_list) = @_;
-    $self->eliminated_push(\@elim_list);
+    $self->eliminated_push(set(@elim_list));
     my $round = $self->current_round();
     $round->set_result(
         name => clone(\@elim_list),
