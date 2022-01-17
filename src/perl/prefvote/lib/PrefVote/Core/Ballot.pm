@@ -15,6 +15,7 @@ package PrefVote::Core::Ballot;
 
 use autodie;
 use Carp qw(croak);
+use Readonly;
 
 # class definitions
 use Moo;
@@ -28,6 +29,13 @@ extends 'PrefVote';
 # set of valid ballot choices submitted by PrefVote::Core
 # separate copy here avoids dependency loop and helps testing the module alone
 my %choices;
+
+# blackbox testing structure
+Readonly::Hash my %blackbox_spec => (
+    items => [qw(list string)],
+    quantity => [qw(int)],
+    hex_id => [qw(string)],
+);
 
 # per-ballot array of vote items
 has items => (
@@ -102,6 +110,13 @@ sub as_string
 {
     my $self = shift;
     return $self->items_join(" ");
+}
+
+# list of blackbox tests by attribute
+# the presence of this method enables blackbox tests via PrefVote::Core::TestSpec
+sub blackbox_spec
+{
+    return \%blackbox_spec;
 }
 
 1;

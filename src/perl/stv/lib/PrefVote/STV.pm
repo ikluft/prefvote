@@ -23,13 +23,6 @@ use Set::Tiny qw(set);
 use PrefVote::STV::Round;
 use PrefVote::STV::Tally;
 
-# constants
-Readonly::Hash my %blackbox_spec => (
-    winner => [qw(list set string)],
-    eliminated => [qw(list set string)],
-    rounds => [qw(list PrefVote::STV::Round)],
-);
-
 # class definitions
 use Moo;
 use MooX::TypeTiny;
@@ -37,6 +30,22 @@ use MooX::HandlesVia;
 use Types::Standard qw(Str ArrayRef HashRef InstanceOf);
 use PrefVote::Core::Types qw(Set);
 extends 'PrefVote::Core';
+
+# blackbox testing structure
+Readonly::Hash my %blackbox_spec => (
+    # TODO eliminate temporary duplication from PrefVote::Core until PrefVote::Core::TestSpec adds registry for this
+    name => [qw(string)],
+    choice_to_index => [qw(hash string)],
+    index_to_choice => [qw(hash string)],
+    choices => [qw(hash string)],
+    seats => [qw(int)],
+    ballots => [qw(hash PrefVote::Core::Ballot)],
+    total_ballots => [qw(int)],
+
+    winner => [qw(list set string)],
+    eliminated => [qw(list set string)],
+    rounds => [qw(list PrefVote::STV::Round)],
+);
 
 # list of names of winners in order by place, ties shown by an ArrayRef to the tied candidates
 has winners => (
@@ -322,68 +331,6 @@ sub results
 {
     my $self = shift;
     return {winners => $self->{winners}, eliminated => $self->{eliminated}};
-}
-
-# collect result structure
-# this is for conversion into YAML. But the conversion is not done here.
-sub result_yaml
-{
-    my $self = shift;
-
-    # copy relevant round/result records into YAML result structure
-    my $result_out = {
-        winners => $self->winners(),
-        eliminated => $self->eliminated(),
-        rounds => [],
-    };
-    for (my $round_index=0; $round_index < $self->rounds_count(); $round_index++) {
-        my $round_ref = $self->rounds_get($round_index);
-        my $round_yaml = {
-            round => $round_index+1,
-            total_votes => $round_ref->votes_used(),
-            quota => $round_ref->quota(),
-            candidates => [],
-        };
-
-        # if the round had a result (win or elimination) then record it
-        if (exists $round_ref->{result}) {
-            my $result_ref = $round_ref->{result};
-            my $type = $result_ref->type();
-            if ($type eq "winner") {
-                $round_yaml->{winner} = $result_ref->name();
-            } elsif ($type eq "eliminated") {
-                $round_yaml->{eliminated} = $result_ref->name();
-            } else {
-                # unrecognized type should not happen unless enum is changed in PrefVote::STV::Result
-                PrefVote::Core::InternalDataException->throw(
-                    classname => __PACKAGE__,
-                    attribute => 'type',
-                    description => "unrecognized result type $type",
-                );
-            }
-        }
-
-        # list candidate tallies for the round in order of descending result
-        foreach my $cand_name ($round_ref->candidates_all()) {
-            my $tally_ref = $round_ref->tally_get($cand_name);
-            my $tally_yaml = {
-                name => $cand_name,
-                votes => $tally_ref->{votes},
-            };
-            if ($tally_ref->winner()) {
-                $tally_yaml->{winner} = 1;
-                $tally_yaml->{place} = $tally_ref->{place};
-                $tally_yaml->{surplus} = $tally_ref->{surplus};
-                $tally_yaml->{transfer} = $tally_ref->{transfer};
-            } elsif ($tally_ref->eliminated()) {
-                $tally_yaml->{eliminated} = 1;
-            }
-            push @{$round_yaml->{candidates}}, $tally_yaml;
-        }
-        push @{$result_out->{rounds}}, $round_yaml;
-    }
-
-    return $result_out;
 }
 
 #

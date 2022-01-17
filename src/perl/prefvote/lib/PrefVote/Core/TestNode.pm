@@ -353,7 +353,7 @@ sub node_list
     }
     for (my $i=0; $i<$cl_count; $i++) {
         # process sub-lists recursively
-        if (reftype $self->{plan}[$i] eq "ARRAY") {
+        if (ref $self->{plan}[$i]) {
             push @tests, $self->subnode(name => $i, plan => $self->{plan}[$i], objref => $self->{objref},
             objpath => [$self->objpath_all(), $i]);
             next;
@@ -390,7 +390,7 @@ sub node_set
     my $value_count = $value->size();
     my $count_cmp = $cl_count <=> $value_count;
     push @tests, {type => "is", expected => $cl_count, value => $value_count,
-        description => join("-", $self->path())." set length=$cl_count"};
+        description => join("-", $self->path())." set size=$cl_count"};
     for (my $i=0; $i<$cl_count; $i++) {
         # create description text for test
         my $item = $self->{plan}[$i];

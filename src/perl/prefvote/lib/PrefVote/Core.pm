@@ -40,6 +40,17 @@ use Types::Common::String qw(NonEmptySimpleStr);
 extends 'PrefVote';
 with 'MooX::Singleton';
 
+# blackbox testing structure
+Readonly::Hash my %blackbox_spec => (
+    name => [qw(string)],
+    choice_to_index => [qw(hash string)],
+    index_to_choice => [qw(hash string)],
+    choices => [qw(hash string)],
+    seats => [qw(int)],
+    ballots => [qw(hash PrefVote::Core::Ballot)],
+    total_ballots => [qw(int)],
+);
+
 # name of poll/vote
 has name => (
     is => 'ro',
@@ -72,7 +83,7 @@ has index_to_choice => (
 # strings identifying poll/vote choices
 has choices => (
     is => 'ro',
-    isa => HashRef,
+    isa => HashRef[NonEmptySimpleStr],
     requred => 1,
     trigger => sub {
         my $self = shift;
@@ -340,6 +351,68 @@ sub yaml2vote
     $vote_obj->debug_print("votes: submitted=$submitted accepted=$accepted");
 
     return $vote_obj;
+}
+
+# collect detailed result nodes recursively for generation of YAML tests
+sub result_node
+{
+    my $node = shift;
+
+    # return scalar value directly
+    if (not ref $node) {
+        return $node;
+    }
+
+    # roll up Set::Tiny into an array of its elements
+    if (ref $node eq "Set::Tiny") {
+        return [$node->elements()];
+    }
+
+    # recursively collect array contents
+    if (reftype $node eq "ARRAY") {
+        my $result = [];
+        foreach my $entry (@$node) {
+            push @$result, result_node($entry);
+        }
+        return $result;
+    }
+
+    # recursively collect hash contents
+    if (reftype $node eq "HASH") {
+        my $result = {};
+        foreach my $key (keys %$node) {
+            next if $key eq "prev"; # omit all prev links since we know they're duplication
+            $result->{$key} = result_node($node->{$key});
+        }
+        return $result;
+    }
+
+    # We got something else? Instead of throwing an exception, return it raw. YAML will tag whatever it is.
+    return $node;
+}
+
+# collect result structure
+# this is for conversion into YAML. But the conversion is not done here.
+sub result_yaml
+{
+    my $self = shift;
+
+    # copy relevant round/result records into YAML result structure
+    my $result_out = {};
+    foreach my $key (keys %$self) {
+        next if $key eq "testspec"; # omit any current testspec since we use this to build a future testspec
+        $result_out->{$key} = result_node($self->{$key});
+    }
+    $result_out->{timestamp} = localtime;
+    return $result_out;
+}
+
+# list of blackbox tests by attribute
+# the presence of this method enables blackbox tests via PrefVote::Core::TestSpec
+# Each class should override it to return their own %blackbox_spec
+sub blackbox_spec
+{
+    return \%blackbox_spec;
 }
 
 # perform blackbox tests from current voting-method object

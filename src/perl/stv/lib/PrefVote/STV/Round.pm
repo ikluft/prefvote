@@ -170,7 +170,14 @@ sub sort_candidates
         # default sorting function is descending order by vote tally
         # alternative sort functions are for testing (i.e. alphabetical sort allows testing without using votes)
         my $tally_ref = $self->tally();
-        $sort_fn = sub {return $tally_ref->{$_[1]}->votes() <=> $tally_ref->{$_[0]}->votes()};
+        $sort_fn = sub {
+            my $votes0 = $tally_ref->{$_[0]}->votes();
+            my $votes1 = $tally_ref->{$_[1]}->votes();
+            if ($votes0 == $votes1) {
+                return $_[0] cmp $_[1]; # break sorting ties alphabetically so test comparisons aren't random
+            }
+            return $votes1 <=> $votes0;
+        };
     } elsif (ref $sort_fn ne "CODE") {
         PrefVote::STV::Round::BadSortingFnException->throw({classname => __PACKAGE__,
             attribute => 'sort_fn',

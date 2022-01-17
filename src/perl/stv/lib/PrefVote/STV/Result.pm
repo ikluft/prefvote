@@ -38,6 +38,11 @@ has name => (
     is => 'ro',
     isa => Set[NonEmptySimpleStr],
     required => 1,
+    handles => {
+        name_all => 'elements',
+        name_count => 'size',
+        name_empty => 'is_empty',
+    },
 );
 
 has type => (
