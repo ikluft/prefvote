@@ -169,7 +169,7 @@ sub find_test_files
     my ($dir, $test_re) = @_;
 
     # find test scripts in subdirectories
-    say STDERR "find_test_file ($dir, $test_re)";
+    #say STDERR "find_test_file ($dir, $test_re)";
     opendir(my $dh, "$dir")
         or croak "Can't open $dir: $! (cwd=".getcwd().")";
     my @all = grep { $_ !~ /^\./ } readdir($dh);
@@ -183,7 +183,7 @@ sub find_test_files
             push @files, find_test_files($path, $test_re);
         }
     }
-    say STDERR "find_test_file $dir -> : ".join(" ", @files);
+    #say STDERR "find_test_file $dir -> : ".join(" ", @files);
 
     return @files;
 }
