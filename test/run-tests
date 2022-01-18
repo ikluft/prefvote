@@ -12,6 +12,7 @@ use Readonly;
 use Getopt::Long;
 use Term::ANSIColor;
 use IO::Interactive qw(is_interactive);
+use IPC::Run qw(run);
 use TAP::Parser qw/all/;
 use TAP::Parser::Aggregator qw/all/;
 
@@ -36,7 +37,7 @@ Readonly::Hash my %config => (
             env => {
                 PERL5LIB => '${cwd}/prefvote/lib:${cwd}/stc/lib:${env/PERL5LIB}',
             },
-            run => [ 'src/perl/bin/vote-count', "--test"],
+            cmd => [ 'src/perl/bin/vote-count', "--test"],
         }
     },
 );
@@ -223,13 +224,49 @@ sub run_blackbox_tests
     my $lang = $opts{lang};
     my $agg = $opts{agg};
 
+    # collect blackbox test parameters for selected language
+    if (not exists $config{$lang}{blackbox}) {
+        croak "blackbox tests not configured for language $lang";
+    }
+    if (not exists $config{$lang}{blackbox}{cmd}) {
+        croak "blackbox test command not configured for language $lang";
+    }
+    if (ref $config{$lang}{blackbox}{cmd} ne "ARRAY") {
+        croak "blackbox test command improperly configured for language $lang - not an ARRAY ref";
+    }
+    my @blackbox_cmd = @{$config{$lang}{blackbox}{cmd}};
+    my $blackbox_env = $config{$lang}{blackbox}{env} // {};
+    # TODO add language-specific blackbox test build parameters here
+
     # enter blackbox test directory and find test data files
     my $testdir = $config{blackbox}{data};
     my $test_re = $config{blackbox}{test_re};
     my @test_files = find_test_files($testdir, $test_re);
 
+    # run blackbox tests for the selected language on the test data
     foreach my $test_file (@test_files) {
-        # TODO
+        (-f $test_file) or next;
+        say "running blackbox tests: $test_file";
+
+        # run the blackbox tests in the selected language
+        my $bbt_out;
+        run \@blackbox_cmd, \undef, \$bbt_out,
+            init => sub { foreach my $key (keys %$blackbox_env) {$ENV{$key} = $blackbox_env->{$key} } };
+
+        # parse the TAP output
+        my $parser = TAP::Parser->new({
+            tap => \$bbt_out,
+            @{$config{$lang}{whitebox}{tp_args}},
+            (is_interactive() ? (callbacks => \%callbacks) : ()),
+        });
+        while ( my $result = $parser->next ) {
+            if (not is_interactive()) {
+                say $result->as_string;
+            }
+        }
+        printf "Planned: %s\nPassed: %s\nFailed: %s\n\n",
+            $parser->tests_planned, scalar $parser->passed, scalar $parser->failed;
+            $agg->add($test_file, $parser);
     }
 }
 
