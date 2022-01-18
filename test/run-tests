@@ -266,6 +266,15 @@ sub run_blackbox_tests
         run [@blackbox_cmd, $test_file], \undef, \$bbt_out,
             init => sub { foreach my $key (keys %$blackbox_env) {$ENV{$key} = str_expand($blackbox_env->{$key})} };
 
+        # skip files with no tests
+        if (length $bbt_out == 0) {
+            is_interactive() and print color 'bright_blue';
+            say "No tests";
+            is_interactive() and print color 'reset';
+            say "";
+            next;
+        }
+
         # parse the TAP output
         my $parser = TAP::Parser->new({
             source => $bbt_out,
