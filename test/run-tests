@@ -5,6 +5,8 @@
 use Modern::Perl qw(2015); # require 5.20.0 or later
 use autodie;
 use Carp qw(croak);
+use Config;
+use English;
 use Cwd;
 use Readonly;
 use Getopt::Long;
@@ -17,7 +19,8 @@ use TAP::Parser::Aggregator qw/all/;
 Readonly::Array my @supported_languages => (qw(perl));
 Readonly::Hash my %config => (
     blackbox => {
-       data => "test/inputs", 
+        data => "test/inputs",
+        test_re => qr{\.(yaml|yml)$},
     },
     "perl" => {
         build => 'dzil build',
@@ -29,9 +32,19 @@ Readonly::Hash my %config => (
             tp_args => [switches => ['-I../prefvote/lib', '-Ilib']],
         },
         prove_params => "--lib",
-        blackbox => 'src/perl/bin/vote-count',
+        blackbox => {
+            env => {
+                PERL5LIB => '${cwd}/prefvote/lib:${cwd}/stc/lib:${env/PERL5LIB}',
+            },
+            run => [ 'src/perl/bin/vote-count', "--test"],
+        }
     },
 );
+
+# save original working directory (before any chdirs)
+Readonly::Scalar my $orig_cwd => getcwd();
+
+# test result text coloring for Test::Harness
 Readonly::Hash my %callbacks => (
     test => sub {
         my $test = shift;
@@ -62,33 +75,127 @@ Readonly::Hash my %callbacks => (
     },
 );
 
+# string substitution query (used by str_expand)
+sub str_subst
+{
+    my $query = shift;
+    my @query_parts = split '/', $query;
+
+    # environment variable lookup
+    if ($query_parts[0] eq 'env') {
+        return $ENV{$query_parts[1]} // "";
+    }
+
+    # perl configuration lookup
+    if ($query_parts[0] eq 'perl') {
+        return Config($query_parts[1]);
+    }
+
+    # program configuration lookup
+    if ($query_parts[0] eq 'prog') {
+        shift @query_parts;
+        my $configref = \%config;
+        while (ref $configref eq "HASH") {
+            my $key = shift @query_parts;
+            if (not exists $configref->{$key}) {
+                return "";
+            }
+            $configref = $configref->{$key};
+        }
+        return $configref;
+    }
+
+
+    # current working directory (as of program start)
+    if ($query_parts[0] eq 'cwd') {
+        return $orig_cwd;
+    }
+
+    # default to blank
+    return "";
+}
+
+# simple string expansion utility
+sub str_expand
+{
+    my $in_str = shift;
+    my $out_str = "";
+    my $pos = 0;
+
+    # scan through string looking for escapes '\' or expansions '$'
+    while ($pos < length $in_str) {
+        my $slash = index($in_str, '\\', $pos);
+        my $dollar = index($in_str, '$', $pos);
+
+        # if next backslash occurs before dollar sign, process the escape
+        if ($slash>=0 and ($dollar==-1 or $slash<$dollar)) {
+            $out_str .= substr($in_str, $pos, $slash-$pos);
+            $pos = $slash+1;
+            if ($pos > length $in_str) {
+                $out_str .= '\\';
+                last;
+            }
+            $out_str .= substr($in_str, $pos-1, 1);
+            next;
+        }
+
+        # check first occurrence of a dollar sign in the remainder of the string for a variable expansion
+        if ($dollar>=0) {
+            if (substr($in_str, $dollar) =~ m/^\$\{([^}]+)\}/x) {
+                my $query = $1;
+                my $subst = str_subst($query);
+            }
+        }
+    }
+}
+
+# search directory for test files
+sub find_test_files
+{
+    my ($dir, $test_re) = @_;
+
+    # find test scripts in subdirectories
+    say STDERR "find_test_file ($dir, $test_re)";
+    opendir(my $dh, "$dir")
+        or croak "Can't open $dir: $! (cwd=".getcwd().")";
+    my @all = grep { $_ !~ /^\./ } readdir($dh);
+    closedir $dh;
+    my @files;
+    foreach my $name (@all) {
+        my $path = $dir."/".$name;
+        if (-f $path and $path =~ $test_re) {
+            push @files, $path;
+        } elsif (-d $path) {
+            push @files, find_test_files($path, $test_re);
+        }
+    }
+    say STDERR "find_test_file $dir -> : ".join(" ", @files);
+
+    return @files;
+}
+
 # run whitebox (unit) tests
 sub run_whitebox_tests
 {
     my %opts = @_;
     my $lang = $opts{lang};
     my $agg = $opts{agg};
-    my $orig_cwd = getcwd();
     foreach my $dir (@{$config{$lang}{whitebox}{dirs}}) {
         ( -d "$dir" )
             or croak "configure whitebox testing directory $dir is not a directory";
+        chdir $dir;
         my $testdir = $config{$lang}{whitebox}{testdir};
         my $test_re = $config{$lang}{whitebox}{test_re};
-        if ( -d "$dir/$testdir" ) {
+        if ( -d $testdir ) {
             # enter whitebox test directory and find test scripts
-            chdir $dir;
-            opendir(my $dh, "$testdir")
-                or croak "Can't open $dir/$testdir: $!";
-            my @files = sort grep {$_ =~ $test_re} readdir($dh);
-            say STDERR "debug ($dir/$testdir -> $test_re): ".join(" ", @files);
-            closedir $dh;
+            my @files = find_test_files($testdir, $test_re);
 
             # run tests
             foreach my $file (@files) {
-                (-f "$testdir/$file") or next;
-                say "running tests: $dir/$testdir/$file";
+                (-f $file) or next;
+                say "running whitebox tests: $dir/$file";
                 my $parser = TAP::Parser->new({
-                    source => "$testdir/$file",
+                    source => $file,
                     @{$config{$lang}{whitebox}{tp_args}},
                     (is_interactive() ? (callbacks => \%callbacks) : ()),
                 });
@@ -99,12 +206,12 @@ sub run_whitebox_tests
                 }
                 printf "Planned: %s\nPassed: %s\nFailed: %s\n\n",
                     $parser->tests_planned, scalar $parser->passed, scalar $parser->failed;
-                    $agg->add("$testdir/$file", $parser);
+                    $agg->add($file, $parser);
             }
-            chdir $orig_cwd;
         } else {
             croak("test (t) directory not found in configured directory $dir");
         }
+        chdir $orig_cwd;
     }
     return;
 }
@@ -115,8 +222,14 @@ sub run_blackbox_tests
     my %opts = @_;
     my $lang = $opts{lang};
     my $agg = $opts{agg};
-    my $orig_cwd = getcwd();
-    foreach my $dir (@{$config{$lang}{blackbox}{dirs}}) {
+
+    # enter blackbox test directory and find test data files
+    my $testdir = $config{blackbox}{data};
+    my $test_re = $config{blackbox}{test_re};
+    my @test_files = find_test_files($testdir, $test_re);
+
+    foreach my $test_file (@test_files) {
+        # TODO
     }
 }
 
@@ -142,7 +255,7 @@ if ($all) {
 
 # whitebox and blackbox tests within each language implementation's sources
 {
-    local $ENV{PREFVOTE_ROOT} = getcwd(); # unit tests must look for this and run relative to the project root
+    local $ENV{PREFVOTE_ROOT} = $orig_cwd; # unit tests must look for this and run relative to the project root
     foreach my $lang (@language) {
         if ($whitebox) {
             run_whitebox_tests(lang => $lang, agg => $aggregate);
