@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# 001module_load.t - basic test that the modules all load
+# 001_stv_module_load.t - basic test that the modules all load
 
 use strict;
 use warnings;
