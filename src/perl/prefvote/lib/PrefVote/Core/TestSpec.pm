@@ -50,7 +50,7 @@ sub get_blackbox_spec
         shift @args;
     }
     my $client_class = $args[0];
-    return $spec_registry{$client_class};
+    return $spec_registry{$client_class} // {};
 }
 
 # blackbox test checklist tree structure

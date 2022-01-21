@@ -164,14 +164,14 @@ sub spectype
     # get object path
     my @path = ($self->objpath_all(), (defined $lookahead ? ($lookahead) : ()));
     $self->debug_print("spectype path=".join("-", @path));
-    my %spec = PrefVote::Core::TestSpec->get_blackbox_spec(ref $self->objref());
+    my $spec = PrefVote::Core::TestSpec->get_blackbox_spec(ref $self->objref());
     my $specindex = 0;
-    #$self->debug_print("spectype spec=".Dumper(\%spec));
+    #$self->debug_print("spectype spec=".Dumper($spec));
 
     # special treatment for first item in path it's the attribute name used in hash lookup
     my $attr = shift @path;
     my $objpos = $self->objref()->{$attr};
-    my $spectype = $spec{$attr}[$specindex++];
+    my $spectype = $spec->{$attr}[$specindex++];
 
     # descend in spec to find data type of current node
     while (scalar @path > 0) {
@@ -188,7 +188,7 @@ sub spectype
                 description => "spectype: attempt to descend into non-container at "
                 .$spectype."-".$self->objpath_join("-"));
         }
-        $spectype = $spec{$attr}[$specindex++];
+        $spectype = $spec->{$attr}[$specindex++];
     }
     $self->debug_print("spectype result=".($spectype // "undef"));
     return $spectype;
