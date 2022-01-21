@@ -1,7 +1,7 @@
 # PrefVote::Exception
 # ABSTRACT: top-level exception class for PrefVote hierarchy
 # derived from Vote::STV by Ian Kluft
-# Copyright (c) 1998-2021 by Ian Kluft
+# Copyright (c) 1998-2022 by Ian Kluft
 # Open Source license: Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
 
 # pragmas to silence some warnings from Perl::Critic
