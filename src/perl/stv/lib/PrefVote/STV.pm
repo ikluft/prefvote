@@ -46,6 +46,7 @@ Readonly::Hash my %blackbox_spec => (
     eliminated => [qw(list set string)],
     rounds => [qw(list PrefVote::STV::Round)],
 );
+PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, \%blackbox_spec);
 
 # list of names of winners in order by place, ties shown by an ArrayRef to the tied candidates
 has winners => (
@@ -331,17 +332,6 @@ sub results
 {
     my $self = shift;
     return {winners => $self->{winners}, eliminated => $self->{eliminated}};
-}
-
-#
-# perform STV-specific black-box tests from external file against this object's data
-#
-
-# list of blackbox tests by attribute
-# the presence of this method enables blackbox tests via PrefVote::Core::TestSpec
-sub blackbox_spec
-{
-    return \%blackbox_spec;
 }
 
 1;

@@ -25,6 +25,34 @@ use MooX::TypeTiny;
 use Types::Standard qw(HashRef InstanceOf);
 extends 'PrefVote';
 
+# per-class registry of blackbox test specs
+# this is package-scoped so accessible only by class functions
+my %spec_registry;
+sub register_blackbox_spec
+{
+    my @args = @_;
+    if ($args[0] eq __PACKAGE__) {
+        # omit this class from first argument so we can call this as a class method
+        shift @args;
+    }
+    my $client_class = $args[0];
+    my $spec = $args[1];
+    $spec_registry{$client_class} = $spec;
+    return;
+}
+
+# read blackbox test spec by client class name
+sub get_blackbox_spec
+{
+    my @args = @_;
+    if ($args[0] eq __PACKAGE__) {
+        # omit this class from first argument so we can call this as a class method
+        shift @args;
+    }
+    my $client_class = $args[0];
+    return $spec_registry{$client_class};
+}
+
 # blackbox test checklist tree structure
 # This defines the tests to perform
 # loaded from YAML - includes tests to examine data structures of the currently-loaded voting-method subclass
@@ -48,18 +76,23 @@ sub check
     my ($self, $value) = @_;
 
     # check parameters
-    if (not $value->can("blackbox_spec")) {
+    my $value_ref = ref $value;
+    if (not $value_ref) {
         PrefVote::Core::InternalDataException->throw(classname => __PACKAGE__, attribute => "value",
-            description => "unrecognized object ".(ref $value));
+            description => "scalar value received, object ref expected");
+    }
+    if (not exists $spec_registry{$value_ref}) {
+        PrefVote::Core::InternalDataException->throw(classname => __PACKAGE__, attribute => "value",
+            description => "unrecognized object $value_ref");
     }
 
     # return list of tests collected from traversing the tree from the root node
-    $self->debug_print("check(".(ref $value).")");
-    my $root_node = PrefVote::Core::TestNode->new(name => ref $value, plan => $self->{checklist},
+    $self->debug_print("check($value_ref)");
+    my $root_node = PrefVote::Core::TestNode->new(name => $value_ref, plan => $self->{checklist},
         objref => $value, objpath => [], parent => undef);
     $self->testroot($root_node); # save test tree for later inspection/troubleshooting if necessary
     __PACKAGE__->debug_print("root node: ".Dumper($root_node));
-    return $root_node->check();    
+    return $root_node->check();
 }
 
 1;

@@ -28,6 +28,10 @@ use Types::Standard qw(Any Value Str Ref ScalarRef ArrayRef InstanceOf Maybe is_
 use Types::Common::Numeric qw(PositiveOrZeroInt);
 extends 'PrefVote';
 
+# avoid circular dependency by loading PrefVote::Core::TestSpec with require
+# need it to read node testspecs but it needs to be first to load TestNode
+require PrefVote::Core::TestSpec;
+
 # constants
 Readonly::Scalar my $fp_epsilon => (($Config{doublesize} >= 8) ? 2**-53 : 2**-24); # fp epsilon for fp_equal()
 
@@ -160,15 +164,14 @@ sub spectype
     # get object path
     my @path = ($self->objpath_all(), (defined $lookahead ? ($lookahead) : ()));
     $self->debug_print("spectype path=".join("-", @path));
-    my %spec = %{$self->objref()->blackbox_spec()};
-    my $spectype = ref $self->objref();
+    my %spec = PrefVote::Core::TestSpec->get_blackbox_spec(ref $self->objref());
     my $specindex = 0;
     #$self->debug_print("spectype spec=".Dumper(\%spec));
 
     # special treatment for first item in path it's the attribute name used in hash lookup
     my $attr = shift @path;
     my $objpos = $self->objref()->{$attr};
-    $spectype = $spec{$attr}[$specindex++];
+    my $spectype = $spec{$attr}[$specindex++];
 
     # descend in spec to find data type of current node
     while (scalar @path > 0) {
@@ -293,7 +296,7 @@ sub node_obj
     my @tests;
 
     $self->debug_print("node_obj(".(ref $self->objref())."-".$self->objpath_join("-").")");
-    my $spec = $self->{objref}->blackbox_spec();
+    my $spec = PrefVote::Core::TestSpec->get_blackbox_spec(ref $self->{objref});
     foreach my $attr (keys %$spec) {
         if (exists $self->{plan}{$attr}) {
             push @tests, $self->subnode(name => $attr, plan => $self->{plan}{$attr},

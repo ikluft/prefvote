@@ -41,6 +41,7 @@ Readonly::Hash my %blackbox_spec => (
     tally => [qw(hash PrefVote::STV::Tally)],
     result => [qw(PrefVote::STV::Result)],
 );
+PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, \%blackbox_spec);
 
 # round number (1=1st, etc)
 has number => (
@@ -236,13 +237,6 @@ sub set_result
     # instantiate and save result object
     $self->result(PrefVote::STV::Result->new(type => $opts{type}, name => set(@{$opts{name}})));
     return;
-}
-
-# list of blackbox tests by attribute
-# the presence of this method enables blackbox tests via PrefVote::Core::TestSpec
-sub blackbox_spec
-{
-    return \%blackbox_spec;
 }
 
 ## no critic (Modules::ProhibitMultiplePackages)

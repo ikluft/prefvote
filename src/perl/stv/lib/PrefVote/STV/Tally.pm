@@ -18,6 +18,7 @@ package PrefVote::STV::Tally;
 
 use autodie;
 use Readonly;
+use PrefVote::Core::TestSpec;
 
 # class definitions
 use Moo;
@@ -35,6 +36,7 @@ Readonly::Hash my %blackbox_spec => (
     transfer => [qw(fp)],
     surplus => [qw(fp)],
 );
+PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, \%blackbox_spec);
 
 # candidate name (identifier string)
 has 'name' => (
@@ -105,13 +107,6 @@ sub mark_as_eliminated
     my $self = shift;
     $self->eliminated(1);
     return;
-}
-
-# list of blackbox tests by attribute
-# the presence of this method enables blackbox tests via PrefVote::Core::TestSpec
-sub blackbox_spec
-{
-    return \%blackbox_spec;
 }
 
 1;

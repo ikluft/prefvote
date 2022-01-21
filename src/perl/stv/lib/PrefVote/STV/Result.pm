@@ -33,6 +33,7 @@ Readonly::Hash my %blackbox_spec => (
     name => [qw(set string)],
     type => [qw(string)],
 );
+PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, \%blackbox_spec);
 
 has name => (
     is => 'ro',
@@ -50,13 +51,6 @@ has type => (
     isa => Enum[qw(winner eliminated)],
     required => 1,
 );
-
-# list of blackbox tests by attribute
-# the presence of this method enables blackbox tests via PrefVote::Core::TestSpec
-sub blackbox_spec
-{
-    return \%blackbox_spec;
-}
 
 1;
 

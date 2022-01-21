@@ -50,6 +50,7 @@ Readonly::Hash my %blackbox_spec => (
     ballots => [qw(hash PrefVote::Core::Ballot)],
     total_ballots => [qw(int)],
 );
+PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, \%blackbox_spec);
 
 # name of poll/vote
 has name => (
@@ -405,14 +406,6 @@ sub result_yaml
     }
     $result_out->{timestamp} = localtime;
     return $result_out;
-}
-
-# list of blackbox tests by attribute
-# the presence of this method enables blackbox tests via PrefVote::Core::TestSpec
-# Each class should override it to return their own %blackbox_spec
-sub blackbox_spec
-{
-    return \%blackbox_spec;
 }
 
 # perform blackbox tests from current voting-method object
