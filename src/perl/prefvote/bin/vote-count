@@ -72,33 +72,14 @@ sub main
         my $testspec = $vote_obj->testspec();
         $vote_obj->debug_print("testspec: ".Dumper($testspec // "undef"));
 
-        # collect tests from PrefVote subclass
+        # collect and run tests from a voting method (PrefVote:Core subclass)
         if (defined $testspec) {
             # 1st level in testspec is classes (by basename) to test against
             # use only tests for the current voting-method class
+            require PrefVote::Core::TestUtil;
             $vote_obj->debug_print("checking tests: ".(ref $vote_obj));
             my @tests = $vote_obj->blackbox_check();
-
-            # feed the tests gathered from the subclass to Test::More
-            $vote_obj->debug_print("tests ".Dumper(\@tests));
-            require Test::More;
-            Test::More::plan(tests => scalar @tests);
-            foreach my $test (@tests) {
-                # process test case parameters as hashes
-                ## no critic (ControlStructures::ProhibitCascadingIfElse ControlStructures::ProhibitDeepNests)
-
-                if ($test->{type} eq "is") {
-                    Test::More::is($test->{value}, $test->{expected}, $test->{description});
-                } elsif ($test->{type} eq "cmp_ok") {
-                    Test::More::cmp_ok($test->{value}, $test->{op}, $test->{expected}, $test->{description});
-                } elsif ($test->{type} eq "ok") {
-                    Test::More::ok($test->{value}, $test->{description});
-                } elsif ($test->{type} eq "pass") {
-                    Test::More::pass($test->{description});
-                } elsif ($test->{type} eq "fail") {
-                    Test::More::fail($test->{description});
-                }
-            }
+            PrefVote::Core::TestUtil::do_tests(@tests);
         }
     } elsif ($out_format eq "yaml") {
         # output YAML results

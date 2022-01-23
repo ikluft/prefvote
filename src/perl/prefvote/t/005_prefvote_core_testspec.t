@@ -65,11 +65,12 @@ package main;
 
 use autodie;
 use Carp qw(croak);
-use Test::More tests => 58;
-use Test::Exception;
 use Readonly;
 use Set::Tiny qw(set);
 use Data::Dumper;
+use Test::More tests => 58;
+use Test::Exception;
+use PrefVote::Core::TestUtil;
 
 # test fixtures: basic
 Readonly::Hash my %basic_checklist => (
@@ -238,27 +239,6 @@ Readonly::Array my @tests => (
         result => \%complex_result, desc => "complex test"},
 );
 
-# perform a test returned from PrefVote::Core::TestSpec's check()
-sub do_test_from_spec
-{
-    my $test = shift;
-
-    # find the operation that was selected and call that test in Test::More
-    ## no critic (ControlStructures::ProhibitCascadingIfElse ControlStructures::ProhibitDeepNests)
-    if ($test->{type} eq "is") {
-        is($test->{value}, $test->{expected}, $test->{description});
-    } elsif ($test->{type} eq "cmp_ok") {
-        cmp_ok($test->{value}, $test->{op}, $test->{expected}, $test->{description});
-    } elsif ($test->{type} eq "ok") {
-        ok($test->{value}, $test->{description});
-    } elsif ($test->{type} eq "pass") {
-        pass($test->{description});
-    } elsif ($test->{type} eq "fail") {
-        fail($test->{description});
-    }
-    return;    
-}
-
 # check if registry was loaded by register_blackbox_spec() call above
 is_deeply(PrefVote::Core::TestSpec->get_blackbox_spec('PrefVote::Core::TestSpec::UnitTest'), \%blackbox_spec,
     "get_blackbox_spec");
@@ -293,6 +273,6 @@ foreach my $test (@tests) {
         #say STDERR "result_item ".Dumper($result_item);
         is_deeply($result_item, $test->{result}{$result_item->{description}},
             "test content: ".$result_item->{description});
-        do_test_from_spec($result_item);
+        PrefVote::Core::TestUtil::do_test($result_item);
     };
 }
