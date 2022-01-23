@@ -41,7 +41,7 @@ Readonly::Hash my %blackbox_spec => (
     tally => [qw(hash PrefVote::STV::Tally)],
     result => [qw(PrefVote::STV::Result)],
 );
-PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, \%blackbox_spec);
+PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, spec => \%blackbox_spec);
 
 # round number (1=1st, etc)
 has number => (

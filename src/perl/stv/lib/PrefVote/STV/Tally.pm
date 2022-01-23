@@ -36,7 +36,7 @@ Readonly::Hash my %blackbox_spec => (
     transfer => [qw(fp)],
     surplus => [qw(fp)],
 );
-PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, \%blackbox_spec);
+PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, spec => \%blackbox_spec);
 
 # candidate name (identifier string)
 has 'name' => (

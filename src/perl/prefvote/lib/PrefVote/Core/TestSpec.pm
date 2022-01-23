@@ -35,10 +35,19 @@ sub register_blackbox_spec
         # omit this class from first argument so we can call this as a class method
         shift @args;
     }
-    my $client_class = $args[0];
-    my $spec = $args[1];
-    $spec_registry{$client_class} = $spec;
+    my $client_class = shift @args;
+    my %args = @args;
+    $spec_registry{$client_class} = {};
+    foreach my $key (keys %args) {
+        $spec_registry{$client_class}{$key} = $args{$key};
+    }
     return;
+}
+
+# get the entire spec registry - for testing only
+sub get_spec_registry
+{
+    return \%spec_registry;
 }
 
 # read blackbox test spec by client class name
@@ -50,7 +59,17 @@ sub get_blackbox_spec
         shift @args;
     }
     my $client_class = $args[0];
-    return $spec_registry{$client_class} // {};
+    my %result;
+    my $class = $client_class;
+    while ($class) {
+        foreach my $key (keys %{$spec_registry{$class}{spec}}) {
+            if (exists $spec_registry{$class}{spec}{$key} and not exists ($result{$key})) {
+                $result{$key} = $spec_registry{$class}{spec}{$key};
+            }
+        }
+        $class = $spec_registry{$class}{parent} // undef;
+    }
+    return \%result;
 }
 
 # blackbox test checklist tree structure

@@ -33,7 +33,7 @@ Readonly::Hash my %blackbox_spec => (
     name => [qw(set string)],
     type => [qw(string)],
 );
-PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, \%blackbox_spec);
+PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, spec => \%blackbox_spec);
 
 has name => (
     is => 'ro',

@@ -6,9 +6,7 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 package PrefVote::Core::TestSpec::UnitTest;
 
 use autodie;
-use Carp qw(croak);
 use Readonly;
-use Set::Tiny qw(set);
 use PrefVote::Core::TestSpec;
 
 #
@@ -30,7 +28,7 @@ Readonly::Hash my %blackbox_spec => (
     boolean => [qw(bool)],
     tsut => [qw(PrefVote::Core::TestSpec::UnitTest)],
 );
-PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, \%blackbox_spec);
+PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, spec => \%blackbox_spec);
 
 # variety of attributes to allow testing the data types
 has strset => (
@@ -67,7 +65,7 @@ package main;
 
 use autodie;
 use Carp qw(croak);
-use Test::More tests => 54;
+use Test::More tests => 58;
 use Test::Exception;
 use Readonly;
 use Set::Tiny qw(set);
@@ -262,8 +260,14 @@ sub do_test_from_spec
 }
 
 # check if registry was loaded by register_blackbox_spec() call above
-is(PrefVote::Core::TestSpec->get_blackbox_spec('PrefVote::Core::TestSpec::UnitTest'), \%blackbox_spec,
+is_deeply(PrefVote::Core::TestSpec->get_blackbox_spec('PrefVote::Core::TestSpec::UnitTest'), \%blackbox_spec,
     "get_blackbox_spec");
+my $spec_registry = PrefVote::Core::TestSpec::get_spec_registry();
+ok(exists $spec_registry->{'PrefVote::Core::TestSpec::UnitTest'}, "registry entry exists");
+isa_ok($spec_registry->{'PrefVote::Core::TestSpec::UnitTest'}, "HASH", "registry entry is a HASH");
+ok((exists $spec_registry->{'PrefVote::Core::TestSpec::UnitTest'}{spec}), "registry entry has a spec");
+ok((not exists $spec_registry->{'PrefVote::Core::TestSpec::UnitTest'}{parent}),
+    "registry entry does not have a parent");
 
 # loop through test fixtures
 foreach my $test (@tests) {

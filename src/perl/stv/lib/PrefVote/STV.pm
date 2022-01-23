@@ -33,20 +33,11 @@ extends 'PrefVote::Core';
 
 # blackbox testing structure
 Readonly::Hash my %blackbox_spec => (
-    # TODO eliminate temporary duplication from PrefVote::Core until PrefVote::Core::TestSpec adds registry for this
-    name => [qw(string)],
-    choice_to_index => [qw(hash string)],
-    index_to_choice => [qw(hash string)],
-    choices => [qw(hash string)],
-    seats => [qw(int)],
-    ballots => [qw(hash PrefVote::Core::Ballot)],
-    total_ballots => [qw(int)],
-
     winner => [qw(list set string)],
     eliminated => [qw(list set string)],
     rounds => [qw(list PrefVote::STV::Round)],
 );
-PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, \%blackbox_spec);
+PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, spec => \%blackbox_spec, parent => 'PrefVote::Core');
 
 # list of names of winners in order by place, ties shown by an ArrayRef to the tied candidates
 has winners => (

@@ -37,7 +37,7 @@ Readonly::Hash my %blackbox_spec => (
     quantity => [qw(int)],
     hex_id => [qw(string)],
 );
-PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, \%blackbox_spec);
+PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, spec => \%blackbox_spec);
  
 # per-ballot array of vote items
 has items => (

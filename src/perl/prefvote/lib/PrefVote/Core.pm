@@ -50,7 +50,7 @@ Readonly::Hash my %blackbox_spec => (
     ballots => [qw(hash PrefVote::Core::Ballot)],
     total_ballots => [qw(int)],
 );
-PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, \%blackbox_spec);
+PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, spec => \%blackbox_spec);
 
 # name of poll/vote
 has name => (
