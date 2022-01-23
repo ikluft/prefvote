@@ -45,8 +45,8 @@ sub suffix
 sub main
 {
     # command-line processing
-    my ($debug, $test_mode, $yaml_format, $rawyaml_format);
-    GetOptions("debug" => \$debug, "test" => \$test_mode, "yaml" => \$yaml_format, "rawyaml" => \$rawyaml_format);
+    my ($debug, $test_mode, $out_format);
+    GetOptions("debug" => \$debug, "test" => \$test_mode, "format|outformat:s" => \$out_format);
     if (not @ARGV) {
         say STDERR "usage: $0 [--debug] [--test] [--yaml|--rawyaml] yaml_file";
         exit 0;
@@ -100,10 +100,10 @@ sub main
                 }
             }
         }
-    } elsif ($yaml_format) {
+    } elsif ($out_format eq "yaml") {
         # output YAML results
         print YAML::XS::Dump($vote_obj->result_yaml());
-    } elsif ($rawyaml_format) {
+    } elsif ($out_format eq "rawyaml") {
         # output YAML results
         print YAML::XS::Dump($vote_obj);
     } else {
