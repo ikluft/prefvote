@@ -13,6 +13,7 @@ my @classes = qw(
         PrefVote::Core::InternalDataException
         PrefVote::Core::TestSpec
         PrefVote::Core::TestNode
+        PrefVote::Core::TestUtil
         PrefVote::Core
         PrefVote::Exception
         );
