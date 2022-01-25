@@ -408,6 +408,31 @@ sub result_yaml
     return $result_out;
 }
 
+# delegate output formatting to applicable classes
+sub format_output
+{
+    my ($self, $format) = @_;
+    
+    # directly handle special cases of YAML and raw YAML formats
+    if (fc($format) eq fc("yaml")) {
+        # output YAML results
+        print YAML::XS::Dump($self->result_yaml());
+        return;
+    } 
+    if (fc($format) eq fc("rawyaml")) {
+        # output YAML results
+        print YAML::XS::Dump($self);
+        return;
+    }
+
+    # check if a class which can handle the requested format exists
+    my $output_class = (ref $self)."::Output::".ucfirst($format);
+    eval {require $output_class}; # throws exception if class doesn't exist
+    $output_class->format([YAML::XS::Dump($self->result_yaml())]);
+    return;
+}
+
+
 # perform blackbox tests from current voting-method object
 sub blackbox_check
 {

@@ -81,12 +81,8 @@ sub main
             my @tests = $vote_obj->blackbox_check();
             PrefVote::Core::TestUtil::do_tests(@tests);
         }
-    } elsif ($out_format eq "yaml") {
-        # output YAML results
-        print YAML::XS::Dump($vote_obj->result_yaml());
-    } elsif ($out_format eq "rawyaml") {
-        # output YAML results
-        print YAML::XS::Dump($vote_obj);
+    } elsif (defined $out_format) {
+        $vote_obj->format_output($out_format);
     } else {
         # print result
         my $results = $vote_obj->results();
