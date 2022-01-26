@@ -412,23 +412,23 @@ sub result_yaml
 sub format_output
 {
     my ($self, $format) = @_;
-    
+
     # directly handle special cases of YAML and raw YAML formats
     if (fc($format) eq fc("yaml")) {
         # output YAML results
         print YAML::XS::Dump($self->result_yaml());
         return;
-    } 
+    }
     if (fc($format) eq fc("rawyaml")) {
         # output YAML results
         print YAML::XS::Dump($self);
         return;
     }
 
-    # check if a class which can handle the requested format exists
-    my $output_class = (ref $self)."::Output::".ucfirst($format);
-    eval {require $output_class}; # throws exception if class doesn't exist
-    $output_class->format([YAML::XS::Dump($self->result_yaml())]);
+    # run output handler
+    eval { require PrefVote::Core::Output }
+        or PrefVote::Core::Exception->throw(description => "could not load PrefVote::Core::Output");
+    PrefVote::Core::Output::do_format($format, ref $self, [YAML::XS::Dump($self->result_yaml()]);
     return;
 }
 
