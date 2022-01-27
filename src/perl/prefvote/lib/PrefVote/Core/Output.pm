@@ -26,10 +26,11 @@ use IPC::Run qw(run);
 sub do_output
 {
     my ($format, $voting_method, $yaml_ref) = @_;
+    say STDERR "debug: ".__PACKAGE__." do_output()";
     $voting_method =~ s/^.*:://x; # voting method suffix only - this allows optionally providing whole class name
     
     # pipe the YAML to a subprocess running main() from this class
-    my @output_cmd = ($Config{perlpath}, '-M'.__PACKAGE__, '-e main', "--", "--format=$format", "--method=$voting_method");
+    my @output_cmd = ($Config{perlpath}, "-M".__PACKAGE__, "-e", "main", "--", "--format=$format", "--method=$voting_method");
     run \@output_cmd, sub {if(my $line = shift @$yaml_ref){return $line}}, \*STDOUT;
     return;
 }
