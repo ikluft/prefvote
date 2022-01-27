@@ -10,6 +10,7 @@ my @classes = qw(
         PrefVote::STV::Round
         PrefVote::STV::Tally
         PrefVote::STV::Result
+        PrefVote::STV::Output::Text
         );
 plan tests => scalar @classes;
 

@@ -11,6 +11,7 @@ my @classes = qw(
         PrefVote::Core::Ballot
         PrefVote::Core::Exception
         PrefVote::Core::InternalDataException
+        PrefVote::Core::Output
         PrefVote::Core::TestSpec
         PrefVote::Core::TestNode
         PrefVote::Core::TestUtil
