@@ -15,7 +15,7 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 package PrefVote::Core::Output;
 
 use autodie;
-use base 'PrefVote';
+use base qw(PrefVote);
 use Carp qw(croak);
 use Config;
 use Getopt::Long;
@@ -25,30 +25,46 @@ use IPC::Run qw(run);
 # launch external piped-input formatter script using this class as the mainline
 sub do_output
 {
-    my ($format, $voting_method, $yaml_text) = @_;
-    $voting_method =~ s/^.*:://x; # voting method suffix only - this allows providing whole class name
+    my ($format, $voting_method, $yaml_ref) = @_;
+    $voting_method =~ s/^.*:://x; # voting method suffix only - this allows optionally providing whole class name
     
     # pipe the YAML to a subprocess running main() from this class
-    my @output_cmd = ($Config{perl5}, -M.__PACKAGE__, -e 'main', "--format=$format", "--method=$method");
-    run \@output_cmd, \$yaml_text, \*STDOUT; #TODO not done
+    my @output_cmd = ($Config{perlpath}, '-M'.__PACKAGE__, '-e main', "--", "--format=$format", "--method=$voting_method");
+    run \@output_cmd, sub {if(my $line = shift @$yaml_ref){return $line}}, \*STDOUT;
+    return;
+}
+
+# slurp input from pipe
+# returns ref to scalar with file contents to avoid copying large memory block
+sub pipeslurp
+{
+    my $pipefh = shift;
+    my $str;
+    local $/ = undef;
+    $str = <$pipefh>;
+    return \$str;
 }
 
 # mainline to launch appropriate formatter subclass and forward YAML data to it
 sub main
 {
-    my ($format, $voting_method);
-    GetOptions ("format=s" => \$format, "method=s" => \$voting_methodl)
+    my ($debug, $format, $voting_method);
+    GetOptions ("debug" => \$debug, "format=s" => \$format, "method=s" => \$voting_method)
         or croak "usage: $0 --format=output_format --method=voting_method";
+    if ($debug) {
+        __PACKAGE->debug(1);
+    }
 
     # check if a class which can handle the requested format exists
     my $output_class = "PrefVote::".$voting_method."::Output::".ucfirst($format);
-    eval {require $output_class}; # throws exception if class doesn't exist
+    eval {require $output_class}
+        or PrefVote::Core::Exception->throw(description => "could not load $output_class");
 
     # slurp standard input
-    my $yaml_text = 
+    my $yaml_textref = pipeslurp(\*STDIN);
 
     # format the output
-    $output_class->format();
+    return $output_class->output($yaml_textref) ? 0 : 1; # invert boolean success code into program exit code
 }
 
 1;
