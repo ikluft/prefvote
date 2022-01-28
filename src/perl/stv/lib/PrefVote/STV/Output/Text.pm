@@ -19,6 +19,7 @@ use base qw(PrefVote::Core::Output);
 use Carp qw(croak);
 use Data::Dumper;
 use YAML::XS;
+use Text::Table::Tiny 1.02 qw/ generate_table /;
 
 # output formatting class method (called by PrefVote::Core::format_output())
 sub output
@@ -26,9 +27,34 @@ sub output
     my $class= shift;
     my $yamlref = shift;
 
+    # decode results data from YAML
     #__PACKAGE__->debug_print("output() receieved YAML: ".Dumper($yamlref));
     my @yaml_docs = YAML::XS::Load($$yamlref);
     __PACKAGE__->debug_print("output() decoded YAML: ".Dumper(\@yaml_docs));
+
+    # generate candidate names list
+    my @candidates;
+    foreach my $winner (@{$yaml_docs[0]{winners}}) {
+        push @candidates, sort @$winner;
+    }
+    foreach my $elim (reverse @{$yaml_docs[0]{eliminated}}) {
+        push @candidates, sort @$elim;
+    }
+
+    # set up for table generation
+    binmode(STDOUT, ':encoding(UTF-8)');
+
+    # generate candidate table of contents
+    my @toc_rows;
+    push @toc_rows, ["Abbreviation", "Name/description"];
+    foreach my $name (@candidates) {
+        push @toc_rows, [$name, $yaml_docs[0]{choices}{$name}];
+    }
+    say generate_table(rows => \@toc_rows, header_row => 1, style => 'boxrule');
+
+    # generate output text table
+    #my @result_rows;
+    # TODO
 
     return 1;
 }
