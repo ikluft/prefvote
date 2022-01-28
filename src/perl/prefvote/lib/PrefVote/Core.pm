@@ -426,8 +426,7 @@ sub format_output
     }
 
     # run output handler
-    eval { require PrefVote::Core::Output }
-        or PrefVote::Core::Exception->throw(description => "could not load PrefVote::Core::Output");
+    require PrefVote::Core::Output;
     PrefVote::Core::Output::do_output($format, ref $self, [YAML::XS::Dump($self->result_yaml())]);
     return;
 }

@@ -16,33 +16,35 @@ package PrefVote::Core::Output;
 
 use autodie;
 use base qw(PrefVote);
-use Carp qw(croak);
+use Carp qw(croak confess);
 use Config;
+use English;
 use Getopt::Long;
+use Data::Dumper;
 use YAML::XS;
 use IPC::Run qw(run);
+use PrefVote::Core::Exception;
 
 # launch external piped-input formatter script using this class as the mainline
 sub do_output
 {
     my ($format, $voting_method, $yaml_ref) = @_;
-    say STDERR "debug: ".__PACKAGE__." do_output()";
     $voting_method =~ s/^.*:://x; # voting method suffix only - this allows optionally providing whole class name
     
     # pipe the YAML to a subprocess running main() from this class
-    my @output_cmd = ($Config{perlpath}, "-M".__PACKAGE__, "-e", "main", "--", "--format=$format", "--method=$voting_method");
+    my @output_cmd = ($Config{perlpath}, "-M".__PACKAGE__, "-e", __PACKAGE__."::main", "--", "--format=$format", "--method=$voting_method");
     run \@output_cmd, sub {if(my $line = shift @$yaml_ref){return $line}}, \*STDOUT;
     return;
 }
 
-# slurp input from pipe
+# slurp standard input to a scalar
 # returns ref to scalar with file contents to avoid copying large memory block
-sub pipeslurp
+sub stdinslurp
 {
-    my $pipefh = shift;
     my $str;
     local $/ = undef;
-    $str = <$pipefh>;
+    ## no critic (InputOutput::ProhibitExplicitStdin)
+    $str = <STDIN>;
     return \$str;
 }
 
@@ -50,22 +52,49 @@ sub pipeslurp
 sub main
 {
     my ($debug, $format, $voting_method);
-    GetOptions ("debug" => \$debug, "format=s" => \$format, "method=s" => \$voting_method)
-        or croak "usage: $0 --format=output_format --method=voting_method";
-    if ($debug) {
-        __PACKAGE->debug(1);
+    __PACKAGE__->debug_print("main()");
+
+    # exception-catching wrapper
+    my ($exitcode, $evalcode);
+    $evalcode = eval {
+        # process command line
+        GetOptions ("debug" => \$debug, "format=s" => \$format, "method=s" => \$voting_method)
+            or croak "usage: $0 --format=output_format --method=voting_method";
+        if ($debug) {
+            $Data::Dumper::Sortkeys = 1;
+            $Data::Dumper::Indent = 1;
+            PrefVote::Core::Output->debug(1);
+        }
+
+        # check if a class which can handle the requested format exists
+        my $output_class = "PrefVote::".$voting_method."::Output::".ucfirst($format);
+        ## no critic (BuiltinFunctions::ProhibitStringyEval)
+        if (not eval "require $output_class") {
+            PrefVote::Core::Exception->throw(description => "could not load $output_class");
+        }
+        ## critic (BuiltinFunctions::ProhibitStringyEval)
+
+        # slurp standard input
+        my $yaml_textref = stdinslurp();
+
+        # format the output
+        $exitcode = $output_class->output($yaml_textref) ? 0 : 1; # invert boolean success code into program exit code
+        return 1; # eval completed
+    };
+
+    # process exceptions
+    if (not $evalcode) {
+        my $e = $EVAL_ERROR;
+        if (ref $e and $e->isa("PrefVote::Exception")) {
+            say "exception: ".$e->{description};
+            #say $e->stack_trace();
+            say Dumper($e);
+        } else {
+            confess $e;
+        }
+        return 1;
     }
-
-    # check if a class which can handle the requested format exists
-    my $output_class = "PrefVote::".$voting_method."::Output::".ucfirst($format);
-    eval {require $output_class}
-        or PrefVote::Core::Exception->throw(description => "could not load $output_class");
-
-    # slurp standard input
-    my $yaml_textref = pipeslurp(\*STDIN);
-
-    # format the output
-    return $output_class->output($yaml_textref) ? 0 : 1; # invert boolean success code into program exit code
+    return $exitcode;
 }
 
 1;

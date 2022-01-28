@@ -23,11 +23,12 @@ use YAML::XS;
 # output formatting class method (called by PrefVote::Core::format_output())
 sub output
 {
+    my $class= shift;
     my $yamlref = shift;
 
-    say STDERR "debug: ".__PACKAGE__." output()";
-    __PACKAGE__->debug_print(__PACKAGE__." receieved YAML: ".Dumper($yamlref));
+    #__PACKAGE__->debug_print("output() receieved YAML: ".Dumper($yamlref));
     my @yaml_docs = YAML::XS::Load($$yamlref);
+    __PACKAGE__->debug_print("output() decoded YAML: ".Dumper(\@yaml_docs));
 
     return 1;
 }
