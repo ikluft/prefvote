@@ -10,6 +10,8 @@ The original Vote::STV software implemented the [single transferable vote](https
 
 ## Example voting result from test suite
 
+This is an example result from a Single Transferable Vote example in the test suite. 200 ballots were randomly generated. So there's no actual meaning to the result except testing the software. Candidate names are fictitious, just to get names that start with A, B, C, D, E and F as used universally throughout the test suite. The names are whimsical based on the difficult dilemma voters sometimes feel they are choosing between in real candidates.
+
 > ```
 > Results: Test Vote
 > 
@@ -33,5 +35,6 @@ The original Vote::STV software implemented the [single transferable vote](https
 > │ 4       │ 114   │ 118 ✓    │ 110   │ ❌      │ ❌       │ ❌     │ ❌            │
 > │ 5       │ 99.5  │ ✓        │ 199 ✓ │ ❌      │ ❌       │ ❌     │ ❌            │
 > └─────────┴───────┴──────────┴───────┴─────────┴──────────┴────────┴───────────────┘
-> 
 > ```
+
+STV is the first implemented voting method in PrefVote since it was the original implementation as Vote::STV back to 1998. Next up will be the Schulze algorithm.
