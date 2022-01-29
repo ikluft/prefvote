@@ -32,11 +32,15 @@ Readonly::Hash my %symbols => {
 sub get_col_result
 {
     my ($result_data, $round, $cand) = @_;
-    my $round_data = $result_data->{rounds}{$round};
+    if (ref $result_data ne "HASH") {
+        say STDERR "expected HASH ref, got ".Dumper($result_data);
+        exit 1;
+    }
+    my $round_data = $result_data->{rounds}[$round];
     my $votes = $round_data->{tally}{$cand}{votes};
     my $result = {};
     $result->{display} = $votes;
-    foreach my $action (qw(elimiated winner)) {
+    foreach my $action (qw(eliminated winner)) {
         if ($round_data->{tally}{$cand}{$action}) {
             $result->{display} .= " ".$symbols{$action};
             $result->{save} = $action;
@@ -82,7 +86,7 @@ sub output
     my $seats = $result_data->{seats};
     my $rounds = $result_data->{rounds};
     my %col_status;
-    push @result_rows, ['Round #', @candidates, 'Result'];
+    push @result_rows, ['Round #', @candidates];
     for (my $round=0; $round < scalar @$rounds; $round++) {
         my @result_row = ($round);
         foreach my $col_name (@candidates) {
@@ -96,6 +100,7 @@ sub output
                 $col_status{$col_name} = $status->{save};
             }
         }
+        push @result_rows, \@result_row;
     }
     say generate_table(rows => \@result_rows, header_row => 1, style => 'boxrule');
 
