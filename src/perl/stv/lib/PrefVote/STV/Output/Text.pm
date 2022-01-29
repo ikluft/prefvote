@@ -18,8 +18,32 @@ use autodie;
 use base qw(PrefVote::Core::Output);
 use Carp qw(croak);
 use Data::Dumper;
+use Readonly;
 use YAML::XS;
 use Text::Table::Tiny 1.02 qw/ generate_table /;
+
+# constants for output
+Readonly::Hash my %symbols => {
+    "winner" => "\N{CHECK MARK}",
+    "eliminated" => "\N{CROSS MARK}",
+};
+
+# look up column/candidate result
+sub get_col_result
+{
+    my ($result_data, $round, $cand) = @_;
+    my $round_data = $result_data->{rounds}{$round};
+    my $votes = $round_data->{tally}{$cand}{votes};
+    my $result = {};
+    $result->{display} = $votes;
+    foreach my $action (qw(elimiated winner)) {
+        if ($round_data->{tally}{$cand}{$action}) {
+            $result->{display} .= " ".$symbols{$action};
+            $result->{save} = $action;
+        }
+    }
+    return $result;
+}
 
 # output formatting class method (called by PrefVote::Core::format_output())
 sub output
@@ -31,13 +55,14 @@ sub output
     #__PACKAGE__->debug_print("output() receieved YAML: ".Dumper($yamlref));
     my @yaml_docs = YAML::XS::Load($$yamlref);
     __PACKAGE__->debug_print("output() decoded YAML: ".Dumper(\@yaml_docs));
+    my $result_data = $yaml_docs[0];
 
     # generate candidate names list
     my @candidates;
-    foreach my $winner (@{$yaml_docs[0]{winners}}) {
+    foreach my $winner (@{$result_data->{winners}}) {
         push @candidates, sort @$winner;
     }
-    foreach my $elim (reverse @{$yaml_docs[0]{eliminated}}) {
+    foreach my $elim (reverse @{$result_data->{eliminated}}) {
         push @candidates, sort @$elim;
     }
 
@@ -48,13 +73,31 @@ sub output
     my @toc_rows;
     push @toc_rows, ["Abbreviation", "Name/description"];
     foreach my $name (@candidates) {
-        push @toc_rows, [$name, $yaml_docs[0]{choices}{$name}];
+        push @toc_rows, [$name, $result_data->{choices}{$name}];
     }
     say generate_table(rows => \@toc_rows, header_row => 1, style => 'boxrule');
 
     # generate output text table
-    #my @result_rows;
-    # TODO
+    my @result_rows;
+    my $seats = $result_data->{seats};
+    my $rounds = $result_data->{rounds};
+    my %col_status;
+    push @result_rows, ['Round #', @candidates, 'Result'];
+    for (my $round=0; $round < scalar @$rounds; $round++) {
+        my @result_row = ($round);
+        foreach my $col_name (@candidates) {
+            if (exists $col_status{$col_name}) {
+               push @result_row, $symbols{$col_status{$col_name}};
+               next;
+            }
+            my $status = get_col_result($result_data, $round, $col_name);
+            push @result_row, $status->{display};
+            if (exists $status->{save}) {
+                $col_status{$col_name} = $status->{save};
+            }
+        }
+    }
+    say generate_table(rows => \@result_rows, header_row => 1, style => 'boxrule');
 
     return 1;
 }
