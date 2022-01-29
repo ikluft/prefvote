@@ -94,7 +94,7 @@ sub output
     for (my $round=0; $round < scalar @$rounds; $round++) {
         my $quota = ($round, $result_data->{rounds}[$round]{quota});
         last if $quota <= 0;
-        my @result_row = ($round, $quota);
+        my @result_row = ($round+1, $quota);
         foreach my $col_name (@candidates) {
             if (exists $col_status{$col_name}) {
                push @result_row, $symbols{$col_status{$col_name}};
