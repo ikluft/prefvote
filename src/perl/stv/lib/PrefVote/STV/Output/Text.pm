@@ -73,6 +73,10 @@ sub output
     # set up for table generation
     binmode(STDOUT, ':encoding(UTF-8)');
 
+    # print title
+    say "Results: ".$result_data->{name};
+    say "";
+
     # generate candidate table of contents
     my @toc_rows;
     push @toc_rows, ["Abbreviation", "Name/description"];
@@ -86,9 +90,11 @@ sub output
     my $seats = $result_data->{seats};
     my $rounds = $result_data->{rounds};
     my %col_status;
-    push @result_rows, ['Round #', @candidates];
+    push @result_rows, ['Round #', 'Quota', @candidates];
     for (my $round=0; $round < scalar @$rounds; $round++) {
-        my @result_row = ($round);
+        my $quota = ($round, $result_data->{rounds}[$round]{quota});
+        last if $quota <= 0;
+        my @result_row = ($round, $quota);
         foreach my $col_name (@candidates) {
             if (exists $col_status{$col_name}) {
                push @result_row, $symbols{$col_status{$col_name}};
