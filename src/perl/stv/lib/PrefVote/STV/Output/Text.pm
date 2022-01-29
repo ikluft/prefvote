@@ -92,7 +92,7 @@ sub output
     my %col_status;
     push @result_rows, ['Round #', 'Quota', @candidates];
     for (my $round=0; $round < scalar @$rounds; $round++) {
-        my $quota = ($round, $result_data->{rounds}[$round]{quota});
+        my $quota = $result_data->{rounds}[$round]{quota};
         last if $quota <= 0;
         my @result_row = ($round+1, $quota);
         foreach my $col_name (@candidates) {
