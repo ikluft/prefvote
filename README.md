@@ -7,3 +7,31 @@ Since the project's original language Perl has strengths in prototyping, it's th
 ## About preference voting algorithms
 
 The original Vote::STV software implemented the [single transferable vote](https://en.wikipedia.org/wiki/Single_transferable_vote) algorithm, which is a subset of [ranked-choice voting](https://en.wikipedia.org/wiki/Ranked_voting).
+
+## Example voting result from test suite
+
+> ```
+> Results: Test Vote
+> 
+> ┌───────────────┬─────────────────────────────┐
+> │ Abbreviation  │ Name/description            │
+> ├───────────────┼─────────────────────────────┤
+> │ FACTIOUS      │ factious/divisive candidate │
+> │ EVIL          │ evil villain                │
+> │ CHAOTIC       │ chaotic unpredictable       │
+> │ ABNORMAL      │ abnormal and antisocial     │
+> │ BORING        │ boring as anything          │
+> │ DYSFUNCTIONAL │ dysfunctional incompetent   │
+> └───────────────┴─────────────────────────────┘
+> ┌─────────┬───────┬──────────┬───────┬─────────┬──────────┬────────┬───────────────┐
+> │ Round # │ Quota │ FACTIOUS │ EVIL  │ CHAOTIC │ ABNORMAL │ BORING │ DYSFUNCTIONAL │
+> ├─────────┼───────┼──────────┼───────┼─────────┼──────────┼────────┼───────────────┤
+> │ 0       │ 125   │ 68       │ 54    │ 36      │ 31       │ 33     │ 28 ❌         │
+> │ 1       │ 124.5 │ 75       │ 58    │ 45      │ 36       │ 35 ❌  │ ❌            │
+> │ 2       │ 122   │ 78       │ 69    │ 51      │ 46 ❌    │ ❌     │ ❌            │
+> │ 3       │ 118.5 │ 90       │ 81    │ 66 ❌   │ ❌       │ ❌     │ ❌            │
+> │ 4       │ 114   │ 118 ✓    │ 110   │ ❌      │ ❌       │ ❌     │ ❌            │
+> │ 5       │ 99.5  │ ✓        │ 199 ✓ │ ❌      │ ❌       │ ❌     │ ❌            │
+> └─────────┴───────┴──────────┴───────┴─────────┴──────────┴────────┴───────────────┘
+> 
+> ```
