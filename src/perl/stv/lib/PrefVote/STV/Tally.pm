@@ -70,21 +70,18 @@ has eliminated => (
 has place => (
     is => 'rw',
     isa => Int,
-    default => 0,
 );
 
 # total votes available for transfer
 has transfer => (
     is => 'rw',
     isa => StrictNum,
-    default => 0,
 );
 
 # fraction of votes which exceed the quota needed to win, and are available for transfer
 has surplus => (
     is => 'rw',
     isa => StrictNum,
-    default => 0,
 );
 
 # mark candidate as a winner
@@ -92,10 +89,13 @@ has surplus => (
 sub mark_as_winner
 {
     my ($self, %opts) = @_;
+    #$self->debug_print("mark_as_winner(".$self->{name}."): opts = ".join(" ", %opts));
     $self->winner(1);
+    my @keys_set;
     foreach my $key (qw(place votes surplus transfer)) {
         if (exists $opts{$key}) {
             $self->$key($opts{$key});
+            push @keys_set, $key;
         }
     }
     return;
@@ -105,6 +105,7 @@ sub mark_as_winner
 sub mark_as_eliminated
 {
     my $self = shift;
+    #$self->debug_print("mark_as_eliminated(".$self->{name}.")");
     $self->eliminated(1);
     return;
 }

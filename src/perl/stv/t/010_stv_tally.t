@@ -15,9 +15,9 @@ is($stv_tally_ref->name(), "test1", "default: name = test1");
 is($stv_tally_ref->votes(), 0, "default: votes = 0");
 is($stv_tally_ref->winner(), 0, "default: winner = 0");
 is($stv_tally_ref->eliminated(), 0, "default: eliminated = 0");
-is($stv_tally_ref->place(), 0, "default: place = 0");
-is($stv_tally_ref->transfer(), 0, "default: transfer = 0");
-is($stv_tally_ref->surplus(), 0, "default: surplus = 0");
+is($stv_tally_ref->place(), undef, "default: place = undef");
+is($stv_tally_ref->transfer(), undef, "default: transfer = undef");
+is($stv_tally_ref->surplus(), undef, "default: surplus = undef");
 
 # modify values via methods and check results (6 tests)
 # Except for booleans, these numbers are made-up. The only significance is the test reads back the same number.
@@ -34,8 +34,8 @@ my $stv_tally_ref2 = PrefVote::STV::Tally->new(name => 'test2');
 $stv_tally_ref2->mark_as_eliminated();
 is($stv_tally_ref2->name(), "test2", "default: name = test2");
 is($stv_tally_ref2->winner(), 0, "eliminated: check winner = 0");
-is($stv_tally_ref2->place(), 0, "eliminated: check place = 0");
 is($stv_tally_ref2->votes(), 0, "eliminated: check votes = 0");
-is($stv_tally_ref2->surplus(), 0, "eliminated: check surplus = 0");
-is($stv_tally_ref2->transfer(), 0, "eliminated: check transfer = 0");
+is($stv_tally_ref2->place(), undef, "eliminated: check place = undef");
+is($stv_tally_ref2->surplus(), undef, "eliminated: check surplus = undef");
+is($stv_tally_ref2->transfer(), undef, "eliminated: check transfer = undef");
 is($stv_tally_ref2->eliminated(), 1, "eliminated: check eliminated = 1");

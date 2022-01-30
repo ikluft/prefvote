@@ -78,6 +78,7 @@ has rounds => (
 #
 # processing
 #
+my %result_cache;
 
 # start a new round
 sub new_round
@@ -112,12 +113,22 @@ sub current_round
 sub add_winner
 {
     my ($self, @win_list) = @_;
+
+    # save winners in order
     $self->winners_push(set(@win_list));
+
+    # add winners to round result
     my $round = $self->current_round();
     $round->set_result(
         name => clone(\@win_list),
         type => "winner",
     );
+
+    # cache win result for each candidate for handling following rounds
+    my $tally = $self->current_round()->tally();
+    foreach my $name (@win_list) {
+        $result_cache{$name} = {winner => 1, transfer => $tally->{$name}{transfer}};
+    }
     return;
 }
 
@@ -125,13 +136,52 @@ sub add_winner
 sub add_eliminated
 {
     my ($self, @elim_list) = @_;
+
+    # save eliminations in order
     $self->eliminated_push(set(@elim_list));
+
+    # add eliminations to round result
     my $round = $self->current_round();
     $round->set_result(
         name => clone(\@elim_list),
         type => "eliminated",
     );
+
+    # cache elimination result for each candidate for handling following rounds
+    foreach my $name (@elim_list) {
+        $result_cache{$name} = {eliminated => 1};
+    }
     return;
+}
+
+# check if a candidate won a previous round
+# return boolean
+sub cand_is_winner
+{
+    my $self = shift;
+    my $cand_name = shift;
+    return exists $result_cache{$cand_name}{winner};
+}
+
+# check if a candidate was eliminated in a previous round
+# return boolean
+sub cand_is_eliminated
+{
+    my $self = shift;
+    my $cand_name = shift;
+    return exists $result_cache{$cand_name}{eliminated};
+}
+
+# get a candidate's transfer ratio from a previous round
+# return floating point number, or undef if not a winner
+sub cand_transfer_ratio
+{
+    my $self = shift;
+    my $cand_name = shift;
+    if (not exists $result_cache{$cand_name}{transfer}) {
+        return;
+    }
+    return $result_cache{$cand_name}{transfer};
 }
 
 # initial tally with vote transfers
@@ -146,7 +196,8 @@ sub run_tally
         my $ballot = $self->ballots_get($combo);
         my $selection = undef;
         my $fraction = 1;
-        foreach my $choice ($ballot->items_all()) {
+        my @ballot_items = $ballot->items_all();
+        foreach my $choice (@ballot_items) {
             if ( $self->debug() and ref($choice) ne "" ) {
                 print STDERR "choice is ref "
                     .ref($choice)
@@ -154,10 +205,6 @@ sub run_tally
                     .$ballot->as_string()
                     ." (x".$ballot->quantity().")\n";
             }
-
-            $round->tally_exists($choice) or next;
-            my $cand_tally = $round->tally_get($choice);
-            #$self->debug_print("run_tally: candidate $choice tally: ".Dumper($cand_tally));
 
             # Handle vote transfers - this is a key point
             # in the STV system.  Note that fractions are
@@ -176,14 +223,16 @@ sub run_tally
             # this loop to find each candidate's place
             # in the results) then individual ballots
             # may be cut in fractions more than once.
-            if ( $cand_tally->winner() and defined $cand_tally->transfer())
+            if ($self->cand_is_winner($choice))
             {
-                $fraction *= $cand_tally->transfer();
+                my $transfer_ratio = $self->cand_transfer_ratio($choice);
+                $fraction *= $transfer_ratio;
                 next;
             }
 
-            # vote transfer not available to eliminated candidates
-            if (not $cand_tally->eliminated()) {
+            # Candidates in this round are eligible to receive vote transfers.
+            # Check for candidates not previously eliminated because previous winners were already filtered out above.
+            if (not $self->cand_is_eliminated($choice)) {
                 $selection = $choice;
                 last;
             }
@@ -195,9 +244,9 @@ sub run_tally
             my $vote_increment = $fraction * $ballot->{quantity};
             $sel_ref->votes($votes + $vote_increment);
             $round->add_votes_used($vote_increment);
+            #$self->debug_print("run_tally: $selection +$vote_increment (frac=$fraction) ".join("-",@ballot_items));
         }
     }
-    $self->debug_print("candidate (tally) = ".join(" ", $round->tally_keys())."\n");
     return;
 }
 
@@ -216,16 +265,13 @@ sub process_winners
         if ( $round->tally_get($curr_key)->votes() == $round->tally_get($round_candidate[0])->votes() ) {
             my $c_votes = $round->tally_get($curr_key)->votes();
             my $c_surplus = $c_votes - $round->quota();
-            my $pc_to_elect = sprintf ( "%6.3f",
-                $round->quota() / $c_votes * 100.0 );
-            my $pc_transfer = sprintf ( "%6.3f",
-                $c_surplus / $c_votes * 100.0 );
+            my $transfer_ratio = $c_surplus / $c_votes;
             push @round_winner, $curr_key;
 
             # mark this candidate a winner
             $round->tally_get($curr_key)->mark_as_winner(place => $place, votes => $c_votes, surplus => $c_surplus,
-                transfer => $round->tally_get($curr_key)->surplus() / $round->tally_get($curr_key)->votes());
-            $self->debug_print( "winner: $curr_key\n");
+                transfer => $transfer_ratio);
+            $self->debug_print( "winner: $curr_key with transfer ratio $transfer_ratio");
         } else {
             last;
         }
@@ -314,6 +360,7 @@ sub count
             # no quota: eliminate last-place candidate(s) and count again on next round
             $self->eliminate_losers();
         }
+        #$self->debug_print("round ".($round->number())." result_cache = ".Dumper(\%result_cache));
     }
     return;
 }

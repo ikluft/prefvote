@@ -19,6 +19,7 @@ use base qw(PrefVote::Core::Output);
 use Carp qw(croak);
 use Data::Dumper;
 use Readonly;
+use Math::Round qw(nearest);
 use YAML::XS;
 use Text::Table::Tiny 1.02 qw/ generate_table /;
 
@@ -27,6 +28,14 @@ Readonly::Hash my %symbols => {
     "winner" => "\N{CHECK MARK}",
     "eliminated" => "\N{CROSS MARK}",
 };
+Readonly::Scalar my $float_digits => 5;
+
+# format floating point numbers to limit display precision
+sub float_output
+{
+    my $num = shift;
+    return nearest(10**-$float_digits, $num);
+}
 
 # look up column/candidate result
 sub get_col_result
@@ -39,7 +48,7 @@ sub get_col_result
     my $round_data = $result_data->{rounds}[$round];
     my $votes = $round_data->{tally}{$cand}{votes};
     my $result = {};
-    $result->{display} = $votes;
+        $result->{display} = float_output($votes);
     foreach my $action (qw(eliminated winner)) {
         if ($round_data->{tally}{$cand}{$action}) {
             $result->{display} .= " ".$symbols{$action};
@@ -94,7 +103,7 @@ sub output
     for (my $round=0; $round < scalar @$rounds; $round++) {
         my $quota = $result_data->{rounds}[$round]{quota};
         last if $quota <= 0;
-        my @result_row = ($round+1, $quota);
+        my @result_row = ($round+1, float_output($quota));
         foreach my $col_name (@candidates) {
             if (exists $col_status{$col_name}) {
                push @result_row, $symbols{$col_status{$col_name}};

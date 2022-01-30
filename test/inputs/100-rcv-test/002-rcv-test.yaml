@@ -489,8 +489,8 @@ STV:
   - - BORING
   - - CHAOTIC
   - - ABNORMAL
-  - - EVIL
-    - FACTIOUS
+  - - FACTIOUS
+    - EVIL
   index_to_choice:
     '0': ABNORMAL
     '1': BORING
@@ -517,49 +517,31 @@ STV:
       ABNORMAL:
         eliminated: 0
         name: ABNORMAL
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 6
         winner: 0
       BORING:
         eliminated: 1
         name: BORING
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 5
         winner: 0
       CHAOTIC:
         eliminated: 0
         name: CHAOTIC
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 6
         winner: 0
       DYSFUNCTIONAL:
         eliminated: 0
         name: DYSFUNCTIONAL
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 11
         winner: 0
       EVIL:
         eliminated: 0
         name: EVIL
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 10
         winner: 0
       FACTIOUS:
         eliminated: 0
         name: FACTIOUS
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 12
         winner: 0
     votes_used: 50
@@ -579,41 +561,26 @@ STV:
       ABNORMAL:
         eliminated: 0
         name: ABNORMAL
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 8
         winner: 0
       CHAOTIC:
         eliminated: 1
         name: CHAOTIC
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 6
         winner: 0
       DYSFUNCTIONAL:
         eliminated: 0
         name: DYSFUNCTIONAL
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 11
         winner: 0
       EVIL:
         eliminated: 0
         name: EVIL
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 12
         winner: 0
       FACTIOUS:
         eliminated: 0
         name: FACTIOUS
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 12
         winner: 0
     votes_used: 49
@@ -632,33 +599,21 @@ STV:
       ABNORMAL:
         eliminated: 1
         name: ABNORMAL
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 9
         winner: 0
       DYSFUNCTIONAL:
         eliminated: 0
         name: DYSFUNCTIONAL
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 15
         winner: 0
       EVIL:
         eliminated: 0
         name: EVIL
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 12
         winner: 0
       FACTIOUS:
         eliminated: 0
         name: FACTIOUS
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 12
         winner: 0
     votes_used: 48
@@ -677,25 +632,16 @@ STV:
       DYSFUNCTIONAL:
         eliminated: 0
         name: DYSFUNCTIONAL
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 17
         winner: 0
       EVIL:
         eliminated: 1
         name: EVIL
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 15
         winner: 0
       FACTIOUS:
         eliminated: 1
         name: FACTIOUS
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 15
         winner: 0
     votes_used: 47
@@ -713,7 +659,7 @@ STV:
         name: DYSFUNCTIONAL
         place: 1
         surplus: 18.5
-        transfer: 0
+        transfer: 0.5
         votes: 37
         winner: 1
     votes_used: 37
@@ -723,7 +669,7 @@ STV:
     tally: {}
     votes_used: 0
   seats: 1
-  timestamp: Tue Jan 18 15:47:30 2022
+  timestamp: Sun Jan 30 13:03:33 2022
   total_ballots: 50
   winners:
   - - DYSFUNCTIONAL

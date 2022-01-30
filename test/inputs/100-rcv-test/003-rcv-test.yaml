@@ -880,49 +880,31 @@ STV:
       ABNORMAL:
         eliminated: 0
         name: ABNORMAL
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 15
         winner: 0
       BORING:
         eliminated: 1
         name: BORING
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 7
         winner: 0
       CHAOTIC:
         eliminated: 0
         name: CHAOTIC
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 13
         winner: 0
       DYSFUNCTIONAL:
         eliminated: 0
         name: DYSFUNCTIONAL
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 12
         winner: 0
       EVIL:
         eliminated: 0
         name: EVIL
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 16
         winner: 0
       FACTIOUS:
         eliminated: 0
         name: FACTIOUS
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 37
         winner: 0
     votes_used: 100
@@ -942,41 +924,26 @@ STV:
       ABNORMAL:
         eliminated: 0
         name: ABNORMAL
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 15
         winner: 0
       CHAOTIC:
         eliminated: 0
         name: CHAOTIC
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 14
         winner: 0
       DYSFUNCTIONAL:
         eliminated: 1
         name: DYSFUNCTIONAL
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 12
         winner: 0
       EVIL:
         eliminated: 0
         name: EVIL
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 19
         winner: 0
       FACTIOUS:
         eliminated: 0
         name: FACTIOUS
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 39
         winner: 0
     votes_used: 99
@@ -995,33 +962,21 @@ STV:
       ABNORMAL:
         eliminated: 1
         name: ABNORMAL
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 15
         winner: 0
       CHAOTIC:
         eliminated: 0
         name: CHAOTIC
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 16
         winner: 0
       EVIL:
         eliminated: 0
         name: EVIL
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 20
         winner: 0
       FACTIOUS:
         eliminated: 0
         name: FACTIOUS
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 45
         winner: 0
     votes_used: 96
@@ -1039,17 +994,11 @@ STV:
       CHAOTIC:
         eliminated: 0
         name: CHAOTIC
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 20
         winner: 0
       EVIL:
         eliminated: 0
         name: EVIL
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 22
         winner: 0
       FACTIOUS:
@@ -1057,7 +1006,7 @@ STV:
         name: FACTIOUS
         place: 1
         surplus: 4.5
-        transfer: 0
+        transfer: 0.0882352941176471
         votes: 51
         winner: 1
     votes_used: 93
@@ -1065,7 +1014,7 @@ STV:
     - EVIL
     - CHAOTIC
     number: 5
-    quota: 43
+    quota: 22.9411764705882
     result:
       name:
       - EVIL
@@ -1074,24 +1023,21 @@ STV:
       CHAOTIC:
         eliminated: 0
         name: CHAOTIC
-        place: 0
-        surplus: 0
-        transfer: 0
-        votes: 31
+        votes: 20.9705882352941
         winner: 0
       EVIL:
         eliminated: 0
         name: EVIL
         place: 2
-        surplus: 12
-        transfer: 0
-        votes: 55
+        surplus: 1.97058823529413
+        transfer: 0.0791027154663524
+        votes: 24.9117647058824
         winner: 1
-    votes_used: 86
+    votes_used: 45.8823529411765
   - candidates:
     - CHAOTIC
     number: 6
-    quota: 33
+    quota: 10.7156226126814
     result:
       name:
       - CHAOTIC
@@ -1101,18 +1047,18 @@ STV:
         eliminated: 0
         name: CHAOTIC
         place: 3
-        surplus: 33
-        transfer: 0
-        votes: 66
+        surplus: 10.7156226126814
+        transfer: 0.5
+        votes: 21.4312452253629
         winner: 1
-    votes_used: 66
+    votes_used: 21.4312452253629
   - candidates: []
     number: 7
     quota: 0
     tally: {}
     votes_used: 0
   seats: 1
-  timestamp: Tue Jan 18 15:49:32 2022
+  timestamp: Sun Jan 30 13:04:27 2022
   total_ballots: 100
   winners:
   - - FACTIOUS

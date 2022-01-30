@@ -2138,49 +2138,31 @@ STV:
       ABNORMAL:
         eliminated: 0
         name: ABNORMAL
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 31
         winner: 0
       BORING:
         eliminated: 0
         name: BORING
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 33
         winner: 0
       CHAOTIC:
         eliminated: 0
         name: CHAOTIC
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 36
         winner: 0
       DYSFUNCTIONAL:
         eliminated: 1
         name: DYSFUNCTIONAL
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 28
         winner: 0
       EVIL:
         eliminated: 0
         name: EVIL
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 54
         winner: 0
       FACTIOUS:
         eliminated: 0
         name: FACTIOUS
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 68
         winner: 0
     votes_used: 250
@@ -2200,41 +2182,26 @@ STV:
       ABNORMAL:
         eliminated: 0
         name: ABNORMAL
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 36
         winner: 0
       BORING:
         eliminated: 1
         name: BORING
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 35
         winner: 0
       CHAOTIC:
         eliminated: 0
         name: CHAOTIC
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 45
         winner: 0
       EVIL:
         eliminated: 0
         name: EVIL
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 58
         winner: 0
       FACTIOUS:
         eliminated: 0
         name: FACTIOUS
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 75
         winner: 0
     votes_used: 249
@@ -2253,33 +2220,21 @@ STV:
       ABNORMAL:
         eliminated: 1
         name: ABNORMAL
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 46
         winner: 0
       CHAOTIC:
         eliminated: 0
         name: CHAOTIC
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 51
         winner: 0
       EVIL:
         eliminated: 0
         name: EVIL
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 69
         winner: 0
       FACTIOUS:
         eliminated: 0
         name: FACTIOUS
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 78
         winner: 0
     votes_used: 244
@@ -2297,25 +2252,16 @@ STV:
       CHAOTIC:
         eliminated: 1
         name: CHAOTIC
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 66
         winner: 0
       EVIL:
         eliminated: 0
         name: EVIL
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 81
         winner: 0
       FACTIOUS:
         eliminated: 0
         name: FACTIOUS
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 90
         winner: 0
     votes_used: 237
@@ -2332,9 +2278,6 @@ STV:
       EVIL:
         eliminated: 0
         name: EVIL
-        place: 0
-        surplus: 0
-        transfer: 0
         votes: 110
         winner: 0
       FACTIOUS:
@@ -2342,14 +2285,14 @@ STV:
         name: FACTIOUS
         place: 1
         surplus: 4
-        transfer: 0
+        transfer: 0.0338983050847458
         votes: 118
         winner: 1
     votes_used: 228
   - candidates:
     - EVIL
     number: 6
-    quota: 99.5
+    quota: 56.5084745762712
     result:
       name:
       - EVIL
@@ -2359,18 +2302,18 @@ STV:
         eliminated: 0
         name: EVIL
         place: 2
-        surplus: 99.5
-        transfer: 0
-        votes: 199
+        surplus: 56.5084745762712
+        transfer: 0.5
+        votes: 113.016949152542
         winner: 1
-    votes_used: 199
+    votes_used: 113.016949152542
   - candidates: []
     number: 7
     quota: 0
     tally: {}
     votes_used: 0
   seats: 1
-  timestamp: Tue Jan 18 15:55:33 2022
+  timestamp: Sun Jan 30 13:05:30 2022
   total_ballots: 250
   winners:
   - - FACTIOUS
