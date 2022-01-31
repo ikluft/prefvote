@@ -10,7 +10,7 @@ The original Vote::STV software implemented the [single transferable vote](https
 
 ## Example voting result from test suite
 
-This is an example result from a Single Transferable Vote from the test suite. 250 ballots were randomly generated. So there's no actual meaning to the result except testing the software. Candidate names are fictitious, just to get names that start with A, B, C, D, E and F as used universally throughout the test suite. The names are whimsical based on the difficult dilemma voters sometimes feel they are choosing between in real candidates.
+This is an example result from a Single Transferable Vote (STV) using a [file in the test suite](test/inputs/100-rcv-test/001-rcv-test.yaml). 250 ballots were randomly generated. So there's no actual meaning to the result except testing the software. Candidate names are fictitious, just to get names that start with A, B, C, D, E and F as used universally throughout the test suite. The names are whimsical based on the difficult dilemma voters sometimes feel they are choosing between in real candidates.
 
 > ```
 > Results: Test Vote
