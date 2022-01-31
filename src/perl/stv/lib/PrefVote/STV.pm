@@ -28,7 +28,7 @@ use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
 use Types::Standard qw(Str ArrayRef HashRef InstanceOf);
-use PrefVote::Core::Types qw(Set);
+use PrefVote::Core::Set qw(Set);
 extends 'PrefVote::Core';
 
 # blackbox testing structure

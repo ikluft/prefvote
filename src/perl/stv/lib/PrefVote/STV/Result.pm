@@ -25,7 +25,7 @@ use MooX::TypeTiny;
 use Types::Standard qw(Enum);
 use Types::Common::String qw(NonEmptySimpleStr);
 use Types::Common::Numeric qw(PositiveOrZeroNum);
-use PrefVote::Core::Types qw(Set);
+use PrefVote::Core::Set qw(Set);
 extends 'PrefVote';
 
 # constants

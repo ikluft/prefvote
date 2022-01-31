@@ -1,11 +1,11 @@
 #!/usr/bin/perl
-# 004_prefvote_core_types.t - tests for PrefVote::Core::Types
+# 004_prefvote_core_types.t - tests for PrefVote::Core::Set
 use Modern::Perl qw(2015); # require 5.20.0 or later
 use autodie;
 use Test::More tests => 12;
 use Test::TypeTiny;
 use Readonly;
-use PrefVote::Core::Types qw(Set);
+use PrefVote::Core::Set qw(Set);
 use Set::Tiny qw(set);
 use Scalar::Util qw( refaddr );
 

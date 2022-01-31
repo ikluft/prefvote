@@ -1,5 +1,5 @@
-# PrefVote::Core::Types
-# ABSTRACT: PrefVote core data types which extend Types::Standard
+# PrefVote::Core::Set
+# ABSTRACT: Set data type which extends Types::Standard
 # Copyright (c) 1998-2022 by Ian Kluft
 # Open Source license: Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
  
@@ -10,7 +10,7 @@
 use Modern::Perl qw(2015); # require 5.20.0 or later
 ## use critic (Modules::RequireExplicitPackage)
 
-package PrefVote::Core::Types;
+package PrefVote::Core::Set;
 
 use autodie;
 use Data::Dumper;
@@ -92,7 +92,7 @@ __END__
 
 =head1 NAME
 
-PrefVote::Core::Types - PrefVote core data types which extend Types::Standard
+PrefVote::Core::Set - Set data type which extends Types::Standard
 
 =head1 SYNOPSIS
 

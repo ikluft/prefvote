@@ -7,12 +7,12 @@ use Test::More;
 
 my @classes = qw(
         PrefVote
-        PrefVote::Core::Types
         PrefVote::Core::Ballot
         PrefVote::Core::Exception
         PrefVote::Core::Float
         PrefVote::Core::InternalDataException
         PrefVote::Core::Output
+        PrefVote::Core::Set
         PrefVote::Core::TestSpec
         PrefVote::Core::TestNode
         PrefVote::Core::TestUtil
