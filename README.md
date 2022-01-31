@@ -10,7 +10,7 @@ The original Vote::STV software implemented the [single transferable vote](https
 
 ## Example voting result from test suite
 
-This is an example result from a Single Transferable Vote (STV) using a [file in the test suite](test/inputs/100-rcv-test/001-rcv-test.yaml). 250 ballots were randomly generated. So there's no actual meaning to the result except testing the software. Candidate names are fictitious, just to get names that start with A, B, C, D, E and F as used universally throughout the test suite. The names are whimsical based on the difficult dilemma voters sometimes feel they are choosing between in real candidates.
+This is an example result from a Single Transferable Vote (STV) using a [file in the test suite](test/inputs/100-rcv-test/001-rcv-test.yaml). 250 ballots were randomly generated. So there's no actual meaning to the result except testing the software.
 
 > ```
 > Results: Test Vote
@@ -37,5 +37,19 @@ This is an example result from a Single Transferable Vote (STV) using a [file in
 > │ 6       │ 56.50847 │ ✓        │ 113.01695 ✓ │ ❌      │ ❌       │ ❌     │ ❌            │
 > └─────────┴──────────┴──────────┴─────────────┴─────────┴──────────┴────────┴───────────────┘
 > ```
+
+Notes about the example:
+
+- Candidate names are fictitious, just to get names that start with A, B, C, D, E and F as used universally throughout the test suite. The names are whimsical based on the difficult dilemma voters sometimes feel they are choosing between in real candidates.
+
+- The "Result" column shows a numerical place and disposition. The disposition will be one of
+  
+  - "selected" if the candidate/choice placed high enough to win an available seat
+  
+  - "tied" if a tie exists between multiple candidates and spans through at least one available seat and more than can be filled. It is the software's role to report this, not to decide what to do. Ties can and do happen. So an organization must have procedures to deal with them.
+  
+  - "placed" if the candidate placed after the last available seat, and therefore was not selected/elected.
+  
+  - "eliminated" if the candidate was eliminated from counting. A place number reflects order where the first or strongest elimination is ordered last.
 
 STV is the first implemented voting method in PrefVote since it was the original implementation as Vote::STV back to 1998. Next up will be the Schulze algorithm.
