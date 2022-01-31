@@ -242,7 +242,7 @@ sub run_tally
             my $sel_ref = $round->tally_get($selection);
             my $votes = $sel_ref->votes();
             my $vote_increment = $fraction * $ballot->{quantity};
-            $sel_ref->votes($votes + $vote_increment);
+            $sel_ref->add_votes($vote_increment);
             $round->add_votes_used($vote_increment);
             #$self->debug_print("run_tally: $selection +$vote_increment (frac=$fraction) ".join("-",@ballot_items));
         }

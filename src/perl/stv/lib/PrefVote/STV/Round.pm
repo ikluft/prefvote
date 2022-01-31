@@ -27,10 +27,11 @@ use PrefVote::STV::Result;
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Standard qw(StrictNum ArrayRef HashRef InstanceOf Map);
-use Types::Common::Numeric qw(PositiveInt PositiveOrZeroNum);
+use Types::Standard qw(ArrayRef HashRef InstanceOf Map);
+use Types::Common::Numeric qw(PositiveInt);
 use Types::Common::String qw(NonEmptySimpleStr);
 extends 'PrefVote';
+use PrefVote::Core::Float qw(float_internal PVPositiveOrZeroNum);
 
 # constants
 Readonly::Hash my %blackbox_spec => (
@@ -60,9 +61,13 @@ has prev => (
 # count of votes used/consumed in counting so far
 has votes_used => (
     is => 'rw',
-    isa => PositiveOrZeroNum,
+    isa => PVPositiveOrZeroNum,
     default => 0,
 );
+around votes_used => sub {
+    my ($orig, $self, $param) = @_;
+    return $orig->($self, (defined $param ? (float_internal($param)) : ()));
+};
 
 # active candidates in the current round (which this object tracks)
 has candidates => (
@@ -83,9 +88,13 @@ has candidates => (
 # STV quota is the threshold to win the round as a function of seats available and candidates running
 has quota => (
     is => 'rw',
-    isa => PositiveOrZeroNum,
+    isa => PVPositiveOrZeroNum,
     default => 0,
 );
+around quota => sub {
+    my ($orig, $self, $param) = @_;
+    return $orig->($self, (defined $param ? (float_internal($param)) : ()));
+};
 
 # candidate vote counts in the current round
 has tally => (
@@ -151,6 +160,8 @@ sub add_votes_used
 {
     my $self = shift;
     my $votes = shift;
+
+    PVPositiveOrZeroNum->validate($votes);
     if ($votes < 0) {
         PrefVote::STV::Round::NegativeIncrementException->throw({classname => __PACKAGE__,
             attribute => 'votes_used',
@@ -158,7 +169,7 @@ sub add_votes_used
         });
     }
     my $votes_used = $self->votes_used() + $votes;
-    $self->votes_used($votes_used);
+    $self->votes_used(float_internal($votes_used));
     return $votes_used;
 }
 

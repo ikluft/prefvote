@@ -10,6 +10,7 @@ my @classes = qw(
         PrefVote::Core::Types
         PrefVote::Core::Ballot
         PrefVote::Core::Exception
+        PrefVote::Core::Float
         PrefVote::Core::InternalDataException
         PrefVote::Core::Output
         PrefVote::Core::TestSpec

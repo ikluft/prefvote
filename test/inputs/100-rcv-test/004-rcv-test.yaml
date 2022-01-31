@@ -2285,14 +2285,14 @@ STV:
         name: FACTIOUS
         place: 1
         surplus: 4
-        transfer: 0.0338983050847458
+        transfer: 0.0338983051
         votes: 118
         winner: 1
     votes_used: 228
   - candidates:
     - EVIL
     number: 6
-    quota: 56.5084745762712
+    quota: 56.508474577
     result:
       name:
       - EVIL
@@ -2302,18 +2302,18 @@ STV:
         eliminated: 0
         name: EVIL
         place: 2
-        surplus: 56.5084745762712
+        surplus: 56.5084745769
         transfer: 0.5
-        votes: 113.016949152542
+        votes: 113.0169491539
         winner: 1
-    votes_used: 113.016949152542
+    votes_used: 113.0169491539
   - candidates: []
     number: 7
     quota: 0
     tally: {}
     votes_used: 0
   seats: 1
-  timestamp: Sun Jan 30 13:05:30 2022
+  timestamp: Sun Jan 30 17:17:56 2022
   total_ballots: 250
   winners:
   - - FACTIOUS

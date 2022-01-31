@@ -528,8 +528,8 @@ STV:
     quota: 25
     result:
       name:
-      - CHAOTIC
       - BORING
+      - CHAOTIC
       type: eliminated
     tally:
       ABNORMAL:
@@ -643,14 +643,14 @@ STV:
         name: FACTIOUS
         place: 1
         surplus: 7
-        transfer: 0.225806451612903
+        transfer: 0.2258064516
         votes: 31
         winner: 1
     votes_used: 48
   - candidates:
     - ABNORMAL
     number: 5
-    quota: 19.5
+    quota: 10.9838709676
     result:
       name:
       - ABNORMAL
@@ -660,18 +660,18 @@ STV:
         eliminated: 0
         name: ABNORMAL
         place: 2
-        surplus: 19.5
+        surplus: 10.9838709676
         transfer: 0.5
-        votes: 39
+        votes: 21.9677419352
         winner: 1
-    votes_used: 39
+    votes_used: 21.9677419352
   - candidates: []
     number: 6
     quota: 0
     tally: {}
     votes_used: 0
   seats: 1
-  timestamp: Sun Jan 30 12:48:35 2022
+  timestamp: Sun Jan 30 17:14:52 2022
   total_ballots: 50
   winners:
   - - FACTIOUS

@@ -11,7 +11,6 @@
 use Modern::Perl qw(2015); # require 5.20.0 or later
 ## use critic (Modules::RequireExplicitPackage)
 
-
 package PrefVote::STV::Output::Text;
 
 use autodie;
@@ -19,23 +18,16 @@ use base qw(PrefVote::Core::Output);
 use Carp qw(croak);
 use Data::Dumper;
 use Readonly;
-use Math::Round qw(nearest);
 use YAML::XS;
 use Text::Table::Tiny 1.02 qw/ generate_table /;
+use Moo::Role;
+use PrefVote::Core::Float qw(float_external);
 
 # constants for output
 Readonly::Hash my %symbols => {
     "winner" => "\N{CHECK MARK}",
     "eliminated" => "\N{CROSS MARK}",
 };
-Readonly::Scalar my $float_digits => 5;
-
-# format floating point numbers to limit display precision
-sub float_output
-{
-    my $num = shift;
-    return nearest(10**-$float_digits, $num);
-}
 
 # look up column/candidate result
 sub get_col_result
@@ -48,7 +40,7 @@ sub get_col_result
     my $round_data = $result_data->{rounds}[$round];
     my $votes = $round_data->{tally}{$cand}{votes};
     my $result = {};
-        $result->{display} = float_output($votes);
+        $result->{display} = float_external($votes);
     foreach my $action (qw(eliminated winner)) {
         if ($round_data->{tally}{$cand}{$action}) {
             $result->{display} .= " ".$symbols{$action};
@@ -103,7 +95,7 @@ sub output
     for (my $round=0; $round < scalar @$rounds; $round++) {
         my $quota = $result_data->{rounds}[$round]{quota};
         last if $quota <= 0;
-        my @result_row = ($round+1, float_output($quota));
+        my @result_row = ($round+1, float_external($quota));
         foreach my $col_name (@candidates) {
             if (exists $col_status{$col_name}) {
                push @result_row, $symbols{$col_status{$col_name}};

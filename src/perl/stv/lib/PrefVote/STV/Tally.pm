@@ -23,8 +23,10 @@ use PrefVote::Core::TestSpec;
 # class definitions
 use Moo;
 use MooX::TypeTiny;
-use Types::Standard qw(Bool Int StrictNum Str ArrayRef);
+use Types::Standard qw(Bool Str ArrayRef);
+use Types::Common::Numeric qw(PositiveInt);
 extends 'PrefVote';
+use PrefVote::Core::Float qw(float_internal PVPositiveOrZeroNum);
 
 # constants
 Readonly::Hash my %blackbox_spec => (
@@ -48,9 +50,13 @@ has 'name' => (
 # candidate vote total
 has votes => (
     is => 'rw',
-    isa => StrictNum,
+    isa => PVPositiveOrZeroNum,
     default => 0,
 );
+around votes => sub {
+    my ($orig, $self, $param) = @_;
+    return $orig->($self, (defined $param ? (float_internal($param)) : ()));
+};
 
 # flag: winner of current or previous round (exclude from later rounds)
 has winner => (
@@ -69,20 +75,47 @@ has eliminated => (
 # result: finished in nth place
 has place => (
     is => 'rw',
-    isa => Int,
+    isa => PositiveInt,
 );
 
 # total votes available for transfer
 has transfer => (
     is => 'rw',
-    isa => StrictNum,
+    isa => PVPositiveOrZeroNum,
 );
+around transfer => sub {
+    my ($orig, $self, $param) = @_;
+    return $orig->($self, (defined $param ? (float_internal($param)) : ()));
+};
 
 # fraction of votes which exceed the quota needed to win, and are available for transfer
 has surplus => (
     is => 'rw',
-    isa => StrictNum,
+    isa => PVPositiveOrZeroNum,
 );
+around surplus => sub {
+    my ($orig, $self, $param) = @_;
+    return $orig->($self, (defined $param ? (float_internal($param)) : ()));
+};
+
+# add to total votes
+# use this instead of direct accessor since we only add to vote totals
+sub add_votes
+{
+    my $self = shift;
+    my $votes = shift;
+
+    PVPositiveOrZeroNum->validate($votes);
+    if ($votes < 0) {
+        PrefVote::STV::Tally::NegativeIncrementException->throw({classname => __PACKAGE__,
+            attribute => 'votes',
+            description => "negative incrememnt is invalid",
+        });
+    }
+    my $new_votes = $self->votes() + $votes;
+    $self->votes(float_internal($new_votes));
+    return $votes;
+}
 
 # mark candidate as a winner
 # if there is a tie, call this once per winning candidate
@@ -109,6 +142,18 @@ sub mark_as_eliminated
     $self->eliminated(1);
     return;
 }
+
+## no critic (Modules::ProhibitMultiplePackages)
+
+#
+# exception classes
+#
+
+package PrefVote::STV::Tally::NegativeIncrementException;
+
+use Moo;
+use Types::Standard qw(Str);
+extends 'PrefVote::Core::InternalDataException';
 
 1;
 

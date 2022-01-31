@@ -1006,7 +1006,7 @@ STV:
         name: FACTIOUS
         place: 1
         surplus: 4.5
-        transfer: 0.0882352941176471
+        transfer: 0.0882352941
         votes: 51
         winner: 1
     votes_used: 93
@@ -1014,7 +1014,7 @@ STV:
     - EVIL
     - CHAOTIC
     number: 5
-    quota: 22.9411764705882
+    quota: 22.9411764702
     result:
       name:
       - EVIL
@@ -1023,21 +1023,21 @@ STV:
       CHAOTIC:
         eliminated: 0
         name: CHAOTIC
-        votes: 20.9705882352941
+        votes: 20.9705882351
         winner: 0
       EVIL:
         eliminated: 0
         name: EVIL
         place: 2
-        surplus: 1.97058823529413
-        transfer: 0.0791027154663524
-        votes: 24.9117647058824
+        surplus: 1.9705882351
+        transfer: 0.0791027155
+        votes: 24.9117647053
         winner: 1
-    votes_used: 45.8823529411765
+    votes_used: 45.8823529404
   - candidates:
     - CHAOTIC
     number: 6
-    quota: 10.7156226126814
+    quota: 10.7156226131
     result:
       name:
       - CHAOTIC
@@ -1047,18 +1047,18 @@ STV:
         eliminated: 0
         name: CHAOTIC
         place: 3
-        surplus: 10.7156226126814
+        surplus: 10.7156226132
         transfer: 0.5
-        votes: 21.4312452253629
+        votes: 21.4312452263
         winner: 1
-    votes_used: 21.4312452253629
+    votes_used: 21.4312452263
   - candidates: []
     number: 7
     quota: 0
     tally: {}
     votes_used: 0
   seats: 1
-  timestamp: Sun Jan 30 13:04:27 2022
+  timestamp: Sun Jan 30 17:17:13 2022
   total_ballots: 100
   winners:
   - - FACTIOUS

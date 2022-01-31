@@ -15,7 +15,6 @@ package PrefVote::Core::TestNode;
 use autodie;
 use Carp qw(croak);
 use Data::Dumper;
-use Config;
 use Readonly;
 use Scalar::Util 'reftype';
 
@@ -27,13 +26,11 @@ use Set::Tiny;
 use Types::Standard qw(Any Value Str Ref ScalarRef ArrayRef InstanceOf Maybe is_Int);
 use Types::Common::Numeric qw(PositiveOrZeroInt);
 extends 'PrefVote';
+use PrefVote::Core::Float qw(fp_equal);
 
 # avoid circular dependency by loading PrefVote::Core::TestSpec with require
 # need it to read node testspecs but it needs to be first to load TestNode
 require PrefVote::Core::TestSpec;
-
-# constants
-Readonly::Scalar my $fp_epsilon => (($Config{doublesize} >= 8) ? 2**-53 : 2**-24); # fp epsilon for fp_equal()
 
 #
 # data in each node is an aggregation of links to a specific point in the blackbox testing tree
@@ -103,13 +100,6 @@ sub baseclass
     my $base = $classname;
     $base =~ s/^.*:://x;
     return $base;
-}
-
-# floating point equality comparison utility function
-# FP must not be compared with == operator - instead check if difference is within "machine epsilon" precision
-sub fp_equal {
-    my ($x, $y) = @_;
-    return ($x-$y > -$fp_epsilon and $x-$y < $fp_epsilon);
 }
 
 # get a child node by name/index
@@ -447,7 +437,8 @@ sub check
             description => join("-", $self->path())."=".$self->{plan}." (int)"});
     }
     if ($spec eq "fp" ) {
-        # return floating point comparison test - use fp_equal() since == operator doesn't work right for fp
+        # return floating point comparison test
+        # use PrefVote::Core::Float::fp_equal() since == operator doesn't work right for fp
         return ({type => "ok", value => fp_equal($self->value(), $self->{plan}),
             description => join("-", $self->path())."=".$self->{plan}." (fp)"});
     }
