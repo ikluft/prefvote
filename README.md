@@ -14,7 +14,7 @@ This is an example result from a Single Transferable Vote (STV) using a [file in
 
 > ```
 > Results: Test Vote
-> 
+> 1 seat available
 > 
 > ┌───────────────┬─────────────────────────────┬──────────────┐
 > │ Abbreviation  │ Name/description            │ Result       │
