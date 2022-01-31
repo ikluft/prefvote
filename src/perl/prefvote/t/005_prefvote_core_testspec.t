@@ -91,10 +91,10 @@ Readonly::Array my @basic_value => (
     
 );
 Readonly::Hash my %basic_result => (
-    'PrefVote::Core::TestSpec::UnitTest-boolean (bool)' => {
+    'PrefVote::Core::TestSpec::UnitTest-boolean=1 (bool)' => {
         'type' => 'cmp_ok',
         'value' => 1,
-        'description' => 'PrefVote::Core::TestSpec::UnitTest-boolean (bool)',
+        'description' => 'PrefVote::Core::TestSpec::UnitTest-boolean=1 (bool)',
         'op' => '==',
         'expected' => 1
     },
@@ -104,23 +104,23 @@ Readonly::Hash my %basic_result => (
         'value' => 3,
         'type' => 'is'
     },
-    'PrefVote::Core::TestSpec::UnitTest-strset-a=a (str)' => {
+    'PrefVote::Core::TestSpec::UnitTest-strset-a=a (string)' => {
         'expected' => 'a',
-        'description' => 'PrefVote::Core::TestSpec::UnitTest-strset-a=a (str)',
+        'description' => 'PrefVote::Core::TestSpec::UnitTest-strset-a=a (string)',
         'value' => 'a',
         'type' => 'is'
     },
-    'PrefVote::Core::TestSpec::UnitTest-strset-b=b (str)' => {
-        'description' => 'PrefVote::Core::TestSpec::UnitTest-strset-b=b (str)',
+    'PrefVote::Core::TestSpec::UnitTest-strset-b=b (string)' => {
+        'description' => 'PrefVote::Core::TestSpec::UnitTest-strset-b=b (string)',
         'value' => 'b',
         'type' => 'is',
         'expected' => 'b'
     },
-    'PrefVote::Core::TestSpec::UnitTest-strset-c=c (str)' => {
+    'PrefVote::Core::TestSpec::UnitTest-strset-c=c (string)' => {
         'expected' => 'c',
         'type' => 'is',
         'value' => 'c',
-        'description' => 'PrefVote::Core::TestSpec::UnitTest-strset-c=c (str)'
+        'description' => 'PrefVote::Core::TestSpec::UnitTest-strset-c=c (string)'
     },
     'PrefVote::Core::TestSpec::UnitTest-strhash-d exists' => {
         'type' => 'ok',
@@ -166,27 +166,27 @@ Readonly::Hash my %basic_result => (
         'value' => 4,
         'type' => 'is'
     },
-    'PrefVote::Core::TestSpec::UnitTest-strlist-0=g (str)' => {
+    'PrefVote::Core::TestSpec::UnitTest-strlist-0=g (string)' => {
         'expected' => 'g',
         'type' => 'is',
         'value' => 'g',
-        'description' => 'PrefVote::Core::TestSpec::UnitTest-strlist-0=g (str)'
+        'description' => 'PrefVote::Core::TestSpec::UnitTest-strlist-0=g (string)'
     },
-    'PrefVote::Core::TestSpec::UnitTest-strlist-1=h (str)' => {
+    'PrefVote::Core::TestSpec::UnitTest-strlist-1=h (string)' => {
         'type' => 'is',
         'value' => 'h',
-        'description' => 'PrefVote::Core::TestSpec::UnitTest-strlist-1=h (str)',
+        'description' => 'PrefVote::Core::TestSpec::UnitTest-strlist-1=h (string)',
         'expected' => 'h'
     },
-    'PrefVote::Core::TestSpec::UnitTest-strlist-2=i (str)' => {
+    'PrefVote::Core::TestSpec::UnitTest-strlist-2=i (string)' => {
         'expected' => 'i',
-        'description' => 'PrefVote::Core::TestSpec::UnitTest-strlist-2=i (str)',
+        'description' => 'PrefVote::Core::TestSpec::UnitTest-strlist-2=i (string)',
         'value' => 'i',
         'type' => 'is'
     },
-    'PrefVote::Core::TestSpec::UnitTest-strlist-3=j (str)' => {
+    'PrefVote::Core::TestSpec::UnitTest-strlist-3=j (string)' => {
         'type' => 'is',
-        'description' => 'PrefVote::Core::TestSpec::UnitTest-strlist-3=j (str)',
+        'description' => 'PrefVote::Core::TestSpec::UnitTest-strlist-3=j (string)',
         'value' => 'j',
         'expected' => 'j'
     },
@@ -213,17 +213,17 @@ Readonly::Hash my %complex_result => (
         'description' => 'PrefVote::Core::TestSpec::UnitTest-PrefVote::Core::TestSpec::UnitTest-strset set size=2',
         'type' => 'is'
     },
-    'PrefVote::Core::TestSpec::UnitTest-PrefVote::Core::TestSpec::UnitTest-strset-a=a (str)' => {
-        'description' => 'PrefVote::Core::TestSpec::UnitTest-PrefVote::Core::TestSpec::UnitTest-strset-a=a (str)',
+    'PrefVote::Core::TestSpec::UnitTest-PrefVote::Core::TestSpec::UnitTest-strset-a=a (string)' => {
+        'description' => 'PrefVote::Core::TestSpec::UnitTest-PrefVote::Core::TestSpec::UnitTest-strset-a=a (string)',
         'type' => 'is',
         'value' => 'a',
         'expected' => 'a'
     },
-    'PrefVote::Core::TestSpec::UnitTest-PrefVote::Core::TestSpec::UnitTest-strset-b=b (str)' => {
+    'PrefVote::Core::TestSpec::UnitTest-PrefVote::Core::TestSpec::UnitTest-strset-b=b (string)' => {
         'expected' => 'b',
         'value' => 'b',
         'type' => 'is',
-        'description' => 'PrefVote::Core::TestSpec::UnitTest-PrefVote::Core::TestSpec::UnitTest-strset-b=b (str)'
+        'description' => 'PrefVote::Core::TestSpec::UnitTest-PrefVote::Core::TestSpec::UnitTest-strset-b=b (string)'
     }
 );
 

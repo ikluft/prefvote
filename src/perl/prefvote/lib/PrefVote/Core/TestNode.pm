@@ -421,26 +421,28 @@ sub check
     $self->debug_print("check(spec=".($spec // "undef"));
 
     # short-circuit the search if the expected value is a scalar
+    my $desc_str = join("-", $self->path())."=".$self->{plan}." ($spec)";
     if ($spec eq "string") {
         # return a string comparison test
         return ({type => "is", expected => $self->{plan}, value => $self->value(),
-            description => join("-", $self->path())."=".$self->{plan}." (str)"});
+            description => $desc_str});
     }
     if ($spec eq "bool" ) {
         # return a simple boolean test
         return ({type => "cmp_ok", expected => $self->{plan}, op => "==", value => $self->value(),
-            description => join("-", $self->path())." (bool)"});
+            description => $desc_str});
     }
     if ($spec eq "int" ) {
         # return integer comparison test
         return ({type => "cmp_ok", expected => $self->{plan}, op => "==", value => $self->value(),
-            description => join("-", $self->path())."=".$self->{plan}." (int)"});
+            description => $desc_str});
     }
     if ($spec eq "fp" ) {
         # return floating point comparison test
         # use PrefVote::Core::Float::fp_equal() since == operator doesn't work right for fp
-        return ({type => "ok", value => fp_equal($self->value(), $self->{plan}),
-            description => join("-", $self->path())."=".$self->{plan}." (fp)"});
+        my $fp_eq = fp_equal($self->{plan}, $self->value());
+        return ({type => "ok", value => fp_equal($self->{plan}, $self->value()),
+            description => $desc_str});
     }
 
     # generate tests for hashes

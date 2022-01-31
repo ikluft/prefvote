@@ -14,7 +14,6 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 package PrefVote::Core::Float;
 
 use autodie;
-use Config;
 use Readonly;
 use Math::Round qw(nearest);
 use Exporter qw(import);
@@ -30,15 +29,15 @@ use Type::Coercion ();
 BEGIN { extends "Types::Standard" };
 
 # constants
-Readonly::Scalar my $fp_external_precision => 5; # 5 digits max past decimal
-Readonly::Scalar my $fp_internal_precision => 10; # 10 digits max past decimal
-Readonly::Scalar my $fp_epsilon => (($Config{doublesize} >= 8) ? 2**-52 : 2**-23); # fp epsilon for fp_equal()
+Readonly::Scalar my $fp_external_precision => 5; # 5 digits max past decimal point
+Readonly::Scalar my $fp_internal_precision => 10; # 10 digits max past decimal point
+Readonly::Scalar my $fp_epsilon => 2**-24; # fp epsilon for fp_equal() based on 32-bit floats
 
 # floating point equality comparison utility function
 # FP must not be compared with == operator - instead check if difference is within "machine epsilon" precision
 sub fp_equal {
     my ($x, $y) = @_;
-    return ($x-$y > -$fp_epsilon and $x-$y < $fp_epsilon);
+    return (abs($x-$y) < $fp_epsilon) ? 1 : 0;
 }
 
 # format floating point numbers to limit display precision
