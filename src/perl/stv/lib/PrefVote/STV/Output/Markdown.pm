@@ -1,5 +1,5 @@
-# PrefVote::STV::Output::Text
-# ABSTRACT: text output formatting PrefVote::STV
+# PrefVote::STV::Output::Markdown
+# ABSTRACT: Markdown output formatting PrefVote::STV
 # derived from Vote::STV by Ian Kluft
 # Copyright (c) 1998-2022 by Ian Kluft
 # Open Source license: Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
@@ -11,17 +11,14 @@
 use Modern::Perl qw(2015); # require 5.20.0 or later
 ## use critic (Modules::RequireExplicitPackage)
 
-package PrefVote::STV::Output::Text;
+package PrefVote::STV::Output::Markdown;
 
 use autodie;
 use base qw(PrefVote::Core::Output);
 use Carp qw(croak);
 use Data::Dumper;
 use Readonly;
-use Term::ANSIColor;
-use IO::Interactive qw(is_interactive);
 use YAML::XS;
-use Text::Table::Tiny 1.02 qw/ generate_table /;
 use PrefVote::Core::Float qw(float_external);
 
 # constants for output
@@ -51,6 +48,26 @@ sub get_col_result
     return $result;
 }
 
+# generate Markdown table from an array
+sub generate_md_table
+{
+    my %opts = @_;
+    my $rows = $opts{rows};
+
+    # generate header from first row
+    if ($opts{header_row} // 0) {
+        my $header = shift @$rows;
+        say "| ".join(" | ", @$header)." |";
+        say "|".("---|" x scalar @$header);
+    }
+
+    # generate table from remainder of rows
+    foreach my $row (@$rows) {
+        say "| ".join(" | ", @$row)." |";
+    }
+    return;
+}
+
 # output formatting class method (called by PrefVote::Core::format_output())
 sub output
 {
@@ -77,7 +94,9 @@ sub output
 
     # print title
     my $seats = $result_data->{seats};
-    say "Results: ".$result_data->{name};
+    my $title = "Results: ".$result_data->{name};
+    say $title;
+    say "-" x length $title;
     say "$seats seat".($seats>1 ? "s" : "")." available";
     say "";
 
@@ -88,9 +107,9 @@ sub output
     foreach my $name (@candidates) {
         push @toc_rows, [$name, $result_data->{choices}{$name}, join("/",@{$c2r->{$name}})];
     }
-    say generate_table(rows => \@toc_rows, header_row => 1, style => 'boxrule');
+    say generate_md_table(rows => \@toc_rows, header_row => 1);
 
-    # generate output text table
+    # generate output table
     my @result_rows;
     my $rounds = $result_data->{rounds};
     my %col_status;
@@ -112,7 +131,7 @@ sub output
         }
         push @result_rows, \@result_row;
     }
-    say generate_table(rows => \@result_rows, header_row => 1, style => 'boxrule');
+    say generate_md_table(rows => \@result_rows, header_row => 1);
 
     return 1;
 }
@@ -125,7 +144,7 @@ __END__
 
 =head1 NAME
 
-PrefVote::STV::Output::Text - text output formatting PrefVote::STV
+PrefVote::STV::Output::Markdown - Markdown output formatting PrefVote::STV
 
 =head1 SYNOPSIS
 
