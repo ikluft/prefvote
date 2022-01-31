@@ -18,6 +18,8 @@ use base qw(PrefVote::Core::Output);
 use Carp qw(croak);
 use Data::Dumper;
 use Readonly;
+use Term::ANSIColor;
+use IO::Interactive qw(is_interactive);
 use YAML::XS;
 use Text::Table::Tiny 1.02 qw/ generate_table /;
 use Moo::Role;
@@ -75,20 +77,22 @@ sub output
     binmode(STDOUT, ':encoding(UTF-8)');
 
     # print title
+    my $seats = $result_data->{seats};
     say "Results: ".$result_data->{name};
+    say "$seats seat".($seats>1 ? "s" : "")." available";
     say "";
 
     # generate candidate table of contents
     my @toc_rows;
-    push @toc_rows, ["Abbreviation", "Name/description"];
+    my $c2r = $result_data->{choice_to_result};
+    push @toc_rows, ["Abbreviation", "Name/description", "Result"];
     foreach my $name (@candidates) {
-        push @toc_rows, [$name, $result_data->{choices}{$name}];
+        push @toc_rows, [$name, $result_data->{choices}{$name}, join("/",@{$c2r->{$name}})];
     }
     say generate_table(rows => \@toc_rows, header_row => 1, style => 'boxrule');
 
     # generate output text table
     my @result_rows;
-    my $seats = $result_data->{seats};
     my $rounds = $result_data->{rounds};
     my %col_status;
     push @result_rows, ['Round #', 'Quota', @candidates];

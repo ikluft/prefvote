@@ -15,16 +15,17 @@ This is an example result from a Single Transferable Vote (STV) using a [file in
 > ```
 > Results: Test Vote
 > 
-> ┌───────────────┬─────────────────────────────┐
-> │ Abbreviation  │ Name/description            │
-> ├───────────────┼─────────────────────────────┤
-> │ FACTIOUS      │ factious/divisive candidate │
-> │ EVIL          │ evil villain                │
-> │ CHAOTIC       │ chaotic unpredictable       │
-> │ ABNORMAL      │ abnormal and antisocial     │
-> │ BORING        │ boring as anything          │
-> │ DYSFUNCTIONAL │ dysfunctional incompetent   │
-> └───────────────┴─────────────────────────────┘
+> 
+> ┌───────────────┬─────────────────────────────┬──────────────┐
+> │ Abbreviation  │ Name/description            │ Result       │
+> ├───────────────┼─────────────────────────────┼──────────────┤
+> │ FACTIOUS      │ factious/divisive candidate │ 1/selected   │
+> │ EVIL          │ evil villain                │ 2/placed     │
+> │ CHAOTIC       │ chaotic unpredictable       │ 3/eliminated │
+> │ ABNORMAL      │ abnormal and antisocial     │ 4/eliminated │
+> │ BORING        │ boring as anything          │ 5/eliminated │
+> │ DYSFUNCTIONAL │ dysfunctional incompetent   │ 6/eliminated │
+> └───────────────┴─────────────────────────────┴──────────────┘
 > ┌─────────┬──────────┬──────────┬─────────────┬─────────┬──────────┬────────┬───────────────┐
 > │ Round # │ Quota    │ FACTIOUS │ EVIL        │ CHAOTIC │ ABNORMAL │ BORING │ DYSFUNCTIONAL │
 > ├─────────┼──────────┼──────────┼─────────────┼─────────┼──────────┼────────┼───────────────┤

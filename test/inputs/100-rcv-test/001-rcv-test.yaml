@@ -496,6 +496,25 @@ STV:
     DYSFUNCTIONAL: '3'
     EVIL: '4'
     FACTIOUS: '5'
+  choice_to_result:
+    ABNORMAL:
+    - 2
+    - placed
+    BORING:
+    - 5
+    - eliminated
+    CHAOTIC:
+    - 5
+    - eliminated
+    DYSFUNCTIONAL:
+    - 4
+    - eliminated
+    EVIL:
+    - 3
+    - eliminated
+    FACTIOUS:
+    - 1
+    - selected
   choices:
     ABNORMAL: abnormal and antisocial
     BORING: boring as anything
@@ -504,8 +523,8 @@ STV:
     EVIL: evil villain
     FACTIOUS: factious/divisive candidate
   eliminated:
-  - - CHAOTIC
-    - BORING
+  - - BORING
+    - CHAOTIC
   - - DYSFUNCTIONAL
   - - EVIL
   index_to_choice:
@@ -528,8 +547,8 @@ STV:
     quota: 25
     result:
       name:
-      - BORING
       - CHAOTIC
+      - BORING
       type: eliminated
     tally:
       ABNORMAL:
@@ -671,7 +690,7 @@ STV:
     tally: {}
     votes_used: 0
   seats: 1
-  timestamp: Sun Jan 30 17:14:52 2022
+  timestamp: Sun Jan 30 22:18:48 2022
   total_ballots: 50
   winners:
   - - FACTIOUS

@@ -843,6 +843,25 @@ STV:
     DYSFUNCTIONAL: '3'
     EVIL: '4'
     FACTIOUS: '5'
+  choice_to_result:
+    ABNORMAL:
+    - 4
+    - eliminated
+    BORING:
+    - 6
+    - eliminated
+    CHAOTIC:
+    - 3
+    - placed
+    DYSFUNCTIONAL:
+    - 5
+    - eliminated
+    EVIL:
+    - 2
+    - placed
+    FACTIOUS:
+    - 1
+    - selected
   choices:
     ABNORMAL: abnormal and antisocial
     BORING: boring as anything
@@ -1058,7 +1077,7 @@ STV:
     tally: {}
     votes_used: 0
   seats: 1
-  timestamp: Sun Jan 30 17:17:13 2022
+  timestamp: Sun Jan 30 22:21:07 2022
   total_ballots: 100
   winners:
   - - FACTIOUS

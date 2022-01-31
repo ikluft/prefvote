@@ -34,7 +34,7 @@ Readonly::Array my @voting_methods => qw(Core STV Schulze);
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Standard qw(Str Int ArrayRef HashRef Map InstanceOf Any);
+use Types::Standard qw(Str Int Enum ArrayRef HashRef Map Tuple InstanceOf Any);
 use Types::Common::Numeric qw(PositiveInt PositiveOrZeroInt);
 use Types::Common::String qw(NonEmptySimpleStr);
 extends 'PrefVote';
@@ -45,6 +45,7 @@ Readonly::Hash my %blackbox_spec => (
     name => [qw(string)],
     choice_to_index => [qw(hash string)],
     index_to_choice => [qw(hash string)],
+    choice_to_result => [qw(hash list string)], # list of strings is all we can do for a tuple
     choices => [qw(hash string)],
     seats => [qw(int)],
     ballots => [qw(hash PrefVote::Core::Ballot)],
@@ -78,6 +79,25 @@ has index_to_choice => (
         i2c_exists => 'exists',
         i2c_get => 'get',
         i2c_set => 'set',
+    },
+);
+
+# Hash from choice names to final result/disposition
+# This must be provided by the voting method subclass from its count.
+# The map structure hashes from choice name to a tuple of place number & disposition (selected/tied/placed/eliminated)
+# Place numbers are not necessarily unique, and will be equal for ties
+# Selected choices are those whose placement was less than or equal to the number of seats.
+# Tied choices are any group in a tie whose numbers span the number of seats to beyond it.
+# Placed choices got a result in sequence after the last seat was filled.
+# Eliminated candidates still have place numbers depending on the order or strength of elimination.
+has choice_to_result => (
+    is => 'rw',
+    isa => Map[NonEmptySimpleStr, Tuple[Int, Enum[qw(selected tied placed eliminated)]]],
+    handles_via => 'Hash',
+    handles => {
+        c2r_exists => 'exists',
+        c2r_get => 'get',
+        c2r_set => 'set',
     },
 );
 
@@ -136,6 +156,10 @@ has testspec => (
     isa => InstanceOf["PrefVote::Core::TestSpec"],
     required => 0,
 );
+
+# final result status per candidate
+# key: candidate abbreviation string
+# value: hashref with place (integer), 
 
 # utility for functions to select between class and object
 sub class_or_obj
