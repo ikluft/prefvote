@@ -12,28 +12,129 @@ The original Vote::STV software implemented the [single transferable vote](https
 
 This is an example result from a Single Transferable Vote (STV) using a [file in the test suite](test/inputs/100-rcv-test/001-rcv-test.yaml). 250 ballots were randomly generated. So there's no actual meaning to the result except testing the software.
 
-> Results: Test Vote
-> ------------------
-> 
-> 1 seat available
-> 
-> | Abbreviation  | Name/description            | Result       |
-> | ------------- | --------------------------- | ------------ |
-> | FACTIOUS      | factious/divisive candidate | 1/selected   |
-> | EVIL          | evil villain                | 2/placed     |
-> | CHAOTIC       | chaotic unpredictable       | 3/eliminated |
-> | ABNORMAL      | abnormal and antisocial     | 4/eliminated |
-> | BORING        | boring as anything          | 5/eliminated |
-> | DYSFUNCTIONAL | dysfunctional incompetent   | 6/eliminated |
-> 
-> | Round # | Quota    | FACTIOUS | EVIL        | CHAOTIC | ABNORMAL | BORING | DYSFUNCTIONAL |
-> | ------- | -------- | -------- | ----------- | ------- | -------- | ------ | ------------- |
-> | 1       | 125      | 68       | 54          | 36      | 31       | 33     | 28 ❌          |
-> | 2       | 124.5    | 75       | 58          | 45      | 36       | 35 ❌   | ❌             |
-> | 3       | 122      | 78       | 69          | 51      | 46 ❌     | ❌      | ❌             |
-> | 4       | 118.5    | 90       | 81          | 66 ❌    | ❌        | ❌      | ❌             |
-> | 5       | 114      | 118 ✅    | 110         | ❌       | ❌        | ❌      | ❌             |
-> | 6       | 56.50847 | ✅        | 113.01695 ✅ | ❌       | ❌        | ❌      | ❌             |
+<blockquote>
+<div id="prefvote">
+<h2>Results: Test Vote</h2>
+<p>1 seat available</p>
+<table>
+<thead>
+<tr>
+<th>Abbreviation</th>
+<th>Name/description</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FACTIOUS</td>
+<td>factious/divisive candidate</td>
+<td>1/selected</td>
+</tr>
+<tr>
+<td>EVIL</td>
+<td>evil villain</td>
+<td>2/placed</td>
+</tr>
+<tr>
+<td>CHAOTIC</td>
+<td>chaotic unpredictable</td>
+<td>3/eliminated</td>
+</tr>
+<tr>
+<td>ABNORMAL</td>
+<td>abnormal and antisocial</td>
+<td>4/eliminated</td>
+</tr>
+<tr>
+<td>BORING</td>
+<td>boring as anything</td>
+<td>5/eliminated</td>
+</tr>
+<tr>
+<td>DYSFUNCTIONAL</td>
+<td>dysfunctional incompetent</td>
+<td>6/eliminated</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Round #</th>
+<th>Quota</th>
+<th>FACTIOUS</th>
+<th>EVIL</th>
+<th>CHAOTIC</th>
+<th>ABNORMAL</th>
+<th>BORING</th>
+<th>DYSFUNCTIONAL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>125</td>
+<td>68</td>
+<td>54</td>
+<td>36</td>
+<td>31</td>
+<td>33</td>
+<td>28 ❌</td>
+</tr>
+<tr>
+<td>2</td>
+<td>124.5</td>
+<td>75</td>
+<td>58</td>
+<td>45</td>
+<td>36</td>
+<td>35 ❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>3</td>
+<td>122</td>
+<td>78</td>
+<td>69</td>
+<td>51</td>
+<td>46 ❌</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>4</td>
+<td>118.5</td>
+<td>90</td>
+<td>81</td>
+<td>66 ❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>5</td>
+<td>114</td>
+<td>118 ✅</td>
+<td>110</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>6</td>
+<td>56.50847</td>
+<td>✅</td>
+<td>113.01695 ✅</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+</tbody>
+</table>
+</div>
+</blockquote>
 
 Notes about the example:
 
