@@ -8,6 +8,8 @@ Since the project's original language Perl has strengths in prototyping, it's th
 
 The original Vote::STV software implemented the [single transferable vote](https://en.wikipedia.org/wiki/Single_transferable_vote) algorithm, which is a subset of [ranked-choice voting](https://en.wikipedia.org/wiki/Ranked_voting).
 
+STV is the first implemented voting method in PrefVote since it was the original implementation as Vote::STV back to 1998. Next up will be the Schulze algorithm.
+
 ## Example voting result from test suite
 
 This is an example result from a Single Transferable Vote (STV) using a [file in the test suite](test/inputs/100-rcv-test/001-rcv-test.yaml). 250 ballots were randomly generated. So there's no actual meaning to the result except testing the software.
@@ -149,5 +151,3 @@ Notes about the example:
   - "placed" if the candidate placed after the last available seat, and therefore was not selected/elected.
   
   - "eliminated" if the candidate was eliminated from counting. A place number reflects order where the first or strongest elimination is ordered last.
-
-STV is the first implemented voting method in PrefVote since it was the original implementation as Vote::STV back to 1998. Next up will be the Schulze algorithm.

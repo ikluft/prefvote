@@ -50,11 +50,34 @@ PrefVote - Preference voting system
 
 =head1 SYNOPSIS
 
+In standard Perl5:
+
+    use base "PrefVote";
+    #...
+    PrefVote->debug($debug_flag);
+    #...
+    PrefVote->debug_print("debug message goes here");
+
+In Moo object environment:
+
+    use Moo;
+    #...
+    extends 'PrefVote';
+    #...
+    PrefVote->debug($debug_flag);
+    #...
+    PrefVote->debug_print("debug message goes here");
 
 =head1 DESCRIPTION
 
+PrefVote is the top-level class of the PrefVote voting system. By itself the class serves as the top level of the
+class hierarchy. It only provides a global debug flag. It loads L<PrefVote::Exception> in case any subclasses throw
+an exception. Voting functionality is under L<PrefVote::Core>.
 
 =head1 SEE ALSO
+
+L<PrefVote::Core>. L<PrefVote::STV>, L<PrefVote::Schulze>
+L<https://github.com/ikluft/prefvote>
 
 =head1 BUGS AND LIMITATIONS
 
