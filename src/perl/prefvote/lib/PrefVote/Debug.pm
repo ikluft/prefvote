@@ -48,11 +48,24 @@ PrefVote::Debug - debug flag singleton class for PrefVote hierarchy
 
 =head1 SYNOPSIS
 
+    use PrefVote::Debug;
+
+    my $debug_ref = PrefVote::Debug->instance(debug => (($ENV{PREFVOTE_DEBUG} // 0) ? 1 : 0));
+    $debug_mode = $debug_ref->debug(); # read debug mode flag
+    $debug_ref->debug($debug_flag); # write to debug mode flag
+    $debug_ref->debug_print("debug message goes here");
 
 =head1 DESCRIPTION
 
+PrefVote::Debug maintains a singleton debug flag for the PrefVote class hierarchy.
+Since the top-level PrefVote class provides this to the entire hierarchy,
+it is unnecessary and not recommended to use this class directly.
+Use any subclass of PrefVote instead.
 
 =head1 SEE ALSO
+
+L<PrefVote>
+L<https://github.com/ikluft/prefvote>
 
 =head1 BUGS AND LIMITATIONS
 
