@@ -31,11 +31,42 @@ PrefVote::Exception - top-level exception class for PrefVote hierarchy
 
 =head1 SYNOPSIS
 
+Usage from CLI mainline:
+
+    use Carp qw(confess);
+    use Data::Dumper;
+    use PrefVote; # any subclass of PrefVote will load PrefVote::Exception
+
+    sub main
+    {
+        # ...
+        return 1;
+    }
+
+    if (not eval { main() }) {
+        my $e = $@;
+        if (ref $e and $e->isa("PrefVote::Exception")) {
+            say "exception: ".$e->{description};
+            say Data::Dumper->Dump($e);
+        } else {
+            confess $e;
+        }
+        exit 1;
+    }
+
+Usage throwing an exception:
+
+    PrefVote::Exception->throw({description => "error message", classname => __PACKAGE__});
 
 =head1 DESCRIPTION
 
+PrefVote::Exception uses L<Throwable> to serve as a class for excpetions in the PrefVote system.
+It can be used directly, or subclassed to add more parameters or default values to existing parameters.
 
 =head1 SEE ALSO
+
+L<PrefVote>, L<Throwable>
+L<https://github.com/ikluft/prefvote>
 
 =head1 BUGS AND LIMITATIONS
 
