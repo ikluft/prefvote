@@ -53,26 +53,11 @@ sub float_external { return float_limit(shift, $fp_external_precision); }
 sub float_internal { return float_limit(shift, $fp_internal_precision); }
 
 # PVNum type for Type::Tiny ecosystem - PrefVote floating point number limited to 10-digit internal precision
-#my $pvnum_type = Type::Tiny->new(
-#    name => "PVNum",
-#    parent => Num,
-#    constraint => sub { looks_like_number($_) },
-#    message    => sub { "$_ is not a number" },
-#    type_coercion_map => [
-#        Num, sub { float_internal($_) },
-#    ],
-#);
 declare "PVNum",
     as "Num",
     message { Num->validate() or "$_ is not a number"};
 coerce "PVNum",
     from "Num", via { float_internal($_) };
-#my $pvpznum_type = Type::Tiny->new(
-#    name       => 'PVPositiveOrZeroNum',
-#    parent     => $pvnum_type,
-#    constraint => sub { $_ >= 0 },
-#    message    => sub { "Must be a number greater than or equal to zero" },
-#);
 declare "PVPositiveOrZeroNum",
     as "PVNum",
     where { $_ >= 0 },
@@ -89,11 +74,38 @@ PrefVote::Core::Float - floating point utilities for PrefVote subclasses
 
 =head1 SYNOPSIS
 
+floating point equality comparison utility function:
+
+    use PrefVote::Core::Float qw(fp_equal);
+
+    my $fp_eq = fp_equal($plan, $value);
+    say "the numbers are".($fp_eq ? "" :" not")." equal";
+
+floating point data types using PrefVote precision limits (for consistent fp results):
+
+    use Moo;
+    extends 'PrefVote';
+    use PrefVote::Core::Float qw(float_internal PVPositiveOrZeroNum);
+
+    # candidate vote total
+    has votes => (
+        is => 'rw',
+        isa => PVPositiveOrZeroNum,
+        default => 0,
+    );
+    around votes => sub {
+        my ($orig, $self, $param) = @_;
+        return $orig->($self, (defined $param ? (float_internal($param)) : ()));
+    };    
 
 =head1 DESCRIPTION
 
+This provides floating point utility functions and data types for PrefVote.
 
 =head1 SEE ALSO
+
+L<PrefVote>
+L<https://github.com/ikluft/prefvote>
 
 =head1 BUGS AND LIMITATIONS
 
