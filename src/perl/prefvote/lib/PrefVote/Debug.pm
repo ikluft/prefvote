@@ -41,6 +41,7 @@ sub debug_print
 __END__
 
 # POD documentation
+=encoding utf8
 
 =head1 NAME
 
@@ -57,10 +58,12 @@ PrefVote::Debug - debug flag singleton class for PrefVote hierarchy
 
 =head1 DESCRIPTION
 
+⛔ This is for PrefVote internal use only.
+
 PrefVote::Debug maintains a singleton debug flag for the PrefVote class hierarchy.
-Since the top-level PrefVote class provides this to the entire hierarchy,
-it is unnecessary and not recommended to use this class directly.
-Use any subclass of PrefVote instead.
+
+Since the top-level PrefVote class provides this to the entire hierarchy, do use this class directly.
+Use any relevant subclass of PrefVote instead.
 
 =head1 SEE ALSO
 
