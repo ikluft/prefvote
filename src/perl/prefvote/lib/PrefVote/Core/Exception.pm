@@ -30,11 +30,21 @@ PrefVote::Core::Exception - general exception class for all voting methods
 
 =head1 SYNOPSIS
 
+    if (@missing) {
+        PrefVote::Core::Exception->throw(classname => __PACKAGE__,
+            description => "missing parameter: ".join(" ", @missing));
+    }
 
 =head1 DESCRIPTION
 
+PrefVote::Core::Exception is a subclass of L<PrefVote::Exception> and only differs in the default value for
+the classname attribute. It serves as the top-level exception class for voting method classes, which are those
+that derive from PrefVote::Core.
 
 =head1 SEE ALSO
+
+L<PrefVote::Exception>, L<Throwable>
+L<https://github.com/ikluft/prefvote>
 
 =head1 BUGS AND LIMITATIONS
 
