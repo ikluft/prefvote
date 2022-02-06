@@ -68,6 +68,8 @@ __END__
 
 # POD documentation
 
+=encoding utf8
+
 =head1 NAME
 
 PrefVote::Core::Float - floating point utilities for PrefVote subclasses
@@ -101,6 +103,52 @@ floating point data types using PrefVote precision limits (for consistent fp res
 =head1 DESCRIPTION
 
 This provides floating point utility functions and data types for PrefVote.
+
+=head1 FUNCTIONS
+
+=over 1
+
+=item fp_equal ( fp_a, fp_b )
+
+Returns true if two floating point number parameters are close enough to be considered equal. 
+
+In most programming languages the numeric equality operator (== in Perl) works for integers, but is not
+appropriate for use with floating point numbers. Comparison of floating point numbers for equality needs to
+check that the difference between the numbers is less than a small number "epsilon" value which depends on
+the number of bits of floating point precision.
+
+PrefVote sets a uniform epsilon value of 2^-23 so that tests can get consistent results. It is more than precise
+enough for our voting needs, where internal fractional votes are limited to half that precision at 10^-10.
+
+=item float_limit ( fp_num, digits )
+
+Return a floating point number limited to the number of digits of precision beyond the decimal point.
+
+=item float_external
+
+Return a floating point number limited to PrefVote's systemwide standard for external precision,
+5 decimal digits beyond the decimal point.
+
+=item float_internal
+
+Return a floating point number limited to PrefVote's systemwide standard for internal precision,
+10 decimal digits beyond the decimal point.
+
+=back
+
+=head1 DATA TYPES
+
+=over 1
+
+=item PVNum
+
+L<Types::Standard> compatible floating point number, except limited in precision to float_internal().
+
+=item PVPositiveOrZeroNum
+
+Same as PVNum except limited to non-negative numers, a.k.a. positive or zero.
+
+=back
 
 =head1 SEE ALSO
 
