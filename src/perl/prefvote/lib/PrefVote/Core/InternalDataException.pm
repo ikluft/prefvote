@@ -23,6 +23,7 @@ has attribute => (is => 'ro', isa =>Str);
 __END__
 
 # POD documentation
+=encoding utf8
 
 =head1 NAME
 
@@ -30,11 +31,38 @@ PrefVote::Core::InternalDataException - invalid internal data exception
 
 =head1 SYNOPSIS
 
+Throwing this exception directly:
+
+    if (not ref $value) {
+        PrefVote::Core::InternalDataException->throw(classname => __PACKAGE__, attribute => "value",
+            description => "scalar value received, object ref expected");
+    }
+
+Deriving a subclass from this exception:
+
+    package Some::Class::NegativeIncrementException;
+
+    use Moo;
+    use Types::Standard qw(Str);
+    extends 'PrefVote::Core::InternalDataException';
+    # optionally add exception data attributes here
 
 =head1 DESCRIPTION
 
+PrefVote::Core::InternalDataException is a subclass of L<PrefVote::Core::Exception>.
+It extends it with an attribute called 'attribute' which contains the name of a variable which had an error.
+
+It can be meaningful to derive a subclass which doesn't add any new attributes.
+The name of the subclass can give an indication of which class or group of classes an error occurred,
+where that error would be thrown.
+It can also be named for a more specific kind of error as an indicator of what went wrong when that
+exception is thrown.
 
 =head1 SEE ALSO
+
+L<PrefVote::Core::Exception>
+
+L<https://github.com/ikluft/prefvote>
 
 =head1 BUGS AND LIMITATIONS
 
