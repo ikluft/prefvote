@@ -22,6 +22,7 @@ use Readonly;
 # class definitions
 use Moo;
 use MooX::TypeTiny;
+use MooX::HandlesVia;
 use Types::Standard qw(Enum);
 use Types::Common::String qw(NonEmptySimpleStr);
 use Types::Common::Numeric qw(PositiveOrZeroNum);
