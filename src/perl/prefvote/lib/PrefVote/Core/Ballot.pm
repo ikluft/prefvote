@@ -16,20 +16,32 @@ package PrefVote::Core::Ballot;
 use autodie;
 use Carp qw(croak);
 use Readonly;
+use Set::Tiny qw(set);
 use PrefVote::Core::TestSpec;
 
 # class definitions
 use Moo;
-use MooX::HandlesVia;
 use MooX::TypeTiny;
 use Types::Standard qw(Str ArrayRef);
 use Types::Common::Numeric qw(PositiveInt);
 use Types::Common::String qw(NonEmptySimpleStr);
+use PrefVote::Core::Set qw(Set);
 extends 'PrefVote';
 
-# set of valid ballot choices submitted by PrefVote::Core
-# separate copy here avoids dependency loop and helps testing the module alone
+#
+# file-scoped configuration variables submitted by PrefVote::Core
+# A separate copy of this data here avoids a dependency loop and allows testing the module alone.
+#
+
+# set of valid ballot choices
 my %choices;
+
+# policy flag: allow ballot-input ties, defaults to false (Schulze sets it true)
+my $ballot_input_ties_flag = 0;
+
+#
+# class definition
+#
 
 # blackbox testing structure
 Readonly::Hash my %blackbox_spec => (
@@ -40,9 +52,11 @@ Readonly::Hash my %blackbox_spec => (
 PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, spec => \%blackbox_spec);
  
 # per-ballot array of vote items
+# Each item is a Set type to allow for voting methods which allow ballot-input ties. But not all do.
+# PrefVote::Core class method ballot_input_ties_policy() defaults to false. Override it to true to enable ballot ties.
 has items => (
     is => 'ro',
-    isa => ArrayRef[Str],
+    isa => ArrayRef[Set[Str]],
     required => 1,
     constraint => sub {
         # if %choices is non-empty, use it to look up valid values in ballot items
@@ -55,12 +69,6 @@ has items => (
             }
         }
         return 1;
-    },
-    handles_via => 'Array',
-    handles => {
-        items_all => 'all',
-        items_join => 'join',
-        items_count => 'count',
     },
 );
 
@@ -77,6 +85,19 @@ has hex_id => (
     isa => NonEmptySimpleStr,
     required => 1,
 );
+
+# ballot-input ties are not allowed by default. Voting methods which allow it should override this class method.
+# this function acts as a read/write accessor to the file-scoped ballot-input tie flag, which defaults to false
+# This should be set only from the voting method class based on its policy/definition on ballot-input ties.
+# For example, Single Transferable Vote (STV) does not allow ballot-input ties. The Schulze Method does allow them.
+sub ballot_input_ties_flag
+{
+    my $value = shift;
+    if (defined $value) {
+        $ballot_input_ties_flag = ($value ? 1 : 0)
+    }
+    return $ballot_input_ties_flag;
+}
 
 # set valid ballot choices in a class variable
 # this allows testing separate from other classes
@@ -97,6 +118,75 @@ sub set_choices
 sub get_choices
 {
     return wantarray ? (keys %choices) : \%choices;
+}
+
+# enforce ballot-input ties only allowed when ballot_input_ties_flag() is true
+sub enforce_ballot_item_ties
+{
+    my $item_set = shift;
+    if (ref $item_set ne "Set::Tiny") {
+        PrefVote::Core::InternalDataException->throw(classname => __PACKAGE__, attribute => "ballot item",
+            description => "ballot item is not a ref to Set::Tiny")
+    }
+    if ($item_set->is_empty()) {
+        PrefVote::Core::InternalDataException->throw(classname => __PACKAGE__, attribute => "ballot item",
+            description => "bad data: ballot item set is empty")
+    }
+    return if ballot_input_ties_flag(); # no further checks if ballot-item ties are allowed
+    if ($item_set->size() > 1) {
+        PrefVote::Core::InternalDataException->throw(classname => __PACKAGE__, attribute => "ballot item",
+            description => "ballot item set has more than one item in voting method that doesn't support input ties")
+    }
+    return;
+}
+
+# return list of all items
+# This is like returning all the entries in a list, except that each list entry is a set of potential input ties.
+# If ballot_input_ties_flag() is false then enforce one item per ballot-item set - throw an exception otherwise.
+sub items_all
+{
+    my $self = shift;
+    my @result;
+    foreach my $item (@{$self->{items}}) {
+        enforce_ballot_item_ties($item);
+        if ($item->size() > 1) {
+            push @result, set($item->elements());
+        } else {
+            push @result, $item->elements();
+        }
+    }
+    return @result;
+}
+
+# return a string of joined ballot-item entries
+# This is does a join into a string after fetching all the sub-items from each ballot-item set.
+# If ballot_input_ties_flag() is false then enforce one item per ballot-item set - throw an exception otherwise.
+sub items_join
+{
+    my $self = shift;
+    my $separator = shift;
+    my @result;
+    foreach my $item (@{$self->{items}}) {
+        enforce_ballot_item_ties($item);
+        if ($item->size() > 1) {
+            push @result, join("/", sort $item->elements());
+        } else {
+            push @result, $item->elements();
+        }
+    }
+    return join($separator, @result);
+}
+
+# return a count of ballot choices - including totals for ballot-item sets with ties of more than one choice.
+# If ballot_input_ties_flag() is false then enforce one item per ballot-item set - throw an exception otherwise.
+sub items_count
+{
+    my $self = shift;
+    my $total = 0;
+    foreach my $item (@{$self->{items}}) {
+        $total += $item->size();
+    }
+    return $total;
 }
 
 # increment the quantity on this ballot record

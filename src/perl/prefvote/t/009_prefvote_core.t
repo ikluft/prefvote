@@ -3,10 +3,11 @@
 
 use Modern::Perl qw(2015); # require 5.20.0 or later
 use autodie;
-use Test::More tests => 65;
+use Test::More tests => 86;
 use Test::Exception;
 use File::Basename;
 use Readonly;
+use Set::Tiny qw(set);
 use YAML::XS;
 use PrefVote::Core;
 
@@ -27,6 +28,12 @@ Readonly::Array my @ballot_tests => (
     {ballot => [qw(EVIL FACTIOUS DYSFUNCTIONAL CHAOTIC ABNORMAL BORING)], total => 6, hex => '453201'},
     {ballot => [qw(BORING DYSFUNCTIONAL CHAOTIC EVIL ABNORMAL CTHULU)], total => 5, hex => '13240'},
     {ballot => [qw(CTHULU)], exception => "PrefVote::Core::Exception"},
+    {ballot => [qw(EVIL FACTIOUS DYSFUNCTIONAL/CHAOTIC ABNORMAL BORING)],
+        exception => "PrefVote::Core::Exception"}, # this fails because allow_ties isn't set and it has a tie input
+    {ballot => [qw(EVIL FACTIOUS DYSFUNCTIONAL/CHAOTIC ABNORMAL BORING)],
+        allow_ties => 1, total => 6, hex => '45[23]01'},
+    {ballot => [qw(EVIL/FACTIOUS DYSFUNCTIONAL/CHAOTIC ABNORMAL/BORING)],
+        allow_ties => 1 ,total => 6, hex => '[45][23][01]'},
 );
 Readonly::Scalar my $input_dir => "t/test-inputs/".basename($0, ".t");
 Readonly::Scalar my $yaml_file => "test.yaml";
@@ -68,7 +75,51 @@ sub basic_tests
     return;
 }
 
-# ballot input tests (12 tests)
+# convert an array to a set of ballot items
+sub array2ballot
+{
+    my $array_ref = shift;
+    my @ballot;
+    foreach my $item (@$array_ref) {
+        if (index($item, "/") != -1) {
+            push @ballot, set(split( "/", $item));
+        } else {
+            push @ballot, set($item);
+        }
+    }
+    return @ballot;
+}
+
+# abbreviate expected candidate names to first letter for brevity of test titles (they're named for A,B,C,D,E,F)
+sub summary_name
+{
+    my $choices_ref = shift;
+    my $item = shift;
+    my @summary;
+
+    # abbreviate candidate names where possible within group-tie or singular ballot-item
+    if (index($item, "/") != -1) {
+        # group-tie entry
+        foreach my $subitem (sort split "/", $item) {
+            if (exists $choices_ref->{$subitem}) {
+                # abbreviate known candidate
+                push @summary, substr $subitem, 0, 1;
+            } else {
+                # use full identifier for unknown candidate
+                push @summary, $subitem;
+            }
+        }
+    } elsif (exists $choices_ref->{$item}) {
+        # abbreviate known candidate
+        push @summary, substr $item, 0, 1;
+    } else {
+        # use full identifier for unknown candidate
+        push @summary, $item;
+    }
+    return join "/", @summary;
+}
+
+# ballot input tests (33 tests)
 # no counting of ballots is done here because in the top-level class we don't have a voting method subclass to do that
 sub ballot_tests
 {
@@ -81,26 +132,23 @@ sub ballot_tests
     # verify empty ballot box at start (1 test)
     is($vote_obj->total_ballots(), 0, "obj->total_ballots() = 0 initially");
 
-    # run through array of ballot input tests (19 tests)
+    # run through array of ballot input tests (22 tests)
     foreach my $test (@ballot_tests) {
+        PrefVote::Core::ballot_input_ties_policy($test->{allow_ties} // 0); # allow ballot input ties for testing
         my @summary;
         foreach my $item (@{$test->{ballot}}) {
-            if ($vote_obj->choice_exists($item)) {
-                push @summary, substr $item, 0, 1;
-            } else {
-                push @summary, $item;
-            }
+            push @summary, summary_name($vote_obj->choices(), $item);
         }
         my $summary_str = join "-", @summary;
         if (exists $test->{exception}) {
-            throws_ok( sub {$vote_obj->submit_ballot(@{$test->{ballot}}); }, $test->{exception},
+            throws_ok( sub {$vote_obj->submit_ballot(array2ballot($test->{ballot})); }, $test->{exception},
                 "ballot $summary_str -> exception $test->{exception} as expected");
         } else {
             my $combo;
             lives_ok(sub {$combo = $vote_obj->submit_ballot(@{$test->{ballot}}); }, "ballot $summary_str");
-            my $hex_index = $vote_obj->ballot_to_hex(@{$test->{ballot}});
-            is($hex_index, $test->{hex}, "computed hex_index $hex_index as expected");
-            is($combo, $hex_index, "combo $combo from submit_ballot matches hex_index");
+            my $hex_index = $vote_obj->ballot_to_hex(array2ballot($test->{ballot}));
+            is($hex_index, $test->{hex}, "computed hex_index ".$test->{hex}." as expected");
+            is($hex_index, $combo, "combo $combo from submit_ballot matches hex_index");
             my $ballot_obj = $vote_obj->{ballots}{$combo};
             ok(defined $ballot_obj, "ballot lookup returns data");
             isa_ok($ballot_obj, "PrefVote::Core::Ballot", "ballot lookup returns correct object");
@@ -108,8 +156,7 @@ sub ballot_tests
             lives_ok(sub {$vote_obj->submit_ballot(@{$test->{ballot}}); }, "ballot $summary_str resubmit"); 
             is($ballot_obj->quantity(), 2, "ballot quantity increments to 2 after identical ballot");
             if (exists $test->{total}) {
-                is($ballot_obj->items_count(), $test->{total},
-                    "ballot $summary_str has $test->{total} valid items");
+                is($ballot_obj->items_count(), $test->{total}, "ballot $summary_str has $test->{total} valid items");
             }
         }
     }
@@ -120,7 +167,7 @@ sub ballot_tests
     }
 
     # count ballots (1 test)
-    is($vote_obj->total_ballots(), 4, "obj->total_ballots() = 4");
+    is($vote_obj->total_ballots(), 8, "obj->total_ballots() = 8");
     return;
 }
 

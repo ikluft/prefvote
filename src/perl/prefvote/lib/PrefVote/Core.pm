@@ -17,6 +17,7 @@ use autodie;
 use Carp qw(croak);
 use DateTime;
 use Readonly;
+use Set::Tiny qw(set);
 use Scalar::Util 'reftype';
 use YAML::XS;
 use PrefVote::Core::Ballot;
@@ -111,6 +112,7 @@ has choices => (
         $self->debug_print("set choices to ".join(" ", $self->choices_keys()));
         $self->gen_choice_hex();
         PrefVote::Core::Ballot::set_choices($self->choices_keys());
+        PrefVote::Core::Ballot::ballot_input_ties_flag($self->ballot_input_ties_policy());
     },
     handles_via => 'Hash',
     handles => {
@@ -156,6 +158,18 @@ has testspec => (
     isa => InstanceOf["PrefVote::Core::TestSpec"],
     required => 0,
 );
+
+# By default PrefVote::Core sets ballot-input ties policy to false.
+# Override this in voting method subclasses which allow input ties. (i.e. Schulze)
+my $ballot_input_ties_policy = 0; # only change this for testing purposes, override in subclass to enable it
+sub ballot_input_ties_policy
+{
+    my $value = shift;
+    if (defined $value) {
+        $ballot_input_ties_policy = ($value ? 1 : 0)
+    }
+    return $ballot_input_ties_policy;
+}
 
 # final result status per candidate
 # key: candidate abbreviation string
@@ -233,9 +247,20 @@ sub ballot_to_hex
 {
     my ($self, @ballot) = @_;
     my $hex_id = "";
+
+    # generate hex digit(s) for each candidate's listed position
     foreach my $item (@ballot) {
-        if ($self->c2i_exists($item)) {
-            $hex_id .= $self->c2i_get($item);
+        my $set_hex = "";
+        # sort elements within a ballot-input tie group for consistency and enclose them in square brackets
+        foreach my $set_item (sort $item->elements()) {
+            if ($self->c2i_exists($set_item)) {
+                $set_hex .= $self->c2i_get($set_item);
+            }
+        }
+        if ($item->size() > 1) {
+            $hex_id .= "[$set_hex]";
+        } else {
+            $hex_id .= $set_hex;
         }
     }
     return $hex_id;
@@ -254,9 +279,26 @@ sub submit_ballot
     # filter out invalid items from ballot
     my @filtered_ballot;
     foreach my $item (@ballot) {
-        if ($self->choice_exists($item)) {
-            push @filtered_ballot, $item;
+        # check for ballot-input ties
+        if (index($item, "/") == -1) {
+            # just a single item - save it if it's valid
+            if ($self->choice_exists($item)) {
+                push @filtered_ballot, set($item);
+            }
+            next;
         }
+
+        # handle ballot-input tie if allowed by this voting method
+        if (not $self->ballot_input_ties_policy()) {
+            PrefVote::Core::Exception->throw(description => "ballot-input ties not allowed in ".(ref $self));
+        }
+        my @set_items;
+        foreach my $set_item (split("/", $item)) {
+            if ($self->choice_exists($set_item)) {
+                push @set_items, $set_item;
+            }
+        }
+        push @filtered_ballot, set(@set_items);
     }
 
     # throw exception for empty ballot after filtering
@@ -264,7 +306,7 @@ sub submit_ballot
         PrefVote::Core::Exception->throw(description => "empty ballot");
     }
 
-    # Note: ballots are anonymous once this function is called.
+    # Note: ballots are anonymous and become aggregated once this function is called.
     # Protection against casting multiple votes must be done elsewhere
     # (preferably when the vote is received) because this module doesn't
     # retain any association between the ballot and the voter.

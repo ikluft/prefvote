@@ -200,7 +200,9 @@ sub run_tally
         my $selection = undef;
         my $fraction = 1;
         my @ballot_items = $ballot->items_all();
-        foreach my $choice (@ballot_items) {
+        foreach my $choice_set (@ballot_items) {
+            # STV can assume it received only single-item sets in each ballot item
+            my $choice = ($choice_set->elements())[0];
             if ( $self->debug() and ref($choice) ne "" ) {
                 print STDERR "choice is ref "
                     .ref($choice)
