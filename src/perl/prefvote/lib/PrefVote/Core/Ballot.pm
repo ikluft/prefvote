@@ -22,7 +22,7 @@ use PrefVote::Core::TestSpec;
 # class definitions
 use Moo;
 use MooX::TypeTiny;
-use Types::Standard qw(Str ArrayRef);
+use Types::Standard qw(ArrayRef);
 use Types::Common::Numeric qw(PositiveInt);
 use Types::Common::String qw(NonEmptySimpleStr);
 use PrefVote::Core::Set qw(Set);
@@ -56,7 +56,7 @@ PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, spec => \%blackbox
 # PrefVote::Core class method ballot_input_ties_policy() defaults to false. Override it to true to enable ballot ties.
 has items => (
     is => 'ro',
-    isa => ArrayRef[Set[Str]],
+    isa => ArrayRef[Set[NonEmptySimpleStr]],
     required => 1,
     constraint => sub {
         # if %choices is non-empty, use it to look up valid values in ballot items
@@ -86,10 +86,13 @@ has hex_id => (
     required => 1,
 );
 
-# ballot-input ties are not allowed by default. Voting methods which allow it should override this class method.
-# this function acts as a read/write accessor to the file-scoped ballot-input tie flag, which defaults to false
-# This should be set only from the voting method class based on its policy/definition on ballot-input ties.
+# Ballot-input ties, where a voter casts a ranked choice ballot with two or more choices as equals, are not allowed
+# by default. Voting methods which allow it should override PrefVote::Core's ballot_input_ties_policy() class method,
+# replacing it with one that returns true. That will be used by PrefVote::Core initialization to set this flag.
+# This function acts as a read/write accessor to the file-scoped ballot-input tie flag, which defaults to false.
 # For example, Single Transferable Vote (STV) does not allow ballot-input ties. The Schulze Method does allow them.
+# This flag only exists in this class to avoid a cicrular dependency with PrefVote::Core - if this class queried
+# PrefVote::Core for the flag then this class would depend on it. So it provides the flag to this class at startup.
 sub ballot_input_ties_flag
 {
     my $value = shift;
@@ -206,10 +209,10 @@ sub as_string
 
 1;
 
-
 __END__
 
 # POD documentation
+=encoding utf8
 
 =head1 NAME
 
@@ -217,11 +220,124 @@ PrefVote::Core::Ballot - ballot structure for PrefVote voting system classes
 
 =head1 SYNOPSIS
 
+As used by PrefVote::Core:
+
+    use PrefVote::Core::Ballot;
+    
+    # before instantiating any ballot objects - this is done by PrefVote::Core
+    PrefVote::Core::Ballot::set_choices(@keys);
+    PrefVote::Core::Ballot::ballot_input_ties_flag($flag);
+
+    # instantiating a new ballot - this is done by PrefVote::Core
+    $ballot = PrefVote::Core::Ballot->new(items => \@filtered_ballot, hex_id => $hex_id, quantity => 1);
+
+As used by PrefVote::STV, demonstrating use by voting method classes:
+
+    use Moo;
+    # ...
+    extends 'PrefVote::Core';
+
+    foreach my $combo ($self->ballots_keys()) {
+        my $ballot = $self->ballots_get($combo);
+        my @ballot_items = $ballot->items_all();
+        # count votes based on contents of @ballot_items
+    }
 
 =head1 DESCRIPTION
 
+⛔ This is for PrefVote internal use only.
+
+PrefVote::Core::Ballot encapsulates the data of a ballot, listing a voter's choices as items in order of
+decreasing preference. Ballots with the same combination of choices in the same order are aggregated by
+incrementing the quantity attribute rather than creating a duplicate ballot record.
+
+PrefVote::Core stores ranked-choice ballots as the base class for multiple voting methods.
+
+=head1 ATTRIBUTES
+
+=over 1
+
+=item items : ArrayRef[Set[string]]
+
+This is an array of sets of non-empty strings.
+The strings contained in it are the voter's choices from their ballot, in order of decreasing preference.
+Though sets may have more than one entry, that is only used on voting methods which allow ballot-input ties,
+i.e. allowing voters to cast the same preference for more than one candidate and treating them as equals.
+Voting methods which allow ballot-input ties will have more than one entry in a set when multiple entries are
+considered equal in their place in the order of preference.
+
+=item quantity : integer
+
+This is a multiplier on the ballot combination, indicating how many times this specific combination occurred.
+
+=item hex_id : string
+
+This is a unique string used as a hash key for the ballot.
+It is generated from one or more hexadecimal digits indicating the position
+of each candidate from the table of contents for the race.
+
+In voting methods that allow ballot-input ties, hexadecimal codes for equal candidates are shown between
+square brackets. Though the order isn't significant for equal choices, the hex codes are sorted within the brackets
+in order to maintain consistent results for search matching and testing.
+
+=back
+
+=head1 METHODS
+
+=over 1
+
+=item items_all
+
+This returns a list of all the choices on the ballot in order of decreasing preference.
+This is only for display.
+It isn't sufficient for counting because this list loses the information about ballot-input ties.
+
+=item items_join ( $separator )
+
+This returns a string with the ballot choices concatenated with the $separator between them.
+(See join in L<perlfunc>.)
+If there are ballot-input ties on the ballot, those entries are joined by a slash "/" separator before entering the
+bigger join to show result order correctly.
+
+=item items_count
+
+This returns the number of items on the ballot. It takes ballot-input ties into account and returns the total items
+across all places in the ballot.
+
+=item increment
+
+This increments the count on the ballot.
+It is called by PrefVote::Core when submit_ballot() receives a ballot of the same combination as an existing one.
+This should not be called from voting method subclasses.
+
+=item as_string
+
+This returns a string representing the ballot, formed by the items_join() method with a space for the separator.
+
+=back
+
+=head1 FUNCTIONS
+
+=over 1
+
+=item set_choices
+
+This function is called by PrefVote::Core during initialization and should not be used elsewhere.
+It establishes the list of choices available to vote for.
+
+=item get_choices
+
+This returns a list of the string identifiers for the available voting choices.
+Order is not significant here - it's a list of hash keys.
+
+=back
 
 =head1 SEE ALSO
+
+L<PrefVote>, L<Moo>, L<Set::Tiny>
+
+L<https://github.com/ikluft/prefvote>
+
 
 =head1 BUGS AND LIMITATIONS
 
