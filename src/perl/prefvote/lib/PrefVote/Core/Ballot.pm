@@ -45,7 +45,7 @@ my $ballot_input_ties_flag = 0;
 
 # blackbox testing structure
 Readonly::Hash my %blackbox_spec => (
-    items => [qw(list string)],
+    items => [qw(list set string)],
     quantity => [qw(int)],
     hex_id => [qw(string)],
 );
@@ -149,7 +149,7 @@ sub items_all
     my @result;
     foreach my $item (@{$self->{items}}) {
         enforce_ballot_item_ties($item);
-        if ($item->size() > 1) {
+        if ($item->size() > 1 and ballot_input_ties_flag()) {
             push @result, set($item->elements());
         } else {
             push @result, $item->elements();
