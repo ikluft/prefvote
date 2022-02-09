@@ -1,0 +1,20 @@
+Change log for PrefVote::Schulze
+
+{{$NEXT}}
+ [API CHANGE]
+
+ [BUG FIXES]
+
+ [DOCS]
+
+ [ENHANCEMENTS]
+
+ [MAJOR]
+
+ [MINOR]
+
+ [REVISION]
+ - new PrefVote::Schulze source tree after split of PrefVote::Core and PrefVote::STV
+
+ [SECURITY]
+
