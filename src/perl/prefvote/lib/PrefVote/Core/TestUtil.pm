@@ -74,11 +74,34 @@ PrefVote::Core::TestUtil - testing utilities to contain Test::More runtime depen
 
 =head1 SYNOPSIS
 
+    require PrefVote::Core::TestUtil;
+    $vote_obj->debug_print("checking tests: ".(ref $vote_obj));
+    my @tests = $vote_obj->blackbox_check();
+    PrefVote::Core::TestUtil::do_tests(@tests);
 
 =head1 DESCRIPTION
 
+PrefVote::Core::TestUtil is used for black-box testing of PrefVote.
+It provides a function do_tests() which accepts the array of tests returned from
+blackbox_check() from any voting method subclass of PrefVote::Core. It is meant to keep the dependency on
+the L<Test::More> module separate from other run-time modules that shouldn't otherwise be muddied by a
+dependence on a test module.
+
+=head1 FUNCTIONS
+
+=over 1
+
+=item do_tests ( @tests )
+
+=item do_test ( \%test )
+
+=back
 
 =head1 SEE ALSO
+
+L<PrefVote::Core>
+
+L<https://github.com/ikluft/prefvote>
 
 =head1 BUGS AND LIMITATIONS
 
