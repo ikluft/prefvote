@@ -1,5 +1,5 @@
 ---
-method: STV
+method: STV Schulze
 params:
   name: Test Vote
   seats: 1
