@@ -64,7 +64,6 @@ has tsut => (
 package main;
 
 use autodie;
-use Carp qw(croak);
 use Readonly;
 use Set::Tiny qw(set);
 use Data::Dumper;

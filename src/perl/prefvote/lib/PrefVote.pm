@@ -14,7 +14,6 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 package PrefVote;
 
 use autodie;
-use Carp qw(croak);
 use Moo;
 use MooX::TypeTiny;
 use PrefVote::Debug;

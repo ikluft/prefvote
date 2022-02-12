@@ -15,7 +15,6 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 package PrefVote::STV;
 
 use autodie;
-use Carp qw(croak);
 use Clone qw(clone);
 use Data::Dumper;
 use Readonly;

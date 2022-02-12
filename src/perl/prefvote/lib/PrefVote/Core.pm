@@ -14,7 +14,6 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 package PrefVote::Core;
 
 use autodie;
-use Carp qw(croak);
 use DateTime;
 use Readonly;
 use Set::Tiny qw(set);
@@ -180,7 +179,8 @@ sub class_or_obj
 {
     my $coo = shift;
     if (not $coo->isa(__PACKAGE__)) {
-        croak "class_or_obj: parameter not in class hierarchy".((ref $coo) ? ref $coo : $coo);
+        PrefVote::Core::Exception->throw(description => "class_or_obj: parameter not in class hierarchy"
+            .((ref $coo) ? ref $coo : $coo));
     }
     if (ref $coo) {
         return $coo;
@@ -337,11 +337,11 @@ sub read_yaml
     my $filepath = shift;
 
     # read YAML
-    (-e $filepath) or croak "$filepath not found";
-    (-f $filepath) or croak "$filepath not a regular file";
+    (-e $filepath) or PrefVote::Core::Exception->throw(description => "$filepath not found");
+    (-f $filepath) or PrefVote::Core::Exception->throw(description => "$filepath not a regular file");
     my @yaml_docs = eval { YAML::XS::LoadFile($filepath) };
     if ($@) {
-        croak "$0: error reading $filepath: $@";
+        PrefVote::Core::Exception->throw(description => "$0: error reading $filepath: $@");
     }
     return @yaml_docs;
 }
@@ -355,18 +355,18 @@ sub yaml2vote
     # save the first YAML document as the definition of the vote for entry into a PrefVote::Core structure
     my $yaml_vote_def = shift @yaml_docs;
     if (ref $yaml_vote_def ne "HASH") {
-        croak "$0: misformatted YAML input: 1st document must be in map/hash format";
+        PrefVote::Core::Exception->throw(description => "$0: misformatted YAML input: 1st document must be in map/hash format");
     }
     foreach my $key ( qw(method params)) {
         if (not exists $yaml_vote_def->{$key}) {
-            croak "$0: misformatted YAML input: '$key' parameter missing from top level of vote definition";
+            PrefVote::Core::Exception->throw(description => "$0: misformatted YAML input: '$key' parameter missing from top level of vote definition");
         }
     }
 
     # save the second YAML document as the list of ballots
     my $yaml_ballots = shift @yaml_docs;
     if (ref $yaml_ballots ne "ARRAY") {
-        croak "$0: misformatted YAML input: 2nd document must be in list/array format";
+        PrefVote::Core::Exception->throw(description => "$0: misformatted YAML input: 2nd document must be in list/array format");
     }
 
     # save any additional YAML documents in extra, available for testing
@@ -376,16 +376,16 @@ sub yaml2vote
     # instantiate the voting object from 1st YAML document
     my $method = $yaml_vote_def->{method};
     if (not supported_method($method)) {
-        croak "$method is not a supported voting method";
+        PrefVote::Core::Exception->throw(description => "$method is not a supported voting method");
     }
     my $class = "PrefVote::$method";
     ## no critic (BuiltinFunctions::ProhibitStringyEval)
     if (not eval "require $class") {
-        croak "failed to load class $class: $@";
+        PrefVote::Core::Exception->throw(description => "failed to load class $class: $@");
     }
     ## critic (BuiltinFunctions::ProhibitStringyEval)
     if (not $class->isa(__PACKAGE__)) {
-        croak "class $class in vote defintion is not a subclass of ".__PACKAGE__;
+        PrefVote::Core::Exception->throw(description => "class $class in vote defintion is not a subclass of ".__PACKAGE__);
     }
     my $params = $yaml_vote_def->{params};
     if (scalar @$extra_data) {
@@ -401,7 +401,7 @@ sub yaml2vote
     ## use critic (Subroutines::ProtectPrivateSubs)
     my $vote_obj = eval { $class->instance(%$params) };
     if (not defined $vote_obj) {
-        croak "failed to instantiate object of $class: $@";
+        PrefVote::Core::Exception->throw(description => "failed to instantiate object of $class: $@");
     }
 
     # ingest ballots from 2nd YAML document

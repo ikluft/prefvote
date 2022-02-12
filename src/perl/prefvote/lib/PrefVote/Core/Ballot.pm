@@ -14,7 +14,6 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 package PrefVote::Core::Ballot;
 
 use autodie;
-use Carp qw(croak);
 use Readonly;
 use Set::Tiny qw(set);
 use PrefVote::Core::TestSpec;

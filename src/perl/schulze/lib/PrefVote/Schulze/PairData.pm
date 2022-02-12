@@ -14,7 +14,6 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 package PrefVote::Schulze::PairData;
 
 use autodie;
-use Carp qw(croak);
 use Data::Dumper;
 use Readonly;
 

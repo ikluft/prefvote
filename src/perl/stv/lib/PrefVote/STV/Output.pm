@@ -15,7 +15,6 @@ package PrefVote::STV::Output;
 
 use autodie;
 use base qw(PrefVote::Core::Output);
-use Carp qw(croak);
 use Data::Dumper;
 use Readonly;
 use YAML::XS;

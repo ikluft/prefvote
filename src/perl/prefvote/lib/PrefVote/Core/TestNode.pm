@@ -13,7 +13,6 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 package PrefVote::Core::TestNode;
 
 use autodie;
-use Carp qw(croak);
 use Data::Dumper;
 use Readonly;
 use Scalar::Util 'reftype';

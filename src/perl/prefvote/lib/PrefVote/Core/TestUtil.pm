@@ -13,7 +13,6 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 package PrefVote::Core::TestUtil;
 
 use autodie;
-use Carp qw(croak);
 use Data::Dumper;
 use Test::More;
 use base "PrefVote";

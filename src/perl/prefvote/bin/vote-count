@@ -7,7 +7,7 @@
 
 use Modern::Perl qw(2015); # require 5.20.0 or later
 use autodie;
-use Carp qw(croak confess);;
+use Carp qw(confess);;
 use YAML::XS; # RPM: perl-YAML-LibYAML, DEB: libyaml-libyaml-perl
 use PrefVote::Core;
 use Getopt::Long;
