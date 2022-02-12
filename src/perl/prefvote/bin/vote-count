@@ -32,33 +32,33 @@ sub print_result_list
     return;
 }
 
-# get class suffix string
-sub suffix
-{
-    my $class = shift;
-    my $class_suffix = $class;
-    $class_suffix =~ s/^.*:://x; # remove everything except the last part of the class name
-    return $class_suffix;
-}
-
 # mainline function for exception-catching
 sub main
 {
     # command-line processing
-    my ($debug, $test_mode, $out_format);
-    GetOptions("debug" => \$debug, "test" => \$test_mode, "format|outformat:s" => \$out_format);
+    my ($debug, $test_mode, $out_format, $method);
+    GetOptions("debug" => \$debug, "test" => \$test_mode, "format|outformat:s" => \$out_format,
+        "method:s" => \$method);
     if (not @ARGV) {
-        say STDERR "usage: $0 [--debug] [--test] [--yaml|--rawyaml] yaml_file";
+        say STDERR "usage: $0 [--debug] [--test] [--yaml|--rawyaml] [--method=votingmethod] yaml_file";
         exit 0;
     }
 
     # count votes
-    my $vote_obj = PrefVote::Core::yaml2vote($ARGV[0]);
+    my @opts = ();
+    if (defined $method) {
+        @opts = ({method => $method});
+    }
+    my $vote_obj = PrefVote::Core::yaml2vote(@opts, $ARGV[0]);
     if ($debug) {
         # set debugging in PrefVote hierarchy
         $vote_obj->debug(1);
     }
-    $vote_obj->count();
+    # Core method is the base class and doesn't have a count method
+    # Core would only be used here for black-box testing so we can skip it - all others must run count() method
+    if (not $vote_obj->suffix() eq "Core") {
+        $vote_obj->count();
+    }
     if ($vote_obj->debug()) {
         $Data::Dumper::Sortkeys = 1;
         $Data::Dumper::Indent = 1;
@@ -97,6 +97,10 @@ sub main
 # mainline exception-catching wrapper
 if (not eval { main() }) {
     my $e = $@;
+    if (ref $e and $e->isa("PrefVote::Core::MethodMismatchException")) {
+        say STDERR "method skipped: ".$e->{description};
+        exit 0;
+    }
     if (ref $e and $e->isa("PrefVote::Exception")) {
         say "exception: ".$e->{description};
         #say $e->stack_trace();

@@ -19,6 +19,7 @@ use TAP::Parser::SourceHandler::RawTAP;
 
 # configuration settings per language implementation
 Readonly::Array my @supported_languages => (qw(perl));
+Readonly::Array my @supported_methods => (qw(Core STV Schulze RankedPairs));
 Readonly::Hash my %config => (
     blackbox => {
         data => "test/inputs",
@@ -36,9 +37,9 @@ Readonly::Hash my %config => (
         prove_params => "--lib",
         blackbox => {
             env => {
-                PERL5LIB => '${cwd}/prefvote/lib:${cwd}/stc/lib:${env/PERL5LIB}',
+                PERL5LIB => '${cwd}/prefvote/lib:${cwd}/stv/lib:${env/PERL5LIB}',
             },
-            cmd => [ 'src/perl/prefvote/bin/vote-count', "--test"],
+            cmd => [ 'src/perl/prefvote/bin/vote-count', "--test", '--method=${var/method}'],
             tp_args => [switches => ['-Isrc/perl/prefvote/lib', '-Isrc/perl/stv/lib']],
         }
     },
@@ -82,6 +83,7 @@ Readonly::Hash my %callbacks => (
 sub str_subst
 {
     my $query = shift;
+    my $vars = shift;
     my @query_parts = split '/', $query;
 
     # environment variable lookup
@@ -108,6 +110,13 @@ sub str_subst
         return $configref;
     }
 
+    # program configuration lookup
+    if ($query_parts[0] eq 'var') {
+        if (ref $vars eq "HASH") {
+            return $vars->{$query_parts[1]} // "";
+        }
+        return "";
+    }
 
     # current working directory (as of program start)
     if ($query_parts[0] eq 'cwd') {
@@ -122,6 +131,7 @@ sub str_subst
 sub str_expand
 {
     my $in_str = shift;
+    my $vars = shift;
     my $out_str = "";
     my $pos = 0;
 
@@ -147,9 +157,10 @@ sub str_expand
             $out_str .= substr($in_str, $pos, $dollar-$pos);
             if (substr($in_str, $dollar) =~ m/^\$\{([^}]+)\}/x) {
                 my $query = $1;
-                my $subst = str_subst($query);
+                my $len = length $query;
+                my $subst = str_subst($query, $vars);
+                $pos = $dollar + $len + 3;
                 $out_str .= $subst;
-                $pos += length $query;
             } else {
                 $pos++;
             }
@@ -236,6 +247,7 @@ sub run_blackbox_tests
     my %opts = @_;
     my $lang = $opts{lang};
     my $agg = $opts{agg};
+    my $method = $opts{method};
 
     # collect blackbox test parameters for selected language
     if (not exists $config{$lang}{blackbox}) {
@@ -259,12 +271,15 @@ sub run_blackbox_tests
     # run blackbox tests for the selected language on the test data
     foreach my $test_file (@test_files) {
         (-f $test_file) or next;
-        say "running blackbox tests: $test_file";
+        say "running blackbox tests: $method on $test_file";
 
         # run the blackbox tests in the selected language
         my $bbt_out;
-        run [@blackbox_cmd, $test_file], \undef, \$bbt_out,
-            init => sub { foreach my $key (keys %$blackbox_env) {$ENV{$key} = str_expand($blackbox_env->{$key})} };
+        run [map {str_expand($_, \%opts)} @blackbox_cmd, $test_file],
+            \undef, \$bbt_out,
+            init => sub { foreach my $key (keys %$blackbox_env)
+                {$ENV{$key} = str_expand($blackbox_env->{$key}, \%opts)}
+            };
 
         # skip files with no tests
         if (length $bbt_out == 0) {
@@ -288,14 +303,14 @@ sub run_blackbox_tests
         }
         printf "Planned: %s\nPassed: %s\nFailed: %s\n\n",
             $parser->tests_planned, scalar $parser->passed, scalar $parser->failed;
-        $agg->add($test_file, $parser);
+        $agg->add("$method: $test_file", $parser);
     }
 }
 
 # process command-line
-my (@language, $whitebox, $blackbox, $all);
-GetOptions("language:s" => \@language, "whitebox|white|w" => \$whitebox, "blackbox|black|b" => \$blackbox,
-    "all" => \$all);
+my (@language, @method, $whitebox, $blackbox, $all);
+GetOptions("language:s" => \@language, "method:s" =>\@method, "whitebox|white|w" => \$whitebox,
+    "blackbox|black|b" => \$blackbox, "all" => \$all);
 
 #
 # run tests as selected
@@ -310,6 +325,7 @@ if ($all) {
     $whitebox = 1;
     $blackbox = 1;
     @language = @supported_languages;
+    @method = @supported_methods;
 }
 
 # whitebox and blackbox tests within each language implementation's sources
@@ -319,8 +335,10 @@ if ($all) {
         if ($whitebox) {
             run_whitebox_tests(lang => $lang, agg => $aggregate);
         }
-        if ($blackbox) {
-            run_blackbox_tests(lang => $lang, agg => $aggregate);
+        foreach my $method (@method) {
+            if ($blackbox) {
+                run_blackbox_tests(lang => $lang, agg => $aggregate, method => $method);
+            }
         }
     }
 }

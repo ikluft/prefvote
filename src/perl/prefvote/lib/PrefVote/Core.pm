@@ -20,13 +20,14 @@ use Set::Tiny qw(set);
 use Scalar::Util 'reftype';
 use YAML::XS;
 use PrefVote::Core::Ballot;
-use PrefVote::Core::Exception;              # pre-load in case exception is thrown
-use PrefVote::Core::InternalDataException;   # pre-load in case exception is thrown
+use PrefVote::Core::Exception;
+use PrefVote::Core::InternalDataException;
+use PrefVote::Core::MethodMismatchException;
 use PrefVote::Core::TestSpec;
 
 # supported voting methods - for constructing class names from vote definitions
 # use Core only for testing because the base class doesn't actually have voting-method code
-Readonly::Array my @voting_methods => qw(Core STV Schulze);
+Readonly::Array my @voting_methods => qw(Core STV Schulze RankedPairs);
 
 #
 # class definitions
@@ -188,6 +189,16 @@ sub class_or_obj
     return $coo->instance();
 }
 
+# get class suffix
+sub suffix
+{
+    my ($class_or_obj) = @_;
+    my $self = class_or_obj($class_or_obj);
+    my $class_suffix = ref $self;
+    $class_suffix =~ s/^.*:://x; # remove everything except the last part of the class name
+    return $class_suffix;
+}
+
 # check existence of a voting choice/option
 sub choice_exists
 {
@@ -346,27 +357,107 @@ sub read_yaml
     return @yaml_docs;
 }
 
+# input ballots to a PrefVote::Core-subclass voting method
+sub ingest_ballots
+{
+    my ($vote_obj, $yaml_ballots) = @_;
+
+    # ingest ballots from 2nd YAML document
+    my $submitted = 0;
+    my $accepted = 0;
+    foreach my $ballot (@$yaml_ballots) {
+        $submitted++;
+        if ( eval { $vote_obj->submit_ballot(@$ballot) }) {
+            $accepted++;
+        } else {
+            $vote_obj->debug_print("ballot entry failed: $@");
+        }
+    }
+    $vote_obj->debug_print("votes: submitted=$submitted accepted=$accepted");
+    return;
+}
+
+# determine voting method to use
+# this may throw exceptions for method mismatch
+sub determine_method
+{
+    my ($opts, $yaml_vote_def) = @_;
+
+    # if a specific method was selected by %opts, make sure it's supported
+    my $selected_method;
+    if (exists $opts->{method}) {
+        if (not supported_method($opts->{method})) {
+            PrefVote::Core::MethodMismatchException->throw(description => "specified voting method "
+                .($opts->{method} // "(undef)")." is not supported");
+        }
+        $selected_method = $opts->{method};
+    }
+
+    # translate a voting method string into a voting-method class within this hierarchy
+    # instantiate the voting object from 1st YAML document
+    my $method_list = $yaml_vote_def->{method};
+    my @methods_allowed = split(/\s+/x, $method_list);
+    my $method;
+    if (scalar @methods_allowed > 1) {
+        if (defined $selected_method) {
+            foreach my $method_item (@methods_allowed) {
+                if ($selected_method eq $method_item) {
+                    $method = $method_item;
+                    last;
+                }
+            }
+            if (not defined $method) {
+                PrefVote::Core::MethodMismatchException->throw(description => "specified voting method "
+                    ."$selected_method not found in allowed options ".join(" ",@methods_allowed));
+            }
+        } else {
+            PrefVote::Core::Exception->throw(description => "voting method not specified when multiple choices exist");
+        }
+    } else {
+        if (defined $selected_method and $selected_method ne $methods_allowed[0]) {
+            PrefVote::Core::MethodMismatchException->throw(description => "specified voting method $selected_method "
+                ."doesn't match allowed option ".$methods_allowed[0]);
+        }
+        $method = $methods_allowed[0];
+    }
+    if ((not defined $method) or (not supported_method($method))) {
+        PrefVote::Core::Exception->throw(description => ($method // "(undef)")." is not a supported voting method");
+    }
+    return $method;
+}
+
 # convert YAML input to PrefVote::Core structure and ballots
+# if first parameter is a hash reference, use it as options
+# filepath scalar parameter points to YAML input file
 sub yaml2vote
 {
-    my $filepath = shift;
+    my @args = @_;
+    my %opts;
+    if (ref $args[0] eq "HASH") {
+        my $opts_ref = shift @args;
+        %opts = %$opts_ref;
+    }
+    my $filepath = $args[0];
     my @yaml_docs = read_yaml($filepath);
 
     # save the first YAML document as the definition of the vote for entry into a PrefVote::Core structure
     my $yaml_vote_def = shift @yaml_docs;
     if (ref $yaml_vote_def ne "HASH") {
-        PrefVote::Core::Exception->throw(description => "$0: misformatted YAML input: 1st document must be in map/hash format");
+        PrefVote::Core::Exception->throw(description => "$0: misformatted YAML input: 1st document must be in "
+            ."map/hash format");
     }
     foreach my $key ( qw(method params)) {
         if (not exists $yaml_vote_def->{$key}) {
-            PrefVote::Core::Exception->throw(description => "$0: misformatted YAML input: '$key' parameter missing from top level of vote definition");
+            PrefVote::Core::Exception->throw(description => "$0: misformatted YAML input: "
+                ."'$key' parameter missing from top level of vote definition");
         }
     }
 
     # save the second YAML document as the list of ballots
     my $yaml_ballots = shift @yaml_docs;
     if (ref $yaml_ballots ne "ARRAY") {
-        PrefVote::Core::Exception->throw(description => "$0: misformatted YAML input: 2nd document must be in list/array format");
+        PrefVote::Core::Exception->throw(description => "$0: misformatted YAML input: 2nd document "
+            ."must be in list/array format");
     }
 
     # save any additional YAML documents in extra, available for testing
@@ -374,10 +465,7 @@ sub yaml2vote
 
     # translate a voting method string into a voting-method class within this hierarchy
     # instantiate the voting object from 1st YAML document
-    my $method = $yaml_vote_def->{method};
-    if (not supported_method($method)) {
-        PrefVote::Core::Exception->throw(description => "$method is not a supported voting method");
-    }
+    my $method = determine_method(\%opts, $yaml_vote_def);
     my $class = "PrefVote::$method";
     ## no critic (BuiltinFunctions::ProhibitStringyEval)
     if (not eval "require $class") {
@@ -385,7 +473,8 @@ sub yaml2vote
     }
     ## critic (BuiltinFunctions::ProhibitStringyEval)
     if (not $class->isa(__PACKAGE__)) {
-        PrefVote::Core::Exception->throw(description => "class $class in vote defintion is not a subclass of ".__PACKAGE__);
+        PrefVote::Core::Exception->throw(description => "class $class in vote defintion is not a subclass of "
+            .__PACKAGE__);
     }
     my $params = $yaml_vote_def->{params};
     if (scalar @$extra_data) {
@@ -405,17 +494,7 @@ sub yaml2vote
     }
 
     # ingest ballots from 2nd YAML document
-    my $submitted = 0;
-    my $accepted = 0;
-    foreach my $ballot (@$yaml_ballots) {
-        $submitted++;
-        if ( eval { $vote_obj->submit_ballot(@$ballot) }) {
-            $accepted++;
-        } else {
-            $vote_obj->debug_print("ballot entry failed: $@");
-        }
-    }
-    $vote_obj->debug_print("votes: submitted=$submitted accepted=$accepted");
+    ingest_ballots($vote_obj, $yaml_ballots);
 
     return $vote_obj;
 }
@@ -471,7 +550,11 @@ sub result_yaml
         $result_out->{$key} = result_node($self->{$key});
     }
     $result_out->{timestamp} = localtime;
-    return $result_out;
+
+    # return result under item named for voting method class suffix
+    # this makes the YAML output drop-in compatible with the input for black-box test data
+    my $suffix = $self->suffix();
+    return {$suffix => $result_out};
 }
 
 # delegate output formatting to applicable classes
