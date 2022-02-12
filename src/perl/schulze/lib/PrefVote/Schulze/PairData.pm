@@ -20,7 +20,7 @@ use Readonly;
 # class definitions
 use Moo;
 use MooX::TypeTiny;
-use Types::Standard qw(Int Str ArrayRef HashRef InstanceOf);
+use Types::Standard qw(Bool Int Str ArrayRef HashRef InstanceOf);
 use Types::Common::Numeric qw(PositiveOrZeroInt);
 use Types::Common::String qw(NonEmptySimpleStr);
 use PrefVote::Core::TestSpec;

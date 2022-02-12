@@ -227,7 +227,7 @@ sub compute_strongest_paths
                 my $min_strength_ji_ik = ($strength_ji < $strength_ik) ? $strength_ji : $strength_ik;
                 if ($strength_jk < $min_strength_ji_ik) {
                     $self->set_strength($j, $k, $min_strength_ji_ik);
-                    $self->set_predecessor($j, $k, $self->predecessor($i, $k));
+                    $self->set_predecessor($j, $k, $self->get_predecessor($i, $k));
                 }
             }
         }
@@ -257,15 +257,15 @@ sub compute_potential_winners
         my $unbeaten = 1; # assume each candidate is a winner until we find another candidate who beats them
         foreach my $j (@choices) {
             next if $i eq $j;
-            if ($self->strength($j, $i) > $self->strength($i, $j)) {
+            if ($self->get_strength($j, $i) > $self->get_strength($i, $j)) {
                 # i was beaten - turn off unbeaten flag
                 $unbeaten = 0;
 
                 # j-i direction is a winner
-                $self->win_order($j, $i, 1);
+                $self->set_win_order($j, $i, 1);
             } else {
                 # j-i direction is not a winner
-                $self->win_order($j, $i, 0);
+                $self->set_win_order($j, $i, 0);
             }
         }
         if ($unbeaten) {
