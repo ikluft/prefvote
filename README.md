@@ -10,7 +10,7 @@ The original Vote::STV software implemented the [single transferable vote](https
 
 STV is the first implemented voting method in PrefVote since it was the original implementation as Vote::STV back to 1998.
 
-Next up for voting methods will be the [Schulze algorithm](https://en.wikipedia.org/wiki/Schulze_method) and [Ranked Pairs](https://en.wikipedia.org/wiki/Ranked_pairs).
+Next up for voting methods will be the [Schulze algorithm](https://en.wikipedia.org/wiki/Schulze_method) (see [full definition paper)](https://arxiv.org/abs/1804.02973) and [Ranked Pairs](https://en.wikipedia.org/wiki/Ranked_pairs).
 
 Next up for language implementations will be [Rust](https://www.rust-lang.org/).
 
