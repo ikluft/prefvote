@@ -29,7 +29,7 @@ extends 'PrefVote::Core';
 # blackbox testing structure
 Readonly::Hash my %blackbox_spec => (
     pair => [qw(hash hash PrefVote::Schulze::PairData)],
-    winner => [qw(hash bool)],
+    win_flag => [qw(hash bool)],
 );
 PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, spec => \%blackbox_spec, parent => 'PrefVote::Core');
 
@@ -43,20 +43,23 @@ has pair => (
 );
 
 # winner list
-has winner => (
+has win_flag => (
     is => 'rw',
     isa => HashRef[Bool],
     default => sub { return {} },
     handles_via => 'Hash',
     handles => {
-        winner_count => 'count',
-        winner_empty => 'is_empty',
-        winner_exists => 'exists',
-        winner_get => 'get',
-        winner_keys => 'keys',
-        winner_set => 'set',
+        win_flag_count => 'count',
+        win_flag_empty => 'is_empty',
+        win_flag_exists => 'exists',
+        win_flag_get => 'get',
+        win_flag_keys => 'keys',
+        win_flag_set => 'set',
     },
 );
+
+# internal cache variables
+my $minimum_link; # minimum link value, for use in tie-breaking algorithm
 
 # return a ballot item as a list, whether it was a single scalar or a tie-group set 
 sub item2list
@@ -125,7 +128,7 @@ sub get_predecessor
     return $pred;
 }
 
-# set path strength in matrix entry
+# set strength of strongest path from candidate i to j
 sub set_strength
 {
     my ($self, $cand_i, $cand_j, $value) = @_;
@@ -168,8 +171,6 @@ sub get_win_order
     return $self->{pair}{$cand_i}{$cand_j}->win_order() // 0; # return win_order, or zero if the node didn't have it
 }
 
-# set strength of strongest path from candidate i to j
-
 # compute candidate-pair preference totals
 # each ballot ranks voter preferences in order - this totals preferences among each pair of candidates
 sub tally_preferences
@@ -203,7 +204,9 @@ sub compute_strongest_paths
 {
     my $self = shift;
 
-    # Schulze algorithm definition of Stage 2 calculation of the strengths of the strongest paths:
+    # from Schulze algorithm definition 2.3.1:
+    # Stage 2 calculation of the strengths of the strongest paths
+    # (lack of comments in the pseudocode is as shown in the paper - see below where I added some in the code)
     # for i : = 1 to C
     #   for j : = 1 to C
     #       if ( i ≠ j ) then
@@ -215,12 +218,14 @@ sub compute_strongest_paths
     #                           pred[j,k] : = pred[i,k]
 
     # nested loops i,j,k through candidates/choices to check if P[j,k] has a lower minimum than P[j,i] & P[i,k]
-    my @choices = $self->get_choices();
+    my @choices = $self->get_choices(); # list of ballot choices
     foreach my $i (@choices) {
         foreach my $j (@choices) {
             next if $i eq $j;
             foreach my $k (@choices) {
                 next if $i eq $k or $j eq $k;
+
+                # find the minimum strength link on the strongest path from j to i to k
                 my $strength_ik = $self->get_strength($i, $k);
                 my $strength_ji = $self->get_strength($j, $i);
                 my $strength_jk = $self->get_strength($j, $k);
@@ -235,12 +240,14 @@ sub compute_strongest_paths
     return;
 }
 
-# Schulze algorithm Stage 3: calculation of the binary relation  and the set of potential winners
+# from Schulze algorithm definition 2.3.1:
+# Stage 3: calculation of the binary relation 𝚶  and the set of potential winners
 sub compute_potential_winners
 {
     my $self = shift;
 
     # Schulze algorithm definition of Stage 3 calculation of the binary relation 𝚶 and the set of potential winners:
+    # (lack of comments in the pseudocode is as shown in the paper - see below where I added some in the code)
     #   for i : = 1 to C
     #       winner[i] : = true
     #       for j : = 1 to C
@@ -252,11 +259,21 @@ sub compute_potential_winners
     #                   ji ∉ 𝚶
 
     # nested loops i,j through candidates/choices eliminating candidates from potential winners if beaten by anyone
-    my @choices = $self->get_choices();
+    my @choices = $self->get_choices(); # list of ballot choices
     foreach my $i (@choices) {
-        my $unbeaten = 1; # assume each candidate is a winner until we find another candidate who beats them
+        my $unbeaten = 1; # assume each candidate is a winner until we find any candidate who beats them
         foreach my $j (@choices) {
             next if $i eq $j;
+
+            # save minimum link value seen in the matrix for later use in tie detection and breaking
+            {
+                my $pref_ji = $self->get_preference($j, $i);
+                if ((not defined $minimum_link) or $minimum_link > $pref_ji) {
+                    $minimum_link = $pref_ji;
+                }
+            }
+
+            # check if j beats i
             if ($self->get_strength($j, $i) > $self->get_strength($i, $j)) {
                 # i was beaten - turn off unbeaten flag
                 $unbeaten = 0;
@@ -269,10 +286,177 @@ sub compute_potential_winners
             }
         }
         if ($unbeaten) {
-            # i is a winner
-            $self->winner_set($i, 1);
+            # i is a potential winner (and if it is the only one then it will be the winner)
+            $self->win_flag_set($i, 1);
         }
     }
+    return;
+}
+
+# read & write accessors for alt_path, used in tie-breaking ranking of links (TBRL)
+# This wasn't broken out to its own class because it's only used as a temporary table in a loop in final_rank_links().
+# It's a 2D table where we compute temporary new values for path strengths
+sub get_alt_path
+{
+    # read the value
+    my ($q_hash, $i, $j) = @_;
+    return $q_hash->{$i}{$j} // 0;
+}
+sub set_alt_path
+{
+    my ($q_hash, $i, $j, $value) = @_;
+    if (not exists $q_hash->{$i}) {
+        $q_hash->{$i} = {};
+    }
+    $q_hash->{$i}{$j} = $value;
+    return $value;
+}
+
+# read & write accessors for a hash used as the forbidden link table
+# This wasn't broken out to its own class because it's only used as a temporary table in a loop in final_rank_links().
+# It's a sparse 2D table where we only set values if true. Return 0 (false) if it doesn't exist.
+sub get_forbidden
+{
+    # read the value if it exists, 0 if not
+    my ($f_hash, $i, $j) = @_;
+    return $f_hash->{$i}{$j} // 0;
+}
+sub set_forbidden
+{
+    # write the value to the 2D table if it's true
+    # skip it if false since undefined will have the same result
+    my ($f_hash, $i, $j, $value) = @_;
+    if ($value) {
+        if (not exists $f_hash->{$i}) {
+            $f_hash->{$i} = {};
+        }
+        $f_hash->{$i}{$j} = 1;
+    }
+    return $value ? 1 : 0;
+}
+
+# Stage 4: tie-breaking ranking of links TBRL (from Schulze 5.1)
+# we use the TBRL method because PrefVote system fully ranks results even for 1-seat races
+sub final_rank_links
+{
+    my $self = shift;
+
+    # defintion of Stage 4 TBRL from Schulze 5.1
+    # (lack of comments in the pseudocode is as shown in the paper - see below where I added some in the code)
+    #   xy : = min σ { ij | i,j ∈ {1,...,C}, i ≠ j }
+    #   for m : = 1 to C–1
+    #       for n : = m+1 to C
+    #           if ( Pσ [m,n] ≈σ Pσ[n,m] ) then
+    #               Qσ [m,n] : = Pσ[m,n]
+    #               for i : = 1 to C
+    #                   for j : = 1 to C
+    #                       if ( i ≠ j ) then
+    #                           forbidden[i,j] : = false
+    #               bool1 : = false
+    #               while ( bool1 = false )
+    #                   for i : = 1 to C
+    #                       for j : = 1 to C
+    #                           if ( i ≠ j ) then
+    #                               if ( Qσ[m,n] ≈σ ij ) then
+    #                                   forbidden[i,j] : = true
+    #                   for i : = 1 to C
+    #                       for j : = 1 to C
+    #                           if ( i ≠ j ) then
+    #                               if ( forbidden[i,j] = true ) then
+    #                                   Qσ[i,j] : = xy
+    #                               else
+    #                                   Qσ[i,j] : = ij
+    #                   for i : = 1 to C
+    #                       for j : = 1 to C
+    #                           if ( i ≠ j ) then
+    #                               for k : = 1 to C
+    #                                   if ( i ≠ k ) then
+    #                                       if ( j ≠ k ) then
+    #                                           if ( Qσ[j,k] <σ minσ { Qσ[j,i], Qσ[i,k] } ) then
+    #                                               Qσ[j,k] : = minσ { Qσ[j,i], Qσ[i,k] }
+    #                   if ( Qσ[m,n] >σ Qσ[n,m] ) then
+    #                       𝚶final(σ) : = 𝚶final(σ) + {mn}
+    #                       𝐒final(σ) : = 𝐒final(σ) \ {n}
+    #                       bool1 : = true
+    #                   else
+    #                       if ( Qσ[m,n] <σ Qσ[n,m] ) then
+    #                           𝚶final(σ) : = 𝚶final(σ) + {nm}
+    #                           𝐒final(σ) : = 𝐒final(σ) \ {m}
+    #                           bool1 : = true
+    #                       else
+    #                       if ( Qσ[m,n] = xy and Qσ [n,m] = xy ) then
+    #                           bool1 : = true
+
+    # note: lowest link value $minimum_link was computed for a baseline in compute_potential_winners() loop
+    # and saved in a file-scoped variable
+    # ($minimum_link is called "xy" in the paper's pseudocode)
+
+    # nested loops m,n through candidates/choices looking for ties
+    # attempt to break ties by marking cloned links in tied paths as forbidden and recomputing those strongest paths
+    my @choices = $self->get_choices(); # list of ballot choices
+    my %alt_path; # alternate path strength routing around forbidden links (called "Qσ" in the paper's pseudocode)
+    for (my $m_index=0; $m_index<(scalar @choices)-1; $m_index++) {
+        for (my $n_index=$m_index+1; $n_index<scalar @choices; $n_index++) {
+            my $path_mn = $self->get_strength($choices[$m_index], $choices[$n_index]);
+            my $path_nm = $self->get_strength($choices[$n_index], $choices[$m_index]);
+            if ($path_mn == $path_nm) {
+                # we found a tie... these choices/candidates are probably so-called "clones", similar to each other
+
+                # forbidden table keeps track of links forbidden for m-n and n-m paths in order to break the tie
+                # it is a new empty hash, which allows us to skip initializing every element to zero
+                # set_forbidden() only saves items set to true
+                # get_forbidden() returns true if the entry exists, false if it doesn't exist
+                my %forbidden;
+
+                # set alternate path strength for m,n from actual m,n
+                set_alt_path(\%alt_path, $choices[$m_index], $choices[$n_index], $path_mn);
+
+                # set tie_broken flag to false and loop until it gets toggled or all links exhausted
+                # ($tie_broken is called "bool1" in the paper's pseudocode)
+                my $tie_broken = 0;
+                while (not $tie_broken) {
+                    # declare tied links as forbidden
+                    for (my $i_index=0; $i_index<(scalar @choices); $i_index++) {
+                        for (my $j_index=0; $j_index<scalar @choices; $j_index++) {
+                            next if $i_index == $j_index;
+                            if (get_alt_path(\%alt_path, $choices[$m_index], $choices[$n_index])
+                                == $self->get_preference($choices[$i_index], $choices[$j_index]))
+                            {
+                                set_forbidden(\%forbidden, $choices[$i_index], $choices[$j_index], 1);
+                            }
+                        }
+                    }
+
+                    # calculate new strongest path without forbidden links
+                    for (my $i_index=0; $i_index<(scalar @choices); $i_index++) {
+                        for (my $j_index=0; $j_index<scalar @choices; $j_index++) {
+                            next if $i_index == $j_index;
+                            if (get_forbidden(\%forbidden, $choices[$i_index], $choices[$j_index])) {
+                                set_alt_path(\%alt_path, $choices[$i_index], $choices[$j_index], $minimum_link);
+                            } else {
+                                set_alt_path(\%alt_path, $choices[$i_index], $choices[$j_index],
+                                    $self->get_preference($choices[$i_index], $choices[$j_index]));
+                            }
+                        }
+                    }
+                    # TODO
+                }
+
+                # TODO
+            }
+
+            # TODO
+        }
+    }
+
+    return;
+}
+
+# rank candidates (from TBRC notes in Schulze 5.1)
+sub final_rank_choices
+{
+    my $self = shift;
+
     return;
 }
 
@@ -290,15 +474,18 @@ sub count
     # Stage 1: initialization loop is replaced by lazy assignments upon read of undefined candidate-pair
     # matrix values in get_predecessor() and get_strength().
 
-    # Stage 2: calculation of the strengths of the strongest paths
+    # Stage 2: calculation of the strengths of the strongest paths (from Schulze 2.3.1)
     $self->compute_strongest_paths();
 
-    # Stage 3: calculation of the binary relation 𝚶 and the set of potential winners
+    # Stage 3: calculation of the binary relation 𝚶 and the set of potential winners (from Schulze 2.3.1)
     $self->compute_potential_winners();
 
-    # TODO
-    # work in progress: dump object up to this point
-    $self->debug_print("count: ".Dumper($self));
+    # Stage 4: tie-breaking ranking of links TBRL (from Schulze 5.1)
+    # we use the TBRL method because PrefVote system fully ranks results even for 1-seat races
+    $self->final_rank_links();
+
+    # rank candidates (from TBRC notes in Schulze 5.1)
+    $self->final_rank_choices();
 
     return;
 }
