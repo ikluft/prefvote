@@ -50,6 +50,7 @@ has win_flag => (
     handles_via => 'Hash',
     handles => {
         win_flag_count => 'count',
+        win_flag_delete => 'delete',
         win_flag_empty => 'is_empty',
         win_flag_exists => 'exists',
         win_flag_get => 'get',
@@ -337,6 +338,7 @@ sub set_forbidden
 
 # Stage 4: tie-breaking ranking of links TBRL (from Schulze 5.1)
 # we use the TBRL method because PrefVote system fully ranks results even for 1-seat races
+# Note: this is implemented to the spec, but looks inefficient and could use some attention
 sub final_rank_links
 {
     my $self = shift;
@@ -393,6 +395,9 @@ sub final_rank_links
 
     # nested loops m,n through candidates/choices looking for ties
     # attempt to break ties by marking cloned links in tied paths as forbidden and recomputing those strongest paths
+    # (This uses numeric loop indices, different from the list of strings in compute_strongest_paths().  In the
+    # complexity of the spec, numbers looked necessary. But after implementation that apparently wasn't the case.
+    # It may get converted to loop through the list of string choices like compute_strongest_paths().)
     my @choices = $self->get_choices(); # list of ballot choices
     my %alt_path; # alternate path strength routing around forbidden links (called "Qσ" in the paper's pseudocode)
     for (my $m_index=0; $m_index<(scalar @choices)-1; $m_index++) {
@@ -439,16 +444,50 @@ sub final_rank_links
                             }
                         }
                     }
-                    # TODO
+                    for (my $i_index=0; $i_index<(scalar @choices); $i_index++) {
+                        for (my $j_index=0; $j_index<scalar @choices; $j_index++) {
+                            next if $i_index == $j_index;
+                            for (my $k_index=0; $k_index<scalar @choices; $k_index++) {
+                                next if $i_index == $k_index or $j_index == $k_index;
+
+                                # find the minimum strength non-forbidden link on the strongest path from j to i to k
+                                my $strength_ik = get_alt_path(\%alt_path, $choices[$i_index], $choices[$k_index]);
+                                my $strength_ji = get_alt_path(\%alt_path, $choices[$j_index], $choices[$i_index]);
+                                my $strength_jk = get_alt_path(\%alt_path, $choices[$j_index], $choices[$k_index]);
+                                my $min_strength_ji_ik = ($strength_ji < $strength_ik) ? $strength_ji : $strength_ik;
+                                if ($strength_jk < $min_strength_ji_ik) {
+                                    set_alt_path(\%alt_path, $choices[$j_index], $choices[$k_index],
+                                        $min_strength_ji_ik);
+                                }
+                            }
+                        }
+                    }
+                    
+                    # check if the tie is resolved
+                    my $q_path_mn = get_alt_path(\%alt_path, $choices[$m_index], $choices[$n_index]);
+                    my $q_path_nm = get_alt_path(\%alt_path, $choices[$n_index], $choices[$m_index]);
+                    if ($q_path_mn > $q_path_nm) {
+                        # tie resolved in favor of m
+                        $self->set_win_order($choices[$m_index], $choices[$n_index], 1);
+                        $self->set_win_order($choices[$n_index], $choices[$m_index], 0);
+                        $self->win_flag_set($choices[$m_index], 1);
+                        $self->win_flag_delete($choices[$n_index], 1);
+                        $tie_broken = 1;
+                    } elsif ($q_path_nm > $q_path_mn) {
+                        # tie resolved in favor of n
+                        $self->set_win_order($choices[$n_index], $choices[$m_index], 1);
+                        $self->set_win_order($choices[$m_index], $choices[$n_index], 0);
+                        $self->win_flag_set($choices[$n_index], 1);
+                        $self->win_flag_delete($choices[$m_index], 1);
+                        $tie_broken = 1;
+                    } elsif ($q_path_mn == $minimum_link and $q_path_nm == $minimum_link) {
+                        # tie could not be resolved
+                        $tie_broken = 1;
+                    }
                 }
-
-                # TODO
             }
-
-            # TODO
         }
     }
-
     return;
 }
 
