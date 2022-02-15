@@ -102,6 +102,7 @@ sub main
 __END__
 
 # POD documentation
+=encoding utf8
 
 =head1 NAME
 
@@ -109,11 +110,27 @@ PrefVote::Core::Output - output formatting base class for PrefVote
 
 =head1 SYNOPSIS
 
+As called from PrefVote::Core:
+
+    require PrefVote::Core::Output;
+    PrefVote::Core::Output::do_output($format, ref $self, [YAML::XS::Dump($self->result_yaml())]);
 
 =head1 DESCRIPTION
 
+⛔ This is for PrefVote internal use only.
+
+PrefVote::Core::Output is called by PrefVote::Core to format results from a vote after counting.
+It should not be called directly from user code.
+
+This is the place that calls the output() method of any voting method classes derived from PrefVote::Core.
+PrefVote::Core::Output launches a subprocess with itself as the program mainline, receiving the YAML results
+via its standard input pipe and calling the subclass' output() method to format it.
 
 =head1 SEE ALSO
+
+L<PrefVote::Core>
+
+L<https://github.com/ikluft/prefvote>
 
 =head1 BUGS AND LIMITATIONS
 
