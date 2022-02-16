@@ -8,6 +8,7 @@ use Test::More;
 my @classes = qw(
         PrefVote::Schulze
         PrefVote::Schulze::PairData
+        PrefVote::Schulze::Round
         );
 plan tests => scalar @classes;
 
