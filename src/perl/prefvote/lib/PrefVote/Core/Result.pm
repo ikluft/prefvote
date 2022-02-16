@@ -1,5 +1,5 @@
-# PrefVote::STV::Result
-# ABSTRACT: internal voting-result structure used by PrefVote::STV
+# PrefVote::Core::Result
+# ABSTRACT: internal voting-result structure used by PrefVote::Core
 # derived from Vote::STV by Ian Kluft
 # Copyright (c) 1998-2022 by Ian Kluft
 # Open Source license: Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
@@ -12,9 +12,9 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 ## use critic (Modules::RequireExplicitPackage)
 
 #
-# STV result record from each round
+# PrefVote::Core result record from each round, for voting methods which use rounds
 #
-package PrefVote::STV::Result;
+package PrefVote::Core::Result;
 
 use autodie;
 use Readonly;
@@ -61,7 +61,7 @@ __END__
 
 =head1 NAME
 
-PrefVote::STV::Result - internal voting-result structure used by PrefVote::STV
+PrefVote::Core::Result - internal voting-result structure used by PrefVote::Core
 
 =head1 SYNOPSIS
 

@@ -11,7 +11,6 @@ my @classes = qw(
         PrefVote::STV::Output::HTML
         PrefVote::STV::Output::Markdown
         PrefVote::STV::Output::Text
-        PrefVote::STV::Result
         PrefVote::STV::Round
         PrefVote::STV::Tally
         );

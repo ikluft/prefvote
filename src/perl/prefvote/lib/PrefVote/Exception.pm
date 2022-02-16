@@ -13,11 +13,21 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 
 package PrefVote::Exception;
 
+use overload ('""' => 'stringify');
 use Moo;
 use Types::Standard qw(Str);
 with 'Throwable';
 has classname => (is => 'ro', isa =>Str);
 has description => (is => 'ro', isa =>Str);
+
+sub stringify
+{
+    my ($self) = @_;
+    my $class = ref($self) || $self;
+
+    return "$class exception: ".$self->{description}." "
+        .join("", map { "\n$_: ".($self->{$_} // "undef") }(sort grep { $_ ne "description" }(keys %$self)))."\n";
+}
 
 1;
 
@@ -34,7 +44,6 @@ PrefVote::Exception - top-level exception class for PrefVote hierarchy
 Usage from CLI mainline:
 
     use Carp qw(confess);
-    use Data::Dumper;
     use PrefVote; # any subclass of PrefVote will load PrefVote::Exception
 
     sub main
@@ -46,8 +55,10 @@ Usage from CLI mainline:
     if (not eval { main() }) {
         my $e = $@;
         if (ref $e and $e->isa("PrefVote::Exception")) {
-            say "exception: ".$e->{description};
-            say Data::Dumper->Dump($e);
+            say $e;
+            if ($e->can("retval")) {
+                exit $e->retval();
+            }
         } else {
             confess $e;
         }

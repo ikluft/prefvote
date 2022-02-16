@@ -15,15 +15,15 @@ Readonly::Array my @set_result_tests => (
     {name => [qw(BORING)], type => 'eliminated', description => '1 eliminated'},
     {name => [qw(CHAOTIC DYSFUNCTIONAL)], type => 'winner', description => '2 winner'},
     {name => [qw(EVIL FACTIOUS)], type => 'eliminated', description => '1 eliminated'},
-    {name => [qw(ABOMINABLE)], exception => 'PrefVote::STV::Round::TypeMissingException',
+    {name => [qw(ABOMINABLE)], exception => 'PrefVote::Core::Round::TypeMissingException',
         description => 'TypeMissingException as expected'},
-    {type => 'eliminated', exception => 'PrefVote::STV::Round::NameMissingException',
+    {type => 'eliminated', exception => 'PrefVote::Core::Round::NameMissingException',
         description => 'NameMissingException as expected'},
-    {name => 'ABOMINABLE', type => 'eliminated', exception => 'PrefVote::STV::Round::NameNotArrayException',
+    {name => 'ABOMINABLE', type => 'eliminated', exception => 'PrefVote::Core::Round::NameNotArrayException',
         description => 'scalar -> NameNotArrayException as expected'},
-    {name => sub{ return "foo" }, type => 'eliminated', exception => 'PrefVote::STV::Round::NameNotArrayException',
+    {name => sub{ return "foo" }, type => 'eliminated', exception => 'PrefVote::Core::Round::NameNotArrayException',
         description => 'CODE -> NameNotArrayException as expected'},
-    {name => [qw(ABOMINABLE)], type => 'eliminated', exception => 'PrefVote::STV::Round::InvalidCandidateException',
+    {name => [qw(ABOMINABLE)], type => 'eliminated', exception => 'PrefVote::Core::Round::InvalidCandidateException',
         description => 'InvalidCandidateException as expected'},
 );
 
@@ -40,7 +40,7 @@ is($stv_round_ref->prev(), undef, "prev is undef as expected");
 is($stv_round_ref->votes_used(), 0, "default: votes_used = 0");
 is_deeply($stv_round_ref->candidates(), [], "default: candidates list is empty");
 is($stv_round_ref->quota(), 0, "default: quota = 0");
-throws_ok(sub {$stv_round_ref->init_candidate_tally()}, "PrefVote::STV::Round::PrevMissingException",
+throws_ok(sub {$stv_round_ref->init_candidate_tally()}, "PrefVote::Core::Round::PrevMissingException",
     "init_candidate_tally() missing candidate data");
 
 # test init_candidate_tally (4 tests)

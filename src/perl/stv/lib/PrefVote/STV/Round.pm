@@ -21,42 +21,24 @@ use Readonly;
 use Set::Tiny qw(set);
 use PrefVote::Core;
 use PrefVote::STV::Tally;
-use PrefVote::STV::Result;
 
 # class definitions
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
 use Types::Standard qw(ArrayRef HashRef InstanceOf Map);
-use Types::Common::Numeric qw(PositiveInt);
 use Types::Common::String qw(NonEmptySimpleStr);
-extends 'PrefVote';
+extends 'PrefVote::Core::Round';
 use PrefVote::Core::Float qw(float_internal PVPositiveOrZeroNum);
 
 # constants
 Readonly::Hash my %blackbox_spec => (
-    number => [qw(int)],
     votes_used => [qw(fp)],
-    candidates => [qw(list string)],
     quota => [qw(fp)],
     tally => [qw(hash PrefVote::STV::Tally)],
-    result => [qw(PrefVote::STV::Result)],
 );
-PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, spec => \%blackbox_spec);
-
-# round number (1=1st, etc)
-has number => (
-    is => 'ro',
-    isa => PositiveInt,
-    required => 1,
-);
-
-# link to previous round - makes it available here without access to PrefVote::STV's data
-# If not set, it indicates the object is for the first round and therefore there is no previous round.
-has prev => (
-    is => 'ro',
-    isa => InstanceOf["PrefVote::STV::Round"],
-);
+PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, spec => \%blackbox_spec,
+    parent => 'PrefVote::Core::Round');
 
 # count of votes used/consumed in counting so far
 has votes_used => (
@@ -68,22 +50,6 @@ around votes_used => sub {
     my ($orig, $self, $param) = @_;
     return $orig->($self, (defined $param ? (float_internal($param)) : ()));
 };
-
-# active candidates in the current round (which this object tracks)
-has candidates => (
-    is => 'rw',
-    isa => ArrayRef[NonEmptySimpleStr],
-    default => sub { return [] },
-    handles_via => 'Array',
-    handles => {
-        candidates_all => 'all',
-        candidates_count => 'count',
-        candidates_empty => 'is_empty',
-        candidates_join => 'join',
-        candidates_push => 'push',
-        candidates_sort_in_place => 'sort_in_place',
-    },
-);
 
 # STV quota is the threshold to win the round as a function of seats available and candidates running
 has quota => (
@@ -110,41 +76,14 @@ has tally => (
     },
 );
 
-# result of the current round lists either winners or eliminated candidates
-has result => (
-    is => 'rw',
-    isa => InstanceOf["PrefVote::STV::Result"],
-    required => 0,
-);
-
 # set candidate tallies
 # candidates must be provided by new() for first round, later rounds this populates it from previous round
 sub init_candidate_tally
 {
     my $self = shift;
 
-    # throw exception if there is no candidate list and no previous round link
-    if ($self->candidates_empty() and (not exists $self->{prev})) {
-        # The object wasn't provided with enough info to get started.
-        # This needs new() to get a candidate list on the first round and a link to previous rounds after that.
-        PrefVote::STV::Round::PrevMissingException->throw({classname => __PACKAGE__,
-            description => "prev must be set if candidates list wasn't provided to new()",
-        });
-    }
-
-    # collect candidates from previous round for this round
-    # this occurs every round except the first, when the initial candidate list must be established by new()
-    if (exists $self->{prev}) {
-        my $prev = $self->{prev};
-        foreach my $cand_key ($prev->tally_keys()) {
-            # candidate is available for current round's list if they didn't win or get eliminated in previous round
-            if (not $prev->{tally}{$cand_key}->winner() and not $prev->{tally}{$cand_key}->eliminated()) {
-                $self->debug_print("(round ".$self->{number}.") add $cand_key to candidate list\n");
-                $self->candidates_push($cand_key);
-            }
-        }
-        $self->debug_print("init_candidate_tally: candidates ".$self->candidates_join(" ")."\n");
-    }
+    # initialization for parent class PrefVote::Core::Round
+    $self->init_round_candidates();
 
     # initialize candidate tally structures
     foreach my $cand_name (@{$self->{candidates}}) {
@@ -201,55 +140,6 @@ sub sort_candidates
     return $self->candidates_all();
 }
 
-# instantiate a result for current round
-sub set_result
-{
-    my ($self, %opts) = @_;
-
-    # verify candidates in result are valid in this round
-    if (not exists $opts{type}) {
-        PrefVote::STV::Round::TypeMissingException->throw({classname => __PACKAGE__,
-            attribute => 'type',
-            description => "type parameter not provided",
-        });
-    }
-    if (not exists $opts{name}) {
-        PrefVote::STV::Round::NameMissingException->throw({classname => __PACKAGE__,
-            attribute => 'name',
-            description => "name parameter not provided",
-        });
-    }
-    if (ref $opts{name} ne "ARRAY") {
-        PrefVote::STV::Round::NameNotArrayException->throw({classname => __PACKAGE__,
-            attribute => 'name',
-            description => "name parameter is not an array: got ".(ref $opts{name} ? ref $opts{name} : "scalar"),
-        });
-    }
-    my @invalid_candidates;
-    foreach my $candidate_name (@{$opts{name}}) {
-        my $found=0;
-        foreach (my $i=0; $i<$self->candidates_count(); $i++) {
-            if ($self->{candidates}[$i] eq $candidate_name) {
-                $found=1;
-                last;
-            }
-        }
-        if (not $found) {
-            push @invalid_candidates, $candidate_name;
-        }
-    }
-    if (@invalid_candidates) {
-        PrefVote::STV::Round::InvalidCandidateException->throw({classname => __PACKAGE__,
-            attribute => 'name',
-            description => "invalid candidate name ($opts{type}):".join(" ", @invalid_candidates),
-        });
-    }
-
-    # instantiate and save result object
-    $self->result(PrefVote::STV::Result->new(type => $opts{type}, name => set(@{$opts{name}})));
-    return;
-}
-
 ## no critic (Modules::ProhibitMultiplePackages)
 
 #
@@ -263,36 +153,6 @@ use Types::Standard qw(Str);
 extends 'PrefVote::Core::InternalDataException';
 
 package PrefVote::STV::Round::BadSortingFnException;
-
-use Moo;
-use Types::Standard qw(Str);
-extends 'PrefVote::Core::InternalDataException';
-
-package PrefVote::STV::Round::TypeMissingException;
-
-use Moo;
-use Types::Standard qw(Str);
-extends 'PrefVote::Core::InternalDataException';
-
-package PrefVote::STV::Round::PrevMissingException;
-
-use Moo;
-use Types::Standard qw(Str);
-extends 'PrefVote::Core::InternalDataException';
-
-package PrefVote::STV::Round::NameMissingException;
-
-use Moo;
-use Types::Standard qw(Str);
-extends 'PrefVote::Core::InternalDataException';
-
-package PrefVote::STV::Round::NameNotArrayException;
-
-use Moo;
-use Types::Standard qw(Str);
-extends 'PrefVote::Core::InternalDataException';
-
-package PrefVote::STV::Round::InvalidCandidateException;
 
 use Moo;
 use Types::Standard qw(Str);

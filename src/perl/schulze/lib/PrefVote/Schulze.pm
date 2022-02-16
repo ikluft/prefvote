@@ -338,7 +338,8 @@ sub set_forbidden
 
 # Stage 4: tie-breaking ranking of links TBRL (from Schulze 5.1)
 # we use the TBRL method because PrefVote system fully ranks results even for 1-seat races
-# Note: this is implemented to the spec, but looks inefficient and could use some attention
+# Note: this is initially implemented per the paper, but is inefficient ( O(n⁵) - srsly? ) and needs attention
+# TODO: replace Schulze 5.1 with improved algorithm to follow paths directly to find ties in opposing common links
 sub final_rank_links
 {
     my $self = shift;
@@ -491,14 +492,6 @@ sub final_rank_links
     return;
 }
 
-# rank candidates (from TBRC notes in Schulze 5.1)
-sub final_rank_choices
-{
-    my $self = shift;
-
-    return;
-}
-
 # count votes using Schulze method
 sub count
 {
@@ -522,9 +515,6 @@ sub count
     # Stage 4: tie-breaking ranking of links TBRL (from Schulze 5.1)
     # we use the TBRL method because PrefVote system fully ranks results even for 1-seat races
     $self->final_rank_links();
-
-    # rank candidates (from TBRC notes in Schulze 5.1)
-    $self->final_rank_choices();
 
     return;
 }

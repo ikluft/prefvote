@@ -98,7 +98,7 @@ sub new_round
 
     # instantiate and save new round
     my $round = PrefVote::STV::Round->new(number => $number, @args);
-    $round->init_candidate_tally();
+    $round->init_candidate_tally(); # initialization for PrefVote::STV::Round - also calls PrefVote::Core::Round init
     $self->rounds_push($round);
 
     return $round;
