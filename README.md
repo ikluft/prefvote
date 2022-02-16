@@ -8,11 +8,11 @@ Since the project's original language Perl has strengths in prototyping, it's th
 
 The original Vote::STV software implemented the [single transferable vote](https://en.wikipedia.org/wiki/Single_transferable_vote) algorithm, which is a subset of [ranked-choice voting](https://en.wikipedia.org/wiki/Ranked_voting).
 
-STV is the first implemented voting method in PrefVote since it was the original implementation as Vote::STV back to 1998.
+STV is the first implemented voting method in PrefVote since it was the original implementation as Vote::STV back to 1998. But STV has largely fallen out of favor because studies of voting methods found it lacking on some desirable characteristics.
 
-Next up for voting methods will be the [Schulze algorithm](https://en.wikipedia.org/wiki/Schulze_method) (see [full definition paper)](https://arxiv.org/abs/1804.02973) and [Ranked Pairs](https://en.wikipedia.org/wiki/Ranked_pairs).
+ While no voting method can be perfect, methods which meet Condorcet requirements are among the best around. So next up for voting methods will be the [Schulze algorithm](https://en.wikipedia.org/wiki/Schulze_method) (see [full definition paper)](https://arxiv.org/abs/1804.02973) and [Ranked Pairs](https://en.wikipedia.org/wiki/Ranked_pairs).
 
-Next up for language implementations will be [Rust](https://www.rust-lang.org/).
+After the reference implementation in Perl, next up for language implementations will be [Rust](https://www.rust-lang.org/).
 
 ## Example voting result from test suite
 
