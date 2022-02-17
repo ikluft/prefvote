@@ -165,10 +165,57 @@ sub get_win_order
     return $self->{pair}{$cand_i}{$cand_j}->win_order() // 0; # return win_order, or zero if the node didn't have it
 }
 
+# compute candidate-pair preference totals
+# each ballot ranks voter preferences in order - this totals preferences among each pair of candidates
+sub tally_preferences
+{
+    my $self = shift;
+    my $schulze_ref = shift; # ref to PrefVote::Schulze object
+
+    # If this is the first round, compute preferences from ballots. Otherwise get them from previous round.
+    if (exists $self->{prev}) {
+        # loop through votes tallying preferences
+        foreach my $combo ($schulze_ref->ballots_keys()) {
+            # loop through choices on the ballot
+            my $ballot = $schulze_ref->ballots_get($combo);
+            my @ballot_items = $ballot->items_all();
+            for (my $pos1=0; $pos1 < scalar @ballot_items - 1; $pos1++) {
+                # mark all following items on the ballot as less-favored than the current item
+                # This adds 2 levels of loops to support potential ties within each position.
+                my @item1 = item2list($ballot_items[$pos1]);
+                for (my $pos2=$pos1+1; $pos2 < scalar @ballot_items; $pos2++) {
+                    my @item2 = item2list($ballot_items[$pos2]);
+                    foreach my $cand_i (@item1) {
+                        foreach my $cand_j (@item2) {
+                            $self->add_preference($cand_i, $cand_j, $ballot->{quantity});
+                        }
+                    }
+                }
+            }
+        }
+    } else {
+        # get preference data from previous round
+        my $prev = $self->{prev};
+        my @round_candidates = $self->candidates_all();
+        foreach my $cand1 (@round_candidates) {
+            next if not exists $prev->{pair}{$cand1};
+            foreach my $cand2 (@round_candidates) {
+                next if $cand1 eq $cand2;
+                next if not exists $prev->{pair}{$cand1}{$cand2};
+                if (exists $prev->{pair}{$cand1}{$cand2}{preference}) {
+                    $self->add_preference($cand1, $cand2, $prev->{pair}{$cand1}{$cand2}{preference});
+                }
+            }
+        }
+    }
+    return;
+}
+
 # Schulze algorithm Stage 2: calculation of the strengths of the strongest paths
 sub compute_strongest_paths
 {
     my $self = shift;
+    my $schulze_ref = shift; # ref to PrefVote::Schulze object
 
     # from Schulze algorithm definition 2.3.1:
     # Stage 2 calculation of the strengths of the strongest paths
@@ -184,7 +231,7 @@ sub compute_strongest_paths
     #                           pred[j,k] : = pred[i,k]
 
     # nested loops i,j,k through candidates/choices to check if P[j,k] has a lower minimum than P[j,i] & P[i,k]
-    my @choices = $self->get_choices(); # list of ballot choices
+    my @choices = $schulze_ref->get_choices(); # list of ballot choices
     foreach my $i (@choices) {
         foreach my $j (@choices) {
             next if $i eq $j;
@@ -211,6 +258,7 @@ sub compute_strongest_paths
 sub compute_potential_winners
 {
     my $self = shift;
+    my $schulze_ref = shift; # ref to PrefVote::Schulze object
 
     # Schulze algorithm definition of Stage 3 calculation of the binary relation 𝚶 and the set of potential winners:
     # (lack of comments in the pseudocode is as shown in the paper - see below where I added some in the code)
@@ -225,7 +273,7 @@ sub compute_potential_winners
     #                   ji ∉ 𝚶
 
     # nested loops i,j through candidates/choices eliminating candidates from potential winners if beaten by anyone
-    my @choices = $self->get_choices(); # list of ballot choices
+    my @choices = $schulze_ref->get_choices(); # list of ballot choices
     foreach my $i (@choices) {
         my $unbeaten = 1; # assume each candidate is a winner until we find any candidate who beats them
         foreach my $j (@choices) {
@@ -308,6 +356,7 @@ sub set_forbidden
 sub final_rank_links
 {
     my $self = shift;
+    my $schulze_ref = shift; # ref to PrefVote::Schulze object
 
     # defintion of Stage 4 TBRL from Schulze 5.1
     # (lack of comments in the pseudocode is as shown in the paper - see below where I added some in the code)
@@ -364,7 +413,7 @@ sub final_rank_links
     # (This uses numeric loop indices, different from the list of strings in compute_strongest_paths().  In the
     # complexity of the spec, numbers looked necessary. But after implementation that apparently wasn't the case.
     # It may get converted to loop through the list of string choices like compute_strongest_paths().)
-    my @choices = $self->get_choices(); # list of ballot choices
+    my @choices = $schulze_ref->get_choices(); # list of ballot choices
     my %alt_path; # alternate path strength routing around forbidden links (called "Qσ" in the paper's pseudocode)
     for (my $m_index=0; $m_index<(scalar @choices)-1; $m_index++) {
         for (my $n_index=$m_index+1; $n_index<scalar @choices; $n_index++) {
@@ -461,19 +510,23 @@ sub final_rank_links
 sub do_computation
 {
     my $self = shift;
+    my $schulze_ref = shift; # ref to PrefVote::Schulze object
+
+    # preparation: convert ballot preferences to candidate-pair preference totals, or obtain them from previous round
+    $self->tally_preferences();
 
     # Stage 1: initialization loop is replaced by lazy assignments upon read of undefined candidate-pair
     # matrix values in get_predecessor() and get_strength().
 
     # Stage 2: calculation of the strengths of the strongest paths (from Schulze 2.3.1)
-    $self->compute_strongest_paths();
+    $self->compute_strongest_paths($schulze_ref);
 
     # Stage 3: calculation of the binary relation 𝚶 and the set of potential winners (from Schulze 2.3.1)
-    $self->compute_potential_winners();
+    $self->compute_potential_winners($schulze_ref);
 
     # Stage 4: tie-breaking ranking of links TBRL (from Schulze 5.1)
     # we use the TBRL method because PrefVote system fully ranks results even for 1-seat races
-    $self->final_rank_links();
+    $self->final_rank_links($schulze_ref);
 
     # TODO: set round winner
 
