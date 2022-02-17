@@ -172,28 +172,8 @@ sub tally_preferences
     my $self = shift;
     my $schulze_ref = shift; # ref to PrefVote::Schulze object
 
-    # If this is the first round, compute preferences from ballots. Otherwise get them from previous round.
-    if (exists $self->{prev}) {
-        # loop through votes tallying preferences
-        foreach my $combo ($schulze_ref->ballots_keys()) {
-            # loop through choices on the ballot
-            my $ballot = $schulze_ref->ballots_get($combo);
-            my @ballot_items = $ballot->items_all();
-            for (my $pos1=0; $pos1 < scalar @ballot_items - 1; $pos1++) {
-                # mark all following items on the ballot as less-favored than the current item
-                # This adds 2 levels of loops to support potential ties within each position.
-                my @item1 = item2list($ballot_items[$pos1]);
-                for (my $pos2=$pos1+1; $pos2 < scalar @ballot_items; $pos2++) {
-                    my @item2 = item2list($ballot_items[$pos2]);
-                    foreach my $cand_i (@item1) {
-                        foreach my $cand_j (@item2) {
-                            $self->add_preference($cand_i, $cand_j, $ballot->{quantity});
-                        }
-                    }
-                }
-            }
-        }
-    } else {
+    # If this is not the first round, get preference data from previous round
+    if (not exists $self->{prev}) {
         # get preference data from previous round
         my $prev = $self->{prev};
         my @round_candidates = $self->candidates_all();
@@ -204,6 +184,28 @@ sub tally_preferences
                 next if not exists $prev->{pair}{$cand1}{$cand2};
                 if (exists $prev->{pair}{$cand1}{$cand2}{preference}) {
                     $self->add_preference($cand1, $cand2, $prev->{pair}{$cand1}{$cand2}{preference});
+                }
+            }
+        }
+        return;
+    }
+
+    # If this is not the first round, compute preferences from ballots.
+    # loop through votes tallying preferences
+    foreach my $combo ($schulze_ref->ballots_keys()) {
+        # loop through choices on the ballot
+        my $ballot = $schulze_ref->ballots_get($combo);
+        my @ballot_items = $ballot->items_all();
+        for (my $pos1=0; $pos1 < scalar @ballot_items - 1; $pos1++) {
+            # mark all following items on the ballot as less-favored than the current item
+            # This adds 2 levels of loops to support potential ties within each position.
+            my @item1 = item2list($ballot_items[$pos1]);
+            for (my $pos2=$pos1+1; $pos2 < scalar @ballot_items; $pos2++) {
+                my @item2 = item2list($ballot_items[$pos2]);
+                foreach my $cand_i (@item1) {
+                    foreach my $cand_j (@item2) {
+                        $self->add_preference($cand_i, $cand_j, $ballot->{quantity});
+                    }
                 }
             }
         }
