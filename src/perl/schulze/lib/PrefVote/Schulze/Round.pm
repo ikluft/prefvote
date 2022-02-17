@@ -217,7 +217,6 @@ sub tally_preferences
 sub compute_strongest_paths
 {
     my $self = shift;
-    my $schulze_ref = shift; # ref to PrefVote::Schulze object
 
     # from Schulze algorithm definition 2.3.1:
     # Stage 2 calculation of the strengths of the strongest paths
@@ -233,11 +232,11 @@ sub compute_strongest_paths
     #                           pred[j,k] : = pred[i,k]
 
     # nested loops i,j,k through candidates/choices to check if P[j,k] has a lower minimum than P[j,i] & P[i,k]
-    my @choices = $schulze_ref->get_choices(); # list of ballot choices
-    foreach my $i (@choices) {
-        foreach my $j (@choices) {
+    my @candidates = $self->candidates_all(); # list of candidates in this round
+    foreach my $i (@candidates) {
+        foreach my $j (@candidates) {
             next if $i eq $j;
-            foreach my $k (@choices) {
+            foreach my $k (@candidates) {
                 next if $i eq $k or $j eq $k;
 
                 # find the minimum strength link on the strongest path from j to i to k
@@ -260,7 +259,6 @@ sub compute_strongest_paths
 sub compute_potential_winners
 {
     my $self = shift;
-    my $schulze_ref = shift; # ref to PrefVote::Schulze object
 
     # Schulze algorithm definition of Stage 3 calculation of the binary relation 𝚶 and the set of potential winners:
     # (lack of comments in the pseudocode is as shown in the paper - see below where I added some in the code)
@@ -275,10 +273,10 @@ sub compute_potential_winners
     #                   ji ∉ 𝚶
 
     # nested loops i,j through candidates/choices eliminating candidates from potential winners if beaten by anyone
-    my @choices = $schulze_ref->get_choices(); # list of ballot choices
-    foreach my $i (@choices) {
+    my @candidates = $self->candidates_all(); # list of candidates in this round
+    foreach my $i (@candidates) {
         my $unbeaten = 1; # assume each candidate is a winner until we find any candidate who beats them
-        foreach my $j (@choices) {
+        foreach my $j (@candidates) {
             next if $i eq $j;
 
             # save minimum link value seen in the matrix for later use in tie detection and breaking
@@ -358,7 +356,6 @@ sub set_forbidden
 sub final_rank_links
 {
     my $self = shift;
-    my $schulze_ref = shift; # ref to PrefVote::Schulze object
 
     # defintion of Stage 4 TBRL from Schulze 5.1
     # (lack of comments in the pseudocode is as shown in the paper - see below where I added some in the code)
@@ -412,15 +409,14 @@ sub final_rank_links
 
     # nested loops m,n through candidates/choices looking for ties
     # attempt to break ties by marking cloned links in tied paths as forbidden and recomputing those strongest paths
-    # (This uses numeric loop indices, different from the list of strings in compute_strongest_paths().  In the
-    # complexity of the spec, numbers looked necessary. But after implementation that apparently wasn't the case.
-    # It may get converted to loop through the list of string choices like compute_strongest_paths().)
-    my @choices = $schulze_ref->get_choices(); # list of ballot choices
+    my @candidates = $self->candidates_all(); # list of candidates in this round
     my %alt_path; # alternate path strength routing around forbidden links (called "Qσ" in the paper's pseudocode)
-    for (my $m_index=0; $m_index<(scalar @choices)-1; $m_index++) {
-        for (my $n_index=$m_index+1; $n_index<scalar @choices; $n_index++) {
-            my $path_mn = $self->get_strength($choices[$m_index], $choices[$n_index]);
-            my $path_nm = $self->get_strength($choices[$n_index], $choices[$m_index]);
+    for (my $m_index=0; $m_index<(scalar @candidates)-1; $m_index++) {
+        my $m = $candidates[$m_index];
+        for (my $n_index=$m_index+1; $n_index<scalar @candidates; $n_index++) {
+            my $n = $candidates[$n_index];
+            my $path_mn = $self->get_strength($m, $n);
+            my $path_nm = $self->get_strength($n, $m);
             if ($path_mn == $path_nm) {
                 # we found a tie... these choices/candidates are probably so-called "clones", similar to each other
 
@@ -431,71 +427,67 @@ sub final_rank_links
                 my %forbidden;
 
                 # set alternate path strength for m,n from actual m,n
-                set_alt_path(\%alt_path, $choices[$m_index], $choices[$n_index], $path_mn);
+                set_alt_path(\%alt_path, $m, $n, $path_mn);
 
                 # set tie_broken flag to false and loop until it gets toggled or all links exhausted
                 # ($tie_broken is called "bool1" in the paper's pseudocode)
                 my $tie_broken = 0;
                 while (not $tie_broken) {
                     # declare tied links as forbidden
-                    for (my $i_index=0; $i_index<(scalar @choices); $i_index++) {
-                        for (my $j_index=0; $j_index<scalar @choices; $j_index++) {
-                            next if $i_index == $j_index;
-                            if (get_alt_path(\%alt_path, $choices[$m_index], $choices[$n_index])
-                                == $self->get_preference($choices[$i_index], $choices[$j_index]))
-                            {
-                                set_forbidden(\%forbidden, $choices[$i_index], $choices[$j_index], 1);
+                    foreach my $i (@candidates) {
+                        foreach my $j (@candidates) {
+                            next if $i eq $j;
+                            if (get_alt_path(\%alt_path, $m, $n) == $self->get_preference($i, $j)) {
+                                set_forbidden(\%forbidden, $i, $j, 1);
                             }
                         }
                     }
 
                     # calculate new strongest path without forbidden links
-                    for (my $i_index=0; $i_index<(scalar @choices); $i_index++) {
-                        for (my $j_index=0; $j_index<scalar @choices; $j_index++) {
-                            next if $i_index == $j_index;
-                            if (get_forbidden(\%forbidden, $choices[$i_index], $choices[$j_index])) {
-                                set_alt_path(\%alt_path, $choices[$i_index], $choices[$j_index], $minimum_link);
+                    foreach my $i (@candidates) {
+                        foreach my $j (@candidates) {
+                            next if $i eq $j;
+                            if (get_forbidden(\%forbidden, $i, $j)) {
+                                set_alt_path(\%alt_path, $i, $j, $minimum_link);
                             } else {
-                                set_alt_path(\%alt_path, $choices[$i_index], $choices[$j_index],
-                                    $self->get_preference($choices[$i_index], $choices[$j_index]));
+                                set_alt_path(\%alt_path, $i, $j, $self->get_preference($i, $j));
                             }
                         }
                     }
-                    for (my $i_index=0; $i_index<(scalar @choices); $i_index++) {
-                        for (my $j_index=0; $j_index<scalar @choices; $j_index++) {
-                            next if $i_index == $j_index;
-                            for (my $k_index=0; $k_index<scalar @choices; $k_index++) {
-                                next if $i_index == $k_index or $j_index == $k_index;
+                    foreach my $i (@candidates) {
+                        foreach my $j (@candidates) {
+                            next if $i eq $j;
+                            foreach my $k (@candidates) {
+                                next if $i eq $k or $j eq $k;
 
                                 # find the minimum strength non-forbidden link on the strongest path from j to i to k
-                                my $strength_ik = get_alt_path(\%alt_path, $choices[$i_index], $choices[$k_index]);
-                                my $strength_ji = get_alt_path(\%alt_path, $choices[$j_index], $choices[$i_index]);
-                                my $strength_jk = get_alt_path(\%alt_path, $choices[$j_index], $choices[$k_index]);
+                                my $strength_ik = get_alt_path(\%alt_path, $i, $k);
+                                my $strength_ji = get_alt_path(\%alt_path, $j, $i);
+                                my $strength_jk = get_alt_path(\%alt_path, $j, $k);
                                 my $min_strength_ji_ik = ($strength_ji < $strength_ik) ? $strength_ji : $strength_ik;
                                 if ($strength_jk < $min_strength_ji_ik) {
-                                    set_alt_path(\%alt_path, $choices[$j_index], $choices[$k_index],
-                                        $min_strength_ji_ik);
+                                    set_alt_path(\%alt_path, $j, $k, $min_strength_ji_ik);
                                 }
                             }
                         }
                     }
                     
                     # check if the tie is resolved
-                    my $q_path_mn = get_alt_path(\%alt_path, $choices[$m_index], $choices[$n_index]);
-                    my $q_path_nm = get_alt_path(\%alt_path, $choices[$n_index], $choices[$m_index]);
+                    my $q_path_mn = get_alt_path(\%alt_path, $m, $n);
+                    my $q_path_nm = get_alt_path(\%alt_path, $n, $m);
                     if ($q_path_mn > $q_path_nm) {
                         # tie resolved in favor of m
-                        $self->set_win_order($choices[$m_index], $choices[$n_index], 1);
-                        $self->set_win_order($choices[$n_index], $choices[$m_index], 0);
-                        $self->win_flag_set($choices[$m_index], 1);
-                        $self->win_flag_delete($choices[$n_index], 1);
+                        $self->set_win_order($m, $n, 1);
+                        $self->set_win_order($n, $m, 0);
+                        $self->win_flag_set($m, 1);
+                        $self->win_flag_delete($n, 1);
                         $tie_broken = 1;
                     } elsif ($q_path_nm > $q_path_mn) {
                         # tie resolved in favor of n
-                        $self->set_win_order($choices[$n_index], $choices[$m_index], 1);
-                        $self->set_win_order($choices[$m_index], $choices[$n_index], 0);
-                        $self->win_flag_set($choices[$n_index], 1);
-                        $self->win_flag_delete($choices[$m_index], 1);
+                        $self->set_win_order($n, $m, 1);
+                        $self->set_win_order($m, $n, 0);
+                        $self->win_flag_set($n, 1);
+                        $self->win_flag_delete($m, 1);
                         $tie_broken = 1;
                     } elsif ($q_path_mn == $minimum_link and $q_path_nm == $minimum_link) {
                         # tie could not be resolved
@@ -515,20 +507,20 @@ sub do_computation
     my $schulze_ref = shift; # ref to PrefVote::Schulze object
 
     # preparation: convert ballot preferences to candidate-pair preference totals, or obtain them from previous round
-    $self->tally_preferences();
+    $self->tally_preferences($schulze_ref);
 
     # Stage 1: initialization loop is replaced by lazy assignments upon read of undefined candidate-pair
     # matrix values in get_predecessor() and get_strength().
 
     # Stage 2: calculation of the strengths of the strongest paths (from Schulze 2.3.1)
-    $self->compute_strongest_paths($schulze_ref);
+    $self->compute_strongest_paths();
 
     # Stage 3: calculation of the binary relation 𝚶 and the set of potential winners (from Schulze 2.3.1)
-    $self->compute_potential_winners($schulze_ref);
+    $self->compute_potential_winners();
 
     # Stage 4: tie-breaking ranking of links TBRL (from Schulze 5.1)
     # we use the TBRL method because PrefVote system fully ranks results even for 1-seat races
-    $self->final_rank_links($schulze_ref);
+    $self->final_rank_links();
 
     # TODO: set round winner
 
