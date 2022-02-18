@@ -313,48 +313,6 @@ sub eliminate_losers
     return;
 }
 
-# save per-candidate final results in PrefVote::Core's choice_to_result map
-sub save_c2r
-{
-    my $self = shift;
-    my $seats = $self->seats();
-    my $place = 0;
-
-    # initialize the result map
-    if (not exists $self->{choice_to_result}) {
-        $self->{choice_to_result} = {};
-    }
-
-    # scan winners to assign places and determine elected seats
-    for (my $win_l1=0; $win_l1 < $self->winners_count(); $win_l1++) {
-        # candidates in this list are tied if there's more than one
-        my @group = $self->{winners}[$win_l1]->members();
-        my $disposition;
-        if ($place + scalar @group <= $seats) {
-            $disposition = "selected";
-        } elsif ($place < $seats and $place + scalar @group > $seats) {
-            $disposition = "tied";
-        } else {
-            $disposition = "placed";
-        }
-        foreach my $cand_key (@group) {
-            $self->c2r_set($cand_key, [$place+1, $disposition]);
-        }
-        $place += scalar @group;
-    }
-
-    # mark results for eliminated candidates
-    for (my $elim_l1=$self->eliminated_count()-1; $elim_l1 >= 0; $elim_l1--) {
-        my @group = $self->{eliminated}[$elim_l1]->members();
-        foreach my $cand_key (@group) {
-            $self->c2r_set($cand_key, [$place+1, "eliminated"]);
-        }
-        $place += scalar @group;
-    }
-    
-    return;
-}
-
 # count using STV
 sub count
 {
@@ -409,7 +367,7 @@ sub count
     }
 
     # save per-candidate final results in PrefVote::Core's choice_to_result map
-    $self->save_c2r();
+    $self->save_c2r(winners => $self->winners(), eliminated => $self->eliminated());
 
     return;
 }

@@ -23,25 +23,43 @@ use PrefVote::Schulze::Round;
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Standard qw(ArrayRef HashRef InstanceOf);
+use Types::Standard qw(Str ArrayRef HashRef InstanceOf);
 use PrefVote::Core::Set qw(Set);
 use PrefVote::Core::TestSpec;
 extends 'PrefVote::Core';
 
 # blackbox testing structure
 Readonly::Hash my %blackbox_spec => (
+    winners => [qw(list set string)],
+    rounds => [qw(list PrefVote::Schulze::Round)],
 );
 PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, spec => \%blackbox_spec, parent => 'PrefVote::Core');
 
-# return a ballot item as a list, whether it was a single scalar or a tie-group set 
-sub item2list
-{
-    my $item = shift;
-    if (ref $item eq 'Set::Tiny') {
-        return ($item->elements());
-    }
-    return ($item);
-}
+# list of names of winners in order by place, ties shown by an ArrayRef to the tied candidates
+has winners => (
+    is => 'rw',
+    isa => ArrayRef[Set[Str]],
+    default => sub { return [] },
+    handles_via => 'Array',
+    handles => {
+        winners_all => 'all',
+        winners_count => 'count',
+        winners_push => 'push',
+    },
+);
+
+# list of rounds of Schulze vote counting
+has rounds => (
+    is => 'rw',
+    isa => ArrayRef[InstanceOf["PrefVote::Schulze::Round"]],
+    default => sub { return [] },
+    handles_via => 'Array',
+    handles => {
+        rounds_count => 'count',
+        rounds_get => 'get',
+        rounds_push => 'push',
+    },
+);
 
 # set up a new round
 sub new_round
@@ -65,14 +83,6 @@ sub new_round
     return $round;
 }
 
-# save per-candidate final results in PrefVote::Core's choice_to_result map
-sub save_c2r
-{
-    # TODO
-
-    return;
-}
-
 # count votes using Schulze method
 sub count
 {
@@ -89,10 +99,18 @@ sub count
 
         # perform computations for the round to find the nth-place ranked choice/candidate
         $round->do_computation($self);
+
+        # save result
+        my $round_result = $round->result();
+        if (defined $round_result) {
+            if ($round_result->type() eq "winner") {
+                $self->winners_push(set($round_result->name_all()));
+            }
+        }
     }    
 
     # save per-candidate final results in PrefVote::Core's choice_to_result map
-    $self->save_c2r();
+    $self->save_c2r(winners => $self->winners());
 
     return;
 }
