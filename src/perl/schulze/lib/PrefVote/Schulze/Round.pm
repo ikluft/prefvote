@@ -184,7 +184,7 @@ sub tally_preferences
     my $schulze_ref = shift; # ref to PrefVote::Schulze object
 
     # If this is not the first round, get preference data from previous round
-    if (not exists $self->{prev}) {
+    if (exists $self->{prev}) {
         # get preference data from previous round
         my $prev = $self->{prev};
         my @round_candidates = $self->candidates_all();
@@ -535,8 +535,7 @@ sub do_computation
     $self->final_rank_links();
 
     # set round winner(s) from candidate(s) with win_flag set - more than one indicates a tie for this place
-    $self->set_result(type => "winner", $self->win_flag_keys());
-    #$schulze_ref->winners_push(set($self->win_flag_keys()));
+    $self->set_result(type => "winner", name => [$self->win_flag_keys()]);
 
     return;    
 }

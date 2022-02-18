@@ -97,6 +97,13 @@ sub count
         $self->debug_print("new round\n");
         my $round = $self->new_round();
 
+        # done if we've exhausted the candidates
+        $self->debug_print("round->candidates -> ".Dumper($round->{candidates}));
+        if ($round->candidates_empty()) {
+            $self->debug_print("no candidates remaining in new round\n");
+            last;
+        }
+
         # perform computations for the round to find the nth-place ranked choice/candidate
         $round->do_computation($self);
 
@@ -106,6 +113,10 @@ sub count
             if ($round_result->type() eq "winner") {
                 $self->winners_push(set($round_result->name_all()));
             }
+        } else {
+            # no result in previous round? A new round can't have a different result. Bail out.
+            $self->debug_print("no this round - bail out\n");
+            last;
         }
     }    
 
