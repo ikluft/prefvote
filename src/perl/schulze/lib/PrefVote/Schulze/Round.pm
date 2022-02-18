@@ -16,6 +16,7 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 package PrefVote::Schulze::Round;
 
 use autodie;
+use Clone qw(clone);
 use Readonly;
 use Set::Tiny qw(set);
 use PrefVote::Core;
@@ -163,6 +164,16 @@ sub get_win_order
     my ($self, $cand_i, $cand_j) = @_;
     return 0 if not exists $self->{pair}{$cand_i}{$cand_j}; # just use zero if the node doesn't exist
     return $self->{pair}{$cand_i}{$cand_j}->win_order() // 0; # return win_order, or zero if the node didn't have it
+}
+
+# return a ballot item as a list, whether it was a single scalar or a tie-group set
+sub item2list
+{
+    my $item = shift;
+    if (ref $item eq 'Set::Tiny') {
+        return ($item->elements());
+    }
+    return ($item);
 }
 
 # compute candidate-pair preference totals
@@ -507,6 +518,7 @@ sub do_computation
     my $schulze_ref = shift; # ref to PrefVote::Schulze object
 
     # preparation: convert ballot preferences to candidate-pair preference totals, or obtain them from previous round
+    # This needs the $schulze_ref in order to access ballot data in the first round.
     $self->tally_preferences($schulze_ref);
 
     # Stage 1: initialization loop is replaced by lazy assignments upon read of undefined candidate-pair
@@ -522,7 +534,9 @@ sub do_computation
     # we use the TBRL method because PrefVote system fully ranks results even for 1-seat races
     $self->final_rank_links();
 
-    # TODO: set round winner
+    # set round winner(s) from candidate(s) with win_flag set - more than one indicates a tie for this place
+    $self->set_result(type => "winner", $self->win_flag_keys());
+    #$schulze_ref->winners_push(set($self->win_flag_keys()));
 
     return;    
 }
