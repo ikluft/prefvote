@@ -17,7 +17,6 @@ use autodie;
 use base qw(PrefVote::Core::Output);
 use Data::Dumper;
 use Readonly;
-use YAML::XS;
 use PrefVote::Core::Float qw(float_external);
 
 # constants for output
@@ -52,21 +51,17 @@ sub get_col_result
 sub output
 {
     my $class= shift;
-    my $yamlref = shift;
-
-    # decode results data from YAML
-    #__PACKAGE__->debug_print("output() receieved YAML: ".Dumper($yamlref));
-    my @yaml_docs = YAML::XS::Load($$yamlref);
-    __PACKAGE__->debug_print("output() decoded YAML: ".Dumper(\@yaml_docs));
-    my $result_data = $yaml_docs[0];
+    my $result_data = shift;
 
     # generate candidate names list
     my @candidates;
     foreach my $winner (@{$result_data->{winners}}) {
         push @candidates, sort @$winner;
     }
-    foreach my $elim (reverse @{$result_data->{eliminated}}) {
-        push @candidates, sort @$elim;
+    if (exists $result_data->{eliminated}) {
+        foreach my $elim (reverse @{$result_data->{eliminated}}) {
+            push @candidates, sort @$elim;
+        }
     }
 
     # set up for table generation

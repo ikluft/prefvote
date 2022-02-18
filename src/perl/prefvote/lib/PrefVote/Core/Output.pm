@@ -77,8 +77,24 @@ sub main
         # slurp standard input
         my $yaml_textref = stdinslurp();
 
+        # decode results data from YAML
+        #__PACKAGE__->debug_print("output() receieved YAML: ".Dumper($yaml_textref));
+        my @yaml_docs = YAML::XS::Load($$yaml_textref);
+        __PACKAGE__->debug_print("output() decoded YAML: ".Dumper(\@yaml_docs));
+        my $result_data_root = $yaml_docs[0];
+
+        # double check proper formatting and voting method from received data
+        # top level hash should be named for votring method
+        if (not exists $result_data_root->{$voting_method}) {
+            croak "voting method $voting_method data not found in input";
+        }
+        if (ref $result_data_root->{$voting_method} ne "HASH") {
+            croak "voting method $voting_method data not formatted correctly";
+        }
+
         # format the output
-        $exitcode = $output_class->output($yaml_textref) ? 0 : 1; # invert boolean success code into program exit code
+        # invert boolean success code into program exit code
+        $exitcode = $output_class->output($result_data_root->{$voting_method}) ? 0 : 1;
         return 1; # eval completed
     };
 
