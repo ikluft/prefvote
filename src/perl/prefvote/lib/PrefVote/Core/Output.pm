@@ -83,17 +83,9 @@ sub candidates_list
 {
     my ($class, $result_data) = @_;
 
-    # generate candidate names list
-    my @candidates;
-    foreach my $winner (@{$result_data->{winners}}) {
-        push @candidates, sort @$winner;
-    }
-    if (exists $result_data->{eliminated}) {
-        foreach my $elim (reverse @{$result_data->{eliminated}}) {
-            push @candidates, sort @$elim;
-        }
-    }
-
+    # get list of candidates ordered by choice_to_result list
+    my $c2r = $result_data->{choice_to_result};
+    my @candidates = sort {$c2r->{$a}[0] <=> $c2r->{$b}[0]} keys %$c2r;
     return @candidates;
 }
 
