@@ -211,7 +211,7 @@ Notes about the STV example:
 </tr>
 </tbody>
 </table>
-<h3>Victory matrix</h3>
+<h3>Margin-of-victory matrix</h3>
 <table>
 <thead>
 <tr>
