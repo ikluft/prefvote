@@ -80,7 +80,7 @@ sub do_table
 {
     my ($class, $result_data, $result_rows, $title, $subtitle) = @_;
     if (defined $title) {
-        say "<h2>".$title."</h2>";
+        say "<h3>".$title."</h3>";
     }
     if (defined $subtitle) {
         say "<p>".$subtitle."</p>";

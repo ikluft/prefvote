@@ -8,15 +8,23 @@ Since the project's original language Perl has strengths in prototyping, it's th
 
 The original Vote::STV software implemented the [single transferable vote](https://en.wikipedia.org/wiki/Single_transferable_vote) algorithm, which is a subset of [ranked-choice voting](https://en.wikipedia.org/wiki/Ranked_voting).
 
-STV is the first implemented voting method in PrefVote since it was the original implementation as Vote::STV back to 1998. But STV has largely fallen out of favor because studies of voting methods found it lacking on some desirable characteristics.
+STV ws the first implemented voting method in PrefVote since it was the original implementation as Vote::STV back to 1998. But STV has largely fallen out of favor because studies of voting methods found it lacking on some desirable characteristics.
 
- While no voting method can be perfect, methods which meet Condorcet requirements are among the best around. So next up for voting methods will be the [Schulze algorithm](https://en.wikipedia.org/wiki/Schulze_method) (see [full definition paper)](https://arxiv.org/abs/1804.02973) and [Ranked Pairs](https://en.wikipedia.org/wiki/Ranked_pairs).
+ While no voting method can be perfect, methods which meet Condorcet requirements are among the best around. So the second voting method implemented in PrefVote was the [Schulze algorithm](https://en.wikipedia.org/wiki/Schulze_method) (see [full definition paper)](https://arxiv.org/abs/1804.02973). Next up will be [Ranked Pairs](https://en.wikipedia.org/wiki/Ranked_pairs).
 
 After the reference implementation in Perl, next up for language implementations will be [Rust](https://www.rust-lang.org/).
 
 ## Example voting result from test suite
 
-This is an example result from a Single Transferable Vote (STV) using a [file in the test suite](test/inputs/100-rcv-test/001-rcv-test.yaml). 250 ballots were randomly generated. So there's no actual meaning to the result except testing the software.
+This is an example result from Single Transferable Vote (STV) and Schulze using the same [file in the test suite](test/inputs/100-rcv-test/004-rcv-test.yaml) with each algorithm. 250 ballots were randomly generated. So there's no actual meaning to the result except testing the software.
+
+Notes about all the following examples:
+
+- Candidate names are fictitious, just to get names that start with A, B, C, D, E and F as used universally throughout the test suite. The names are whimsical based on the difficult dilemma voters sometimes feel they are choosing between in real candidates.
+
+- Even for a relatively small set of test data, this shows the importance of algorithm definition to handling of ranked-choice votes since the results are different between the methods.
+
+## Single Transferable Vote (STV) results from the example data
 
 <blockquote>
 <div id="prefvote">
@@ -142,9 +150,7 @@ This is an example result from a Single Transferable Vote (STV) using a [file in
 </div>
 </blockquote>
 
-Notes about the example:
-
-- Candidate names are fictitious, just to get names that start with A, B, C, D, E and F as used universally throughout the test suite. The names are whimsical based on the difficult dilemma voters sometimes feel they are choosing between in real candidates.
+Notes about the STV example:
 
 - In the Single Transferable Vote (STV) method used in this example, each round proceeds by either selecting winners who are above the quota of available votes, or eliminating the last-place candidate(s) and transferring those votes to the next choice on each ballot that had them. When a candidate wins, the fraction of their votes beyond the quota necessary to win also transfer to other candidates.
 
@@ -157,3 +163,131 @@ Notes about the example:
   - "placed" if the candidate placed after the last available seat, and therefore was not selected/elected.
   
   - "eliminated" if the candidate was eliminated from counting. A place number reflects order where the first or strongest elimination is ordered last.
+
+## Schulze method results from the example data
+
+<blockquote>
+<div id="prefvote">
+<h2>Results: Test Vote</h2>
+<p>1 seat available</p>
+<table>
+<thead>
+<tr>
+<th>Abbreviation</th>
+<th>Name/description</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>EVIL</td>
+<td>evil villain</td>
+<td>1/selected</td>
+</tr>
+<tr>
+<td>FACTIOUS</td>
+<td>factious/divisive candidate</td>
+<td>2/placed</td>
+</tr>
+<tr>
+<td>CHAOTIC</td>
+<td>chaotic unpredictable</td>
+<td>3/placed</td>
+</tr>
+<tr>
+<td>DYSFUNCTIONAL</td>
+<td>dysfunctional incompetent</td>
+<td>4/placed</td>
+</tr>
+<tr>
+<td>ABNORMAL</td>
+<td>abnormal and antisocial</td>
+<td>5/placed</td>
+</tr>
+<tr>
+<td>BORING</td>
+<td>boring as anything</td>
+<td>6/placed</td>
+</tr>
+</tbody>
+</table>
+<h3>Victory matrix</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>EVIL</th>
+<th>FACTIOUS</th>
+<th>CHAOTIC</th>
+<th>DYSFUNCTIONAL</th>
+<th>ABNORMAL</th>
+<th>BORING</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>EVIL</td>
+<td>🛇</td>
+<td>1 ✅</td>
+<td>37 ✅</td>
+<td>46 ✅</td>
+<td>53 ✅</td>
+<td>47 ✅</td>
+</tr>
+<tr>
+<td>FACTIOUS</td>
+<td>-1 ❌</td>
+<td>🛇</td>
+<td>38 ✅</td>
+<td>37 ✅</td>
+<td>51 ✅</td>
+<td>54 ✅</td>
+</tr>
+<tr>
+<td>CHAOTIC</td>
+<td>-37 ❌</td>
+<td>-38 ❌</td>
+<td>🛇</td>
+<td>5 ✅</td>
+<td>1 ✅</td>
+<td>9 ✅</td>
+</tr>
+<tr>
+<td>DYSFUNCTIONAL</td>
+<td>-46 ❌</td>
+<td>-37 ❌</td>
+<td>-5 ❌</td>
+<td>🛇</td>
+<td>20 ✅</td>
+<td>10 ✅</td>
+</tr>
+<tr>
+<td>ABNORMAL</td>
+<td>-53 ❌</td>
+<td>-51 ❌</td>
+<td>-1 ❌</td>
+<td>-20 ❌</td>
+<td>🛇</td>
+<td>9 ✅</td>
+</tr>
+<tr>
+<td>BORING</td>
+<td>-47 ❌</td>
+<td>-54 ❌</td>
+<td>-9 ❌</td>
+<td>-10 ❌</td>
+<td>-9 ❌</td>
+<td>🛇</td>
+</tr>
+</tbody>
+</table>
+</div>
+</blockquote>
+
+Notes about the Schulze example:
+
+- The Schulze method is a Condorcet voting method. So it aggregates the ranked preferences from each ballot into total occurrences of preference of each pair of candidates. In all Condorcet methods, if one candidate is preferred over all others then it is the winner. The Schulze method also considers paths of preferences in a graph to pick between candidates when there isn't a single Condorcet winner.
+
+- As with the STV results, the first table in the example is the final ranking order of the voting results. It indicates selected, tied, and placed candidates as above. There is no concept of eliminated candidates in the Schulze method. After the winner is found in each round, the vote is re-run for as many rounds as needed until all the candidates are ordered in the result.
+
+- The victory matrix shows the voting results with how much each candidate on the row labels are preferred over candidates on the column labels. Negative numbers mean the other candidate is more preferred. There is a "not applicable" icon in each cell diagonally down the middle where each candidate cannot be compared to themselves. A Condorcet winner is easily visible as having all positive numbers (and green check-mark icons) compared against all other candidates.
