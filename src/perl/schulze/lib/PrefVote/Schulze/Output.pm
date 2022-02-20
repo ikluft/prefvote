@@ -27,46 +27,41 @@ sub do_counting_table
     # generate candidate names list
     my @candidates = PrefVote::Core::Output->candidates_list($result_data);
 
-    # generate per-round result tables
+    # generate victory matrix
     my $c2r = $result_data->{choice_to_result};
-    my $rounds = $result_data->{rounds};
-    for (my $round_num=0; $round_num < scalar @$rounds; $round_num++) {
-        my $round = $rounds->[$round_num];
-        my @round_candidates = sort {$c2r->{$a}[0] <=> $c2r->{$b}[0]} @{$round->{candidates}};
-        last if not @round_candidates;
-        
-        # generate per-round victory matrix rows
-        # start with heading row
-        my @result_rows = [ "", @round_candidates];
+    my $round = $result_data->{rounds}[0];
+    
+    # start with heading row
+    my @result_rows = [ "", @candidates];
 
-        foreach my $i (@round_candidates) {
-            # candidate name starts the row
-            my @row = ($i);
+    # generate victory matrix rows
+    foreach my $i (@candidates) {
+        # candidate name starts the row
+        my @row = ($i);
 
-            foreach my $j (@round_candidates) {
-                # generate victory matrix column items
-                # add n/a symbol for a candidate compared against itself
-                if ($i eq $j) {
-                    push @row, PrefVote::Core::Output::symbol("n/a");
-                    next;
-                }
-
-                # add blank entry if no comparison occurred between these candidates (rare corner case)
-                if (not exists $round->{pair}{$i}{$j}{preference} and not exists $round->{pair}{$j}{$i}{preference}) {
-                    push @row, "";
-                    next;
-                }
-
-                # add margin of victory and win/lose icon
-                my $margin = ($round->{pair}{$i}{$j}{preference} // 0) - ($round->{pair}{$j}{$i}{preference} // 0);
-                my $icon = ($margin == 0) ? PrefVote::Core::Output::symbol("tie")
-                    : (($margin > 0) ? PrefVote::Core::Output::symbol("win") : PrefVote::Core::Output::symbol("lose"));
-                push @row, "$margin $icon";
+        foreach my $j (@candidates) {
+            # generate victory matrix column items
+            # add n/a symbol for a candidate compared against itself
+            if ($i eq $j) {
+                push @row, PrefVote::Core::Output::symbol("n/a");
+                next;
             }
-            push @result_rows, \@row;
+
+            # add blank entry if no comparison occurred between these candidates (rare corner case)
+            if (not exists $round->{pair}{$i}{$j}{preference} and not exists $round->{pair}{$j}{$i}{preference}) {
+                push @row, "";
+                next;
+            }
+
+            # add margin of victory and win/lose icon
+            my $margin = ($round->{pair}{$i}{$j}{preference} // 0) - ($round->{pair}{$j}{$i}{preference} // 0);
+            my $icon = ($margin == 0) ? PrefVote::Core::Output::symbol("tie")
+                : (($margin > 0) ? PrefVote::Core::Output::symbol("win") : PrefVote::Core::Output::symbol("lose"));
+            push @row, "$margin $icon";
         }
-        $format_class->do_table($result_data, \@result_rows, "Round $round_num");
+        push @result_rows, \@row;
     }
+    $format_class->do_table($result_data, \@result_rows, "Victory matrix");
 
     return;
 }
