@@ -1,6 +1,6 @@
-# PrefVote::STV::Output::HTML
-# ABSTRACT: HTML output formatting in PrefVote::STV
-# derived from Vote::STV by Ian Kluft
+# PrefVote::Core::Output::Markdown
+# ABSTRACT: result Markdown output formatting for PrefVote
+# derived from Vote::Core by Ian Kluft
 # Copyright (c) 2022 by Ian Kluft
 # Open Source license: Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
 
@@ -11,44 +11,29 @@
 use Modern::Perl qw(2015); # require 5.20.0 or later
 ## use critic (Modules::RequireExplicitPackage)
 
-package PrefVote::STV::Output::HTML;
+package PrefVote::Core::Output::Markdown;
 
 use autodie;
-use base qw(PrefVote::STV::Output);
-use HTML::Escape qw(escape_html);
+use base qw(PrefVote::Core::Output);
 
-# generate HTML table from an array
-sub generate_html_table
+# generate Markdown table from an array
+sub generate_md_table
 {
     my %opts = @_;
     my $rows = $opts{rows};
 
-    # table heading
-    say "<table>";
-
     # generate header from first row
     if ($opts{header_row} // 0) {
         my $header = shift @$rows;
-        say "<thead>";
-        say "<tr>";
-        foreach my $col_item (@$header) {
-            say "<th>".escape_html($col_item)."</th>";
-        }
-        say "</tr>";
-        say "</thead>";
+        say "| ".join(" | ", @$header)." |";
+        say "|".("---|" x scalar @$header);
     }
 
     # generate table from remainder of rows
-    say "<tbody>";
     foreach my $row (@$rows) {
-        say "<tr>";
-        foreach my $col_item (@$row) {
-            say "<td>".escape_html($col_item)."</td>";
-        }
-        say "</tr>";
+        say "| ".join(" | ", @$row)." |";
     }
-    say "</tbody>";
-    say "</table>";
+    say;
     return;
 }
 
@@ -56,14 +41,12 @@ sub generate_html_table
 sub do_header
 {
     my ($class, $result_data) = @_;
-
-    # vote result heading
-    # scope limited to h2 level heading - assumes this will be inserted in a larger document
     my $seats = $result_data->{seats};
     my $title = "Results: ".$result_data->{name};
-    say "<div id=\"prefvote\">";
-    say "<h2>".escape_html($title)."</h2>";
-    say "<p>".escape_html($seats)." seat".($seats>1 ? "s" : "")." available</p>";
+    say $title;
+    say "-" x length $title;
+    say "$seats seat".($seats>1 ? "s" : "")." available";
+    say;
     return;
 }
 
@@ -71,7 +54,7 @@ sub do_header
 sub do_toc
 {
     my ($class, $result_data, $toc_rows) = @_;
-    generate_html_table(rows => $toc_rows, header_row => 1);
+    generate_md_table(rows => $toc_rows, header_row => 1);
     return;
 }
 
@@ -79,7 +62,7 @@ sub do_toc
 sub do_table
 {
     my ($class, $result_data, $result_rows) = @_;
-    generate_html_table(rows => $result_rows, header_row => 1);
+    generate_md_table(rows => $result_rows, header_row => 1);
     return;
 }
 
@@ -87,11 +70,11 @@ sub do_table
 sub do_footer
 {
     my ($class, $result_data) = @_;
-    say "</div>";
+    # nothing to do
     return;
 }
 
-# output() class method provided by parent class PrefVote::STV::Output
+# output() class method provided by parent class PrefVote::Core::Output
 
 1;
 
@@ -101,7 +84,7 @@ __END__
 
 =head1 NAME
 
-PrefVote::STV::Output::HTML - HTML output formatting in PrefVote::STV
+PrefVote::Core::Output::Markdown - result Markdown output formatting for PrefVote
 
 =head1 SYNOPSIS
 

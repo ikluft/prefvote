@@ -78,6 +78,58 @@ sub stdinslurp
     return \$str;
 }
 
+# get list of candidates
+sub candidates_list
+{
+    my ($class, $result_data) = @_;
+
+    # generate candidate names list
+    my @candidates;
+    foreach my $winner (@{$result_data->{winners}}) {
+        push @candidates, sort @$winner;
+    }
+    if (exists $result_data->{eliminated}) {
+        foreach my $elim (reverse @{$result_data->{eliminated}}) {
+            push @candidates, sort @$elim;
+        }
+    }
+
+    return @candidates;
+}
+
+# output formatting class method (called by PrefVote::Core::format_output())
+# requires subclass (::Text, ::Markdown, ::HTML, etc) implement functions: do_header, do_toc, do_table, do_footer
+sub output
+{
+    my ($class, $format_class, $method_class, $result_data) = @_;
+
+    # generate candidate names list
+    my @candidates = $class->candidates_list($result_data);
+
+    # set up for table generation
+    binmode(STDOUT, ':encoding(UTF-8)');
+
+    # print heading
+    $format_class->do_header($result_data);
+
+    # generate candidate table of contents
+    my @toc_rows;
+    my $c2r = $result_data->{choice_to_result};
+    push @toc_rows, ["Abbreviation", "Name/description", "Result"];
+    foreach my $name (@candidates) {
+        push @toc_rows, [$name, $result_data->{choices}{$name}, join("/",@{$c2r->{$name}})];
+    }
+    $format_class->do_toc($result_data, \@toc_rows);
+
+    # generate output table
+    $method_class->do_counting_table($format_class, $result_data);
+
+    # generate footer (if needed)
+    $format_class->do_footer($result_data);
+
+    return 1;
+}
+
 # mainline to launch appropriate formatter subclass and forward YAML data to it
 sub main
 {
@@ -97,10 +149,18 @@ sub main
         }
 
         # check if a class which can handle the requested format exists
-        my $output_class = "PrefVote::".$voting_method."::Output::".ucfirst($format);
+        my $format_class = "PrefVote::Core::Output::".ucfirst($format);
         ## no critic (BuiltinFunctions::ProhibitStringyEval)
-        if (not eval "require $output_class") {
-            PrefVote::Core::Exception->throw(description => "could not load $output_class");
+        if (not eval "require $format_class") {
+            PrefVote::Core::Exception->throw(description => "could not load formatting class $format_class");
+        }
+        ## critic (BuiltinFunctions::ProhibitStringyEval)
+
+        # check if a class which can handle the requested voting method exists
+        my $method_class = "PrefVote::".$voting_method."::Output";
+        ## no critic (BuiltinFunctions::ProhibitStringyEval)
+        if (not eval "require $method_class") {
+            PrefVote::Core::Exception->throw(description => "could not load voting method class $method_class");
         }
         ## critic (BuiltinFunctions::ProhibitStringyEval)
 
@@ -124,7 +184,7 @@ sub main
 
         # format the output
         # invert boolean success code into program exit code
-        $exitcode = $output_class->output($result_data_root->{$voting_method}) ? 0 : 1;
+        $exitcode = __PACKAGE__->output($format_class, $method_class, $result_data_root->{$voting_method}) ? 0 : 1;
         return 1; # eval completed
     };
 

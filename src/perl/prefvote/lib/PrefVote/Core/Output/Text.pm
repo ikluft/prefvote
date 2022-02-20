@@ -1,6 +1,6 @@
-# PrefVote::STV::Output::Text
-# ABSTRACT: text output formatting PrefVote::STV
-# derived from Vote::STV by Ian Kluft
+# PrefVote::Core::Output::Text
+# ABSTRACT: result text output formatting for PrefVote
+# derived from Vote::Core by Ian Kluft
 # Copyright (c) 2022 by Ian Kluft
 # Open Source license: Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
 
@@ -11,10 +11,10 @@
 use Modern::Perl qw(2015); # require 5.20.0 or later
 ## use critic (Modules::RequireExplicitPackage)
 
-package PrefVote::STV::Output::Text;
+package PrefVote::Core::Output::Text;
 
 use autodie;
-use base qw(PrefVote::STV::Output);
+use base qw(PrefVote::Core::Output);
 use Term::ANSIColor;
 use IO::Interactive qw(is_interactive);
 use Text::Table::Tiny 1.02 qw/ generate_table /;
@@ -56,8 +56,6 @@ sub do_footer
     return;
 }
 
-# output() class method provided by parent class PrefVote::STV::Output
-
 1;
 
 __END__
@@ -66,7 +64,7 @@ __END__
 
 =head1 NAME
 
-PrefVote::STV::Output::Text - text output formatting in PrefVote::STV
+PrefVote::Core::Output::Text - result text output formatting for PrefVote
 
 =head1 SYNOPSIS
 

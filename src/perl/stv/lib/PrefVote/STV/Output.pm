@@ -31,7 +31,7 @@ sub get_col_result
     my $result = {};
         $result->{display} = float_external($votes);
     foreach my $action (qw(eliminated winner)) {
-        if ($round_data->{tally}{$cand}{$action}) {
+        if ($round_data->{tally}{$cand}{$action} // 0) {
             $result->{display} .= " ".PrefVote::Core::Output::symbol($action);
             $result->{save} = $action;
         }
@@ -39,42 +39,17 @@ sub get_col_result
     return $result;
 }
 
-# output formatting class method (called by PrefVote::Core::format_output())
-# requires subclass (::Text, ::Markdown, ::HTML, etc) implement functions: do_header, do_toc, do_table, do_footer
-sub output
+# generate counting results table
+sub do_counting_table
 {
-    my $class= shift;
-    my $result_data = shift;
+    my ($class, $format_class, $result_data) = @_;
 
     # set symbol aliases in PrefVote::Core::Output so it accepts STV's "winner" and "eliminated" names
     PrefVote::Core::Output::set_symbol_alias("winner" => "win");
     PrefVote::Core::Output::set_symbol_alias("eliminated" => "lose");
 
     # generate candidate names list
-    my @candidates;
-    foreach my $winner (@{$result_data->{winners}}) {
-        push @candidates, sort @$winner;
-    }
-    if (exists $result_data->{eliminated}) {
-        foreach my $elim (reverse @{$result_data->{eliminated}}) {
-            push @candidates, sort @$elim;
-        }
-    }
-
-    # set up for table generation
-    binmode(STDOUT, ':encoding(UTF-8)');
-
-    # print heading
-    $class->do_header($result_data);
-
-    # generate candidate table of contents
-    my @toc_rows;
-    my $c2r = $result_data->{choice_to_result};
-    push @toc_rows, ["Abbreviation", "Name/description", "Result"];
-    foreach my $name (@candidates) {
-        push @toc_rows, [$name, $result_data->{choices}{$name}, join("/",@{$c2r->{$name}})];
-    }
-    $class->do_toc($result_data, \@toc_rows);
+    my @candidates = $class->candidates_list($result_data);
 
     # generate output table
     my @result_rows;
@@ -98,12 +73,9 @@ sub output
         }
         push @result_rows, \@result_row;
     }
-    $class->do_toc($result_data, \@result_rows);
+    $format_class->do_table($result_data, \@result_rows);
 
-    # generate footer (if needed)
-    $class->do_footer($result_data);
-
-    return 1;
+    return;
 }
 
 1;
