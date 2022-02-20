@@ -8,9 +8,9 @@ Since the project's original language Perl has strengths in prototyping, it's th
 
 The original Vote::STV software implemented the [single transferable vote](https://en.wikipedia.org/wiki/Single_transferable_vote) algorithm, which is a subset of [ranked-choice voting](https://en.wikipedia.org/wiki/Ranked_voting).
 
-STV ws the first implemented voting method in PrefVote since it was the original implementation as Vote::STV back to 1998. But STV has largely fallen out of favor because studies of voting methods found it lacking on some desirable characteristics.
+STV ws the first implemented voting method in PrefVote since it was the original implementation as Vote::STV back to 1998. But STV has largely fallen out of favor because studies of voting methods found it lacking on some desirable characteristics. STV was retained while modernizing the code to develop testing infrastructure.
 
- While no voting method can be perfect, methods which meet Condorcet requirements are among the best around. So the second voting method implemented in PrefVote was the [Schulze algorithm](https://en.wikipedia.org/wiki/Schulze_method) (see [full definition paper)](https://arxiv.org/abs/1804.02973). Next up will be [Ranked Pairs](https://en.wikipedia.org/wiki/Ranked_pairs).
+ While no voting method is perfect, methods which meet Condorcet requirements are among the best around. So the second voting method implemented in PrefVote was the [Schulze algorithm](https://en.wikipedia.org/wiki/Schulze_method) (see [full definition paper)](https://arxiv.org/abs/1804.02973). Next up will be [Ranked Pairs](https://en.wikipedia.org/wiki/Ranked_pairs).
 
 After the reference implementation in Perl, next up for language implementations will be [Rust](https://www.rust-lang.org/).
 
@@ -22,7 +22,7 @@ Notes about all the following examples:
 
 - Candidate names are fictitious, just to get names that start with A, B, C, D, E and F as used universally throughout the test suite. The names are whimsical based on the difficult dilemma voters sometimes feel they are choosing between in real candidates.
 
-- Even for a relatively small set of test data, this shows the importance of algorithm definition to handling of ranked-choice votes since the results are different between the methods.
+- Even for a relatively small set of test data, this shows the importance of algorithm definition to handling of ranked-choice votes. The various algorithms can lead to different results following procedures that can vary in behavior when vote counts are close. This example was one where a close race came out differently.
 
 ## Single Transferable Vote (STV) results from the example data
 
@@ -290,4 +290,4 @@ Notes about the Schulze example:
 
 - As with the STV results, the first table in the example is the final ranking order of the voting results. It indicates selected, tied, and placed candidates as above. There is no concept of eliminated candidates in the Schulze method. After the winner is found in each round, the vote is re-run for as many rounds as needed until all the candidates are ordered in the result.
 
-- The victory matrix shows the voting results with how much each candidate on the row labels are preferred over candidates on the column labels. Negative numbers mean the other candidate is more preferred. There is a "not applicable" icon in each cell diagonally down the middle where each candidate cannot be compared to themselves. A Condorcet winner is easily visible as having all positive numbers (and heavy check-mark icons) compared against all other candidates.
+- The margin-of-victory matrix shows the voting results with how much each candidate on the row labels are preferred over candidates on the column labels. Negative numbers mean the other candidate is more preferred. There is a "not applicable" icon in each cell diagonally down the middle where each candidate cannot be compared to themselves. The matrix always has an inverse symmetry because the same pair of candidates compared on the other side of the diagonal will be opposite - with A-B vs B-A, one of them must negative and opposite of the other. A Condorcet winner is easily visible as having all positive numbers (and check-mark icons) compared against all other candidates.
