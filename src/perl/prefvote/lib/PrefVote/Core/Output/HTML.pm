@@ -14,8 +14,8 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 package PrefVote::Core::Output::HTML;
 
 use autodie;
-use base qw(PrefVote::Core::Output);
 use HTML::Escape qw(escape_html);
+use base qw(PrefVote);
 
 # generate HTML table from an array
 sub generate_html_table

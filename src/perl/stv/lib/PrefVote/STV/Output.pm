@@ -14,8 +14,9 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 package PrefVote::STV::Output;
 
 use autodie;
-use base qw(PrefVote::Core::Output);
+use base qw(PrefVote);
 use Data::Dumper;
+use PrefVote::Core::Output;
 use PrefVote::Core::Float qw(float_external);
 
 # look up column/candidate result

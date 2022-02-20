@@ -14,7 +14,7 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 package PrefVote::Core::Output::Markdown;
 
 use autodie;
-use base qw(PrefVote::Core::Output);
+use base qw(PrefVote);
 
 # generate Markdown table from an array
 sub generate_md_table

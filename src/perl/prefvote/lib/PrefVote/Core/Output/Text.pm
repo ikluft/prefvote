@@ -14,7 +14,7 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 package PrefVote::Core::Output::Text;
 
 use autodie;
-use base qw(PrefVote::Core::Output);
+use base qw(PrefVote);
 use Term::ANSIColor;
 use IO::Interactive qw(is_interactive);
 use Text::Table::Tiny 1.02 qw/ generate_table /;
