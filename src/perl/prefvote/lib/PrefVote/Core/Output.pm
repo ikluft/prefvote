@@ -21,9 +21,20 @@ use Config;
 use English;
 use Getopt::Long;
 use Data::Dumper;
+use Readonly;
 use YAML::XS;
 use IPC::Run qw(run);
 use PrefVote::Core::Exception;
+
+# constants for output
+Readonly::Hash my %symbols => (
+    "win" => "\N{WHITE HEAVY CHECK MARK}",
+    "lose" => "\N{CROSS MARK}",
+    "tie" => "\N{LARGE BLUE CIRCLE}",
+    "n/a" => "\N{PROHIBITED SIGN}",
+    "unknown" => "\N{WHITE QUESTION MARK ORNAMENT}",
+);
+my %symbol_alias;
 
 # launch external piped-input formatter script using this class as the mainline
 sub do_output
@@ -34,6 +45,25 @@ sub do_output
     # pipe the YAML to a subprocess running main() from this class
     my @output_cmd = ($Config{perlpath}, "-M".__PACKAGE__, "-e", __PACKAGE__."::main", "--", "--format=$format", "--method=$voting_method");
     run \@output_cmd, sub {if(my $line = shift @$yaml_ref){return $line}}, \*STDOUT;
+    return;
+}
+
+# access common Unicode symbols
+sub symbol
+{
+    my $name = shift;
+    return $symbols{$name} if (exists $symbols{$name});
+    if (exists $symbol_alias{$name} and exists $symbols{$symbol_alias{$name}}) {
+        return $symbols{$symbol_alias{$name}};
+    }
+    return $symbols{unknown};
+}
+
+# set aliases for use in symbol lookup
+sub set_symbol_alias
+{
+    my ($alias, $name) = @_;
+    $symbol_alias{$alias} = $name;
     return;
 }
 

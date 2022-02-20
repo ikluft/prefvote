@@ -16,14 +16,7 @@ package PrefVote::STV::Output;
 use autodie;
 use base qw(PrefVote::Core::Output);
 use Data::Dumper;
-use Readonly;
 use PrefVote::Core::Float qw(float_external);
-
-# constants for output
-Readonly::Hash my %symbols => {
-    "winner" => "\N{WHITE HEAVY CHECK MARK}",
-    "eliminated" => "\N{CROSS MARK}",
-};
 
 # look up column/candidate result
 sub get_col_result
@@ -39,7 +32,7 @@ sub get_col_result
         $result->{display} = float_external($votes);
     foreach my $action (qw(eliminated winner)) {
         if ($round_data->{tally}{$cand}{$action}) {
-            $result->{display} .= " ".$symbols{$action};
+            $result->{display} .= " ".PrefVote::Core::Output::symbol($action);
             $result->{save} = $action;
         }
     }
@@ -52,6 +45,10 @@ sub output
 {
     my $class= shift;
     my $result_data = shift;
+
+    # set symbol aliases in PrefVote::Core::Output so it accepts STV's "winner" and "eliminated" names
+    PrefVote::Core::Output::set_symbol_alias("winner" => "win");
+    PrefVote::Core::Output::set_symbol_alias("eliminated" => "lose");
 
     # generate candidate names list
     my @candidates;
@@ -90,7 +87,7 @@ sub output
         my @result_row = ($round+1, float_external($quota));
         foreach my $col_name (@candidates) {
             if (exists $col_status{$col_name}) {
-               push @result_row, $symbols{$col_status{$col_name}};
+               push @result_row, PrefVote::Core::Output::symbol($col_status{$col_name});
                next;
             }
             my $status = get_col_result($result_data, $round, $col_name);
