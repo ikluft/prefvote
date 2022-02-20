@@ -61,7 +61,13 @@ sub do_toc
 # generate table
 sub do_table
 {
-    my ($class, $result_data, $result_rows) = @_;
+    my ($class, $result_data, $result_rows, $title, $subtitle) = @_;
+    if (defined $title) {
+        say "## ".$title;
+    }
+    if (defined $subtitle) {
+        say $subtitle;
+    }
     generate_md_table(rows => $result_rows, header_row => 1);
     return;
 }

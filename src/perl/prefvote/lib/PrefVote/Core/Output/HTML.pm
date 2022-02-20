@@ -78,7 +78,13 @@ sub do_toc
 # generate table
 sub do_table
 {
-    my ($class, $result_data, $result_rows) = @_;
+    my ($class, $result_data, $result_rows, $title, $subtitle) = @_;
+    if (defined $title) {
+        say "<h2>".$title."</h2>";
+    }
+    if (defined $subtitle) {
+        say "<p>".$subtitle."</p>";
+    }
     generate_html_table(rows => $result_rows, header_row => 1);
     return;
 }

@@ -90,7 +90,7 @@ sub candidates_list
 }
 
 # output formatting class method (called by PrefVote::Core::format_output())
-# requires subclass (::Text, ::Markdown, ::HTML, etc) implement functions: do_header, do_toc, do_table, do_footer
+# requires $format_class (::Text, ::Markdown, ::HTML, etc) implement functions: do_header, do_toc, do_table, do_footer
 sub output
 {
     my ($class, $format_class, $method_class, $result_data) = @_;
