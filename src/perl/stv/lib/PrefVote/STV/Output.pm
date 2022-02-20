@@ -50,7 +50,7 @@ sub do_counting_table
     PrefVote::Core::Output::set_symbol_alias("eliminated" => "lose");
 
     # generate candidate names list
-    my @candidates = $class->candidates_list($result_data);
+    my @candidates = PrefVote::Core::Output->candidates_list($result_data);
 
     # generate output table
     my @result_rows;
