@@ -25,20 +25,26 @@ sub do_counting_table
     my ($class, $format_class, $result_data) = @_;
 
     # generate candidate names list
-    my @candidates = $class->candidates_list($result_data);
+    my @candidates = PrefVote::Core::Output->candidates_list($result_data);
 
     # generate per-round result tables
     my $c2r = $result_data->{choice_to_result};
     my $rounds = $result_data->{rounds};
-    for (my $round=0; $round < scalar @$rounds; $round++) {
-        my @round_candidates = sort {$c2r->{$a}[0] <=> $c2r->{$b}[0]} @{$rounds->[$round]{candidates}};
+    for (my $round_num=0; $round_num < scalar @$rounds; $round_num++) {
+        my $round = $rounds->[$round_num];
+        my @round_candidates = sort {$c2r->{$a}[0] <=> $c2r->{$b}[0]} @{$round->{candidates}};
+        last if not @round_candidates;
         
         # generate per-round victory matrix rows
-        my @result_rows;
+        # start with heading row
+        my @result_rows = [ "", @round_candidates];
+
         foreach my $i (@round_candidates) {
-            # generate victory matrix column items
-            my @row;
+            # candidate name starts the row
+            my @row = ($i);
+
             foreach my $j (@round_candidates) {
+                # generate victory matrix column items
                 # add n/a symbol for a candidate compared against itself
                 if ($i eq $j) {
                     push @row, PrefVote::Core::Output::symbol("n/a");
@@ -57,9 +63,9 @@ sub do_counting_table
                     : (($margin > 0) ? PrefVote::Core::Output::symbol("win") : PrefVote::Core::Output::symbol("lose"));
                 push @row, "$margin $icon";
             }
-            push @result_rows, @row;
+            push @result_rows, \@row;
         }
-        $format_class->do_table($result_data, \@result_rows, "Round $round");
+        $format_class->do_table($result_data, \@result_rows, "Round $round_num");
     }
 
     return;
