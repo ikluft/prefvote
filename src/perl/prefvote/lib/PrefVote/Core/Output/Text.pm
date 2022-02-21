@@ -67,6 +67,7 @@ sub do_footer
 __END__
 
 # POD documentation
+=encoding utf8
 
 =head1 NAME
 
@@ -74,11 +75,20 @@ PrefVote::Core::Output::Text - result text output formatting for PrefVote
 
 =head1 SYNOPSIS
 
+This should not be called externally - use L<PrefVote::Core::Output>
 
 =head1 DESCRIPTION
 
+⛔ This is for PrefVote internal use only.
+
+PrefVote::Core::Output::Text is used by L<PrefVote::Core::Output> when text is selected as the output format.
+It provides functions for formatting output including tables in plain text.
 
 =head1 SEE ALSO
+
+L<PrefVote::Core::Output>
+
+L<https://github.com/ikluft/prefvote>
 
 =head1 BUGS AND LIMITATIONS
 
