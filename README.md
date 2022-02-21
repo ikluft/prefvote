@@ -41,7 +41,7 @@ Notes about all the following examples:
 <tbody>
 <tr>
 <td>FACTIOUS</td>
-<td>factious/divisive candidate</td>
+<td>factious/divisive</td>
 <td>1/selected</td>
 </tr>
 <tr>
@@ -180,13 +180,13 @@ Notes about the STV example:
 </thead>
 <tbody>
 <tr>
-<td>EVIL</td>
-<td>evil villain</td>
+<td>FACTIOUS</td>
+<td>factious/divisive</td>
 <td>1/selected</td>
 </tr>
 <tr>
-<td>FACTIOUS</td>
-<td>factious/divisive candidate</td>
+<td>EVIL</td>
+<td>evil villain</td>
 <td>2/placed</td>
 </tr>
 <tr>
@@ -216,8 +216,8 @@ Notes about the STV example:
 <thead>
 <tr>
 <th></th>
-<th>EVIL</th>
 <th>FACTIOUS</th>
+<th>EVIL</th>
 <th>CHAOTIC</th>
 <th>DYSFUNCTIONAL</th>
 <th>ABNORMAL</th>
@@ -226,57 +226,57 @@ Notes about the STV example:
 </thead>
 <tbody>
 <tr>
-<td>EVIL</td>
+<td>FACTIOUS</td>
 <td>🛇</td>
-<td>1 ✅</td>
-<td>37 ✅</td>
-<td>46 ✅</td>
-<td>53 ✅</td>
-<td>47 ✅</td>
+<td>7 ✅</td>
+<td>57 ✅</td>
+<td>67 ✅</td>
+<td>74 ✅</td>
+<td>79 ✅</td>
 </tr>
 <tr>
-<td>FACTIOUS</td>
-<td>-1 ❌</td>
+<td>EVIL</td>
+<td>-7 ❌</td>
 <td>🛇</td>
-<td>38 ✅</td>
-<td>37 ✅</td>
-<td>51 ✅</td>
-<td>54 ✅</td>
+<td>48 ✅</td>
+<td>68 ✅</td>
+<td>68 ✅</td>
+<td>64 ✅</td>
 </tr>
 <tr>
 <td>CHAOTIC</td>
-<td>-37 ❌</td>
-<td>-38 ❌</td>
+<td>-57 ❌</td>
+<td>-48 ❌</td>
 <td>🛇</td>
+<td>16 ✅</td>
 <td>5 ✅</td>
-<td>1 ✅</td>
-<td>9 ✅</td>
+<td>15 ✅</td>
 </tr>
 <tr>
 <td>DYSFUNCTIONAL</td>
-<td>-46 ❌</td>
-<td>-37 ❌</td>
-<td>-5 ❌</td>
+<td>-67 ❌</td>
+<td>-68 ❌</td>
+<td>-16 ❌</td>
 <td>🛇</td>
-<td>20 ✅</td>
-<td>10 ✅</td>
+<td>13 ✅</td>
+<td>5 ✅</td>
 </tr>
 <tr>
 <td>ABNORMAL</td>
-<td>-53 ❌</td>
-<td>-51 ❌</td>
-<td>-1 ❌</td>
-<td>-20 ❌</td>
+<td>-74 ❌</td>
+<td>-68 ❌</td>
+<td>-5 ❌</td>
+<td>-13 ❌</td>
 <td>🛇</td>
-<td>9 ✅</td>
+<td>11 ✅</td>
 </tr>
 <tr>
 <td>BORING</td>
-<td>-47 ❌</td>
-<td>-54 ❌</td>
-<td>-9 ❌</td>
-<td>-10 ❌</td>
-<td>-9 ❌</td>
+<td>-79 ❌</td>
+<td>-64 ❌</td>
+<td>-15 ❌</td>
+<td>-5 ❌</td>
+<td>-11 ❌</td>
 <td>🛇</td>
 </tr>
 </tbody>

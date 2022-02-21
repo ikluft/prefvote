@@ -201,23 +201,39 @@ sub tally_preferences
         return;
     }
 
-    # If this is not the first round, compute preferences from ballots.
+    # If this is the first round, compute preferences from ballots.
     # loop through votes tallying preferences
+    my @choices = $schulze_ref->choices_keys(); # list of candidates
     foreach my $combo ($schulze_ref->ballots_keys()) {
         # loop through choices on the ballot
         my $ballot = $schulze_ref->ballots_get($combo);
         my @ballot_items = $ballot->items_all();
+
+        # choices contained on the ballot have all pairwise preferences recorded
+        my %seen_on_ballot;
         for (my $pos1=0; $pos1 < scalar @ballot_items - 1; $pos1++) {
             # mark all following items on the ballot as less-favored than the current item
             # This adds 2 levels of loops to support potential ties within each position.
             my @item1 = item2list($ballot_items[$pos1]);
-            for (my $pos2=$pos1+1; $pos2 < scalar @ballot_items; $pos2++) {
-                my @item2 = item2list($ballot_items[$pos2]);
-                foreach my $cand_i (@item1) {
+            foreach my $cand_i (@item1) {
+                $seen_on_ballot{$cand_i} = 1;
+                for (my $pos2=$pos1+1; $pos2 < scalar @ballot_items; $pos2++) {
+                    my @item2 = item2list($ballot_items[$pos2]);
                     foreach my $cand_j (@item2) {
+                        $seen_on_ballot{$cand_j} = 1;
                         $self->add_preference($cand_i, $cand_j, $ballot->{quantity});
                     }
                 }
+            }
+        }
+
+        # all choices omitted from the ballot (unranked) count as less-preferred than all on the ballot
+        # no comparison is made between unranked choices - the voter didn't provide data on that
+        my @included = keys %seen_on_ballot;
+        my @omitted = grep {not exists $seen_on_ballot{$_}} @choices;
+        foreach my $in (@included) {
+            foreach my $out (@omitted) {
+                $self->add_preference($in, $out, $ballot->{quantity});
             }
         }
     }
@@ -433,6 +449,7 @@ sub final_rank_links
             my $path_nm = $self->get_strength($n, $m);
             if ($path_mn == $path_nm) {
                 # we found a tie... these choices/candidates are probably so-called "clones", similar to each other
+                $self->debug_print("final_rank_links: tie found between $m and $n in round ".$self->number());
 
                 # forbidden table keeps track of links forbidden for m-n and n-m paths in order to break the tie
                 # it is a new empty hash, which allows us to skip initializing every element to zero
@@ -453,6 +470,7 @@ sub final_rank_links
                             next if $i eq $j;
                             if (get_alt_path(\%alt_path, $m, $n) == $self->get_preference($i, $j)) {
                                 set_forbidden(\%forbidden, $i, $j, 1);
+                                $self->debug_print("final_rank_links: set_forbidden $i-$j");
                             }
                         }
                     }
@@ -462,9 +480,13 @@ sub final_rank_links
                         foreach my $j (@candidates) {
                             next if $i eq $j;
                             if (get_forbidden(\%forbidden, $i, $j)) {
-                                set_alt_path(\%alt_path, $i, $j, $minimum_link);
+                                my $value = $minimum_link;
+                                set_alt_path(\%alt_path, $i, $j, $value);
+                                $self->debug_print("final_rank_links: set_alt_path $i-$j => $value");
                             } else {
-                                set_alt_path(\%alt_path, $i, $j, $self->get_preference($i, $j));
+                                my $value = $self->get_preference($i, $j);
+                                set_alt_path(\%alt_path, $i, $j, $value);
+                                $self->debug_print("final_rank_links: set_alt_path $i-$j => $value");
                             }
                         }
                     }
@@ -481,6 +503,7 @@ sub final_rank_links
                                 my $min_strength_ji_ik = ($strength_ji < $strength_ik) ? $strength_ji : $strength_ik;
                                 if ($strength_jk < $min_strength_ji_ik) {
                                     set_alt_path(\%alt_path, $j, $k, $min_strength_ji_ik);
+                                    $self->debug_print("final_rank_links: set_alt_path $j-$k => $min_strength_ji_ik");
                                 }
                             }
                         }
@@ -496,6 +519,7 @@ sub final_rank_links
                         $self->win_flag_set($m, 1);
                         $self->win_flag_delete($n, 1);
                         $tie_broken = 1;
+                        $self->debug_print("final_rank_links: tie $m/$n broken in favor of $m");
                     } elsif ($q_path_nm > $q_path_mn) {
                         # tie resolved in favor of n
                         $self->set_win_order($n, $m, 1);
@@ -503,9 +527,11 @@ sub final_rank_links
                         $self->win_flag_set($n, 1);
                         $self->win_flag_delete($m, 1);
                         $tie_broken = 1;
+                        $self->debug_print("final_rank_links: tie $m/$n broken in favor of $n");
                     } elsif ($q_path_mn == $minimum_link and $q_path_nm == $minimum_link) {
                         # tie could not be resolved
                         $tie_broken = 1;
+                        $self->debug_print("final_rank_links: tie $m/$n unresolved");
                     }
                 }
             }
