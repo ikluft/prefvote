@@ -79,11 +79,19 @@ PrefVote::Schulze::Output - base class for output formatting in PrefVote::Schulz
 
 =head1 SYNOPSIS
 
+This should not be called externally - use L<PrefVote::Core::Output>
 
 =head1 DESCRIPTION
 
+⛔ This is for PrefVote internal use only.
+
+PrefVote::Schulze::Output is used by L<PrefVote::Core::Output> to format output from Schulze votes.
 
 =head1 SEE ALSO
+
+L<PrefVote::Core::Output>
+
+L<https://github.com/ikluft/prefvote>
 
 =head1 BUGS AND LIMITATIONS
 

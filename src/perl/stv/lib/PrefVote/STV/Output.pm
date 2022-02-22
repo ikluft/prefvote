@@ -84,6 +84,7 @@ sub do_counting_table
 __END__
 
 # POD documentation
+=encoding utf8
 
 =head1 NAME
 
@@ -91,11 +92,19 @@ PrefVote::STV::Output - base class for output formatting in PrefVote::STV
 
 =head1 SYNOPSIS
 
+This should not be called externally - use L<PrefVote::Core::Output>
 
 =head1 DESCRIPTION
 
+⛔ This is for PrefVote internal use only.
+
+PrefVote::STV::Output is used by L<PrefVote::Core::Output> to format output from STV votes.
 
 =head1 SEE ALSO
+
+L<PrefVote::Core::Output>
+
+L<https://github.com/ikluft/prefvote>
 
 =head1 BUGS AND LIMITATIONS
 
