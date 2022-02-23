@@ -58,6 +58,7 @@ has type => (
 __END__
 
 # POD documentation
+=encoding utf8
 
 =head1 NAME
 
@@ -65,11 +66,29 @@ PrefVote::Core::Result - internal voting-result structure used by PrefVote::Core
 
 =head1 SYNOPSIS
 
+    use PrefVote::Core::Result;
+    use Set::Tiny;
+
+    $result = PrefVote::Core::Result->new(type => $type, name => set(@names);
+
+    $count = $result->name_count();
+    $empty = $result->name_empty();
+    @cand = $result->name_all();
+    $type = $result->type();
 
 =head1 DESCRIPTION
 
+⛔ This is for PrefVote internal use only.
+
+PrefVote::Core::Result is used to store results of L<PrefVote::Core::Round> structures for voting methods which use rounds, including STV and Schulze.
+
+The result of the round is recorded with the name field containing a L<Set::Tiny> of strings with candidate/choice names. The type parameter is an enumeration with either of the strings "winner" or "eliminated". A PrefVote::Core::Result shoild not be created in a PrefVote::Core::Round if there was no result in the round.
 
 =head1 SEE ALSO
+
+L<PrefVote::Core>, L<PrefVote::Core::Round>
+
+L<https://github.com/ikluft/prefvote>
 
 =head1 BUGS AND LIMITATIONS
 
