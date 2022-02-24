@@ -94,18 +94,20 @@ sub count
     # loop forever until a valid result is established
     for ( ;; ) {
         # start new round
-        $self->debug_print("new round\n");
+        $self->debug_print("count: new round\n");
         my $round = $self->new_round();
 
         # done if we've exhausted the candidates
-        $self->debug_print("round->candidates -> ".Dumper($round->{candidates}));
+        $self->debug_print("count: round->candidates -> ".Dumper($round->{candidates}));
         if ($round->candidates_empty()) {
-            $self->debug_print("no candidates remaining in new round\n");
+            $self->debug_print("count: no candidates remaining in new round\n");
             last;
         }
 
         # perform computations for the round to find the nth-place ranked choice/candidate
+        $self->debug_print("count: begin computations\n");
         $round->do_computation($self);
+        $self->debug_print("count: end computations\n");
 
         # save result
         my $round_result = $round->result();
