@@ -16,16 +16,18 @@ package PrefVote::Schulze::PairData;
 use autodie;
 use Data::Dumper;
 use Readonly;
+use Set::Tiny qw(set);
 
 # class definitions
 use Moo;
 use MooX::TypeTiny;
+use MooX::HandlesVia;
 use Types::Standard qw(Bool Int Str ArrayRef HashRef InstanceOf);
 use Types::Common::Numeric qw(PositiveOrZeroInt);
 use Types::Common::String qw(NonEmptySimpleStr);
+use PrefVote::Core::Set qw(Set);
 use PrefVote::Core::TestSpec;
 extends 'PrefVote';
-
 
 # blackbox testing structure
 Readonly::Hash my %blackbox_spec => (
@@ -61,6 +63,27 @@ has win_order => (
     is => 'rw',
     isa => Bool,
     default => 0,
+);
+
+# forbidden paths - for tie-breaking, forbid use pair paths if both directions would include the same link
+has forbidden => (
+    is => 'rw',
+    isa => Set[NonEmptySimpleStr],
+    handles => {
+        forbidden_contains => 'contains',
+        forbidden_insert => 'insert',
+    },
+);
+
+# path history - keep prior paths so we can see what tie-breaking did
+has path_history => (
+    is => 'rw',
+    isa => ArrayRef[ArrayRef[NonEmptySimpleStr]],
+    handles_via => 'Array',
+    handles => {
+        path_push => 'push',
+        path_get => 'get',
+    },
 );
 
 # add to pair node's preference total

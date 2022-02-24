@@ -240,6 +240,63 @@ sub tally_preferences
     return;
 }
 
+# compute path between two candidates if it exists
+sub get_path
+{
+    my ($self, $src, $dest) = @_;
+    $self->debug_print("get_path ($src → $dest) begin");
+
+    # pseudocode for getting the path from Floyd–Warshall algorithm
+    # procedure Path(src, dest)
+    # if next[src][dest] = null then
+    #     return []
+    # path = [src]
+    # while src ≠ dest
+    #     src ← next[src][dest]
+    #     path.append(src)
+    # return path
+
+    # this builds the path as a list of nodes in reverse order
+    my $pred = $self->get_predecessor($src, $dest);
+    if (not defined $pred) {
+        return;
+    }
+    my @nodes = ($src);
+    my %nodes_seen;
+    while ($src ne $dest) {
+        $src = $self->get_predecessor($src, $dest);
+        push @nodes, $src;
+        if (not defined $src) {
+            return;
+        }
+        if (exists $nodes_seen{$src}) {
+            # break what would be and infinite loop
+            return;
+        }
+        $nodes_seen{$src} = 1;
+        $self->debug_print("get_path ($src → $dest) node $src");
+        push @nodes, $src;
+    }
+    $self->debug_print("get_path ($src → $dest) = ".join("-", @nodes));
+    return @nodes;
+}
+
+# add a path to the history of a route between nodes
+sub add_path
+{
+    my ($self, $src, $dest) = @_;
+    $self->debug_print("add_path ($src → $dest) begin");
+
+    $self->make_pair_node($src, $dest);
+    my @path = $self->get_path($src, $dest);
+    return if (not scalar @path);
+    if (not exists $self->{pair}{$src}{$dest}{path_history}) {
+        $self->{pair}{$src}{$dest}->path_history([]);
+    }
+    $self->debug_print("add_path ($src → $dest) ".join("-", @path));
+    return $self->{pair}{$src}{$dest}->path_push(\@path);
+}
+
 # Schulze algorithm Stage 2: calculation of the strengths of the strongest paths
 sub compute_strongest_paths
 {
@@ -274,6 +331,7 @@ sub compute_strongest_paths
                 if ($strength_jk < $min_strength_ji_ik) {
                     $self->set_strength($j, $k, $min_strength_ji_ik);
                     $self->set_predecessor($j, $k, $self->get_predecessor($i, $k));
+                    $self->add_path($j, $k);
                 }
             }
         }
@@ -286,6 +344,7 @@ sub compute_strongest_paths
 sub compute_potential_winners
 {
     my $self = shift;
+    $self->debug_print("compute_potential_winners: begin");
 
     # Schulze algorithm definition of Stage 3 calculation of the binary relation 𝚶 and the set of potential winners:
     # (lack of comments in the pseudocode is as shown in the paper - see below where I added some in the code)
@@ -330,50 +389,52 @@ sub compute_potential_winners
             # i is a potential winner (and if it is the only one then it will be the winner)
             $self->win_flag_set($i, 1);
         }
+        $self->debug_print("compute_potential_winners: ".join(" ", $self->win_flag_keys()));
     }
     return;
-}
-
-# read & write accessors for alt_path, used in tie-breaking ranking of links (TBRL)
-# This wasn't broken out to its own class because it's only used as a temporary table in a loop in final_rank_links().
-# It's a 2D table where we compute temporary new values for path strengths
-sub get_alt_path
-{
-    # read the value
-    my ($q_hash, $i, $j) = @_;
-    return $q_hash->{$i}{$j} // 0;
-}
-sub set_alt_path
-{
-    my ($q_hash, $i, $j, $value) = @_;
-    if (not exists $q_hash->{$i}) {
-        $q_hash->{$i} = {};
-    }
-    $q_hash->{$i}{$j} = $value;
-    return $value;
 }
 
 # read & write accessors for a hash used as the forbidden link table
 # This wasn't broken out to its own class because it's only used as a temporary table in a loop in final_rank_links().
 # It's a sparse 2D table where we only set values if true. Return 0 (false) if it doesn't exist.
+# sub get_forbidden
+# {
+#     # read the value if it exists, 0 if not
+#     my ($f_hash, $i, $j) = @_;
+#     return $f_hash->{$i}{$j} // 0;
+# }
 sub get_forbidden
 {
-    # read the value if it exists, 0 if not
-    my ($f_hash, $i, $j) = @_;
-    return $f_hash->{$i}{$j} // 0;
+    my ($self, $cand1, $cand2, $cand_m, $cand_n) = @_;
+    # order names in index to recognize forbidden links either direction
+    my $forbid_index = ($cand_m lt $cand_n) ? "$cand_m-$cand_n" : "$cand_n-$cand_m";
+    return 0 if not exists $self->{pair}{$cand1}{$cand2}{forbidden}; # just use zero if the node doesn't exist
+    return $self->{pair}{$cand1}{$cand2}->forbidden_contains($forbid_index); # true if link forbidden for this pair
 }
+# sub set_forbidden
+# {
+#     # write the value to the 2D table if it's true
+#     # skip it if false since undefined will have the same result
+#     my ($f_hash, $i, $j, $value) = @_;
+#     if ($value) {
+#         if (not exists $f_hash->{$i}) {
+#             $f_hash->{$i} = {};
+#         }
+#         $f_hash->{$i}{$j} = 1;
+#     }
+#     return $value ? 1 : 0;
+# }
 sub set_forbidden
 {
-    # write the value to the 2D table if it's true
-    # skip it if false since undefined will have the same result
-    my ($f_hash, $i, $j, $value) = @_;
-    if ($value) {
-        if (not exists $f_hash->{$i}) {
-            $f_hash->{$i} = {};
-        }
-        $f_hash->{$i}{$j} = 1;
+    my ($self, $cand1, $cand2, $cand_m, $cand_n) = @_;
+    # order names in index to recognize forbidden links either direction
+    my $forbid_index = ($cand_m lt $cand_n) ? "$cand_m-$cand_n" : "$cand_n-$cand_m";
+    $self->make_pair_node($cand1, $cand2);
+    if (not exists $self->{pair}{$cand1}{$cand2}{forbidden}) {
+        $self->{pair}{$cand1}{$cand2}->forbidden(set());
     }
-    return $value ? 1 : 0;
+    $self->{pair}{$cand1}{$cand2}->forbidden_insert($forbid_index);
+    return;
 }
 
 # Stage 4: tie-breaking ranking of links TBRL (from Schulze 5.1)
@@ -440,7 +501,7 @@ sub final_rank_links
     # nested loops m,n through candidates/choices looking for ties
     # attempt to break ties by marking cloned links in tied paths as forbidden and recomputing those strongest paths
     my @candidates = $self->candidates_all(); # list of candidates in this round
-    my %alt_path; # alternate path strength routing around forbidden links (called "Qσ" in the paper's pseudocode)
+    my $changes_made = 0;
     for (my $m_index=0; $m_index<(scalar @candidates)-1; $m_index++) {
         my $m = $candidates[$m_index];
         for (my $n_index=$m_index+1; $n_index<scalar @candidates; $n_index++) {
@@ -451,26 +512,21 @@ sub final_rank_links
                 # we found a tie... these choices/candidates are probably so-called "clones", similar to each other
                 $self->debug_print("final_rank_links: tie found between $m and $n in round ".$self->number());
 
-                # forbidden table keeps track of links forbidden for m-n and n-m paths in order to break the tie
-                # it is a new empty hash, which allows us to skip initializing every element to zero
-                # set_forbidden() only saves items set to true
-                # get_forbidden() returns true if the entry exists, false if it doesn't exist
-                my %forbidden;
-
                 # set alternate path strength for m,n from actual m,n
-                set_alt_path(\%alt_path, $m, $n, $path_mn);
+                $self->set_strength($m, $n, $path_mn);
 
                 # set tie_broken flag to false and loop until it gets toggled or all links exhausted
                 # ($tie_broken is called "bool1" in the paper's pseudocode)
                 my $tie_broken = 0;
+                my $counter = 0;
                 while (not $tie_broken) {
                     # declare tied links as forbidden
                     foreach my $i (@candidates) {
                         foreach my $j (@candidates) {
                             next if $i eq $j;
-                            if (get_alt_path(\%alt_path, $m, $n) == $self->get_preference($i, $j)) {
-                                set_forbidden(\%forbidden, $i, $j, 1);
-                                $self->debug_print("final_rank_links: set_forbidden $i-$j");
+                            if ($self->get_strength($m, $n) == $self->get_preference($i, $j)) {
+                                $self->set_forbidden($i, $j, $m, $n);
+                                $self->debug_print("final_rank_links($m-$n): set_forbidden $i-$j");
                             }
                         }
                     }
@@ -479,14 +535,14 @@ sub final_rank_links
                     foreach my $i (@candidates) {
                         foreach my $j (@candidates) {
                             next if $i eq $j;
-                            if (get_forbidden(\%forbidden, $i, $j)) {
+                            if ($self->get_forbidden($i, $j, $m, $n)) {
                                 my $value = $minimum_link;
-                                set_alt_path(\%alt_path, $i, $j, $value);
-                                $self->debug_print("final_rank_links: set_alt_path $i-$j => $value");
+                                $self->set_strength($i, $j, $value);
+                                $self->debug_print("final_rank_links($m-$n): min-link $i-$j => $value");
                             } else {
                                 my $value = $self->get_preference($i, $j);
-                                set_alt_path(\%alt_path, $i, $j, $value);
-                                $self->debug_print("final_rank_links: set_alt_path $i-$j => $value");
+                                $self->set_strength($i, $j, $value);
+                                $self->debug_print("final_rank_links($m-$n): pref $i-$j => $value");
                             }
                         }
                     }
@@ -497,49 +553,92 @@ sub final_rank_links
                                 next if $i eq $k or $j eq $k;
 
                                 # find the minimum strength non-forbidden link on the strongest path from j to i to k
-                                my $strength_ik = get_alt_path(\%alt_path, $i, $k);
-                                my $strength_ji = get_alt_path(\%alt_path, $j, $i);
-                                my $strength_jk = get_alt_path(\%alt_path, $j, $k);
+                                my $strength_ik = $self->get_strength($i, $k);
+                                my $strength_ji = $self->get_strength($j, $i);
+                                my $strength_jk = $self->get_strength($j, $k);
                                 my $min_strength_ji_ik = ($strength_ji < $strength_ik) ? $strength_ji : $strength_ik;
                                 if ($strength_jk < $min_strength_ji_ik) {
-                                    set_alt_path(\%alt_path, $j, $k, $min_strength_ji_ik);
-                                    $self->debug_print("final_rank_links: set_alt_path $j-$k => $min_strength_ji_ik");
+                                    $self->set_strength($j, $k, $min_strength_ji_ik);
+                                    $self->debug_print("final_rank_links($m-$n): min-strength $j-$k "
+                                            ."=> $min_strength_ji_ik");
                                 }
                             }
                         }
                     }
                     
                     # check if the tie is resolved
-                    my $q_path_mn = get_alt_path(\%alt_path, $m, $n);
-                    my $q_path_nm = get_alt_path(\%alt_path, $n, $m);
+                    my $q_path_mn = $self->get_strength($m, $n);
+                    my $q_path_nm = $self->get_strength($n, $m);
                     if ($q_path_mn > $q_path_nm) {
                         # tie resolved in favor of m
                         $self->set_win_order($m, $n, 1);
                         $self->set_win_order($n, $m, 0);
-                        $self->win_flag_set($m, 1);
-                        $self->win_flag_delete($n, 1);
+                        #$self->win_flag_set($m, 1);
+                        #$self->win_flag_delete($n, 1);
                         $tie_broken = 1;
+                        $changes_made = 1;
                         $self->debug_print("final_rank_links: tie $m/$n broken in favor of $m");
                     } elsif ($q_path_nm > $q_path_mn) {
                         # tie resolved in favor of n
                         $self->set_win_order($n, $m, 1);
                         $self->set_win_order($m, $n, 0);
-                        $self->win_flag_set($n, 1);
-                        $self->win_flag_delete($m, 1);
+                        #$self->win_flag_set($n, 1);
+                        #$self->win_flag_delete($m, 1);
                         $tie_broken = 1;
+                        $changes_made = 1;
                         $self->debug_print("final_rank_links: tie $m/$n broken in favor of $n");
                     } elsif ($q_path_mn == $minimum_link and $q_path_nm == $minimum_link) {
                         # tie could not be resolved
                         $tie_broken = 1;
                         $self->debug_print("final_rank_links: tie $m/$n unresolved");
                     }
+                    $counter++;
+                    $self->debug_print("tie-breaking counter: $counter");
                 }
             }
         }
     }
+
+    # compute potential round winners again if any changes were made by tie-breaking
+    if ($changes_made) {
+        $self->win_flag({});
+        $self->compute_potential_winners();
+    }
     return;
 }
 ## use critic(ProhibitExcessComplexity, ProhibitDeepNests)
+
+# Stage 4: tie-breaking ranking of links TBRL (experimental substitute for Schulze 5.1 algorithm)
+# we use the TBRL method because PrefVote system fully ranks results even for 1-seat races
+sub final_rank_links_exp
+{
+    my $self = shift;
+
+    # nested loops m,n through candidates/choices looking for ties
+    # attempt to break ties by marking cloned links in tied paths as forbidden and recomputing those strongest paths
+    my @candidates = $self->candidates_all(); # list of candidates in this round
+    for (my $m_index=0; $m_index<(scalar @candidates)-1; $m_index++) {
+        my $m = $candidates[$m_index];
+        for (my $n_index=$m_index+1; $n_index<scalar @candidates; $n_index++) {
+            my $n = $candidates[$n_index];
+            my $path_mn = $self->get_strength($m, $n);
+            my $path_nm = $self->get_strength($n, $m);
+            if ($path_mn == $path_nm) {
+                # we found a tie... these choices/candidates are probably so-called "clones", similar to each other
+                $self->debug_print("final_rank_links: tie found between $m and $n in round ".$self->number());
+
+                # compare links in the opposite-direction paths and eliminate any in common
+                my @path_nodes_mn = $self->get_path($m, $n);
+                my @path_nodes_nm = $self->get_path($n, $m);
+
+                #TODO
+            }
+
+            #TODO
+        }
+    }
+    return;
+}
 
 # perform computation for a round to find the nth-place ranked choice/candidate
 sub do_computation
@@ -549,22 +648,30 @@ sub do_computation
 
     # preparation: convert ballot preferences to candidate-pair preference totals, or obtain them from previous round
     # This needs the $schulze_ref in order to access ballot data in the first round.
+    $self->debug_print("do_computation: tally");
     $self->tally_preferences($schulze_ref);
 
     # Stage 1: initialization loop is replaced by lazy assignments upon read of undefined candidate-pair
     # matrix values in get_predecessor() and get_strength().
 
     # Stage 2: calculation of the strengths of the strongest paths (from Schulze 2.3.1)
+    $self->debug_print("do_computation: compute paths");
     $self->compute_strongest_paths();
 
     # Stage 3: calculation of the binary relation 𝚶 and the set of potential winners (from Schulze 2.3.1)
+    $self->debug_print("do_computation: compute potential winners");
     $self->compute_potential_winners();
 
     # Stage 4: tie-breaking ranking of links TBRL (from Schulze 5.1)
     # we use the TBRL method because PrefVote system fully ranks results even for 1-seat races
-    $self->final_rank_links();
+    if (scalar $self->win_flag_keys() != 1) {
+        $self->debug_print("do_computation: break ties");
+        $self->final_rank_links();
+        #$self->final_rank_links_exp(); # experimental substitute algorithm
+    }
 
     # set round winner(s) from candidate(s) with win_flag set - more than one indicates a tie for this place
+    $self->debug_print("do_computation: set result ".join(" ", $self->win_flag_keys()));
     $self->set_result(type => "winner", name => [$self->win_flag_keys()]);
 
     return;    
