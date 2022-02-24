@@ -70,7 +70,8 @@ sub new_round
     # pick arguments for first or later rounds
     my @args;
     if ($number == 1) {
-        @args = (candidates => [$self->get_choices()]);
+        # sort the list so results will be consistent for testing
+        @args = (candidates => [sort $self->get_choices()]);
     } else {
         @args = (prev => $self->rounds_get(-1));
     }
