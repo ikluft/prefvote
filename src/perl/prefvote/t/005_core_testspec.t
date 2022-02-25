@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# 005_prefvote_core_testspec.t - tests for PrefVote::Core::TestSpec
+# 005_core_testspec.t - tests for PrefVote::Core::TestSpec
 use Modern::Perl qw(2015); # require 5.20.0 or later
 
 ## no critic (Modules::ProhibitMultiplePackages)

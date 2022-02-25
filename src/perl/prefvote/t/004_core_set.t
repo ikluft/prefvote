@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# 004_prefvote_core_types.t - tests for PrefVote::Core::Set
+# 004_core_types.t - tests for PrefVote::Core::Set
 use Modern::Perl qw(2015); # require 5.20.0 or later
 use autodie;
 use Test::More tests => 12;
