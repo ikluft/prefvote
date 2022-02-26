@@ -16,20 +16,34 @@ use IPC::Run qw(run);
 use TAP::Parser qw/all/;
 use TAP::Parser::Aggregator qw/all/;
 use TAP::Parser::SourceHandler::RawTAP;
+use Text::Table::Tiny 1.02 qw/ generate_table /;
+use HTML::Escape qw(escape_html);
 
 # configuration settings per language implementation
 Readonly::Array my @supported_languages => (qw(perl));
-Readonly::Array my @supported_methods => (qw(Core STV Schulze RankedPairs));
+Readonly::Array my @supported_methods => (qw(Core STV Schulze));
 Readonly::Hash my %config => (
+    methods => {
+        Core => 'PrefVote core - for testing only',
+        STV => 'Single Transferable Vote (STV)',
+        Schulze => 'Schulze/Beatpath',
+        #RankedPairs => "Ranked Pairs",
+    },
     blackbox => {
+        name => "black box tests",
         data => "test/inputs",
         test_re => qr{\.(yaml|yml)$},
     },
     "perl" => {
+        name => "Perl",
         build => 'dzil build',
         whitebox => {
-            dirs => [qw(src/perl/prefvote src/perl/stv)],
-            #dirs => [qw(src/perl/prefvote src/perl/stv src/perl/schulze)],
+            dirs => {
+                Core => 'src/perl/prefvote',
+                STV => 'src/perl/stv',
+                Schulze => 'src/perl/schulze',
+                #RankedPairs => 'src/perl/rankedpairs',
+            },
             testdir => "t",
             test_re => qr{\.t$},
             tp_args => [switches => ['-I../prefvote/lib', '-Ilib']],
@@ -44,6 +58,7 @@ Readonly::Hash my %config => (
         }
     },
 );
+Readonly::Scalar my $not_available => "\N{MATHEMATICAL SANS-SERIF BOLD DIGIT ZERO}";
 
 # save original working directory (before any chdirs)
 Readonly::Scalar my $orig_cwd => getcwd();
@@ -78,6 +93,166 @@ Readonly::Hash my %callbacks => (
         print "\n";
     },
 );
+
+#
+# result summary processing
+#
+my %results;
+
+# save test result by language and method
+sub save_result
+{
+    my ($box, $lang_set, $method, $plan, $pass, $fail) = @_;
+    if (not exists $results{$box}) {
+        $results{$box} = {};
+    }
+    if (not exists $results{$box}{$lang_set}) {
+        $results{$box}{$lang_set} = {};
+    }
+    if (not exists $results{$box}{$lang_set}{$method}) {
+        $results{$box}{$lang_set}{$method} = {plan => $plan, pass => $pass, fail => $fail};
+    } else {
+        $results{$box}{$lang_set}{$method}{plan} += $plan;
+        $results{$box}{$lang_set}{$method}{pass} += $pass;
+        $results{$box}{$lang_set}{$method}{fail} += $fail;
+    }
+}
+
+# print table in Markdown
+sub markdown_table
+{
+    my %opts = @_;
+    my $rows = $opts{rows};
+
+    # generate header from first row
+    if ($opts{header_row} // 0) {
+        my $header = shift @$rows;
+        say "| ".join(" | ", @$header)." |";
+        say "|".("---|" x scalar @$header);
+    }
+
+    # generate table from remainder of rows
+    foreach my $row (@$rows) {
+        say "| ".join(" | ", @$row)." |";
+    }
+    say;
+    return;
+}
+
+# print table in HTML
+sub html_table
+{
+    my %opts = @_;
+    my $rows = $opts{rows};
+
+    # table heading
+    say "<table>";
+
+    # generate header from first row
+    if ($opts{header_row} // 0) {
+        my $header = shift @$rows;
+        say "<thead>";
+        say "<tr>";
+        foreach my $col_item (@$header) {
+            say "<th>".escape_html($col_item)."</th>";
+        }
+        say "</tr>";
+        say "</thead>";
+    }
+
+    # generate table from remainder of rows
+    say "<tbody>";
+    foreach my $row (@$rows) {
+        say "<tr>";
+        foreach my $col_item (@$row) {
+            say "<td>".escape_html($col_item)."</td>";
+        }
+        say "</tr>";
+    }
+    say "</tbody>";
+    say "</table>";
+    return;
+}
+
+# print table of results by set/language and method
+sub print_result_table
+{
+    my $format = shift;
+    my @out_table = (["language/set", @supported_methods, "total"]);
+    my %column_totals;
+
+    # set up for table generation
+    binmode(STDOUT, ':encoding(UTF-8)');
+
+    # zero out column totals
+    foreach my $method (@supported_methods) {
+        $column_totals{$method}{plan} = 0;
+        $column_totals{$method}{pass} = 0;
+        $column_totals{$method}{fail} = 0;
+    }
+
+    # loop through white/black box, language and method filling results table and totals
+    foreach my $box (qw(whitebox blackbox)) {
+        foreach my $lang_set (@supported_languages) {
+            if (exists $results{$box}{$lang_set}) {
+                my $name = $config{$lang_set}{name}." ".$box;
+                my @row_data = ($name);
+                my ($row_plan, $row_pass, $row_fail) = (0, 0, 0);
+                foreach my $method (@supported_methods) {
+                    if (not exists $results{$box}{$lang_set}{$method}) {
+                        push @row_data, $not_available;
+                        next;
+                    }
+                    push @row_data, sprintf( "%d/%d/%d",
+                        $results{$box}{$lang_set}{$method}{plan} // 0,
+                        $results{$box}{$lang_set}{$method}{pass} // 0,
+                        $results{$box}{$lang_set}{$method}{fail} // 0);
+                    $row_plan += $results{$box}{$lang_set}{$method}{plan} // 0;
+                    $row_pass += $results{$box}{$lang_set}{$method}{pass} // 0;
+                    $row_fail += $results{$box}{$lang_set}{$method}{fail} // 0;
+                    $column_totals{$method}{plan} += $results{$box}{$lang_set}{$method}{plan} // 0;
+                    $column_totals{$method}{pass} += $results{$box}{$lang_set}{$method}{pass} // 0;
+                    $column_totals{$method}{fail} += $results{$box}{$lang_set}{$method}{fail} // 0;
+                }
+                push @row_data, sprintf( "%s/%s/%s", $row_plan, $row_pass, $row_fail);
+                push @out_table, \@row_data;
+            }
+        }
+    }
+
+    # generate totals line at bottom
+    my @totals_row = ('total');
+    my $total_plan = 0;
+    my $total_pass = 0;
+    my $total_fail = 0;
+    foreach my $method (@supported_methods) {
+        push @totals_row, sprintf( "%d/%d/%d",
+            $column_totals{$method}{plan} // 0,
+            $column_totals{$method}{pass} // 0,
+            $column_totals{$method}{fail} // 0);
+        $total_plan += $column_totals{$method}{plan};
+        $total_pass += $column_totals{$method}{pass};
+        $total_fail += $column_totals{$method}{fail};
+
+    }
+    push @totals_row, sprintf( "%s/%s/%s", $total_plan, $total_pass, $total_fail);
+    push @out_table, \@totals_row;
+
+    # format output table
+    if (lc $format eq "text") {
+        say generate_table(rows => \@out_table, header_row => 1, style => 'boxrule');
+        return;
+    }
+    if (lc $format eq "markdown") {
+        say markdown_table(rows => \@out_table, header_row => 1);
+        return;
+    }
+    if (lc $format eq "html") {
+        say html_table(rows => \@out_table, header_row => 1);
+        return;
+    }
+    croak "unrecognized format type $format";
+}
 
 # string substitution query (used by str_expand)
 sub str_subst
@@ -205,39 +380,43 @@ sub run_whitebox_tests
     my %opts = @_;
     my $lang = $opts{lang};
     my $agg = $opts{agg};
-    foreach my $dir (@{$config{$lang}{whitebox}{dirs}}) {
-        ( -d "$dir" )
-            or croak "configure whitebox testing directory $dir is not a directory";
-        chdir $dir;
-        my $testdir = $config{$lang}{whitebox}{testdir};
-        my $test_re = $config{$lang}{whitebox}{test_re};
-        if ( -d $testdir ) {
-            # enter whitebox test directory and find test scripts
-            my @files = find_test_files($testdir, $test_re);
+    my $method = $opts{method};
 
-            # run tests
-            foreach my $file (@files) {
-                (-f $file) or next;
-                say "running whitebox tests: $dir/$file";
-                my $parser = TAP::Parser->new({
-                    source => $file,
-                    @{$config{$lang}{whitebox}{tp_args}},
-                    (is_interactive() ? (callbacks => \%callbacks) : ()),
-                });
-                while ( my $result = $parser->next ) {
-                    if (not is_interactive()) {
-                        say $result->as_string;
-                    }
+    # loop through whitebox test scripts for this method
+    my $dir = $config{$lang}{whitebox}{dirs}{$method};
+    defined $dir or next;
+    ( -d "$dir" ) or croak "configure whitebox testing directory $dir is not a directory";
+    chdir $dir;
+    my $testdir = $config{$lang}{whitebox}{testdir};
+    my $test_re = $config{$lang}{whitebox}{test_re};
+    if ( -d $testdir ) {
+        # enter whitebox test directory and find test scripts
+        my @files = find_test_files($testdir, $test_re);
+
+        # run tests
+        foreach my $file (@files) {
+            (-f $file) or next;
+            say "running whitebox tests: $dir/$file";
+            my $parser = TAP::Parser->new({
+                source => $file,
+                @{$config{$lang}{whitebox}{tp_args}},
+                (is_interactive() ? (callbacks => \%callbacks) : ()),
+            });
+            while ( my $result = $parser->next ) {
+                if (not is_interactive()) {
+                    say $result->as_string;
                 }
-                printf "Planned: %s\nPassed: %s\nFailed: %s\n\n",
-                    $parser->tests_planned, scalar $parser->passed, scalar $parser->failed;
-                $agg->add($file, $parser);
             }
-        } else {
-            croak("test (t) directory not found in configured directory $dir");
+            printf "Planned: %s\nPassed: %s\nFailed: %s\n\n",
+                $parser->tests_planned, scalar $parser->passed, scalar $parser->failed;
+            save_result("whitebox", $lang, $method, $parser->tests_planned, scalar $parser->passed,
+                scalar $parser->failed);
+            $agg->add($file, $parser);
         }
-        chdir $orig_cwd;
+    } else {
+        croak("test (t) directory not found in configured directory $dir");
     }
+    chdir $orig_cwd;
     return;
 }
 
@@ -303,14 +482,17 @@ sub run_blackbox_tests
         }
         printf "Planned: %s\nPassed: %s\nFailed: %s\n\n",
             $parser->tests_planned, scalar $parser->passed, scalar $parser->failed;
+        save_result("blackbox", $lang, $method, $parser->tests_planned, scalar $parser->passed,
+            scalar $parser->failed);
         $agg->add("$method: $test_file", $parser);
     }
+    chdir $orig_cwd;
 }
 
 # process command-line
-my (@language, @method, $whitebox, $blackbox, $all);
+my (@language, @method, $whitebox, $blackbox, $all, $format);
 GetOptions("language:s" => \@language, "method:s" =>\@method, "whitebox|white|w" => \$whitebox,
-    "blackbox|black|b" => \$blackbox, "all" => \$all);
+    "blackbox|black|b" => \$blackbox, "all" => \$all, "format:s" => \$format);
 
 #
 # run tests as selected
@@ -331,12 +513,19 @@ if ($all) {
 # whitebox and blackbox tests within each language implementation's sources
 {
     local $ENV{PREFVOTE_ROOT} = $orig_cwd; # unit tests must look for this and run relative to the project root
+
+    # loop through selected languages for whitebox tests
     foreach my $lang (@language) {
+        # do whitebox tests first
         if ($whitebox) {
-            run_whitebox_tests(lang => $lang, agg => $aggregate);
+            foreach my $method (@method) {
+                run_whitebox_tests(lang => $lang, agg => $aggregate, method => $method);
+            }
         }
-        foreach my $method (@method) {
-            if ($blackbox) {
+
+        # do blackbox tests last
+        if ($blackbox) {
+            foreach my $method (@method) {
                 run_blackbox_tests(lang => $lang, agg => $aggregate, method => $method);
             }
         }
@@ -344,5 +533,9 @@ if ($all) {
 }
 
 # print results
-printf "Total: %s\nPlanned: %s\nPassed: %s\nFailed: %s\n",
-$aggregate->total, scalar $aggregate->planned, scalar $aggregate->passed, scalar $aggregate->failed;
+if (defined $format) {
+    print_result_table($format);
+} else {
+    printf "Total: %s\nPlanned: %s\nPassed: %s\nFailed: %s\n",
+        $aggregate->total, scalar $aggregate->planned, scalar $aggregate->passed, scalar $aggregate->failed;
+}
