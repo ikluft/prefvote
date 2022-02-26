@@ -20,8 +20,8 @@ use Text::Table::Tiny 1.02 qw/ generate_table /;
 use HTML::Escape qw(escape_html);
 
 # configuration settings per language implementation
-Readonly::Array my @supported_languages => (qw(perl));
-Readonly::Array my @supported_methods => (qw(Core STV Schulze));
+Readonly::Array my @supported_languages => (qw(perl rust));
+Readonly::Array my @supported_methods => (qw(Core STV Schulze RankedPairs));
 Readonly::Hash my %config => (
     methods => {
         Core => 'PrefVote core - for testing only',
@@ -34,7 +34,7 @@ Readonly::Hash my %config => (
         data => "test/inputs",
         test_re => qr{\.(yaml|yml)$},
     },
-    "perl" => {
+    perl => {
         name => "Perl",
         build => 'dzil build',
         whitebox => {
@@ -56,6 +56,9 @@ Readonly::Hash my %config => (
             cmd => [ 'src/perl/prefvote/bin/vote-count', "--test", '--method=${var/method}'],
             tp_args => [switches => ['-Isrc/perl/prefvote/lib', '-Isrc/perl/stv/lib']],
         }
+    },
+    rust => {
+        name => "Rust",
     },
 );
 Readonly::Scalar my $not_available => "\N{MATHEMATICAL SANS-SERIF BOLD DIGIT ZERO}";
@@ -383,6 +386,10 @@ sub run_whitebox_tests
     my $method = $opts{method};
 
     # loop through whitebox test scripts for this method
+    if (not exists $config{$lang}{whitebox}) {
+-       warn "whitebox tests not configured for language $lang";
+        return;
+    }
     my $dir = $config{$lang}{whitebox}{dirs}{$method};
     defined $dir or next;
     ( -d "$dir" ) or croak "configure whitebox testing directory $dir is not a directory";
@@ -430,7 +437,8 @@ sub run_blackbox_tests
 
     # collect blackbox test parameters for selected language
     if (not exists $config{$lang}{blackbox}) {
-        croak "blackbox tests not configured for language $lang";
+-       warn "blackbox tests not configured for language $lang";
+        return;
     }
     if (not exists $config{$lang}{blackbox}{cmd}) {
         croak "blackbox test command not configured for language $lang";
