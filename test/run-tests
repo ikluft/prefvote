@@ -102,16 +102,24 @@ Readonly::Hash my %callbacks => (
 #
 my %results;
 
-# save test result by language and method
-sub save_result
+# create box & language headings in results
+sub touch_result
 {
-    my ($box, $lang_set, $method, $plan, $pass, $fail) = @_;
+    my ($box, $lang_set) = @_;
     if (not exists $results{$box}) {
         $results{$box} = {};
     }
     if (not exists $results{$box}{$lang_set}) {
         $results{$box}{$lang_set} = {};
     }
+    return;
+}
+
+# save test result by language and method
+sub save_result
+{
+    my ($box, $lang_set, $method, $plan, $pass, $fail) = @_;
+    touch_result($box, $lang_set); # make sure the result row exists
     if (not exists $results{$box}{$lang_set}{$method}) {
         $results{$box}{$lang_set}{$method} = {plan => $plan, pass => $pass, fail => $fail};
     } else {
@@ -387,7 +395,8 @@ sub run_whitebox_tests
 
     # loop through whitebox test scripts for this method
     if (not exists $config{$lang}{whitebox}) {
--       warn "whitebox tests not configured for language $lang";
+        touch_result("whitebox", $lang); # make sure the result row exists
+        warn "whitebox tests not configured for language $lang";
         return;
     }
     my $dir = $config{$lang}{whitebox}{dirs}{$method};
@@ -437,7 +446,8 @@ sub run_blackbox_tests
 
     # collect blackbox test parameters for selected language
     if (not exists $config{$lang}{blackbox}) {
--       warn "blackbox tests not configured for language $lang";
+        touch_result("blackbox", $lang); # make sure the result row exists
+        warn "blackbox tests not configured for language $lang";
         return;
     }
     if (not exists $config{$lang}{blackbox}{cmd}) {

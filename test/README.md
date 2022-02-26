@@ -28,12 +28,28 @@ Numbers in each cell are test cases planned/passed/failed.
 <td>380/380/0</td>
 </tr>
 <tr>
+<td>Rust whitebox</td>
+<td>𝟬</td>
+<td>𝟬</td>
+<td>𝟬</td>
+<td>𝟬</td>
+<td>0/0/0</td>
+</tr>
+<tr>
 <td>Perl blackbox</td>
 <td>693/693/0</td>
 <td>7043/7043/0</td>
 <td>8274/8274/0</td>
 <td>𝟬</td>
 <td>16010/16010/0</td>
+</tr>
+<tr>
+<td>Rust blackbox</td>
+<td>𝟬</td>
+<td>𝟬</td>
+<td>𝟬</td>
+<td>𝟬</td>
+<td>0/0/0</td>
 </tr>
 <tr>
 <td>total</td>
