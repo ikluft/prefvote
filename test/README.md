@@ -23,9 +23,9 @@ Numbers in each cell are test cases planned/passed/failed.
 <td>Perl whitebox</td>
 <td>273/273/0</td>
 <td>103/103/0</td>
-<td>4/4/0</td>
+<td>42/42/0</td>
 <td>𝟬</td>
-<td>380/380/0</td>
+<td>418/418/0</td>
 </tr>
 <tr>
 <td>Rust whitebox</td>
@@ -39,9 +39,9 @@ Numbers in each cell are test cases planned/passed/failed.
 <td>Perl blackbox</td>
 <td>693/693/0</td>
 <td>7043/7043/0</td>
-<td>8274/8274/0</td>
+<td>8282/8282/0</td>
 <td>𝟬</td>
-<td>16010/16010/0</td>
+<td>16018/16018/0</td>
 </tr>
 <tr>
 <td>Rust blackbox</td>
@@ -55,9 +55,9 @@ Numbers in each cell are test cases planned/passed/failed.
 <td>total</td>
 <td>966/966/0</td>
 <td>7146/7146/0</td>
-<td>8278/8278/0</td>
+<td>8324/8324/0</td>
 <td>0/0/0</td>
-<td>16390/16390/0</td>
+<td>16436/16436/0</td>
 </tr>
 </tbody>
 </table>
