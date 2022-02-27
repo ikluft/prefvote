@@ -20,6 +20,7 @@ use Clone qw(clone);
 use Readonly;
 use Set::Tiny qw(set);
 use PrefVote::Core;
+use PrefVote::Schulze::PairData;
 
 # class definitions
 use Moo;
@@ -92,7 +93,8 @@ sub add_preference
 sub get_preference
 {
     my ($self, $cand_i, $cand_j) = @_;
-    return 0 if not exists $self->{pair}{$cand_i}{$cand_j}; # just use zero if the node doesn't exist
+    return 0 if not exists $self->{pair}{$cand_i}; # use zero if the node doesn't exist
+    return 0 if not exists $self->{pair}{$cand_i}{$cand_j}; # use zero if the node doesn't exist
     return $self->{pair}{$cand_i}{$cand_j}->preference() // 0; # return preference, or zero if the node didn't have it
 }
 
@@ -127,8 +129,10 @@ sub get_predecessor
 sub set_strength
 {
     my ($self, $cand_i, $cand_j, $value) = @_;
+    return 0 if not exists $self->{pair}{$cand_i}; # use zero if the node doesn't exist
+    return 0 if not exists $self->{pair}{$cand_i}{$cand_j}; # use zero if the node doesn't exist
     $self->make_pair_node($cand_i, $cand_j);
-    return $self->{pair}{$cand_i}{$cand_j}->strength($value);
+    return $self->{pair}{$cand_i}{$cand_j}->strength($value) // 0;
 }
 
 # get strength in matrix entry
@@ -162,7 +166,8 @@ sub set_win_order
 sub get_win_order
 {
     my ($self, $cand_i, $cand_j) = @_;
-    return 0 if not exists $self->{pair}{$cand_i}{$cand_j}; # just use zero if the node doesn't exist
+    return 0 if not exists $self->{pair}{$cand_i}; # use zero if the node doesn't exist
+    return 0 if not exists $self->{pair}{$cand_i}{$cand_j}; # use zero if the node doesn't exist
     return $self->{pair}{$cand_i}{$cand_j}->win_order() // 0; # return win_order, or zero if the node didn't have it
 }
 
