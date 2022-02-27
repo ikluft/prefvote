@@ -35,6 +35,8 @@ Readonly::Hash my %blackbox_spec => (
     predecessor => [qw(string)],
     strength => [qw(int)],
     win_order => [qw(bool)],
+    forbidden => [qw(set string)],
+    path_history => [qw(array array string)],
 );
 PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, spec => \%blackbox_spec, parent => 'PrefVote');
 
