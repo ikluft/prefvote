@@ -22,10 +22,10 @@ Numbers in each cell are test cases planned/passed/failed.
 <tr>
 <td>Perl whitebox</td>
 <td>317/317/0</td>
-<td>103/103/0</td>
+<td>189/189/0</td>
 <td>79/79/0</td>
 <td>𝟬</td>
-<td>499/499/0</td>
+<td>585/585/0</td>
 </tr>
 <tr>
 <td>Rust whitebox</td>
@@ -54,10 +54,10 @@ Numbers in each cell are test cases planned/passed/failed.
 <tr>
 <td>total</td>
 <td>1010/1010/0</td>
-<td>7146/7146/0</td>
+<td>7232/7232/0</td>
 <td>8361/8361/0</td>
 <td>0/0/0</td>
-<td>16517/16517/0</td>
+<td>16603/16603/0</td>
 </tr>
 </tbody>
 </table>
