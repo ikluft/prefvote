@@ -3,7 +3,7 @@
 use Modern::Perl qw(2015); # require 5.20.0 or later
 use autodie;
 use open ":std", ":encoding(UTF-8)";
-use Test::More tests => 86;
+use Test::More tests => 92;
 use Test::Exception;
 use Readonly;
 use Data::Dumper;
@@ -330,7 +330,7 @@ Readonly::Array my @result_expected => (
     dies_ok(sub {PrefVote::Core::Output::main() }, "dies as expected on empty stdin");
 }
 
-# test with mock-stdin data (36 tests)
+# test with mock-stdin data (88 tests)
 {
     local @ARGV = qw(--format=rawcapture --method=stv);
     my $vote_obj;
@@ -343,10 +343,19 @@ Readonly::Array my @result_expected => (
     foreach my $key (keys %{$result_expected[0]}) {
         is($output->[0]{$key}, $result_expected[0]{$key}, "output record 0: $key=".$result_expected[0]{$key});
     }
-    is(scalar keys %{$output->[1]}, 1, "output record 1: 1 item");
-    isa_ok($output->[1]{rows}, "ARRAY", "output record 1: rows is an array ref");
     # tables in expected result entry 1 & 2
-    foreach my $num (qw(1 2)) {
+    foreach my $num (1..2) {
+        is(scalar keys %{$output->[$num]}, scalar keys %{$result_expected[$num]},
+            "output record $num: ".(scalar keys %{$result_expected[$num]})." item");
+        isa_ok($output->[$num]{rows}, "ARRAY", "output record $num: rows is an array ref");
+        foreach my $attr (qw(title subtitle)) {
+            if (exists $result_expected[$num]{$attr}) {
+                is($output->[$num]{$attr}, $result_expected[$num]{$attr},
+                    "output record $num: $attr = ".$result_expected[$num]{$attr});
+            } else {
+                ok((not exists $output->[$num]{$attr}), "output record $num: $attr should not exist");
+            }
+        }
         my $row_count = scalar @{$result_expected[$num]{rows}};
         is(scalar @{$output->[$num]{rows}}, $row_count, "output record $num: $row_count rows");
         for (my $res_row=0; $res_row < $row_count; $res_row++) {
@@ -360,6 +369,6 @@ Readonly::Array my @result_expected => (
             }
         }
     }
-    #say STDERR "mock output: ".Dumper(PrefVote::Core::Output::RawCapture::get_output());
+    #PrefVote::STV::Output->debug_print("output = ".Dumper($output));
 }
 

@@ -2,7 +2,7 @@
 # 008_core_output.t - tests for PrefVote::Core::Output
 use Modern::Perl qw(2015); # require 5.20.0 or later
 use autodie;
-use Test::More tests => 40;
+use Test::More tests => 42;
 use Test::Exception;
 use Readonly;
 use Data::Dumper;
@@ -146,22 +146,38 @@ Readonly::Array my @result_expected => (
     PrefVote::Core::Output::set_mock_stdin($mock_input);
     lives_ok(sub {PrefVote::Core::Output::main() }, "main processes YAML result");
     my $output = PrefVote::Core::Output::RawCapture::get_output();
+    # expected result entry 0
     is(scalar keys %{$output->[0]}, 2, "output record 0: 2 items");
     foreach my $key (keys %{$result_expected[0]}) {
         is($output->[0]{$key}, $result_expected[0]{$key}, "output record 0: $key=".$result_expected[0]{$key});
     }
-    is(scalar keys %{$output->[1]}, 1, "output record 1: 1 item");
-    isa_ok($output->[1]{rows}, "ARRAY", "output record 1: rows is an array ref");
-    my $row_count = scalar @{$result_expected[1]{rows}};
-    is(scalar @{$output->[1]{rows}}, $row_count, "output record 1: $row_count rows");
-    for (my $res_row=0; $res_row < $row_count; $res_row++) {
-        my $col_count = scalar @{$result_expected[1]{rows}[$res_row]};
-        is (scalar @{$output->[1]{rows}[$res_row]}, $col_count, "output record 1 row $res_row: $col_count columns");
-        for (my $res_col=0; $res_col < $col_count; $res_col++) {
-            is($output->[1]{rows}[$res_row][$res_col], $result_expected[1]{rows}[$res_row][$res_col],
-                "output record 1 row $res_row col $res_col: '".$result_expected[1]{rows}[$res_row][$res_col]."'");
+    # tables in expected result entry 1
+    # TODO: common code with 014_stv_output.t & 022_schulze_output.t should be consolidated somewhere
+    foreach my $num ((1)) {
+        is(scalar keys %{$output->[$num]}, scalar keys %{$result_expected[$num]},
+            "output record $num: ".(scalar keys %{$result_expected[$num]})." item");
+        isa_ok($output->[$num]{rows}, "ARRAY", "output record $num: rows is an array ref");
+        foreach my $attr (qw(title subtitle)) {
+            if (exists $result_expected[$num]{$attr}) {
+                is($output->[$num]{$attr}, $result_expected[$num]{$attr},
+                    "output record $num: $attr = ".$result_expected[$num]{$attr});
+            } else {
+                ok((not exists $output->[$num]{$attr}), "output record $num: $attr should not exist");
+            }
+        }
+        my $row_count = scalar @{$result_expected[$num]{rows}};
+        is(scalar @{$output->[$num]{rows}}, $row_count, "output record $num: $row_count rows");
+        for (my $res_row=0; $res_row < $row_count; $res_row++) {
+            my $col_count = scalar @{$result_expected[$num]{rows}[$res_row]};
+            is (scalar @{$output->[$num]{rows}[$res_row]}, $col_count,
+                "output record $num row $res_row: $col_count columns");
+            for (my $res_col=0; $res_col < $col_count; $res_col++) {
+                is($output->[$num]{rows}[$res_row][$res_col], $result_expected[$num]{rows}[$res_row][$res_col],
+                    "output record $num row $res_row col $res_col: '"
+                        .$result_expected[$num]{rows}[$res_row][$res_col]."'");
+            }
         }
     }
-    #say STDERR "mock output: ".Dumper(PrefVote::Core::Output::RawCapture::get_output());
+    #PrefVote::Core::Output->debug_print("output = ".Dumper($output));
 }
 
