@@ -9,7 +9,7 @@ params:
     CHAOTIC: chaotic unpredictable
     DYSFUNCTIONAL: dysfunctional incompetent
     EVIL: evil villain
-    FACTIOUS: factious/divisive candidate
+    FACTIOUS: factious/divisive
 ---
 - [BORING, EVIL, FACTIOUS, ABNORMAL, CHAOTIC]
 - [ABNORMAL, FACTIOUS, CHAOTIC]

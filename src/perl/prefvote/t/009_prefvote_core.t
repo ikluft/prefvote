@@ -21,7 +21,7 @@ Readonly::Hash my %core_params => (
         CHAOTIC => "chaotic unpredictable",
         DYSFUNCTIONAL => "dysfunctional incompetent",
         EVIL => "evil villain",
-        FACTIOUS => "factious/divisive candidate",
+        FACTIOUS => "factious/divisive",
     },
 );
 Readonly::Array my @ballot_tests => (
