@@ -42,6 +42,7 @@ sub debug_print
 __END__
 
 # POD documentation
+=encoding utf8
 
 =head1 NAME
 

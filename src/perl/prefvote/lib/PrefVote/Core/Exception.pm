@@ -23,6 +23,7 @@ has classname => (is => 'ro', isa =>Str, default => "PrefVote::Core");
 __END__
 
 # POD documentation
+=encoding utf8
 
 =head1 NAME
 
