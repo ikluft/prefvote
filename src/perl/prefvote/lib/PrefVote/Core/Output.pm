@@ -43,7 +43,8 @@ sub do_output
     $voting_method =~ s/^.*:://x; # voting method suffix only - this allows optionally providing whole class name
     
     # pipe the YAML to a subprocess running main() from this class
-    my @output_cmd = ($Config{perlpath}, "-M".__PACKAGE__, "-e", __PACKAGE__."::main", "--", "--format=$format", "--method=$voting_method");
+    my @output_cmd = ($Config{perlpath}, "-M".__PACKAGE__, "-e", __PACKAGE__."::main", "--", "--format=$format",
+        "--method=$voting_method", (__PACKAGE__->debug()?"--debug":()));
     run \@output_cmd, sub {if(my $line = shift @$yaml_ref){return $line}}, \*STDOUT;
     return;
 }
@@ -122,6 +123,50 @@ sub output
     return 1;
 }
 
+# find an available class for formatting or voting method
+# this allows formatting or voting-method string parameters to be case-insensitive match to formatting class suffix
+sub class_search
+{
+    my ($search, $type) = @_;
+
+    # try the raw search string as a class first
+    my $class_name = $search;
+    ## no critic (BuiltinFunctions::ProhibitStringyEval)
+    if (eval "require $class_name") {
+        __PACKAGE__->debug_print("class_search: $type = $class_name");
+        return $search; # success
+    }
+    ## critic (BuiltinFunctions::ProhibitStringyEval)
+
+    # search INC path for class if the string wasn't an exact match
+    my @search_components = split('::', $search);
+    my $search_filename = (pop @search_components).".pm";
+    my $search_subpath = join('/', @search_components);
+    __PACKAGE__->debug_print("search_filename=$search_filename search_subpath=$search_subpath");
+    foreach my $inc_dir (@INC) {
+        -d $inc_dir or next;
+        opendir(my $dirhandle, "$inc_dir/$search_subpath") or next;
+        my @all_files = readdir($dirhandle);
+        __PACKAGE__->debug_print("class_search: grepping files ".join(" ", @all_files));
+        my @files = sort grep {(fc($_) eq fc($search_filename)) and -f "$inc_dir/$search_subpath/$_"}
+            @all_files;
+        foreach my $file (@files) {
+            my $basename = (substr($file, -3) eq ".pm") ? substr($file, 0, -3) : $file;
+            $class_name = join("::", @search_components, $basename);
+            __PACKAGE__->debug_print("class_search: candidate $file -> $class_name");
+            ## no critic (BuiltinFunctions::ProhibitStringyEval)
+            if (eval "require $class_name") {
+                __PACKAGE__->debug_print("class_search: $type = $class_name");
+                return $class_name; # success
+            }
+            ## critic (BuiltinFunctions::ProhibitStringyEval)
+        }
+    }
+
+    # couldn't find it - throw exception
+    PrefVote::Core::Exception->throw(description => "could not load $type class $search");
+}
+
 # mainline to launch appropriate formatter subclass and forward YAML data to it
 sub main
 {
@@ -141,20 +186,10 @@ sub main
         }
 
         # check if a class which can handle the requested format exists
-        my $format_class = "PrefVote::Core::Output::".ucfirst($format);
-        ## no critic (BuiltinFunctions::ProhibitStringyEval)
-        if (not eval "require $format_class") {
-            PrefVote::Core::Exception->throw(description => "could not load formatting class $format_class");
-        }
-        ## critic (BuiltinFunctions::ProhibitStringyEval)
+        my $format_class = class_search("PrefVote::Core::Output::$format", "formatting");
 
         # check if a class which can handle the requested voting method exists
-        my $method_class = "PrefVote::".$voting_method."::Output";
-        ## no critic (BuiltinFunctions::ProhibitStringyEval)
-        if (not eval "require $method_class") {
-            PrefVote::Core::Exception->throw(description => "could not load voting method class $method_class");
-        }
-        ## critic (BuiltinFunctions::ProhibitStringyEval)
+        my $method_class = class_search("PrefVote::".$voting_method."::Output", "voting method");
 
         # slurp standard input
         my $yaml_textref = stdinslurp();

@@ -221,11 +221,11 @@ sub supported_method
 {
     my $method = shift;
     foreach my $supported (@voting_methods) {
-        if ($method eq $supported) {
-            return 1;
+        if (fc $method eq fc $supported) {
+            return $supported;
         }
     }
-    return 0;
+    return;
 }
 
 # generate choice hexadecimal index values and bidirectional hash lookup tables
@@ -386,11 +386,12 @@ sub determine_method
     # if a specific method was selected by %opts, make sure it's supported
     my $selected_method;
     if (exists $opts->{method}) {
-        if (not supported_method($opts->{method})) {
+        my $supported_method = supported_method($opts->{method});
+        if (not defined $supported_method) {
             PrefVote::Core::MethodMismatchException->throw(description => "specified voting method "
                 .($opts->{method} // "(undef)")." is not supported");
         }
-        $selected_method = $opts->{method};
+        $selected_method = $supported_method;
     }
 
     # translate a voting method string into a voting-method class within this hierarchy
@@ -401,8 +402,8 @@ sub determine_method
     if (scalar @methods_allowed > 1) {
         if (defined $selected_method) {
             foreach my $method_item (@methods_allowed) {
-                if ($selected_method eq $method_item) {
-                    $method = $method_item;
+                if (fc($selected_method) eq fc($method_item)) {
+                    $method = $selected_method;
                     last;
                 }
             }
@@ -420,8 +421,8 @@ sub determine_method
         }
         $method = $methods_allowed[0];
     }
-    if ((not defined $method) or (not supported_method($method))) {
-        PrefVote::Core::Exception->throw(description => ($method // "(undef)")." is not a supported voting method");
+    if (not defined $method) {
+        PrefVote::Core::Exception->throw(description => "$selected_method not found in input file's voting methods");
     }
     return $method;
 }

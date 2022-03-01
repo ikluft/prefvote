@@ -13,6 +13,9 @@ my @classes = qw(
         PrefVote::Core::InternalDataException
         PrefVote::Core::MethodMismatchException
         PrefVote::Core::Output
+        PrefVote::Core::Output::HTML
+        PrefVote::Core::Output::Markdown
+        PrefVote::Core::Output::Text
         PrefVote::Core::Result
         PrefVote::Core::Round
         PrefVote::Core::Set
