@@ -24,6 +24,7 @@ use Data::Dumper;
 use Readonly;
 use YAML::XS;
 use IPC::Run qw(run);
+use PrefVote::Core;
 use PrefVote::Core::Exception;
 
 # constants for output
@@ -35,6 +36,14 @@ Readonly::Hash my %symbols => (
     "unknown" => "\N{WHITE QUESTION MARK ORNAMENT}",
 );
 my %symbol_alias;
+
+# allow a string as mock stdin for testing
+my $testing_mock_stdin;
+sub set_mock_stdin
+{
+    $testing_mock_stdin = shift;
+    return;
+}
 
 # launch external piped-input formatter script using this class as the mainline
 sub do_output
@@ -73,9 +82,14 @@ sub set_symbol_alias
 sub stdinslurp
 {
     my $str;
-    local $/ = undef;
-    ## no critic (InputOutput::ProhibitExplicitStdin)
-    $str = <STDIN>;
+    if (defined $testing_mock_stdin) {
+        $str = $testing_mock_stdin;
+        undef $testing_mock_stdin;
+    } else {
+        local $/ = undef;
+        ## no critic (InputOutput::ProhibitExplicitStdin)
+        $str = <STDIN>;
+    }
     return \$str;
 }
 
@@ -85,8 +99,10 @@ sub candidates_list
     my ($class, $result_data) = @_;
 
     # get list of candidates ordered by choice_to_result list
+    # list is sorted by 1: result place (ascending), 2: candidate key string (alphabetical)
+    # the second sort factor keeps results in order for testing
     my $c2r = $result_data->{choice_to_result};
-    my @candidates = sort {$c2r->{$a}[0] <=> $c2r->{$b}[0]} keys %$c2r;
+    my @candidates = sort {($c2r->{$a}[0]==$c2r->{$b}[0]) ? ($a cmp $b) : ($c2r->{$a}[0]<=>$c2r->{$b}[0])} keys %$c2r;
     return @candidates;
 }
 
@@ -123,6 +139,16 @@ sub output
     return 1;
 }
 
+# generate counting results table
+# in PrefVote::Core::Output this is only for testing - voting methods must override it to process their result
+sub do_counting_table
+{
+    my ($class, $format_class, $result_data) = @_;
+
+    # do nothing - Core method has no results of its own
+    return;
+}
+
 # find an available class for formatting or voting method
 # this allows formatting or voting-method string parameters to be case-insensitive match to formatting class suffix
 sub class_search
@@ -145,10 +171,12 @@ sub class_search
     __PACKAGE__->debug_print("search_filename=$search_filename search_subpath=$search_subpath");
     foreach my $inc_dir (@INC) {
         -d $inc_dir or next;
-        opendir(my $dirhandle, "$inc_dir/$search_subpath") or next;
+        my $inc_search_path = "$inc_dir/$search_subpath";
+        -d $inc_search_path or next;
+        opendir(my $dirhandle, $inc_search_path) or next;
         my @all_files = readdir($dirhandle);
         __PACKAGE__->debug_print("class_search: grepping files ".join(" ", @all_files));
-        my @files = sort grep {(fc($_) eq fc($search_filename)) and -f "$inc_dir/$search_subpath/$_"}
+        my @files = sort grep {(fc($_) eq fc($search_filename)) and -f "$inc_search_path/$_"}
             @all_files;
         foreach my $file (@files) {
             my $basename = (substr($file, -3) eq ".pm") ? substr($file, 0, -3) : $file;
@@ -170,15 +198,17 @@ sub class_search
 # mainline to launch appropriate formatter subclass and forward YAML data to it
 sub main
 {
-    my ($debug, $format, $voting_method);
+    my ($debug, $format, $method);
     __PACKAGE__->debug_print("main()");
 
     # exception-catching wrapper
     my ($exitcode, $evalcode);
     $evalcode = eval {
         # process command line
-        GetOptions ("debug" => \$debug, "format=s" => \$format, "method=s" => \$voting_method)
-            or croak "usage: $0 --format=output_format --method=voting_method";
+        GetOptions ("debug" => \$debug, "format=s" => \$format, "method=s" => \$method);
+        if (not defined $format or not defined $method) {
+            croak "usage: $0 --format=output_format --method=voting_method";
+        }
         if ($debug) {
             $Data::Dumper::Sortkeys = 1;
             $Data::Dumper::Indent = 1;
@@ -189,6 +219,10 @@ sub main
         my $format_class = class_search("PrefVote::Core::Output::$format", "formatting");
 
         # check if a class which can handle the requested voting method exists
+        my $voting_method = PrefVote::Core::supported_method($method);
+        if (not defined $voting_method) {
+            croak "$method is not a supported voting method";
+        }
         my $method_class = class_search("PrefVote::".$voting_method."::Output", "voting method");
 
         # slurp standard input

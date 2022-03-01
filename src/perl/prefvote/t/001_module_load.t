@@ -15,6 +15,7 @@ my @classes = qw(
         PrefVote::Core::Output
         PrefVote::Core::Output::HTML
         PrefVote::Core::Output::Markdown
+        PrefVote::Core::Output::RawCapture
         PrefVote::Core::Output::Text
         PrefVote::Core::Result
         PrefVote::Core::Round
