@@ -10,13 +10,14 @@ Change log for PrefVote
  [ENHANCEMENTS]
  - split PrefVote source tree into PrefVote::Core and PrefVote::STV so future voting methods can be separate
  - import code from Vote::STV 0.5 and modernize as Perl reference implementation of PrefVote
- - use Moo object system (40% lighter than Moose) instead of directly managing objects
+ - use Moo object system ("40% lighter than Moose") instead of directly managing objects
  - code modernization and refactoring
- - add unit test cases
 
  [MAJOR]
 
  [MINOR]
+ - add unit test cases
+ - black-box test infrastructure compares to data from previous runs, designed for all PrefVote language impementations
 
  [REVISION]
 
