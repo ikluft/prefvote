@@ -106,7 +106,7 @@ has choice_to_result => (
 has choices => (
     is => 'ro',
     isa => HashRef[NonEmptySimpleStr],
-    requred => 1,
+    required => 1,
     trigger => sub {
         my $self = shift;
         $self->debug_print("set choices to ".join(" ", $self->choices_keys()));
