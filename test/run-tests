@@ -27,7 +27,7 @@ Readonly::Hash my %config => (
         Core => 'PrefVote core - for testing only',
         STV => 'Single Transferable Vote (STV)',
         Schulze => 'Schulze/Beatpath',
-        #RankedPairs => "Ranked Pairs",
+        RankedPairs => "Ranked Pairs",
     },
     blackbox => {
         name => "black box tests",
@@ -42,7 +42,7 @@ Readonly::Hash my %config => (
                 Core => 'src/perl/prefvote',
                 STV => 'src/perl/stv',
                 Schulze => 'src/perl/schulze',
-                #RankedPairs => 'src/perl/rankedpairs',
+                RankedPairs => 'src/perl/rankedpairs',
             },
             testdir => "t",
             test_re => qr{\.t$},
