@@ -34,6 +34,7 @@ Readonly::Hash my %blackbox_spec => (
     rounds => [qw(list PrefVote::Schulze::Round)],
 );
 PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, spec => \%blackbox_spec, parent => 'PrefVote::Core');
+__PACKAGE__->ballot_input_ties_policy(1); # set flag for Core: this class allows input ballots to set A/B ties
 
 # list of names of winners in order by place, ties shown by an ArrayRef to the tied candidates
 has winners => (

@@ -1,4 +1,3 @@
-
 # PrefVote::Schulze::PairData
 # ABSTRACT: internal candidate-pair data for Schulze method
 # Copyright (c) 2022 by Ian Kluft
@@ -41,14 +40,14 @@ Readonly::Hash my %blackbox_spec => (
 PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, spec => \%blackbox_spec, parent => 'PrefVote');
 
 # preference: total votes showing preference of candidate i over j
-# optional - use 0 is nonexistent
+# optional - should return 0 if nonexistent
 has preference => (
     is => 'rw',
     isa => PositiveOrZeroInt,
 );
 
 # predecessor: link in building strongest paths
-# optional - only exists if after computation if candidates i and j have preferences cast
+# optional - only exists after computation if candidates i and j have preferences cast
 has predecessor => (
     is => 'rw',
     isa => NonEmptySimpleStr,
