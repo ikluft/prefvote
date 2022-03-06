@@ -1,5 +1,5 @@
 # PrefVote::Core
-# ABSTRACT: core code for all PrefVote voting methods
+# ABSTRACT: common code for all PrefVote voting methods
 # derived from Vote::STV by Ian Kluft
 # Copyright (c) 1998-2022 by Ian Kluft
 # Open Source license: Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
@@ -646,7 +646,7 @@ __END__
 
 =head1 NAME
 
-PrefVote::Core - core code for all PrefVote voting methods
+PrefVote::Core - common code for all PrefVote voting methods
 
 =head1 SYNOPSIS
 
@@ -666,6 +666,23 @@ PrefVote::Core - core code for all PrefVote voting methods
 
 =head1 DESCRIPTION
 
+=head1 ATTRIBUTES
+
+=over 1
+
+=back
+
+=head1 METHODS
+
+=over 1
+
+=back
+
+=head1 FUNCTIONS
+
+=over 1
+
+=back
 
 =head1 SEE ALSO
 
