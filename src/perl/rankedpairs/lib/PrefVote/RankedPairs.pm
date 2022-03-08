@@ -17,6 +17,7 @@ use Data::Dumper;
 use Readonly;
 use Set::Tiny qw(set);
 use PrefVote::RankedPairs::PairData;
+use PrefVote::RankedPairs::Majority;
 
 # class definitions
 use Moo;
@@ -57,6 +58,11 @@ has pair => (
     is => 'rw',
     isa => HashRef[HashRef[InstanceOf['PrefVote::RankedPairs::PairData']]],
     default => sub { return {} },
+    handles_via => 'Hash',
+    handles => {
+        pair_accessor => 'accessor',
+        pair_keys => 'keys',
+    },
 );
 
 # majorities are win-lose (or tied) pairs
@@ -64,11 +70,13 @@ has pair => (
 has majority => (
     is => 'rw',
     isa => ArrayRef[InstanceOf['PrefVote::RankedPairs::Majority']],
+    default => sub { return [] },
     handles_via => 'Array',
     handles => {
-        majority_all => 'all',
         majority_count => 'count',
+        majority_get => 'get',
         majority_push => 'push',
+        majority_sort => 'sort_in_place',
     },
 );
 
@@ -120,32 +128,12 @@ sub item2list
 sub tally_preferences
 {
     my $self = shift;
-    my $ranked_pairs_ref = shift; # ref to PrefVote::RankedPairs object
 
-    # If this is not the first round, get preference data from previous round
-    if (exists $self->{prev}) {
-        # get preference data from previous round
-        my $prev = $self->{prev};
-        my @round_candidates = $self->candidates_all();
-        foreach my $cand1 (@round_candidates) {
-            next if not exists $prev->{pair}{$cand1};
-            foreach my $cand2 (@round_candidates) {
-                next if $cand1 eq $cand2;
-                next if not exists $prev->{pair}{$cand1}{$cand2};
-                if (exists $prev->{pair}{$cand1}{$cand2}{preference}) {
-                    $self->add_preference($cand1, $cand2, $prev->{pair}{$cand1}{$cand2}{preference});
-                }
-            }
-        }
-        return;
-    }
-
-    # If this is the first round, compute preferences from ballots.
-    # loop through votes tallying preferences
-    my @choices = $ranked_pairs_ref->choices_keys(); # list of candidates
-    foreach my $combo ($ranked_pairs_ref->ballots_keys()) {
+    # compute preferences from ballots: loop through votes tallying preferences
+    my @choices = $self->choices_keys(); # list of candidates
+    foreach my $combo ($self->ballots_keys()) {
         # loop through choices on the ballot
-        my $ballot = $ranked_pairs_ref->ballots_get($combo);
+        my $ballot = $self->ballots_get($combo);
         my @ballot_items = $ballot->items_all();
 
         # choices contained on the ballot have all pairwise preferences recorded
@@ -184,7 +172,35 @@ sub sort_pairs
 {
     my $self = shift;
 
-    # TODO
+    # create list of candidate pairs
+    foreach my $cand_i ($self->pair_keys()) {
+        foreach my $cand_j (keys %{$self->pair_accessor($cand_i)}) {
+            # set up margin of victory (mov) and tentative i-j candidate pair (may be reordered)
+            my $mov = $self->get_preference($cand_i, $cand_j) - $self->get_preference($cand_j, $cand_i);
+            my @cand = ($cand_i, $cand_j);
+
+            # handle tied i = j link
+            if ($mov == 0) {
+                # tied candidates ordered alphabetically for consistent results in testing
+                $self->majority_push(PrefVote::RankedPairs::Majority->new(cand => [sort @cand], mov => 0));
+                next;
+            }
+
+            # handle i < j link
+            if ($mov < 0) {
+                # candidates in reverse order for j > i
+                $self->majority_push(PrefVote::RankedPairs::Majority->new(cand => [reverse @cand], mov => -$mov));
+                next;
+            }
+
+            # handle i > j link
+            $self->majority_push(PrefVote::RankedPairs::Majority->new(cand => [@cand], mov => $mov));
+        }
+    }
+
+    # sort candidate pairs list by margin of victory
+    $self->majority_sort(\&PrefVote::RankedPairs::Majority::pair_cmp);
+    return;
 }
 
 # count votes using Ranked Pairs method
@@ -195,9 +211,18 @@ sub count
     # stop now if there are no votes
     return if $self->total_ballots() == 0;
 
+    # tally preferences into one-way candidate-pair totals
+    $self->tally_preferences();
+
+    # sort candidate pairs by margin of victory
+    $self->sort_pairs();
+
+    $self->debug_print(__PACKAGE__." count(): ".Dumper($self));
     # TODO
     return;
 }
+
+1;
 
 __END__
 

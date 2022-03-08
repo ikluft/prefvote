@@ -16,11 +16,12 @@ use autodie;
 use Data::Dumper;
 use Readonly;
 use overload
-    '<=>' => \&mycmp;
+    '<=>' => \&pair_cmp;
 
 # class definitions
 use Moo;
 use MooX::TypeTiny;
+use Types::Standard qw(Tuple);
 use Types::Common::Numeric qw(PositiveOrZeroInt);
 use Types::Common::String qw(NonEmptySimpleStr);
 use PrefVote::Core::TestSpec;
@@ -40,17 +41,19 @@ has mov => (
     required => 1,
 );
 
-sub mycmp
+sub pair_cmp
 {
     my ($self, $other, $swap) = @_;
-    if (not $other->isa(__PACKAGE__) {
+    if (not $other->isa(__PACKAGE__)) {
         PrefVote::Core::Exception->throw(description => "majority comparison type mismatch");
     }
     if ($swap) {
-        return $other->mov() <=> $self->mov();
+        return (($self->{mov} // 0) <=> ($other->{mov} // 0));
     }
-    return $self->mov() <=> $other->mov();
+    return (($other->{mov} // 0) <=> ($self->{mov} // 0));
 }
+
+1;
 
 __END__
 
