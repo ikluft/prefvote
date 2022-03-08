@@ -111,6 +111,24 @@ sub get_preference
     return $self->{pair}{$cand_i}{$cand_j}->preference() // 0; # return preference, or zero if the node didn't have it
 }
 
+# set a candidate-pair majority order in matrix entry
+sub set_order
+{
+    my ($self, $cand_i, $cand_j, $order) = @_;
+    $self->make_pair_node($cand_i, $cand_j);
+    return $self->{pair}{$cand_i}{$cand_j}->order($order);
+}
+
+# get candidate-pair majority order in matrix entry
+sub get_order
+{
+    my ($self, $cand_i, $cand_j) = @_;
+    return if not exists $self->{pair}{$cand_i}; # undef if the node doesn't exist
+    return if not exists $self->{pair}{$cand_i}{$cand_j}; # undef if the node doesn't exist
+    return if not exists $self->{pair}{$cand_i}{$cand_j}{order}; # undef if the attribute doesn't exist
+    return $self->{pair}{$cand_i}{$cand_j}->order(); # return order, or zero if the node didn't have it
+}
+
 # return a ballot item as a list, whether it was a single scalar or a tie-group set
 # This code was borrowed from Schulze, which allows ties on input. Ranked Pairs should never receive ties from Core.
 # To allow for experimentation, this code was preserved here anyway.
@@ -175,6 +193,9 @@ sub sort_pairs
     # create list of candidate pairs
     foreach my $cand_i ($self->pair_keys()) {
         foreach my $cand_j (keys %{$self->pair_accessor($cand_i)}) {
+            # skip if we've already computed this pair in the opposite candidate order
+            next if exists $self->{pair}{$cand_i}{$cand_j}{order};
+
             # set up margin of victory (mov) and tentative i-j candidate pair (may be reordered)
             my $mov = $self->get_preference($cand_i, $cand_j) - $self->get_preference($cand_j, $cand_i);
             my @cand = ($cand_i, $cand_j);
@@ -182,6 +203,8 @@ sub sort_pairs
             # handle tied i = j link
             if ($mov == 0) {
                 # tied candidates ordered alphabetically for consistent results in testing
+                $self->set_order($cand_i, $cand_j, 0);
+                $self->set_order($cand_j, $cand_i, 0);
                 $self->majority_push(PrefVote::RankedPairs::Majority->new(cand => [sort @cand], mov => 0));
                 next;
             }
@@ -189,11 +212,15 @@ sub sort_pairs
             # handle i < j link
             if ($mov < 0) {
                 # candidates in reverse order for j > i
+                $self->set_order($cand_i, $cand_j, -1);
+                $self->set_order($cand_j, $cand_i, 1);
                 $self->majority_push(PrefVote::RankedPairs::Majority->new(cand => [reverse @cand], mov => -$mov));
                 next;
             }
 
             # handle i > j link
+            $self->set_order($cand_i, $cand_j, 1);
+            $self->set_order($cand_j, $cand_i, -1);
             $self->majority_push(PrefVote::RankedPairs::Majority->new(cand => [@cand], mov => $mov));
         }
     }

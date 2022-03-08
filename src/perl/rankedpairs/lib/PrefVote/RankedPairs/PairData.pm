@@ -20,13 +20,14 @@ use Set::Tiny qw(set);
 # class definitions
 use Moo;
 use MooX::TypeTiny;
-use Types::Common::Numeric qw(PositiveOrZeroInt);
+use Types::Common::Numeric qw(PositiveOrZeroInt IntRange);
 use PrefVote::Core::TestSpec;
 extends 'PrefVote';
 
 # blackbox testing structure
 Readonly::Hash my %blackbox_spec => (
     preference => [qw(int)],
+    order => [qw(int)],
 );
 
 # preference: total votes showing preference of candidate i over j
@@ -36,6 +37,11 @@ has preference => (
     isa => PositiveOrZeroInt,
 );
 
+# candidate order for this pair: 1 = as listed (i>j), -1 = reverse (i<j), 0 = tie (i=j)
+has order => (
+    is => 'rw',
+    isa => IntRange[-1, 1],
+);
 
 # add to pair node's preference total
 sub add_preference
