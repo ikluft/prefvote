@@ -20,14 +20,21 @@ use Set::Tiny qw(set);
 # class definitions
 use Moo;
 use MooX::TypeTiny;
+use Types::Standard qw(Int);
 use Types::Common::Numeric qw(PositiveOrZeroInt IntRange);
 use PrefVote::Core::TestSpec;
 extends 'PrefVote';
 
+# constants for lock attribute
+Readonly::Scalar my $no_lock => 0;
+Readonly::Scalar my $direct_lock => 1;
+Readonly::Scalar my $indirect_lock => 2;
+
 # blackbox testing structure
 Readonly::Hash my %blackbox_spec => (
     preference => [qw(int)],
-    order => [qw(int)],
+    mov => [qw(int)],
+    lock => [qw(int)],
 );
 
 # preference: total votes showing preference of candidate i over j
@@ -37,10 +44,16 @@ has preference => (
     isa => PositiveOrZeroInt,
 );
 
-# candidate order for this pair: 1 = as listed (i>j), -1 = reverse (i<j), 0 = tie (i=j)
-has order => (
+# margin of victory (0 for tie)
+has mov => (
     is => 'rw',
-    isa => IntRange[-1, 1],
+    isa => Int,
+);
+
+# flag: the pair is locked
+has lock => (
+    is => 'rw',
+    isa => IntRange[$no_lock, $indirect_lock],
 );
 
 # add to pair node's preference total
@@ -53,6 +66,38 @@ sub add_preference
     my $total = $quantity + ($self->preference() // 0);
     $self->preference($total);
     return $total;
+}
+
+# read accessor for margin of victory (mov)
+# if non-existent, return zero without creating the attribute
+sub get_mov
+{
+    my $self = shift;
+    return $self->{mov} // 0;
+}
+
+# set direct lock
+sub direct_lock
+{
+    my $self = shift;
+    $self->lock($direct_lock);
+    return;
+}
+
+# set indirect_lock
+sub indirect_lock
+{
+    my $self = shift;
+    $self->lock($indirect_lock);
+    return;
+}
+
+# read lock flag
+# if non-existent, return zero without creating the attribute
+sub get_lock
+{
+    my $self = shift;
+    return $self->{lock} // 0;
 }
 
 1;

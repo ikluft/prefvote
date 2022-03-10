@@ -73,6 +73,7 @@ has majority => (
     default => sub { return [] },
     handles_via => 'Array',
     handles => {
+        majority_all => 'all',
         majority_count => 'count',
         majority_get => 'get',
         majority_push => 'push',
@@ -111,22 +112,46 @@ sub get_preference
     return $self->{pair}{$cand_i}{$cand_j}->preference() // 0; # return preference, or zero if the node didn't have it
 }
 
-# set a candidate-pair majority order in matrix entry
-sub set_order
+# set a candidate-pair margin of victory (mov) in matrix entry
+sub set_mov
 {
-    my ($self, $cand_i, $cand_j, $order) = @_;
+    my ($self, $cand_i, $cand_j, $mov) = @_;
     $self->make_pair_node($cand_i, $cand_j);
-    return $self->{pair}{$cand_i}{$cand_j}->order($order);
+    return $self->{pair}{$cand_i}{$cand_j}->mov($mov);
 }
 
-# get candidate-pair majority order in matrix entry
-sub get_order
+# get candidate-pair margin of victory (mov) in matrix entry
+sub get_mov
 {
     my ($self, $cand_i, $cand_j) = @_;
-    return if not exists $self->{pair}{$cand_i}; # undef if the node doesn't exist
-    return if not exists $self->{pair}{$cand_i}{$cand_j}; # undef if the node doesn't exist
-    return if not exists $self->{pair}{$cand_i}{$cand_j}{order}; # undef if the attribute doesn't exist
-    return $self->{pair}{$cand_i}{$cand_j}->order(); # return order, or zero if the node didn't have it
+    return 0 if not exists $self->{pair}{$cand_i}; # zero if the node doesn't exist
+    return 0 if not exists $self->{pair}{$cand_i}{$cand_j}; # zero if the node doesn't exist
+    return $self->{pair}{$cand_i}{$cand_j}->get_mov();
+}
+
+# direct-lock a candidate-pair
+sub direct_lock
+{
+    my ($self, $cand_i, $cand_j) = @_;
+    $self->make_pair_node($cand_i, $cand_j);
+    return $self->{pair}{$cand_i}{$cand_j}->direct_lock();
+}
+
+# indirect-lock a candidate-pair
+sub indirect_lock
+{
+    my ($self, $cand_i, $cand_j) = @_;
+    $self->make_pair_node($cand_i, $cand_j);
+    return $self->{pair}{$cand_i}{$cand_j}->indirect_lock();
+}
+
+# get lock status in matrix entry
+sub get_lock
+{
+    my ($self, $cand_i, $cand_j) = @_;
+    return 0 if not exists $self->{pair}{$cand_i}; # zero if the node doesn't exist
+    return 0 if not exists $self->{pair}{$cand_i}{$cand_j}; # zero if the node doesn't exist
+    return $self->{pair}{$cand_i}{$cand_j}->get_lock();
 }
 
 # return a ballot item as a list, whether it was a single scalar or a tie-group set
@@ -193,35 +218,32 @@ sub sort_pairs
     # create list of candidate pairs
     foreach my $cand_i ($self->pair_keys()) {
         foreach my $cand_j (keys %{$self->pair_accessor($cand_i)}) {
-            # skip if we've already computed this pair in the opposite candidate order
-            next if exists $self->{pair}{$cand_i}{$cand_j}{order};
+            # skip if we've already computed this pair in the reverse candidate order
+            next if exists $self->{pair}{$cand_i}{$cand_j}{mov};
 
             # set up margin of victory (mov) and tentative i-j candidate pair (may be reordered)
-            my $mov = $self->get_preference($cand_i, $cand_j) - $self->get_preference($cand_j, $cand_i);
+            my $pref_ij = $self->get_preference($cand_i, $cand_j);
+            my $pref_ji = $self->get_preference($cand_j, $cand_i);
+            $self->set_mov($cand_i, $cand_j, $pref_ij - $pref_ji);
+            $self->set_mov($cand_j, $cand_i, $pref_ji - $pref_ij);
             my @cand = ($cand_i, $cand_j);
 
             # handle tied i = j link
-            if ($mov == 0) {
+            if ($pref_ij == $pref_ji) {
                 # tied candidates ordered alphabetically for consistent results in testing
-                $self->set_order($cand_i, $cand_j, 0);
-                $self->set_order($cand_j, $cand_i, 0);
-                $self->majority_push(PrefVote::RankedPairs::Majority->new(cand => [sort @cand], mov => 0));
+                $self->majority_push(PrefVote::RankedPairs::Majority->new(cand => [sort @cand]));
                 next;
             }
 
             # handle i < j link
-            if ($mov < 0) {
+            if ($pref_ij < $pref_ji) {
                 # candidates in reverse order for j > i
-                $self->set_order($cand_i, $cand_j, -1);
-                $self->set_order($cand_j, $cand_i, 1);
-                $self->majority_push(PrefVote::RankedPairs::Majority->new(cand => [reverse @cand], mov => -$mov));
+                $self->majority_push(PrefVote::RankedPairs::Majority->new(cand => [reverse @cand]));
                 next;
             }
 
             # handle i > j link
-            $self->set_order($cand_i, $cand_j, 1);
-            $self->set_order($cand_j, $cand_i, -1);
-            $self->majority_push(PrefVote::RankedPairs::Majority->new(cand => [@cand], mov => $mov));
+            $self->majority_push(PrefVote::RankedPairs::Majority->new(cand => [@cand]));
         }
     }
 
@@ -229,6 +251,48 @@ sub sort_pairs
     $self->majority_sort(\&PrefVote::RankedPairs::Majority::pair_cmp);
     return;
 }
+
+# check if a candidate pair conflicts with previous pairs
+sub is_conflict
+{
+    my ($self, $cand1, $cand2) = @_;
+
+    # skip ties - either direction is in conflict against locking
+    if ($self->get_mov($cand1, $cand2) == 0) {
+        return 1;
+    }
+
+    # it's a conflict if the opposite order/direction of the same pair is locked
+    return $self->get_lock($cand2, $cand1) != 0;
+}
+
+# lock candidtate pairs which don't conflict with earlier pairs
+sub lock_pairs
+{
+    my $self = shift;
+
+    # loop through sorted majority-pair list:
+    # lock pairs which don't conflict with earlier ones
+    #   direct lock for pairs as listed
+    #   indirect lock for pairs implied by earlier locks (if A>B and B>C then A>C)
+    for (my $maj_index=0; $maj_index < $self->majority_count(); $maj_index++) {
+        # find majority item (candidate pair) for this pass through the loop
+        my $majority = $self->majority_get($maj_index);
+        my @pair = $majority->cands();
+
+        # skip conflicts
+        if ($self->is_conflict(@pair)) {
+            next;
+        }
+
+        # direct-lock the listed candidate pair
+        $self->direct_lock(@pair);
+
+        # set indirect locks on pairs implied by existing pairs
+        # TODO
+    }
+}
+
 
 # count votes using Ranked Pairs method
 sub count
@@ -243,6 +307,9 @@ sub count
 
     # sort candidate pairs by margin of victory
     $self->sort_pairs();
+
+    # lock candidate pairs which don't conflict with earlier pairs
+    $self->lock_pairs();
 
     $self->debug_print(__PACKAGE__." count(): ".Dumper($self));
     # TODO

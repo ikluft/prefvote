@@ -22,10 +22,14 @@ use overload
 use Moo;
 use MooX::TypeTiny;
 use Types::Standard qw(Tuple);
-use Types::Common::Numeric qw(PositiveOrZeroInt);
 use Types::Common::String qw(NonEmptySimpleStr);
 use PrefVote::Core::TestSpec;
 extends 'PrefVote';
+
+# blackbox testing structure
+Readonly::Hash my %blackbox_spec => (
+    cand => [qw(array string)],
+);
 
 # candidates paired either as winner-loser or alphabetical for ties
 has cand => (
@@ -34,23 +38,38 @@ has cand => (
     required => 1,
 );
 
-# margin of victory (0 for tie)
-has mov => (
-    is => 'ro',
-    isa => PositiveOrZeroInt,
-    required => 1,
-);
+# get candidates in the pair
+sub cands
+{
+    my $self = shift;
+    return @{$self->cand()};
+}
 
+# comparison function for sorting PrefVote::RankedPairs::Majority elements by margin of victory (mov)
 sub pair_cmp
 {
     my ($self, $other, $swap) = @_;
+
+    # make sure both elements in the comparison are of this package's type, or a subclass
     if (not $other->isa(__PACKAGE__)) {
         PrefVote::Core::Exception->throw(description => "majority comparison type mismatch");
     }
-    if ($swap) {
-        return (($self->{mov} // 0) <=> ($other->{mov} // 0));
+
+    # pairs in comparison must be swapped if $swap flag is on
+    my ($pair1, $pair2) = $swap ? ($self->{cand}, $other->{cand}) : ($other->{cand}, $self->{cand});
+
+    # compare for sorting margin of victory in descending order
+    my $rp_obj = PrefVote::RankedPairs->instance();
+    my $mov1 = $rp_obj->get_mov(@$pair1);
+    my $mov2 = $rp_obj->get_mov(@$pair2);
+    if ($mov1 != $mov2) {
+        return $mov1 <=> $mov2;
     }
-    return (($other->{mov} // 0) <=> ($self->{mov} // 0));
+
+    # if margin of victory was equal, secondary comparison is for lesser opposition (ascending order)
+    my $oppose1 = $rp_obj->get_preference(reverse @$pair1);
+    my $oppose2 = $rp_obj->get_preference(reverse @$pair2);
+    return $oppose2 <=> $oppose1;
 }
 
 1;
