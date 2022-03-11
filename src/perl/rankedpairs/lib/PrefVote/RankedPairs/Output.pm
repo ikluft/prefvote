@@ -48,16 +48,18 @@ sub do_counting_table
             }
 
             # add blank entry if no comparison occurred between these candidates (rare corner case)
-            if (not exists $pair->{$i}{$j}{mov} and not exists $pair->{$j}{$i}{preference}) {
+            if (not exists $pair->{$i}{$j}{mov}) {
                 push @row, "";
                 next;
             }
 
             # add margin of victory and win/lose icon
-            my $margin = ($pair->{$i}{$j}{preference} // 0) - ($pair->{$j}{$i}{preference} // 0);
+            my $margin = ($pair->{$i}{$j}{mov} // 0);
+            my $locked = ($pair->{$i}{$j}{lock} // 0);
             my $icon = ($margin == 0) ? PrefVote::Core::Output::symbol("tie")
                 : (($margin > 0) ? PrefVote::Core::Output::symbol("win") : PrefVote::Core::Output::symbol("lose"));
-            push @row, "$margin $icon";
+            my $lock_icon = $locked ? " ".PrefVote::Core::Output::symbol("lock") : "";
+            push @row, "$margin $icon$lock_icon";
         }
         push @result_rows, \@row;
     }

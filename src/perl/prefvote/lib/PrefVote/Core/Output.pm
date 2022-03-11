@@ -32,6 +32,7 @@ Readonly::Hash my %symbols => (
     "win" => "\N{WHITE HEAVY CHECK MARK}",
     "lose" => "\N{CROSS MARK}",
     "tie" => "\N{LARGE BLUE CIRCLE}",
+    "lock" => "\N{LOCK}",
     "n/a" => "\N{PROHIBITED SIGN}",
     "unknown" => "\N{WHITE QUESTION MARK ORNAMENT}",
 );
