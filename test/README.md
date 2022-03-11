@@ -24,8 +24,8 @@ Numbers in each cell are test cases planned/passed/failed.
 <td>319/319/0</td>
 <td>195/195/0</td>
 <td>182/182/0</td>
-<td>𝟬</td>
-<td>696/696/0</td>
+<td>29/29/0</td>
+<td>725/725/0</td>
 </tr>
 <tr>
 <td>Rust whitebox</td>
@@ -40,8 +40,8 @@ Numbers in each cell are test cases planned/passed/failed.
 <td>693/693/0</td>
 <td>7043/7043/0</td>
 <td>8282/8282/0</td>
-<td>𝟬</td>
-<td>16018/16018/0</td>
+<td>6611/6611/0</td>
+<td>22629/22629/0</td>
 </tr>
 <tr>
 <td>Rust blackbox</td>
@@ -56,8 +56,8 @@ Numbers in each cell are test cases planned/passed/failed.
 <td>1012/1012/0</td>
 <td>7238/7238/0</td>
 <td>8464/8464/0</td>
-<td>0/0/0</td>
-<td>16714/16714/0</td>
+<td>6640/6640/0</td>
+<td>23354/23354/0</td>
 </tr>
 </tbody>
 </table>
