@@ -62,7 +62,9 @@ has pair => (
     handles_via => 'Hash',
     handles => {
         pair_accessor => 'accessor',
+        pair_get => 'get',
         pair_keys => 'keys',
+        pair_set => 'set',
     },
 );
 
@@ -145,20 +147,12 @@ sub get_mov
     return $self->{pair}{$cand_i}{$cand_j}->get_mov();
 }
 
-# direct-lock a candidate-pair
-sub set_direct_lock
+# lock a candidate-pair
+sub set_lock
 {
     my ($self, $cand_i, $cand_j) = @_;
     $self->make_pair_node($cand_i, $cand_j);
-    return $self->{pair}{$cand_i}{$cand_j}->set_direct_lock();
-}
-
-# indirect-lock a candidate-pair
-sub set_indirect_lock
-{
-    my ($self, $cand_i, $cand_j) = @_;
-    $self->make_pair_node($cand_i, $cand_j);
-    return $self->{pair}{$cand_i}{$cand_j}->set_indirect_lock();
+    return $self->{pair}{$cand_i}{$cand_j}->set_lock();
 }
 
 # get lock status in matrix entry
@@ -168,6 +162,38 @@ sub get_lock
     return 0 if not exists $self->{pair}{$cand_i}; # zero if the node doesn't exist
     return 0 if not exists $self->{pair}{$cand_i}{$cand_j}; # zero if the node doesn't exist
     return $self->{pair}{$cand_i}{$cand_j}->get_lock();
+}
+
+# add a directed link in the graph
+sub graph_add_link
+{
+    my ($self, $cand_i, $cand_j) = @_;
+
+    # tally links in graph
+    if (not $self->graph_exists($cand_i)) {
+        $self->graph_set($cand_i, {});
+    }
+    $self->{graph}{$cand_i}{$cand_j} = 1;
+    return;
+}
+
+# get a choice/candidate's total locked wins
+sub cand_total_wins
+{
+    my ($self, $cand) = @_;
+    return 0 if not $self->graph_exists($cand);
+    return scalar keys %{$self->graph_accessor($cand)};
+}
+
+# get a choice/candidate's total of all margins of victory
+sub cand_total_mov
+{
+    my ($self, $cand) = @_;
+    my $total = 0;
+    foreach my $opponent (keys %{$self->pair_get($cand)}) {
+        $total += $self->get_mov($cand, $opponent);
+    }
+    return $total;
 }
 
 # return a ballot item as a list, whether it was a single scalar or a tie-group set
@@ -231,7 +257,7 @@ sub sort_pairs
 {
     my $self = shift;
 
-    # create list of candidate pairs
+    # create list of candidate pairs and compute margin of victory for each
     foreach my $cand_i ($self->pair_keys()) {
         foreach my $cand_j (keys %{$self->pair_accessor($cand_i)}) {
             # skip if we've already computed this pair in the reverse candidate order
@@ -268,6 +294,40 @@ sub sort_pairs
     return;
 }
 
+# depth first search looking for a specific node (to prevent a cycle)
+sub depth_first_search
+{
+    my ($self, %opts) = @_;
+    my $target = $opts{target};
+    my $node = $opts{node};
+    my $visited = $opts{visited};
+
+    # skip if this node has already been visited
+    if ($visited->{$node} // 0) {
+        return 0;
+    }
+
+    # set this node as visited
+    $visited->{$node} = 1;
+
+    # skip if there are no adjacent nodes
+    return 0 if not $self->graph_exists($node);
+
+    # inspect adjacent nodes for the target, return true if found
+    # otherwise traverse them
+    foreach my $adj (keys %{$self->graph_get($node)}) {
+        if ($adj eq $target) {
+            return 1;
+        }
+        if ($self->depth_first_search(target => $target, node => $adj, visited => $visited)) {
+            return 1;
+        }
+    }
+
+    # nothing found, return false (not found)
+    return 0;
+}
+
 # check if a candidate pair conflicts with previous pairs
 sub is_conflict
 {
@@ -275,35 +335,25 @@ sub is_conflict
 
     # skip ties - either direction is in conflict against locking
     if ($self->get_mov($cand1, $cand2) == 0) {
+        $self->debug_print("is_conflict($cand1, $cand2) -> true (tie)");
         return 1;
     }
 
     # it's a conflict if the opposite order/direction of the same pair is locked
-    return $self->get_lock($cand2, $cand1) != 0;
-}
-
-# set indirect locks on downstream links
-sub graph_locks
-{
-    my ($self, $start, @seen_nodes) = @_;
-    $self->debug_print("graph_locks($start -> ".join(" ", @seen_nodes)."}");
-
-    # skip nodes already seen
-    foreach my $seen (@seen_nodes) {
-        return if $start eq $seen;
+    if ($self->get_lock($cand2, $cand1) != 0) {
+        $self->debug_print("is_conflict($cand1, $cand2) -> true (reverse direction is locked)");
+        return 1;
     }
 
-    # traverse graph
-    foreach my $subnode (keys %{$self->graph_get($start)}) {
-        # set indirect locks for each node seen on this path
-        foreach my $seen_node (@seen_nodes) {
-            $self->set_indirect_lock($seen_node, $subnode);
-        }
-
-        # traverse the graph recursively from this node
-        $self->graph_locks($subnode, @seen_nodes, $subnode)
+    # do a depth-first search of the graph to detect a path from cand2 to cand1, which would cause a cycle
+    if ($self->depth_first_search(target => $cand1, node => $cand2, visited => {})) {
+        $self->debug_print("is_conflict($cand1, $cand2) -> true (cycle detected)");
+        return 1;
     }
-    return;
+
+    # no conflict found
+    $self->debug_print("is_conflict($cand1, $cand2) -> false (no conflict)");
+    return 0;
 }
 
 # lock candidtate pairs which don't conflict with earlier pairs
@@ -313,8 +363,6 @@ sub lock_pairs
 
     # loop through sorted majority-pair list:
     # lock pairs which don't conflict with earlier ones
-    #   direct lock for pairs as listed
-    #   indirect lock for pairs implied by earlier locks (if A>B and B>C then A>C)
     for (my $maj_index=0; $maj_index < $self->majority_count(); $maj_index++) {
         # find majority item (candidate pair) for this pass through the loop
         my $majority = $self->majority_get($maj_index);
@@ -325,20 +373,52 @@ sub lock_pairs
             next;
         }
 
-        # direct-lock the listed candidate pair
-        $self->set_direct_lock(@pair);
+        # -lock the listed candidate pair
+        $self->set_lock(@pair);
 
-        # tally links in a graph
-        if (not $self->graph_exists($pair[0])) {
-            $self->graph_set($pair[0], {});
-        }
-        $self->{graph}{$pair[0]}{$pair[1]} = 1;
-
-        # set indirect locks on downstream pairs implied by existing pairs
-        $self->graph_locks($pair[0]);
+        # tally links in graph
+        $self->graph_add_link($pair[0], $pair[1]);
     }
+    return;
 }
 
+# comparison function for sorting results
+sub cmp_choice
+{
+    my ($self, $cand1, $cand2) = @_;
+
+    # compare total wins in descending order
+    my $total_wins_1 = $self->cand_total_wins($cand1);
+    my $total_wins_2 = $self->cand_total_wins($cand2);
+    if ($total_wins_1 != $total_wins_2) {
+        return $total_wins_2 <=> $total_wins_1;
+    }
+
+    # in case of tie in total wins, compare total of margins of victory in descending order
+    my $total_mov_1 = $self->cand_total_mov($cand1);
+    my $total_mov_2 = $self->cand_total_mov($cand2);
+    return $total_mov_2 <=> $total_mov_1;
+}
+
+# calculate result ordering from graph
+sub graph_to_order
+{
+    my $self = shift;
+
+    # sort list of choices to begin graph traversal
+    my @choices = sort { $self->cmp_choice($a, $b) } $self->choices_keys(); # list of candidates ordered by cmp_choice
+
+    # detect ties and build result rankings
+    while (scalar @choices) {
+        my $leader = shift @choices;
+        my $tie_group = set($leader);
+        while ((scalar @choices > 0) and ($self->cmp_choice($leader, $choices[0]) == 0)) {
+            $tie_group->insert(shift @choices);
+        }
+        $self->winners_push($tie_group);
+    }
+    return;
+}
 
 # count votes using Ranked Pairs method
 sub count
@@ -357,8 +437,13 @@ sub count
     # lock candidate pairs which don't conflict with earlier pairs
     $self->lock_pairs();
 
-    $self->debug_print(__PACKAGE__." count(): ".Dumper($self));
-    # TODO
+    # calculate result ordering from graph
+    $self->graph_to_order();
+
+    # save per-candidate final results in PrefVote::Core's choice_to_result map
+    $self->save_c2r(winners => $self->winners());
+
+    #$self->debug_print(__PACKAGE__." count(): ".Dumper($self));
     return;
 }
 

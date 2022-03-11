@@ -20,15 +20,10 @@ use Set::Tiny qw(set);
 # class definitions
 use Moo;
 use MooX::TypeTiny;
-use Types::Standard qw(Int);
+use Types::Standard qw(Bool Int);
 use Types::Common::Numeric qw(PositiveOrZeroInt IntRange);
 use PrefVote::Core::TestSpec;
 extends 'PrefVote';
-
-# constants for lock attribute
-Readonly::Scalar my $no_lock => 0;
-Readonly::Scalar my $direct_lock => 1;
-Readonly::Scalar my $indirect_lock => 2;
 
 # blackbox testing structure
 Readonly::Hash my %blackbox_spec => (
@@ -53,7 +48,7 @@ has mov => (
 # flag: the pair is locked
 has lock => (
     is => 'rw',
-    isa => IntRange[$no_lock, $indirect_lock],
+    isa => Bool,
 );
 
 # add to pair node's preference total
@@ -76,20 +71,11 @@ sub get_mov
     return $self->{mov} // 0;
 }
 
-# set direct lock
-sub set_direct_lock
+# set lock
+sub set_lock
 {
     my $self = shift;
-    $self->lock($direct_lock);
-    return;
-}
-
-# set indirect_lock
-sub set_indirect_lock
-{
-    my $self = shift;
-    return if $self->get_lock() == $direct_lock; # skip: already has a higher lock
-    $self->lock($indirect_lock);
+    $self->lock(1);
     return;
 }
 
@@ -98,15 +84,7 @@ sub set_indirect_lock
 sub get_lock
 {
     my $self = shift;
-    return $self->{lock} // $no_lock;
-}
-
-# check if a direct lock exists
-sub is_direct_lock
-{
-    my $self = shift;
-    return $self->get_lock() == $direct_lock;
-
+    return $self->{lock} // 0;
 }
 
 1;
