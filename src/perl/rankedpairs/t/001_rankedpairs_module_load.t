@@ -7,6 +7,9 @@ use Test::More;
 
 my @classes = qw(
         PrefVote::RankedPairs
+        PrefVote::RankedPairs::Majority
+        PrefVote::RankedPairs::Output
+        PrefVote::RankedPairs::PairData
         );
 plan tests => scalar @classes;
 
