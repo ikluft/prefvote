@@ -34,7 +34,7 @@ extends 'PrefVote::Core';
 Readonly::Hash my %blackbox_spec => (
     winners => [qw(list set string)],
     pair => [qw(hash hash PrefVote::RankedPairs::PairData)],
-    majority => [qw(array PrefVote::RankedPairs::Majority)],
+    majority => [qw(list PrefVote::RankedPairs::Majority)],
     graph => [qw(hash hash string)],
 );
 PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, spec => \%blackbox_spec, parent => 'PrefVote::Core');

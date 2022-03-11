@@ -16,26 +16,33 @@ use autodie;
 use Data::Dumper;
 use Readonly;
 use overload
-    '<=>' => \&pair_cmp;
+    '<=>' => \&pair_cmp,
+    '""' => \&stringify;
 
 # class definitions
 use Moo;
 use MooX::TypeTiny;
-use Types::Standard qw(Tuple);
+use MooX::HandlesVia;
+use Types::Standard qw(ArrayRef);
 use Types::Common::String qw(NonEmptySimpleStr);
 use PrefVote::Core::TestSpec;
 extends 'PrefVote';
 
 # blackbox testing structure
 Readonly::Hash my %blackbox_spec => (
-    cand => [qw(array string)],
+    cand => [qw(list string)],
 );
 
 # candidates paired either as winner-loser or alphabetical for ties
 has cand => (
     is => 'ro',
-    isa => Tuple[NonEmptySimpleStr, NonEmptySimpleStr],
+    isa => ArrayRef[NonEmptySimpleStr, 2, 2],
     required => 1,
+    handles_via => 'Array',
+    handles => {
+        cand_all => 'all',
+        cand_join => 'join',
+    },
 );
 
 # get candidates in the pair
@@ -70,6 +77,13 @@ sub pair_cmp
     my $oppose1 = $rp_obj->get_preference(reverse @$pair1);
     my $oppose2 = $rp_obj->get_preference(reverse @$pair2);
     return $oppose2 <=> $oppose1;
+}
+
+# convert to string
+sub stringify
+{
+    my $self = shift;
+    return $self->cand_join('>');
 }
 
 1;
