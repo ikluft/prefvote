@@ -10,7 +10,7 @@ The original Vote::STV software implemented the [single transferable vote](https
 
 STV was the first implemented voting method in PrefVote since it was the original implementation as Vote::STV back to 1998. But STV has largely fallen out of favor because studies of voting methods found it lacking on some desirable characteristics. STV was retained while modernizing the code to develop testing infrastructure.
 
- While no voting method is perfect, methods which meet Condorcet requirements are among the best around. So the second voting method implemented in PrefVote was the [Schulze algorithm](https://en.wikipedia.org/wiki/Schulze_method) (see [full definition paper)](https://arxiv.org/abs/1804.02973). Next up will be [Ranked Pairs](https://en.wikipedia.org/wiki/Ranked_pairs).
+ While no voting method is perfect, methods which meet Condorcet requirements are among the best around. So the second voting method implemented in PrefVote was the [Schulze algorithm](https://en.wikipedia.org/wiki/Schulze_method) (see [full definition paper)](https://arxiv.org/abs/1804.02973). Next was [Ranked Pairs](https://en.wikipedia.org/wiki/Ranked_pairs).
 
 After the reference implementation in Perl, next up for language implementations will be [Rust](https://www.rust-lang.org/).
 
@@ -291,3 +291,129 @@ Notes about the Schulze example:
 - As with the STV results, the first table in the example is the final ranking order of the voting results. It indicates selected, tied, and placed candidates as above. There is no concept of eliminated candidates in the Schulze method. After the winner is found in each round, the vote is re-run for as many rounds as needed until all the candidates are ordered in the result.
 
 - The margin-of-victory matrix shows the voting results with how much each candidate on the row labels are preferred over candidates on the column labels. Negative numbers mean the other candidate is more preferred. There is a "not applicable" icon in each cell diagonally down the middle where each candidate cannot be compared to themselves. The matrix always has an inverse symmetry because the same pair of candidates compared on the other side of the diagonal will be opposite - with A-B vs B-A, one of them must negative and opposite of the other. A Condorcet winner is easily visible as having all positive numbers (and check-mark icons) compared against all other candidates.
+
+## Ranked Pairs voting results from the example data
+
+<blockquote>
+<div id="prefvote">
+<h2>Results: Test Vote</h2>
+<p>1 seat available</p>
+<table>
+<thead>
+<tr>
+<th>Abbreviation</th>
+<th>Name/description</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FACTIOUS</td>
+<td>factious/divisive</td>
+<td>1/selected</td>
+</tr>
+<tr>
+<td>EVIL</td>
+<td>evil villain</td>
+<td>2/placed</td>
+</tr>
+<tr>
+<td>CHAOTIC</td>
+<td>chaotic unpredictable</td>
+<td>3/placed</td>
+</tr>
+<tr>
+<td>DYSFUNCTIONAL</td>
+<td>dysfunctional incompetent</td>
+<td>4/placed</td>
+</tr>
+<tr>
+<td>ABNORMAL</td>
+<td>abnormal and antisocial</td>
+<td>5/placed</td>
+</tr>
+<tr>
+<td>BORING</td>
+<td>boring as anything</td>
+<td>6/placed</td>
+</tr>
+</tbody>
+</table>
+<h3>Margin-of-victory matrix</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>FACTIOUS</th>
+<th>EVIL</th>
+<th>CHAOTIC</th>
+<th>DYSFUNCTIONAL</th>
+<th>ABNORMAL</th>
+<th>BORING</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FACTIOUS</td>
+<td>🛇</td>
+<td>7 ✅</td>
+<td>57 ✅</td>
+<td>67 ✅</td>
+<td>74 ✅</td>
+<td>79 ✅</td>
+</tr>
+<tr>
+<td>EVIL</td>
+<td>-7 ❌</td>
+<td>🛇</td>
+<td>48 ✅</td>
+<td>68 ✅</td>
+<td>68 ✅</td>
+<td>64 ✅</td>
+</tr>
+<tr>
+<td>CHAOTIC</td>
+<td>-57 ❌</td>
+<td>-48 ❌</td>
+<td>🛇</td>
+<td>16 ✅</td>
+<td>5 ✅</td>
+<td>15 ✅</td>
+</tr>
+<tr>
+<td>DYSFUNCTIONAL</td>
+<td>-67 ❌</td>
+<td>-68 ❌</td>
+<td>-16 ❌</td>
+<td>🛇</td>
+<td>13 ✅</td>
+<td>5 ✅</td>
+</tr>
+<tr>
+<td>ABNORMAL</td>
+<td>-74 ❌</td>
+<td>-68 ❌</td>
+<td>-5 ❌</td>
+<td>-13 ❌</td>
+<td>🛇</td>
+<td>11 ✅</td>
+</tr>
+<tr>
+<td>BORING</td>
+<td>-79 ❌</td>
+<td>-64 ❌</td>
+<td>-15 ❌</td>
+<td>-5 ❌</td>
+<td>-11 ❌</td>
+<td>🛇</td>
+</tr>
+</tbody>
+</table>
+</div>
+</blockquote>
+
+Notes about the Ranked Pairs example:
+
+- Ranked Pairs is also a Condorcet method, like Schulze. So there are fewer differences between them. And in this example there are no differences at all. Though other files in the test suite do have some modest differences when breaking ties.
+
+- I added a hack to the Ranked Pairs implementation on the tie-breaking. Rather than select a random ballot to count a second time as Tideman recommended in his 1987 paper, I used the total of each candidate's margins of victory compared to all other candidates as a second priority sorting field. I'll look into back-porting that to Schulze as well.
