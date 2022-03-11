@@ -35,6 +35,7 @@ Readonly::Hash my %blackbox_spec => (
     winners => [qw(list set string)],
     pair => [qw(hash hash PrefVote::RankedPairs::PairData)],
     majority => [qw(array PrefVote::RankedPairs::Majority)],
+    graph => [qw(hash hash string)],
 );
 PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, spec => \%blackbox_spec, parent => 'PrefVote::Core');
 
@@ -78,6 +79,21 @@ has majority => (
         majority_get => 'get',
         majority_push => 'push',
         majority_sort => 'sort_in_place',
+    },
+);
+
+# majority graph for determining ordering
+has graph => (
+    is => 'rw',
+    isa => HashRef[HashRef[NonEmptySimpleStr]],
+    default => sub { return {} },
+    handles_via => 'Hash',
+    handles => {
+        graph_accessor => 'accessor',
+        graph_exists => 'exists',
+        graph_get => 'get',
+        graph_keys => 'keys',
+        graph_set => 'set',
     },
 );
 
@@ -130,19 +146,19 @@ sub get_mov
 }
 
 # direct-lock a candidate-pair
-sub direct_lock
+sub set_direct_lock
 {
     my ($self, $cand_i, $cand_j) = @_;
     $self->make_pair_node($cand_i, $cand_j);
-    return $self->{pair}{$cand_i}{$cand_j}->direct_lock();
+    return $self->{pair}{$cand_i}{$cand_j}->set_direct_lock();
 }
 
 # indirect-lock a candidate-pair
-sub indirect_lock
+sub set_indirect_lock
 {
     my ($self, $cand_i, $cand_j) = @_;
     $self->make_pair_node($cand_i, $cand_j);
-    return $self->{pair}{$cand_i}{$cand_j}->indirect_lock();
+    return $self->{pair}{$cand_i}{$cand_j}->set_indirect_lock();
 }
 
 # get lock status in matrix entry
@@ -266,6 +282,30 @@ sub is_conflict
     return $self->get_lock($cand2, $cand1) != 0;
 }
 
+# set indirect locks on downstream links
+sub graph_locks
+{
+    my ($self, $start, @seen_nodes) = @_;
+    $self->debug_print("graph_locks($start -> ".join(" ", @seen_nodes)."}");
+
+    # skip nodes already seen
+    foreach my $seen (@seen_nodes) {
+        return if $start eq $seen;
+    }
+
+    # traverse graph
+    foreach my $subnode (keys %{$self->graph_get($start)}) {
+        # set indirect locks for each node seen on this path
+        foreach my $seen_node (@seen_nodes) {
+            $self->set_indirect_lock($seen_node, $subnode);
+        }
+
+        # traverse the graph recursively from this node
+        $self->graph_locks($subnode, @seen_nodes, $subnode)
+    }
+    return;
+}
+
 # lock candidtate pairs which don't conflict with earlier pairs
 sub lock_pairs
 {
@@ -286,10 +326,16 @@ sub lock_pairs
         }
 
         # direct-lock the listed candidate pair
-        $self->direct_lock(@pair);
+        $self->set_direct_lock(@pair);
 
-        # set indirect locks on pairs implied by existing pairs
-        # TODO
+        # tally links in a graph
+        if (not $self->graph_exists($pair[0])) {
+            $self->graph_set($pair[0], {});
+        }
+        $self->{graph}{$pair[0]}{$pair[1]} = 1;
+
+        # set indirect locks on downstream pairs implied by existing pairs
+        $self->graph_locks($pair[0]);
     }
 }
 

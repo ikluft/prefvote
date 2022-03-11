@@ -77,7 +77,7 @@ sub get_mov
 }
 
 # set direct lock
-sub direct_lock
+sub set_direct_lock
 {
     my $self = shift;
     $self->lock($direct_lock);
@@ -85,9 +85,10 @@ sub direct_lock
 }
 
 # set indirect_lock
-sub indirect_lock
+sub set_indirect_lock
 {
     my $self = shift;
+    return if $self->get_lock() == $direct_lock; # skip: already has a higher lock
     $self->lock($indirect_lock);
     return;
 }
@@ -97,7 +98,15 @@ sub indirect_lock
 sub get_lock
 {
     my $self = shift;
-    return $self->{lock} // 0;
+    return $self->{lock} // $no_lock;
+}
+
+# check if a direct lock exists
+sub is_direct_lock
+{
+    my $self = shift;
+    return $self->get_lock() == $direct_lock;
+
 }
 
 1;
