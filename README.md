@@ -356,29 +356,29 @@ Notes about the Schulze example:
 <tr>
 <td>FACTIOUS</td>
 <td>🛇</td>
-<td>7 ✅</td>
-<td>57 ✅</td>
-<td>67 ✅</td>
-<td>74 ✅</td>
-<td>79 ✅</td>
+<td>7 ✅ 🔒</td>
+<td>57 ✅ 🔒</td>
+<td>67 ✅ 🔒</td>
+<td>74 ✅ 🔒</td>
+<td>79 ✅ 🔒</td>
 </tr>
 <tr>
 <td>EVIL</td>
 <td>-7 ❌</td>
 <td>🛇</td>
-<td>48 ✅</td>
-<td>68 ✅</td>
-<td>68 ✅</td>
-<td>64 ✅</td>
+<td>48 ✅ 🔒</td>
+<td>68 ✅ 🔒</td>
+<td>68 ✅ 🔒</td>
+<td>64 ✅ 🔒</td>
 </tr>
 <tr>
 <td>CHAOTIC</td>
 <td>-57 ❌</td>
 <td>-48 ❌</td>
 <td>🛇</td>
-<td>16 ✅</td>
-<td>5 ✅</td>
-<td>15 ✅</td>
+<td>16 ✅ 🔒</td>
+<td>5 ✅ 🔒</td>
+<td>15 ✅ 🔒</td>
 </tr>
 <tr>
 <td>DYSFUNCTIONAL</td>
@@ -386,8 +386,8 @@ Notes about the Schulze example:
 <td>-68 ❌</td>
 <td>-16 ❌</td>
 <td>🛇</td>
-<td>13 ✅</td>
-<td>5 ✅</td>
+<td>13 ✅ 🔒</td>
+<td>5 ✅ 🔒</td>
 </tr>
 <tr>
 <td>ABNORMAL</td>
@@ -396,7 +396,7 @@ Notes about the Schulze example:
 <td>-5 ❌</td>
 <td>-13 ❌</td>
 <td>🛇</td>
-<td>11 ✅</td>
+<td>11 ✅ 🔒</td>
 </tr>
 <tr>
 <td>BORING</td>

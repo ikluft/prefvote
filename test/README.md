@@ -1,6 +1,6 @@
 # PrefVote test suite
 
-PrefVote is designed for multiple programming language implementations using a common test suite. The test suite consists of "black box" test specs used across all languages, plus "white box" unit tests within each language's source code directory. The test harness collects Test Anywhere Protocol (TAP) data from each language's unit tests to report the results.
+PrefVote is designed for multiple programming language implementations using a common test suite. The test suite consists of "black box" test specs used across all languages, plus "white box" unit tests within each language's source code directory. The test harness collects [Test Anywhere Protocol (TAP)](https://testanything.org/) data from each language's unit tests to report the results.
 
 ## Progress on the test suite
 
