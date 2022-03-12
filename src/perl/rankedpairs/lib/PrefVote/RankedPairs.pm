@@ -290,7 +290,7 @@ sub sort_pairs
     }
 
     # sort candidate pairs list by margin of victory
-    $self->majority_sort(\&PrefVote::RankedPairs::Majority::pair_cmp);
+    $self->majority_sort(\&PrefVote::RankedPairs::Majority::cmp_pair);
     return;
 }
 
@@ -387,17 +387,24 @@ sub cmp_choice
 {
     my ($self, $cand1, $cand2) = @_;
 
-    # compare total wins in descending order
-    my $total_wins_1 = $self->cand_total_wins($cand1);
-    my $total_wins_2 = $self->cand_total_wins($cand2);
-    if ($total_wins_1 != $total_wins_2) {
-        return $total_wins_2 <=> $total_wins_1;
+    # 1st comparison: Condorcet table wins in descending order
+    my $total_wins1 = $self->cand_total_wins($cand1);
+    my $total_wins2 = $self->cand_total_wins($cand2);
+    if ($total_wins1 != $total_wins2) {
+        return $total_wins2 <=> $total_wins1;
     }
 
-    # in case of tie in total wins, compare total of margins of victory in descending order
-    my $total_mov_1 = $self->cand_total_mov($cand1);
-    my $total_mov_2 = $self->cand_total_mov($cand2);
-    return $total_mov_2 <=> $total_mov_1;
+    # 2nd comparison: fewer votes against each choice
+    my $oppose1 = $self->get_preference($cand2, $cand1);
+    my $oppose2 = $self->get_preference($cand1, $cand2);
+    if ($oppose1 != $oppose2) {
+        return $oppose2 <=> $oppose1;
+    }
+
+    # 3rd comparison: total of margins of victory in descending order
+    my $total_mov1 = $self->cand_total_mov($cand1);
+    my $total_mov2 = $self->cand_total_mov($cand2);
+    return $total_mov2 <=> $total_mov1;
 }
 
 # calculate result ordering from graph
