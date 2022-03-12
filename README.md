@@ -301,41 +301,41 @@ Notes about the Schulze example:
 <table>
 <thead>
 <tr>
-<th>Abbreviation</th>
-<th>Name/description</th>
-<th>Result</th>
+<th style="white-space: nowrap;">Abbreviation</th>
+<th style="white-space: nowrap;">Name/description</th>
+<th style="white-space: nowrap;">Result</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>FACTIOUS</td>
-<td>factious/divisive</td>
-<td>1/selected</td>
+<td style="white-space: nowrap;">FACTIOUS</td>
+<td style="white-space: nowrap;">factious/divisive</td>
+<td style="white-space: nowrap;">1/selected</td>
 </tr>
 <tr>
-<td>EVIL</td>
-<td>evil villain</td>
-<td>2/placed</td>
+<td style="white-space: nowrap;">EVIL</td>
+<td style="white-space: nowrap;">evil villain</td>
+<td style="white-space: nowrap;">2/placed</td>
 </tr>
 <tr>
-<td>CHAOTIC</td>
-<td>chaotic unpredictable</td>
-<td>3/placed</td>
+<td style="white-space: nowrap;">CHAOTIC</td>
+<td style="white-space: nowrap;">chaotic unpredictable</td>
+<td style="white-space: nowrap;">3/placed</td>
 </tr>
 <tr>
-<td>DYSFUNCTIONAL</td>
-<td>dysfunctional incompetent</td>
-<td>4/placed</td>
+<td style="white-space: nowrap;">DYSFUNCTIONAL</td>
+<td style="white-space: nowrap;">dysfunctional incompetent</td>
+<td style="white-space: nowrap;">4/placed</td>
 </tr>
 <tr>
-<td>ABNORMAL</td>
-<td>abnormal and antisocial</td>
-<td>5/placed</td>
+<td style="white-space: nowrap;">ABNORMAL</td>
+<td style="white-space: nowrap;">abnormal and antisocial</td>
+<td style="white-space: nowrap;">5/placed</td>
 </tr>
 <tr>
-<td>BORING</td>
-<td>boring as anything</td>
-<td>6/placed</td>
+<td style="white-space: nowrap;">BORING</td>
+<td style="white-space: nowrap;">boring as anything</td>
+<td style="white-space: nowrap;">6/placed</td>
 </tr>
 </tbody>
 </table>
@@ -343,69 +343,69 @@ Notes about the Schulze example:
 <table>
 <thead>
 <tr>
-<th></th>
-<th>FACTIOUS</th>
-<th>EVIL</th>
-<th>CHAOTIC</th>
-<th>DYSFUNCTIONAL</th>
-<th>ABNORMAL</th>
-<th>BORING</th>
+<th style="white-space: nowrap;"></th>
+<th style="white-space: nowrap;">FACTIOUS</th>
+<th style="white-space: nowrap;">EVIL</th>
+<th style="white-space: nowrap;">CHAOTIC</th>
+<th style="white-space: nowrap;">DYSFUNCTIONAL</th>
+<th style="white-space: nowrap;">ABNORMAL</th>
+<th style="white-space: nowrap;">BORING</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>FACTIOUS</td>
-<td>🛇</td>
-<td>7 ✅ 🔒</td>
-<td>57 ✅ 🔒</td>
-<td>67 ✅ 🔒</td>
-<td>74 ✅ 🔒</td>
-<td>79 ✅ 🔒</td>
+<td style="white-space: nowrap;">FACTIOUS</td>
+<td style="white-space: nowrap;">🛇</td>
+<td style="white-space: nowrap;">7 ✅ 🔒</td>
+<td style="white-space: nowrap;">57 ✅ 🔒</td>
+<td style="white-space: nowrap;">67 ✅ 🔒</td>
+<td style="white-space: nowrap;">74 ✅ 🔒</td>
+<td style="white-space: nowrap;">79 ✅ 🔒</td>
 </tr>
 <tr>
-<td>EVIL</td>
-<td>-7 ❌</td>
-<td>🛇</td>
-<td>48 ✅ 🔒</td>
-<td>68 ✅ 🔒</td>
-<td>68 ✅ 🔒</td>
-<td>64 ✅ 🔒</td>
+<td style="white-space: nowrap;">EVIL</td>
+<td style="white-space: nowrap;">-7 ❌</td>
+<td style="white-space: nowrap;">🛇</td>
+<td style="white-space: nowrap;">48 ✅ 🔒</td>
+<td style="white-space: nowrap;">68 ✅ 🔒</td>
+<td style="white-space: nowrap;">68 ✅ 🔒</td>
+<td style="white-space: nowrap;">64 ✅ 🔒</td>
 </tr>
 <tr>
-<td>CHAOTIC</td>
-<td>-57 ❌</td>
-<td>-48 ❌</td>
-<td>🛇</td>
-<td>16 ✅ 🔒</td>
-<td>5 ✅ 🔒</td>
-<td>15 ✅ 🔒</td>
+<td style="white-space: nowrap;">CHAOTIC</td>
+<td style="white-space: nowrap;">-57 ❌</td>
+<td style="white-space: nowrap;">-48 ❌</td>
+<td style="white-space: nowrap;">🛇</td>
+<td style="white-space: nowrap;">16 ✅ 🔒</td>
+<td style="white-space: nowrap;">5 ✅ 🔒</td>
+<td style="white-space: nowrap;">15 ✅ 🔒</td>
 </tr>
 <tr>
-<td>DYSFUNCTIONAL</td>
-<td>-67 ❌</td>
-<td>-68 ❌</td>
-<td>-16 ❌</td>
-<td>🛇</td>
-<td>13 ✅ 🔒</td>
-<td>5 ✅ 🔒</td>
+<td style="white-space: nowrap;">DYSFUNCTIONAL</td>
+<td style="white-space: nowrap;">-67 ❌</td>
+<td style="white-space: nowrap;">-68 ❌</td>
+<td style="white-space: nowrap;">-16 ❌</td>
+<td style="white-space: nowrap;">🛇</td>
+<td style="white-space: nowrap;">13 ✅ 🔒</td>
+<td style="white-space: nowrap;">5 ✅ 🔒</td>
 </tr>
 <tr>
-<td>ABNORMAL</td>
-<td>-74 ❌</td>
-<td>-68 ❌</td>
-<td>-5 ❌</td>
-<td>-13 ❌</td>
-<td>🛇</td>
-<td>11 ✅ 🔒</td>
+<td style="white-space: nowrap;">ABNORMAL</td>
+<td style="white-space: nowrap;">-74 ❌</td>
+<td style="white-space: nowrap;">-68 ❌</td>
+<td style="white-space: nowrap;">-5 ❌</td>
+<td style="white-space: nowrap;">-13 ❌</td>
+<td style="white-space: nowrap;">🛇</td>
+<td style="white-space: nowrap;">11 ✅ 🔒</td>
 </tr>
 <tr>
-<td>BORING</td>
-<td>-79 ❌</td>
-<td>-64 ❌</td>
-<td>-15 ❌</td>
-<td>-5 ❌</td>
-<td>-11 ❌</td>
-<td>🛇</td>
+<td style="white-space: nowrap;">BORING</td>
+<td style="white-space: nowrap;">-79 ❌</td>
+<td style="white-space: nowrap;">-64 ❌</td>
+<td style="white-space: nowrap;">-15 ❌</td>
+<td style="white-space: nowrap;">-5 ❌</td>
+<td style="white-space: nowrap;">-11 ❌</td>
+<td style="white-space: nowrap;">🛇</td>
 </tr>
 </tbody>
 </table>
@@ -415,5 +415,7 @@ Notes about the Schulze example:
 Notes about the Ranked Pairs example:
 
 - Ranked Pairs is also a Condorcet method, like Schulze. So there are fewer differences between them. And in this example there are no differences at all. Though other files in the test suite do have some modest differences when breaking ties.
+
+- The lock icon (🔒) in the results indicate candidate majority pairings which were "locked" and accepted for use in the result order because they did not conflict with pairs with larger margins of victory. Table entries without a lock icon would be because they were a loss or tie, or a conflict with larger majorities. For example if A>B and B>C then C>A is not locked due to a conflict.
 
 - I added a hack to the Ranked Pairs implementation on the tie-breaking. Rather than select a random ballot to count a second time as Tideman recommended in his 1987 paper, I used the total of each candidate's margins of victory compared to all other candidates as a second priority sorting field. I'll look into back-porting that to Schulze as well.

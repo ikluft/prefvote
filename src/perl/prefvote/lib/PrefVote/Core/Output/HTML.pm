@@ -32,7 +32,7 @@ sub generate_html_table
         say "<thead>";
         say "<tr>";
         foreach my $col_item (@$header) {
-            say "<th>".escape_html($col_item)."</th>";
+            say "<th style=\"white-space: nowrap;\">".escape_html($col_item)."</th>";
         }
         say "</tr>";
         say "</thead>";
@@ -43,7 +43,7 @@ sub generate_html_table
     foreach my $row (@$rows) {
         say "<tr>";
         foreach my $col_item (@$row) {
-            say "<td>".escape_html($col_item)."</td>";
+            say "<td style=\"white-space: nowrap;\">".escape_html($col_item)."</td>";
         }
         say "</tr>";
     }
