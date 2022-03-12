@@ -16,7 +16,7 @@ use autodie;
 use Data::Dumper;
 use Readonly;
 use overload
-    '<=>' => \&pair_cmp,
+    '<=>' => \&cmp_pair,
     '""' => \&stringify;
 
 # class definitions
@@ -53,7 +53,7 @@ sub cands
 }
 
 # comparison function for sorting PrefVote::RankedPairs::Majority elements by margin of victory (mov)
-sub pair_cmp
+sub cmp_pair
 {
     my ($self, $other, $swap) = @_;
 
