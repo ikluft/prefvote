@@ -1,6 +1,6 @@
 # PrefVote test suite
 
-PrefVote is designed for multiple programming language implementations using a common test suite. The test suite consists of "black box" test specs used across all languages, plus "white box" unit tests within each language's source code directory. The test harness collects [Test Anywhere Protocol (TAP)](https://testanything.org/) data from each language's unit tests to report the results.
+PrefVote is designed for multiple programming language implementations using a common test suite. The test suite consists of "black box" test specs used across all languages, plus "white box" unit tests within each language's source code directory. The test harness collects [Test Anything Protocol (TAP)](https://testanything.org/) data from each language's unit tests to report the results.
 
 ## Progress on the test suite
 
@@ -24,8 +24,8 @@ Numbers in each cell are test cases planned/passed/failed.
 <td>319/319/0</td>
 <td>195/195/0</td>
 <td>182/182/0</td>
-<td>29/29/0</td>
-<td>725/725/0</td>
+<td>132/132/0</td>
+<td>828/828/0</td>
 </tr>
 <tr>
 <td>Rust whitebox</td>
@@ -56,8 +56,8 @@ Numbers in each cell are test cases planned/passed/failed.
 <td>1012/1012/0</td>
 <td>7238/7238/0</td>
 <td>8464/8464/0</td>
-<td>6640/6640/0</td>
-<td>23354/23354/0</td>
+<td>6743/6743/0</td>
+<td>23457/23457/0</td>
 </tr>
 </tbody>
 </table>
