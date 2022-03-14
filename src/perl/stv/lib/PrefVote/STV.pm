@@ -27,6 +27,7 @@ use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
 use Types::Standard qw(Str ArrayRef HashRef InstanceOf);
+use PrefVote::Core::Float qw(fp_equal fp_cmp);
 use PrefVote::Core::Set qw(Set);
 extends 'PrefVote::Core';
 
@@ -265,7 +266,9 @@ sub process_winners
     my $place = $self->winners_count()+1;
     foreach my $curr_key ( @round_candidate ) {
         # mark all the candidates over quota who are tied for first place as winners
-        if ( $round->tally_get($curr_key)->votes() == $round->tally_get($round_candidate[0])->votes() ) {
+        if (($round->tally_get($curr_key)->votes() == $round->tally_get($round_candidate[0])->votes()) and
+            (fp_equal($self->average_ranking($curr_key),$self->average_ranking($round_candidate[0]))))
+        {
             my $c_votes = $round->tally_get($curr_key)->votes();
             my $c_surplus = $c_votes - $round->quota();
             my $transfer_ratio = $c_surplus / $c_votes;
@@ -300,7 +303,8 @@ sub eliminate_losers
     my @round_eliminated;
     for ( $i = (scalar @round_candidate)-1; $i > 0; $i-- ) {
         my $indexed_cand = $round_candidate[$i];
-        if ( $round->tally_get($last_cand)->votes() == $round->tally_get($indexed_cand)->votes())
+        if (($round->tally_get($last_cand)->votes() == $round->tally_get($indexed_cand)->votes()) and
+            (fp_equal($self->average_ranking($last_cand),$self->average_ranking($indexed_cand))))
         {
             $round->tally_get($indexed_cand)->mark_as_eliminated();
             $self->debug_print("eliminated: ".$indexed_cand."\n");
@@ -346,7 +350,24 @@ sub count
         }
 
         # sort in descending order
-        my @round_candidate = $round->sort_candidates();
+        my @round_candidate = $round->sort_candidates(sub {
+            # 1st/primary comparison: votes for candidate in descending order
+            my $votes0 = $round->tally_get($_[0])->votes();
+            my $votes1 = $round->tally_get($_[1])->votes();
+            if ($votes0 != $votes1) {
+                return $votes1 <=> $votes0;
+            }
+
+            # 2nd comparison: average ballot-ranking position in ascending order
+            my $acr0 = $self->average_ranking($_[0]);
+            my $acr1 = $self->average_ranking($_[1]);
+            if (not fp_equal($acr0, $acr1)) {
+                return fp_cmp($acr0, $acr1);
+            }
+
+            # 3rd comparison: alphabetical (so ties in testing keep consistent order)
+            return $_[0] cmp $_[1];
+        });
 
         # Do we have a quota?
         # In a 1-seat race, a quota is a simple 50%+1 majority.

@@ -38,6 +38,7 @@ use MooX::HandlesVia;
 use Types::Standard qw(Str Int Enum ArrayRef HashRef Map Tuple InstanceOf Any);
 use Types::Common::Numeric qw(PositiveInt PositiveOrZeroInt);
 use Types::Common::String qw(NonEmptySimpleStr);
+use PrefVote::Core::Float qw(fp_equal fp_cmp float_internal PVPositiveOrZeroNum);
 extends 'PrefVote';
 with 'MooX::Singleton';
 
@@ -51,6 +52,7 @@ Readonly::Hash my %blackbox_spec => (
     seats => [qw(int)],
     ballots => [qw(hash PrefVote::Core::Ballot)],
     total_ballots => [qw(int)],
+    choice_rank => [qw(hash list int)],
 );
 PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, spec => \%blackbox_spec);
 
@@ -151,6 +153,34 @@ has total_ballots => (
     default => 0,
 );
 
+# keep each choice/candidate's position on ballots to compute average placement
+has choice_rank => (
+    is => 'rw',
+    isa => HashRef[ArrayRef[PositiveOrZeroInt]],
+    default => sub { return {} },
+    handles_via => 'Hash',
+    handles => {
+        cr_exists => 'exists',
+        cr_get => 'get',
+        cr_keys => 'keys',
+        cr_set => 'set',
+    },
+);
+
+# average position on ballots for each choice/candidate
+has average_choice_rank => (
+    is => 'rw',
+    isa => HashRef[PVPositiveOrZeroNum],
+    default => sub { return {} },
+    handles_via => 'Hash',
+    handles => {
+        acr_exists => 'exists',
+        acr_get => 'get',
+        acr_keys => 'keys',
+        acr_set => 'set',
+    },
+),
+
 # blackbox testing checklist structure
 # this is filled from the extra data from YAML input file, used for testing all PrefVote language implementations
 has testspec => (
@@ -226,6 +256,65 @@ sub supported_method
         }
     }
     return;
+}
+
+# tally ballot positions of choices/candidates
+sub save_ranking
+{
+    my ($self, @ballot) = @_;
+
+    # increment tallies for numeric places of each choice
+    my $choices_num = $self->choices_count();
+    for (my $i=0; $i < scalar @ballot; $i++) {
+        my $choice = $ballot[$i];
+
+        # make sure place record exists for this choice
+        foreach my $item ($choice->elements()) {
+            if (not exists $self->{choice_rank}{$item}) {
+                # init array of position tallies to zero
+                $self->{choice_rank}{$item} = [(0) x $choices_num];
+            }
+
+            # increment count for this choice in its ballot position
+            $self->{choice_rank}{$item}[$i]++;
+        }
+    }
+    return;
+}
+
+# get candidate average ballot-position ranking
+# return max/last place if no data on the choice/candidate (never appeared on any ballots)
+# note: average ballot placement doesn't consider total votes and shouldn't be a primary criteria, except in testing
+# after primary voting criteria are computed, this can be a tie-breaker like scoring the candidates
+sub average_ranking
+{
+    my ($self, $choice) = @_;
+
+    # if we already computed this, use the stored value
+    if ($self->acr_exists($choice)) {
+        return $self->acr_get($choice);
+    }
+
+    # set defualt result last place case if no data, which can happen if a candidate never appeared on any ballots
+    my $result = $self->choices_count(); # default result is last place
+
+    # process average if data exists
+    if (exists $self->{choice_rank}{$choice}) {
+        # compute average place (array index + 1) for the choice/candidate
+        my $total_votes = 0;
+        my $total_place = 0.0;
+        for (my $i=0; $i < scalar @{$self->{choice_rank}{$choice}}; $i++) {
+            $total_votes += $self->{choice_rank}{$choice}[$i];
+            $total_place += ($i+1)*$self->{choice_rank}{$choice}[$i];
+        }
+
+        # set average if votes were found
+        if ($total_votes > 0) {
+            $result = float_internal($total_place/$total_votes);
+            $self->acr_set($choice, $result);
+        }
+    }
+    return $result;
 }
 
 # generate choice hexadecimal index values and bidirectional hash lookup tables
@@ -322,6 +411,9 @@ sub submit_ballot
     # (preferably when the vote is received) because this module doesn't
     # retain any association between the ballot and the voter.
 
+    # record placement of choices on ballot
+    $self->save_ranking(@filtered_ballot);
+
     # make a string of this ballot combination for lookup
     my $hex_id = $self->ballot_to_hex(@filtered_ballot);
 
@@ -374,6 +466,33 @@ sub ingest_ballots
         }
     }
     $vote_obj->debug_print("votes: submitted=$submitted accepted=$accepted");
+    return;
+}
+
+# count votes
+# for testing only: Core is not a voting method
+# IMPORTANT: count() METHOD MUST BE OVERRIDDEN BY ALL SUBCLASSES - THIS IS WHERE THEY IMPLEMENT THEIR VOTING METHOD
+# since PrefVote::Core contains average ballot positions of each candidate, that data is used here for testing
+# note: average ballot position doesn't take number of votes into account
+# Do not use it as a primary sorting field in actual voting.
+sub count
+{
+    my $self = shift;
+
+    # sort results
+    my @order = sort {fp_cmp($self->average_ranking($a), $self->average_ranking($b))} $self->choices_keys();
+    my @winners;
+    while (scalar @order) {
+        my $cand = shift @order;
+        my $cand_set = set($cand);
+        while ((scalar @order) and fp_equal($self->average_ranking($order[0]), $self->average_ranking($cand))) {
+            $cand_set->insert(shift @order);
+        }
+        push @winners, $cand_set;
+    }
+
+    # simplistic sort by average ballot position
+    $self->save_c2r(winners => \@winners);
     return;
 }
 

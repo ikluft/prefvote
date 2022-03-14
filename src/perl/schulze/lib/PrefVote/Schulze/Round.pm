@@ -28,7 +28,7 @@ use MooX::TypeTiny;
 use MooX::HandlesVia;
 use Types::Standard qw(Bool ArrayRef HashRef InstanceOf Map);
 extends 'PrefVote::Core::Round';
-use PrefVote::Core::Float qw(float_internal PVPositiveOrZeroNum);
+use PrefVote::Core::Float qw(fp_equal fp_cmp float_internal PVPositiveOrZeroNum);
 
 # constants
 Readonly::Hash my %blackbox_spec => (
@@ -54,6 +54,7 @@ has win_flag => (
     default => sub { return {} },
     handles_via => 'Hash',
     handles => {
+        win_flag_clear => 'clear',
         win_flag_count => 'count',
         win_flag_delete => 'delete',
         win_flag_empty => 'is_empty',
@@ -492,8 +493,8 @@ sub break_tie
             # tie resolved in favor of m
             $self->set_win_order($m, $n, 1);
             $self->set_win_order($n, $m, 0);
-            #$self->win_flag_set($m, 1);
-            #$self->win_flag_delete($n, 1);
+            $self->win_flag_set($m, 1);
+            $self->win_flag_delete($n, 1);
             $tie_broken = 1;
             $changes_made = 1;
             $self->debug_print("final_rank_links: tie $m/$n broken in favor of $m");
@@ -501,8 +502,8 @@ sub break_tie
             # tie resolved in favor of n
             $self->set_win_order($n, $m, 1);
             $self->set_win_order($m, $n, 0);
-            #$self->win_flag_set($n, 1);
-            #$self->win_flag_delete($m, 1);
+            $self->win_flag_set($n, 1);
+            $self->win_flag_delete($m, 1);
             $tie_broken = 1;
             $changes_made = 1;
             $self->debug_print("final_rank_links: tie $m/$n broken in favor of $n");
@@ -594,8 +595,35 @@ sub final_rank_links
 
     # compute potential round winners again if any changes were made by tie-breaking
     if ($changes_made) {
-        $self->win_flag({});
+        $self->win_flag_clear();
         $self->compute_potential_winners();
+    }
+    return;
+}
+
+# narrow down tied set of winning candidates by average ballot ranking placement
+# not from Schulze definition: this uses PrefVote::Core::average_ranking() to break ties that TBRL couldn't
+sub narrow_winners
+{
+    my $self = shift;
+    my $schulze_ref = shift; # ref to PrefVote::Schulze object
+
+    # sort winners by average ballot placement order
+    my @winning_group = sort {fp_cmp($schulze_ref->average_ranking($a), $schulze_ref->average_ranking($b))}
+        $self->win_flag_keys();
+
+    # clear win_flag hash pending re-computation
+    $self->win_flag_clear();
+
+    # set win_flag for leader from sorted @winning_group
+    my $leader = shift @winning_group;
+    $self->win_flag_set($leader, 1);
+
+    # set win_flag for any choice in @winning_group equal to leader (using fp_equal comparison)
+    foreach my $cand (@winning_group) {
+        if (fp_equal($schulze_ref->average_ranking($leader), $schulze_ref->average_ranking($cand))) {
+            $self->win_flag_set($cand, 1);
+        }
     }
     return;
 }
@@ -627,6 +655,12 @@ sub do_computation
     if (scalar $self->win_flag_keys() != 1) {
         $self->debug_print("do_computation: break ties");
         $self->final_rank_links();
+    }
+
+    # Stage 5: additional tie-breaking by average ballot placement (added by PrefVote, not in Schulze definition)
+    if (scalar $self->win_flag_keys() != 1) {
+        $self->debug_print("do_computation: supplemental tie-breaking");
+        $self->narrow_winners($schulze_ref);
     }
 
     # set round winner(s) from candidate(s) with win_flag set - more than one indicates a tie for this place

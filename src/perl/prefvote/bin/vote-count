@@ -54,11 +54,9 @@ sub main
         # set debugging in PrefVote hierarchy
         $vote_obj->debug(1);
     }
-    # Core method is the base class and doesn't have a count method
-    # Core would only be used here for black-box testing so we can skip it - all others must run count() method
-    if (not $vote_obj->suffix() eq "Core") {
-        $vote_obj->count();
-    }
+    # run count() for the voting method
+    # note: Core is not a voting method but has its own count() which orders results by average ballot position
+    $vote_obj->count();
     if ($vote_obj->debug()) {
         $Data::Dumper::Sortkeys = 1;
         $Data::Dumper::Indent = 1;

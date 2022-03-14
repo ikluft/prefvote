@@ -26,6 +26,7 @@ use MooX::HandlesVia;
 use Types::Standard qw(Str ArrayRef HashRef InstanceOf);
 use Types::Common::Numeric qw(PositiveOrZeroInt);
 use Types::Common::String qw(NonEmptySimpleStr);
+use PrefVote::Core::Float qw(fp_equal fp_cmp);
 use PrefVote::Core::Set qw(Set);
 use PrefVote::Core::TestSpec;
 extends 'PrefVote::Core';
@@ -394,14 +395,21 @@ sub cmp_choice
         return $total_wins2 <=> $total_wins1;
     }
 
-    # 2nd comparison: fewer votes against each choice
+    # 2nd comparison: fewer votes against each choice in pairwise comparison
     my $oppose1 = $self->get_preference($cand2, $cand1);
     my $oppose2 = $self->get_preference($cand1, $cand2);
     if ($oppose1 != $oppose2) {
         return $oppose2 <=> $oppose1;
     }
 
-    # 3rd comparison: total of margins of victory in descending order
+    # 3rd comparison: choice/candidate's average ballot placement in ascending order
+    my $place1 = $self->average_ranking($cand1);
+    my $place2 = $self->average_ranking($cand2);
+    if (not fp_equal($place1, $place2)) {
+        return fp_cmp($place1, $place2);
+    }
+
+    # 4th comparison: total of margins of victory in descending order
     my $total_mov1 = $self->cand_total_mov($cand1);
     my $total_mov2 = $self->cand_total_mov($cand2);
     return $total_mov2 <=> $total_mov1;

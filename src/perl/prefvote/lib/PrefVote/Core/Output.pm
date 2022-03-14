@@ -26,6 +26,7 @@ use YAML::XS;
 use IPC::Run qw(run);
 use PrefVote::Core;
 use PrefVote::Core::Exception;
+use PrefVote::Core::Float qw(float_external);
 
 # constants for output
 Readonly::Hash my %symbols => (
@@ -141,12 +142,27 @@ sub output
 }
 
 # generate counting results table
-# in PrefVote::Core::Output this is only for testing - voting methods must override it to process their result
+# VOTING METHODS MUST OVERRIDE THIS TO PROCESS THEIR RESULT
+# in PrefVote::Core::Output this is only for testing
+# for testing PrefVote::Core::count() uses simplistic ballot-place average, which does not consider total votes
+# DO NOT USE PrefVote::Core FOR ACTUAL VOTE COUNTING - USE A SUBCLASS WHICH IMPLEMENTS A PROPER VOTING METHOD
 sub do_counting_table
 {
     my ($class, $format_class, $result_data) = @_;
 
-    # do nothing - Core method has no results of its own
+    # generate candidate names list
+    my @candidates = PrefVote::Core::Output->candidates_list($result_data);
+    my $num_cands = scalar @candidates;
+    my $acr = $result_data->{average_choice_rank};
+
+    # generate output table
+    my @result_rows;
+    push @result_rows, ['Candidate', 'average ranking'];
+    foreach my $cand (@candidates) {
+        push @result_rows, [$cand, float_external($acr->{$cand}) // $num_cands];
+    }
+    $format_class->do_table($result_data, \@result_rows, "Average ballot ranking positions");
+
     return;
 }
 

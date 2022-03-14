@@ -17,7 +17,7 @@ use autodie;
 use Readonly;
 use Math::Round qw(nearest);
 use Exporter qw(import);
-our @EXPORT_OK = qw(fp_equal float_limit float_external float_internal PVNum PVPositiveOrZeroNum);
+our @EXPORT_OK = qw(fp_equal fp_cmp float_limit float_external float_internal PVNum PVPositiveOrZeroNum);
 
 # class definitions
 use Type::Library -base, -declare => qw(PVNum PVPositiveOrZeroNum);
@@ -38,6 +38,18 @@ Readonly::Scalar my $fp_epsilon => 2**-24; # fp epsilon for fp_equal() based on 
 sub fp_equal {
     my ($x, $y) = @_;
     return (abs($x-$y) < $fp_epsilon) ? 1 : 0;
+}
+
+# floating point comparison using fp_equal() for equality
+sub fp_cmp {
+    my ($x, $y) = @_;
+    if (fp_equal($x, $y)) {
+        return 0;
+    }
+    if ($x > $y) {
+        return 1;
+    }
+    return -1;
 }
 
 # format floating point numbers to limit display precision

@@ -122,12 +122,15 @@ sub sort_candidates
         # alternative sort functions are for testing (i.e. alphabetical sort allows testing without using votes)
         my $tally_ref = $self->tally();
         $sort_fn = sub {
+            # 1st/primary comparison: votes for candidate in descending order
             my $votes0 = $tally_ref->{$_[0]}->votes();
             my $votes1 = $tally_ref->{$_[1]}->votes();
-            if ($votes0 == $votes1) {
-                return $_[0] cmp $_[1]; # break sorting ties alphabetically so test comparisons aren't random
+            if ($votes0 != $votes1) {
+                return $votes1 <=> $votes0;
             }
-            return $votes1 <=> $votes0;
+
+            # 2nd comparison: alphabetical (so ties in testing comparisons are consistent)
+            return $_[0] cmp $_[1];
         };
     } elsif (ref $sort_fn ne "CODE") {
         PrefVote::STV::Round::BadSortingFnException->throw({classname => __PACKAGE__,
