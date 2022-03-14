@@ -32,122 +32,122 @@ Notes about all the following examples:
 
 <blockquote>
 <div id="prefvote">
-<h2>Results: Test Vote</h2>
+<h2>Results:&nbsp;Test&nbsp;Vote&nbsp;004</h2>
 <p>1 seat available</p>
 <table>
 <thead>
 <tr>
-<th>Abbreviation</th>
-<th>Name/description</th>
-<th>Result</th>
+<th style="white-space: nowrap;">Abbreviation</th>
+<th style="white-space: nowrap;">Name/description</th>
+<th style="white-space: nowrap;">Result</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>FACTIOUS</td>
-<td>factious/divisive</td>
-<td>1/selected</td>
+<td style="white-space: nowrap;">FACTIOUS</td>
+<td style="white-space: nowrap;">factious/divisive</td>
+<td style="white-space: nowrap;">1/selected</td>
 </tr>
 <tr>
-<td>EVIL</td>
-<td>evil villain</td>
-<td>2/placed</td>
+<td style="white-space: nowrap;">EVIL</td>
+<td style="white-space: nowrap;">evil&nbsp;villain</td>
+<td style="white-space: nowrap;">2/placed</td>
 </tr>
 <tr>
-<td>CHAOTIC</td>
-<td>chaotic unpredictable</td>
-<td>3/eliminated</td>
+<td style="white-space: nowrap;">CHAOTIC</td>
+<td style="white-space: nowrap;">chaotic&nbsp;unpredictable</td>
+<td style="white-space: nowrap;">3/eliminated</td>
 </tr>
 <tr>
-<td>ABNORMAL</td>
-<td>abnormal and antisocial</td>
-<td>4/eliminated</td>
+<td style="white-space: nowrap;">ABNORMAL</td>
+<td style="white-space: nowrap;">abnormal&nbsp;and&nbsp;antisocial</td>
+<td style="white-space: nowrap;">4/eliminated</td>
 </tr>
 <tr>
-<td>BORING</td>
-<td>boring as anything</td>
-<td>5/eliminated</td>
+<td style="white-space: nowrap;">BORING</td>
+<td style="white-space: nowrap;">boring&nbsp;as&nbsp;anything</td>
+<td style="white-space: nowrap;">5/eliminated</td>
 </tr>
 <tr>
-<td>DYSFUNCTIONAL</td>
-<td>dysfunctional incompetent</td>
-<td>6/eliminated</td>
+<td style="white-space: nowrap;">DYSFUNCTIONAL</td>
+<td style="white-space: nowrap;">dysfunctional&nbsp;incompetent</td>
+<td style="white-space: nowrap;">6/eliminated</td>
 </tr>
 </tbody>
 </table>
 <table>
 <thead>
 <tr>
-<th>Round #</th>
-<th>Quota</th>
-<th>FACTIOUS</th>
-<th>EVIL</th>
-<th>CHAOTIC</th>
-<th>ABNORMAL</th>
-<th>BORING</th>
-<th>DYSFUNCTIONAL</th>
+<th style="white-space: nowrap;">Round&nbsp;#</th>
+<th style="white-space: nowrap;">Quota</th>
+<th style="white-space: nowrap;">FACTIOUS</th>
+<th style="white-space: nowrap;">EVIL</th>
+<th style="white-space: nowrap;">CHAOTIC</th>
+<th style="white-space: nowrap;">ABNORMAL</th>
+<th style="white-space: nowrap;">BORING</th>
+<th style="white-space: nowrap;">DYSFUNCTIONAL</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>1</td>
-<td>125</td>
-<td>68</td>
-<td>54</td>
-<td>36</td>
-<td>31</td>
-<td>33</td>
-<td>28 ❌</td>
+<td style="white-space: nowrap;">1</td>
+<td style="white-space: nowrap;">125</td>
+<td style="white-space: nowrap;">68</td>
+<td style="white-space: nowrap;">54</td>
+<td style="white-space: nowrap;">36</td>
+<td style="white-space: nowrap;">31</td>
+<td style="white-space: nowrap;">33</td>
+<td style="white-space: nowrap;">28&nbsp;❌</td>
 </tr>
 <tr>
-<td>2</td>
-<td>124.5</td>
-<td>75</td>
-<td>58</td>
-<td>45</td>
-<td>36</td>
-<td>35 ❌</td>
-<td>❌</td>
+<td style="white-space: nowrap;">2</td>
+<td style="white-space: nowrap;">124.5</td>
+<td style="white-space: nowrap;">75</td>
+<td style="white-space: nowrap;">58</td>
+<td style="white-space: nowrap;">45</td>
+<td style="white-space: nowrap;">36</td>
+<td style="white-space: nowrap;">35&nbsp;❌</td>
+<td style="white-space: nowrap;">❌</td>
 </tr>
 <tr>
-<td>3</td>
-<td>122</td>
-<td>78</td>
-<td>69</td>
-<td>51</td>
-<td>46 ❌</td>
-<td>❌</td>
-<td>❌</td>
+<td style="white-space: nowrap;">3</td>
+<td style="white-space: nowrap;">122</td>
+<td style="white-space: nowrap;">78</td>
+<td style="white-space: nowrap;">69</td>
+<td style="white-space: nowrap;">51</td>
+<td style="white-space: nowrap;">46&nbsp;❌</td>
+<td style="white-space: nowrap;">❌</td>
+<td style="white-space: nowrap;">❌</td>
 </tr>
 <tr>
-<td>4</td>
-<td>118.5</td>
-<td>90</td>
-<td>81</td>
-<td>66 ❌</td>
-<td>❌</td>
-<td>❌</td>
-<td>❌</td>
+<td style="white-space: nowrap;">4</td>
+<td style="white-space: nowrap;">118.5</td>
+<td style="white-space: nowrap;">90</td>
+<td style="white-space: nowrap;">81</td>
+<td style="white-space: nowrap;">66&nbsp;❌</td>
+<td style="white-space: nowrap;">❌</td>
+<td style="white-space: nowrap;">❌</td>
+<td style="white-space: nowrap;">❌</td>
 </tr>
 <tr>
-<td>5</td>
-<td>114</td>
-<td>118 ✅</td>
-<td>110</td>
-<td>❌</td>
-<td>❌</td>
-<td>❌</td>
-<td>❌</td>
+<td style="white-space: nowrap;">5</td>
+<td style="white-space: nowrap;">114</td>
+<td style="white-space: nowrap;">118&nbsp;✅</td>
+<td style="white-space: nowrap;">110</td>
+<td style="white-space: nowrap;">❌</td>
+<td style="white-space: nowrap;">❌</td>
+<td style="white-space: nowrap;">❌</td>
+<td style="white-space: nowrap;">❌</td>
 </tr>
 <tr>
-<td>6</td>
-<td>56.50847</td>
-<td>✅</td>
-<td>113.01695 ✅</td>
-<td>❌</td>
-<td>❌</td>
-<td>❌</td>
-<td>❌</td>
+<td style="white-space: nowrap;">6</td>
+<td style="white-space: nowrap;">56.50847</td>
+<td style="white-space: nowrap;">✅</td>
+<td style="white-space: nowrap;">113.01695&nbsp;✅</td>
+<td style="white-space: nowrap;">❌</td>
+<td style="white-space: nowrap;">❌</td>
+<td style="white-space: nowrap;">❌</td>
+<td style="white-space: nowrap;">❌</td>
 </tr>
 </tbody>
 </table>
@@ -172,135 +172,7 @@ Notes about the STV example:
 
 <blockquote>
 <div id="prefvote">
-<h2>Results: Test Vote</h2>
-<p>1 seat available</p>
-<table>
-<thead>
-<tr>
-<th>Abbreviation</th>
-<th>Name/description</th>
-<th>Result</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>FACTIOUS</td>
-<td>factious/divisive</td>
-<td>1/selected</td>
-</tr>
-<tr>
-<td>EVIL</td>
-<td>evil villain</td>
-<td>2/placed</td>
-</tr>
-<tr>
-<td>CHAOTIC</td>
-<td>chaotic unpredictable</td>
-<td>3/placed</td>
-</tr>
-<tr>
-<td>DYSFUNCTIONAL</td>
-<td>dysfunctional incompetent</td>
-<td>4/placed</td>
-</tr>
-<tr>
-<td>ABNORMAL</td>
-<td>abnormal and antisocial</td>
-<td>5/placed</td>
-</tr>
-<tr>
-<td>BORING</td>
-<td>boring as anything</td>
-<td>6/placed</td>
-</tr>
-</tbody>
-</table>
-<h3>Margin-of-victory matrix</h3>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>FACTIOUS</th>
-<th>EVIL</th>
-<th>CHAOTIC</th>
-<th>DYSFUNCTIONAL</th>
-<th>ABNORMAL</th>
-<th>BORING</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>FACTIOUS</td>
-<td>🛇</td>
-<td>7 ✅</td>
-<td>57 ✅</td>
-<td>67 ✅</td>
-<td>74 ✅</td>
-<td>79 ✅</td>
-</tr>
-<tr>
-<td>EVIL</td>
-<td>-7 ❌</td>
-<td>🛇</td>
-<td>48 ✅</td>
-<td>68 ✅</td>
-<td>68 ✅</td>
-<td>64 ✅</td>
-</tr>
-<tr>
-<td>CHAOTIC</td>
-<td>-57 ❌</td>
-<td>-48 ❌</td>
-<td>🛇</td>
-<td>16 ✅</td>
-<td>5 ✅</td>
-<td>15 ✅</td>
-</tr>
-<tr>
-<td>DYSFUNCTIONAL</td>
-<td>-67 ❌</td>
-<td>-68 ❌</td>
-<td>-16 ❌</td>
-<td>🛇</td>
-<td>13 ✅</td>
-<td>5 ✅</td>
-</tr>
-<tr>
-<td>ABNORMAL</td>
-<td>-74 ❌</td>
-<td>-68 ❌</td>
-<td>-5 ❌</td>
-<td>-13 ❌</td>
-<td>🛇</td>
-<td>11 ✅</td>
-</tr>
-<tr>
-<td>BORING</td>
-<td>-79 ❌</td>
-<td>-64 ❌</td>
-<td>-15 ❌</td>
-<td>-5 ❌</td>
-<td>-11 ❌</td>
-<td>🛇</td>
-</tr>
-</tbody>
-</table>
-</div>
-</blockquote>
-
-Notes about the Schulze example:
-
-- The Schulze method is a Condorcet voting method. So it aggregates the ranked preferences from each ballot into total occurrences of preference of each pair of candidates. In all Condorcet methods, if one candidate is preferred over all others then it is the winner. The Schulze method also considers paths of preferences in a graph to pick between candidates when there isn't a single Condorcet winner.
-
-- As with the STV results, the first table in the example is the final ranking order of the voting results. It indicates selected, tied, and placed candidates as above. There is no concept of eliminated candidates in the Schulze method. After the winner is found in each round, the vote is re-run for as many rounds as needed until all the candidates are ordered in the result.
-
-- The margin-of-victory matrix shows the voting results with how much each candidate on the row labels are preferred over candidates on the column labels. Negative numbers mean the other candidate is more preferred. There is a "not applicable" icon in each cell diagonally down the middle where each candidate cannot be compared to themselves. The matrix always has an inverse symmetry because the same pair of candidates compared on the other side of the diagonal will be opposite - with A-B vs B-A, one of them must negative and opposite of the other. A Condorcet winner is easily visible as having all positive numbers (and check-mark icons) compared against all other candidates.
-
-## Ranked Pairs voting results from the example data
-
-<blockquote>
-<div id="prefvote">
-<h2>Results: Test Vote</h2>
+<h2>Results:&nbsp;Test&nbsp;Vote&nbsp;004</h2>
 <p>1 seat available</p>
 <table>
 <thead>
@@ -318,27 +190,27 @@ Notes about the Schulze example:
 </tr>
 <tr>
 <td style="white-space: nowrap;">EVIL</td>
-<td style="white-space: nowrap;">evil villain</td>
+<td style="white-space: nowrap;">evil&nbsp;villain</td>
 <td style="white-space: nowrap;">2/placed</td>
 </tr>
 <tr>
 <td style="white-space: nowrap;">CHAOTIC</td>
-<td style="white-space: nowrap;">chaotic unpredictable</td>
+<td style="white-space: nowrap;">chaotic&nbsp;unpredictable</td>
 <td style="white-space: nowrap;">3/placed</td>
 </tr>
 <tr>
 <td style="white-space: nowrap;">DYSFUNCTIONAL</td>
-<td style="white-space: nowrap;">dysfunctional incompetent</td>
+<td style="white-space: nowrap;">dysfunctional&nbsp;incompetent</td>
 <td style="white-space: nowrap;">4/placed</td>
 </tr>
 <tr>
 <td style="white-space: nowrap;">ABNORMAL</td>
-<td style="white-space: nowrap;">abnormal and antisocial</td>
+<td style="white-space: nowrap;">abnormal&nbsp;and&nbsp;antisocial</td>
 <td style="white-space: nowrap;">5/placed</td>
 </tr>
 <tr>
 <td style="white-space: nowrap;">BORING</td>
-<td style="white-space: nowrap;">boring as anything</td>
+<td style="white-space: nowrap;">boring&nbsp;as&nbsp;anything</td>
 <td style="white-space: nowrap;">6/placed</td>
 </tr>
 </tbody>
@@ -360,55 +232,183 @@ Notes about the Schulze example:
 <tr>
 <td style="white-space: nowrap;">FACTIOUS</td>
 <td style="white-space: nowrap;">🛇</td>
-<td style="white-space: nowrap;">7 ✅ 🔒</td>
-<td style="white-space: nowrap;">57 ✅ 🔒</td>
-<td style="white-space: nowrap;">67 ✅ 🔒</td>
-<td style="white-space: nowrap;">74 ✅ 🔒</td>
-<td style="white-space: nowrap;">79 ✅ 🔒</td>
+<td style="white-space: nowrap;">7&nbsp;✅</td>
+<td style="white-space: nowrap;">57&nbsp;✅</td>
+<td style="white-space: nowrap;">67&nbsp;✅</td>
+<td style="white-space: nowrap;">74&nbsp;✅</td>
+<td style="white-space: nowrap;">79&nbsp;✅</td>
 </tr>
 <tr>
 <td style="white-space: nowrap;">EVIL</td>
-<td style="white-space: nowrap;">-7 ❌</td>
+<td style="white-space: nowrap;">-7&nbsp;❌</td>
 <td style="white-space: nowrap;">🛇</td>
-<td style="white-space: nowrap;">48 ✅ 🔒</td>
-<td style="white-space: nowrap;">68 ✅ 🔒</td>
-<td style="white-space: nowrap;">68 ✅ 🔒</td>
-<td style="white-space: nowrap;">64 ✅ 🔒</td>
+<td style="white-space: nowrap;">48&nbsp;✅</td>
+<td style="white-space: nowrap;">68&nbsp;✅</td>
+<td style="white-space: nowrap;">68&nbsp;✅</td>
+<td style="white-space: nowrap;">64&nbsp;✅</td>
 </tr>
 <tr>
 <td style="white-space: nowrap;">CHAOTIC</td>
-<td style="white-space: nowrap;">-57 ❌</td>
-<td style="white-space: nowrap;">-48 ❌</td>
+<td style="white-space: nowrap;">-57&nbsp;❌</td>
+<td style="white-space: nowrap;">-48&nbsp;❌</td>
 <td style="white-space: nowrap;">🛇</td>
-<td style="white-space: nowrap;">16 ✅ 🔒</td>
-<td style="white-space: nowrap;">5 ✅ 🔒</td>
-<td style="white-space: nowrap;">15 ✅ 🔒</td>
+<td style="white-space: nowrap;">16&nbsp;✅</td>
+<td style="white-space: nowrap;">5&nbsp;✅</td>
+<td style="white-space: nowrap;">15&nbsp;✅</td>
 </tr>
 <tr>
 <td style="white-space: nowrap;">DYSFUNCTIONAL</td>
-<td style="white-space: nowrap;">-67 ❌</td>
-<td style="white-space: nowrap;">-68 ❌</td>
-<td style="white-space: nowrap;">-16 ❌</td>
+<td style="white-space: nowrap;">-67&nbsp;❌</td>
+<td style="white-space: nowrap;">-68&nbsp;❌</td>
+<td style="white-space: nowrap;">-16&nbsp;❌</td>
 <td style="white-space: nowrap;">🛇</td>
-<td style="white-space: nowrap;">13 ✅ 🔒</td>
-<td style="white-space: nowrap;">5 ✅ 🔒</td>
+<td style="white-space: nowrap;">13&nbsp;✅</td>
+<td style="white-space: nowrap;">5&nbsp;✅</td>
 </tr>
 <tr>
 <td style="white-space: nowrap;">ABNORMAL</td>
-<td style="white-space: nowrap;">-74 ❌</td>
-<td style="white-space: nowrap;">-68 ❌</td>
-<td style="white-space: nowrap;">-5 ❌</td>
-<td style="white-space: nowrap;">-13 ❌</td>
+<td style="white-space: nowrap;">-74&nbsp;❌</td>
+<td style="white-space: nowrap;">-68&nbsp;❌</td>
+<td style="white-space: nowrap;">-5&nbsp;❌</td>
+<td style="white-space: nowrap;">-13&nbsp;❌</td>
 <td style="white-space: nowrap;">🛇</td>
-<td style="white-space: nowrap;">11 ✅ 🔒</td>
+<td style="white-space: nowrap;">11&nbsp;✅</td>
 </tr>
 <tr>
 <td style="white-space: nowrap;">BORING</td>
-<td style="white-space: nowrap;">-79 ❌</td>
-<td style="white-space: nowrap;">-64 ❌</td>
-<td style="white-space: nowrap;">-15 ❌</td>
-<td style="white-space: nowrap;">-5 ❌</td>
-<td style="white-space: nowrap;">-11 ❌</td>
+<td style="white-space: nowrap;">-79&nbsp;❌</td>
+<td style="white-space: nowrap;">-64&nbsp;❌</td>
+<td style="white-space: nowrap;">-15&nbsp;❌</td>
+<td style="white-space: nowrap;">-5&nbsp;❌</td>
+<td style="white-space: nowrap;">-11&nbsp;❌</td>
+<td style="white-space: nowrap;">🛇</td>
+</tr>
+</tbody>
+</table>
+</div>
+</blockquote>
+
+Notes about the Schulze example:
+
+- The Schulze method is a Condorcet voting method. So it aggregates the ranked preferences from each ballot into total occurrences of preference of each pair of candidates. In all Condorcet methods, if one candidate is preferred over all others then it is the winner. The Schulze method also considers paths of preferences in a graph to pick between candidates when there isn't a single Condorcet winner.
+
+- As with the STV results, the first table in the example is the final ranking order of the voting results. It indicates selected, tied, and placed candidates as above. There is no concept of eliminated candidates in the Schulze method. After the winner is found in each round, the vote is re-run for as many rounds as needed until all the candidates are ordered in the result.
+
+- The margin-of-victory matrix shows the voting results with how much each candidate on the row labels are preferred over candidates on the column labels. Negative numbers mean the other candidate is more preferred. There is a "not applicable" icon in each cell diagonally down the middle where each candidate cannot be compared to themselves. The matrix always has an inverse symmetry because the same pair of candidates compared on the other side of the diagonal will be opposite - with A-B vs B-A, one of them must negative and opposite of the other. A Condorcet winner is easily visible as having all positive numbers (and check-mark icons) compared against all other candidates.
+
+## Ranked Pairs voting results from the example data
+
+<blockquote>
+<div id="prefvote">
+<h2>Results:&nbsp;Test&nbsp;Vote&nbsp;004</h2>
+<p>1 seat available</p>
+<table>
+<thead>
+<tr>
+<th style="white-space: nowrap;">Abbreviation</th>
+<th style="white-space: nowrap;">Name/description</th>
+<th style="white-space: nowrap;">Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="white-space: nowrap;">FACTIOUS</td>
+<td style="white-space: nowrap;">factious/divisive</td>
+<td style="white-space: nowrap;">1/selected</td>
+</tr>
+<tr>
+<td style="white-space: nowrap;">EVIL</td>
+<td style="white-space: nowrap;">evil&nbsp;villain</td>
+<td style="white-space: nowrap;">2/placed</td>
+</tr>
+<tr>
+<td style="white-space: nowrap;">CHAOTIC</td>
+<td style="white-space: nowrap;">chaotic&nbsp;unpredictable</td>
+<td style="white-space: nowrap;">3/placed</td>
+</tr>
+<tr>
+<td style="white-space: nowrap;">DYSFUNCTIONAL</td>
+<td style="white-space: nowrap;">dysfunctional&nbsp;incompetent</td>
+<td style="white-space: nowrap;">4/placed</td>
+</tr>
+<tr>
+<td style="white-space: nowrap;">ABNORMAL</td>
+<td style="white-space: nowrap;">abnormal&nbsp;and&nbsp;antisocial</td>
+<td style="white-space: nowrap;">5/placed</td>
+</tr>
+<tr>
+<td style="white-space: nowrap;">BORING</td>
+<td style="white-space: nowrap;">boring&nbsp;as&nbsp;anything</td>
+<td style="white-space: nowrap;">6/placed</td>
+</tr>
+</tbody>
+</table>
+<h3>Margin-of-victory matrix</h3>
+<table>
+<thead>
+<tr>
+<th style="white-space: nowrap;"></th>
+<th style="white-space: nowrap;">FACTIOUS</th>
+<th style="white-space: nowrap;">EVIL</th>
+<th style="white-space: nowrap;">CHAOTIC</th>
+<th style="white-space: nowrap;">DYSFUNCTIONAL</th>
+<th style="white-space: nowrap;">ABNORMAL</th>
+<th style="white-space: nowrap;">BORING</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="white-space: nowrap;">FACTIOUS</td>
+<td style="white-space: nowrap;">🛇</td>
+<td style="white-space: nowrap;">7&nbsp;✅&nbsp;🔒</td>
+<td style="white-space: nowrap;">57&nbsp;✅&nbsp;🔒</td>
+<td style="white-space: nowrap;">67&nbsp;✅&nbsp;🔒</td>
+<td style="white-space: nowrap;">74&nbsp;✅&nbsp;🔒</td>
+<td style="white-space: nowrap;">79&nbsp;✅&nbsp;🔒</td>
+</tr>
+<tr>
+<td style="white-space: nowrap;">EVIL</td>
+<td style="white-space: nowrap;">-7&nbsp;❌</td>
+<td style="white-space: nowrap;">🛇</td>
+<td style="white-space: nowrap;">48&nbsp;✅&nbsp;🔒</td>
+<td style="white-space: nowrap;">68&nbsp;✅&nbsp;🔒</td>
+<td style="white-space: nowrap;">68&nbsp;✅&nbsp;🔒</td>
+<td style="white-space: nowrap;">64&nbsp;✅&nbsp;🔒</td>
+</tr>
+<tr>
+<td style="white-space: nowrap;">CHAOTIC</td>
+<td style="white-space: nowrap;">-57&nbsp;❌</td>
+<td style="white-space: nowrap;">-48&nbsp;❌</td>
+<td style="white-space: nowrap;">🛇</td>
+<td style="white-space: nowrap;">16&nbsp;✅&nbsp;🔒</td>
+<td style="white-space: nowrap;">5&nbsp;✅&nbsp;🔒</td>
+<td style="white-space: nowrap;">15&nbsp;✅&nbsp;🔒</td>
+</tr>
+<tr>
+<td style="white-space: nowrap;">DYSFUNCTIONAL</td>
+<td style="white-space: nowrap;">-67&nbsp;❌</td>
+<td style="white-space: nowrap;">-68&nbsp;❌</td>
+<td style="white-space: nowrap;">-16&nbsp;❌</td>
+<td style="white-space: nowrap;">🛇</td>
+<td style="white-space: nowrap;">13&nbsp;✅&nbsp;🔒</td>
+<td style="white-space: nowrap;">5&nbsp;✅&nbsp;🔒</td>
+</tr>
+<tr>
+<td style="white-space: nowrap;">ABNORMAL</td>
+<td style="white-space: nowrap;">-74&nbsp;❌</td>
+<td style="white-space: nowrap;">-68&nbsp;❌</td>
+<td style="white-space: nowrap;">-5&nbsp;❌</td>
+<td style="white-space: nowrap;">-13&nbsp;❌</td>
+<td style="white-space: nowrap;">🛇</td>
+<td style="white-space: nowrap;">11&nbsp;✅&nbsp;🔒</td>
+</tr>
+<tr>
+<td style="white-space: nowrap;">BORING</td>
+<td style="white-space: nowrap;">-79&nbsp;❌</td>
+<td style="white-space: nowrap;">-64&nbsp;❌</td>
+<td style="white-space: nowrap;">-15&nbsp;❌</td>
+<td style="white-space: nowrap;">-5&nbsp;❌</td>
+<td style="white-space: nowrap;">-11&nbsp;❌</td>
 <td style="white-space: nowrap;">🛇</td>
 </tr>
 </tbody>
