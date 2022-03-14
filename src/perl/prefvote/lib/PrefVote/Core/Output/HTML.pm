@@ -17,6 +17,14 @@ use autodie;
 use HTML::Escape qw(escape_html);
 use base qw(PrefVote);
 
+# HTML filters (escape and whitespace)
+sub htmlify
+{
+    my $str = escape_html(shift);
+    $str =~ s/\s+/&nbsp;/gx;
+    return $str
+}
+
 # generate HTML table from an array
 sub generate_html_table
 {
@@ -32,7 +40,7 @@ sub generate_html_table
         say "<thead>";
         say "<tr>";
         foreach my $col_item (@$header) {
-            say "<th style=\"white-space: nowrap;\">".escape_html($col_item)."</th>";
+            say "<th style=\"white-space: nowrap;\">".htmlify($col_item)."</th>";
         }
         say "</tr>";
         say "</thead>";
@@ -43,7 +51,7 @@ sub generate_html_table
     foreach my $row (@$rows) {
         say "<tr>";
         foreach my $col_item (@$row) {
-            say "<td style=\"white-space: nowrap;\">".escape_html($col_item)."</td>";
+            say "<td style=\"white-space: nowrap;\">".htmlify($col_item)."</td>";
         }
         say "</tr>";
     }
@@ -62,8 +70,8 @@ sub do_header
     my $seats = $result_data->{seats};
     my $title = "Results: ".$result_data->{name};
     say "<div id=\"prefvote\">";
-    say "<h2>".escape_html($title)."</h2>";
-    say "<p>".escape_html($seats)." seat".($seats>1 ? "s" : "")." available</p>";
+    say "<h2>".htmlify($title)."</h2>";
+    say "<p>".htmlify($seats)." seat".($seats>1 ? "s" : "")." available</p>";
     return;
 }
 
