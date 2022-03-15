@@ -36,9 +36,9 @@ sub print_result_list
 sub main
 {
     # command-line processing
-    my ($debug, $test_mode, $out_format, $method);
+    my ($debug, $test_mode, $out_format, $method, $no_tiebreak);
     GetOptions("debug" => \$debug, "test" => \$test_mode, "format|outformat:s" => \$out_format,
-        "method:s" => \$method);
+        "method:s" => \$method, "no_tiebreak" => \$no_tiebreak);
     if (not @ARGV) {
         say STDERR "usage: $0 [--debug] [--test] [--yaml|--rawyaml] [--method=votingmethod] yaml_file";
         exit 0;
@@ -54,6 +54,10 @@ sub main
         # set debugging in PrefVote hierarchy
         $vote_obj->debug(1);
     }
+    if ($no_tiebreak) {
+        $vote_obj->config("no-tiebreak", 1);
+    }
+
     # run count() for the voting method
     # note: Core is not a voting method but has its own count() which orders results by average ballot position
     $vote_obj->count();

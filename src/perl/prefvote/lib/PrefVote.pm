@@ -16,10 +16,12 @@ package PrefVote;
 use autodie;
 use Moo;
 use MooX::TypeTiny;
+use PrefVote::Config;
 use PrefVote::Debug;
 use PrefVote::Exception;  # pre-load in case exception is thrown
 
-# cache a class-scoped reference to the debug instance
+# cache a class-scoped reference to the config & debug instances
+my $config_ref = PrefVote::Config->instance();
 my $debug_ref = PrefVote::Debug->instance(debug => (($ENV{PREFVOTE_DEBUG} // 0) ? 1 : 0));
 
 # wrapper for PrefVote::Debug's debug method
@@ -35,6 +37,20 @@ sub debug_print
     my ($self_or_class, @args) = @_;
     my $prefix = (ref $self_or_class) ? ref $self_or_class : $self_or_class;
     return $debug_ref->debug_print({prefix => $prefix}, @args);
+}
+
+# accessor for PrefVote::Config hash of config items
+sub config
+{
+    my ($self_or_class, @args) = @_;
+    return $config_ref->accessor(@args);
+}
+
+# check if a config entry exists
+sub config_exists
+{
+    my ($self_or_class, $key) = @_;
+    return $config_ref->exists($key);
 }
 
 1;

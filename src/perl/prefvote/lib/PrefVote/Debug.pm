@@ -62,7 +62,7 @@ PrefVote::Debug - debug flag singleton class for PrefVote hierarchy
 
 PrefVote::Debug maintains a singleton debug flag for the PrefVote class hierarchy.
 
-Since the top-level PrefVote class provides this to the entire hierarchy, do use this class directly.
+Since the top-level PrefVote class provides this to the entire hierarchy, do not use this class directly.
 Use any relevant subclass of PrefVote instead.
 
 =head1 SEE ALSO
