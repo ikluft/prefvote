@@ -608,6 +608,10 @@ sub narrow_winners
     my $self = shift;
     my $schulze_ref = shift; # ref to PrefVote::Schulze object
 
+    # skip step if configuration flag disables PrefVotes's tie-breaking by average rank to strictly follow algorithm
+    my $tiebreak_disabled = $self->config("no-tiebreak") // 0; # config flag to disable tie-breaking by avg rank
+    return if $tiebreak_disabled;
+
     # sort winners by average ballot placement order
     my @winning_group = sort {fp_cmp($schulze_ref->average_ranking($a), $schulze_ref->average_ranking($b))}
         $self->win_flag_keys();

@@ -374,7 +374,7 @@ sub lock_pairs
             next;
         }
 
-        # -lock the listed candidate pair
+        # lock the listed candidate pair
         $self->set_lock(@pair);
 
         # tally links in graph
@@ -403,10 +403,13 @@ sub cmp_choice
     }
 
     # 3rd comparison: choice/candidate's average ballot placement in ascending order
-    my $place1 = $self->average_ranking($cand1);
-    my $place2 = $self->average_ranking($cand2);
-    if (not fp_equal($place1, $place2)) {
-        return fp_cmp($place1, $place2);
+    my $tiebreak_disabled = $self->config("no-tiebreak") // 0; # config flag to disable tie-breaking by avg rank
+    if (not $tiebreak_disabled) {
+        my $place1 = $self->average_ranking($cand1);
+        my $place2 = $self->average_ranking($cand2);
+        if (not fp_equal($place1, $place2)) {
+            return fp_cmp($place1, $place2);
+        }
     }
 
     # 4th comparison: total of margins of victory in descending order

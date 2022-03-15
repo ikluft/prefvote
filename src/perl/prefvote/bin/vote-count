@@ -38,7 +38,7 @@ sub main
     # command-line processing
     my ($debug, $test_mode, $out_format, $method, $no_tiebreak);
     GetOptions("debug" => \$debug, "test" => \$test_mode, "format|outformat:s" => \$out_format,
-        "method:s" => \$method, "no_tiebreak" => \$no_tiebreak);
+        "method:s" => \$method, "no-tiebreak" => \$no_tiebreak);
     if (not @ARGV) {
         say STDERR "usage: $0 [--debug] [--test] [--yaml|--rawyaml] [--method=votingmethod] yaml_file";
         exit 0;

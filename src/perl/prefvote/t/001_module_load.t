@@ -7,6 +7,8 @@ use Test::More;
 
 my @classes = qw(
         PrefVote
+        PrefVote::Config
+        PrefVote::Debug
         PrefVote::Core::Ballot
         PrefVote::Core::Exception
         PrefVote::Core::Float
