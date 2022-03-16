@@ -18,6 +18,12 @@ Next was [Ranked Pairs](https://en.wikipedia.org/wiki/Ranked_pairs). It was desi
 
 After the reference implementation in Perl, next up for language implementations will be [Rust](https://www.rust-lang.org/).
 
+## Tie-breaking modifications to algorithms
+
+PrefVote modifies all the algorithms in one way. It adds a tie-breaking factor of the average ballot-position ranking of a choice/candidate. It started as experimentation with intuition that the average ranking of a choice was indicative of the will of the voters. Though it wouldn't be acceptable as a primary factor because averages don't have quantitative data. Test runs show that it approximates Condorcet results fairly well and converges with Condorcet by around 100 random ballots. It didn't need to be so close to Condorcet to convey meaning about voter's preferences. This restores ballot-position ordering data which Condorcet lacks.
+
+PrefVote's Core module from which all the voting methods inherit common code is not a voting method itself. But in performing the counting of average choice ranking (ACR) for other methods to use for tie-breaking, it contains results which can be displayed for testing purposes. Since it only uses average ranking, it really must not be used for actual voting. There is a principle in voting that every vote counts. That means quantitative factors must be the primary ordering for results. But ACR turns out to be surprisingly well-suited to be a second sorting factor for tie-breaking.
+
 ## Example voting result from test suite
 
 This is an example result from Single Transferable Vote (STV) and Schulze using the same [file in the test suite](test/inputs/100-rcv-test/004-rcv-test.yaml) with each algorithm. 250 ballots were randomly generated. So there's no actual meaning to the result except testing the software.
@@ -422,4 +428,4 @@ Notes about the Ranked Pairs example:
 
 - The lock icon (🔒) in the results indicate candidate majority pairings which were "locked" and accepted for use in the result order because they did not conflict with pairs with larger margins of victory. Table entries without a lock icon would be because they were a loss or tie, or a conflict with larger majorities. For example if A>B and B>C then C>A is not locked due to a conflict.
 
-- I added a hack to the Ranked Pairs implementation on the tie-breaking. Rather than select a random ballot to count a second time as Tideman recommended in his 1987 paper, I used the total of each candidate's margins of victory compared to all other candidates as a second priority sorting field. I'll look into back-porting that to Schulze as well.
+- I modified the Ranked Pairs implementation in the case of tie-breaking. Rather than select a random ballot to count a second time as Tideman recommended in his 1987 paper, I used average ballot-position ranking as a second priority sorting field. This was then retrofitted as a tie-breaker in STV and Schulze and adopted as a design feature of PrefVote.

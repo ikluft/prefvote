@@ -395,14 +395,7 @@ sub cmp_choice
         return $total_wins2 <=> $total_wins1;
     }
 
-    # 2nd comparison: fewer votes against each choice in pairwise comparison
-    my $oppose1 = $self->get_preference($cand2, $cand1);
-    my $oppose2 = $self->get_preference($cand1, $cand2);
-    if ($oppose1 != $oppose2) {
-        return $oppose2 <=> $oppose1;
-    }
-
-    # 3rd comparison: choice/candidate's average ballot placement in ascending order
+    # 2nd comparison: choice/candidate's average ballot placement in ascending order
     my $tiebreak_disabled = $self->config("no-tiebreak") // 0; # config flag to disable tie-breaking by avg rank
     if (not $tiebreak_disabled) {
         my $place1 = $self->average_ranking($cand1);
@@ -412,10 +405,7 @@ sub cmp_choice
         }
     }
 
-    # 4th comparison: total of margins of victory in descending order
-    my $total_mov1 = $self->cand_total_mov($cand1);
-    my $total_mov2 = $self->cand_total_mov($cand2);
-    return $total_mov2 <=> $total_mov1;
+    return 0;
 }
 
 # calculate result ordering from graph
