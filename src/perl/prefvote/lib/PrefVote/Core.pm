@@ -664,6 +664,14 @@ sub save_c2r
         }
     }
 
+    # compute average_choice_rank for candidates where it didn't exist so it will be recorded with YAML results
+    # this happens for any candidate where it wasn't computed on demand for tie-breaking
+    foreach my $choice ($self->choices_keys()) {
+        if (not $self->acr_exists($choice)) {
+            $self->average_ranking($choice);
+        }
+    }
+
     return;
 }
 
