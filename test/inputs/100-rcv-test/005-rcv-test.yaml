@@ -11,298 +11,56 @@ params:
   name: Test Vote 005
   seats: 1
 ---
--
-  - ABNORMAL
-  - BORING
-  - CHAOTIC
-  - FACTIOUS
-  - EVIL
-  - DYSFUNCTIONAL
--
-  - BORING
-  - CHAOTIC
-  - ABNORMAL
-  - DYSFUNCTIONAL
--
-  - EVIL
-  - FACTIOUS
-  - BORING
-  - CHAOTIC
-  - DYSFUNCTIONAL
-  - ABNORMAL
--
-  - EVIL
-  - ABNORMAL
-  - DYSFUNCTIONAL
-  - FACTIOUS
-  - BORING
-  - CHAOTIC
--
-  - BORING
-  - DYSFUNCTIONAL
-  - FACTIOUS
-  - EVIL
-  - ABNORMAL
--
-  - BORING
-  - FACTIOUS
-  - CHAOTIC
-  - EVIL
-  - ABNORMAL
--
-  - BORING
-  - FACTIOUS
--
-  - EVIL
-  - FACTIOUS
-  - ABNORMAL
-  - CHAOTIC
-  - BORING
-  - DYSFUNCTIONAL
--
-  - EVIL
-  - CHAOTIC
-  - FACTIOUS
-  - BORING
--
-  - CHAOTIC
-  - BORING
-  - DYSFUNCTIONAL
-  - EVIL
--
-  - FACTIOUS
-  - DYSFUNCTIONAL
-  - CHAOTIC
-  - EVIL
-  - ABNORMAL
-  - BORING
--
-  - ABNORMAL
-  - CHAOTIC
-  - DYSFUNCTIONAL
--
-  - DYSFUNCTIONAL
-  - ABNORMAL
-  - FACTIOUS
-  - EVIL
-  - CHAOTIC
-  - BORING
+- [ABNORMAL, BORING, CHAOTIC, FACTIOUS, EVIL, DYSFUNCTIONAL]
+- [BORING, CHAOTIC, ABNORMAL, DYSFUNCTIONAL]
+- [EVIL, FACTIOUS, BORING, CHAOTIC, DYSFUNCTIONAL, ABNORMAL]
+- [EVIL, ABNORMAL, DYSFUNCTIONAL, FACTIOUS, BORING, CHAOTIC]
+- [BORING, DYSFUNCTIONAL, FACTIOUS, EVIL, ABNORMAL]
+- [BORING, FACTIOUS, CHAOTIC, EVIL, ABNORMAL]
+- [BORING, FACTIOUS]
+- [EVIL, FACTIOUS, ABNORMAL, CHAOTIC, BORING, DYSFUNCTIONAL]
+- [EVIL, CHAOTIC, FACTIOUS, BORING]
+- [CHAOTIC, BORING, DYSFUNCTIONAL, EVIL]
+- [FACTIOUS, DYSFUNCTIONAL, CHAOTIC, EVIL, ABNORMAL, BORING]
+- [ABNORMAL, CHAOTIC, DYSFUNCTIONAL]
+- [DYSFUNCTIONAL, ABNORMAL, FACTIOUS, EVIL, CHAOTIC, BORING]
 - [FACTIOUS]
--
-  - FACTIOUS
-  - ABNORMAL
-  - DYSFUNCTIONAL
-  - EVIL
-  - CHAOTIC
--
-  - BORING
-  - EVIL
-  - DYSFUNCTIONAL
-  - FACTIOUS
-  - ABNORMAL
-  - CHAOTIC
--
-  - EVIL
-  - CHAOTIC
-  - DYSFUNCTIONAL
-  - FACTIOUS
-  - ABNORMAL
--
-  - CHAOTIC
-  - DYSFUNCTIONAL
-  - EVIL
-  - FACTIOUS
-  - ABNORMAL
-  - BORING
--
-  - FACTIOUS
-  - EVIL
-  - BORING
-  - ABNORMAL
-  - CHAOTIC
-  - DYSFUNCTIONAL
--
-  - EVIL
-  - ABNORMAL
-  - CHAOTIC
-  - FACTIOUS
-  - DYSFUNCTIONAL
--
-  - EVIL
-  - FACTIOUS
-  - CHAOTIC
-  - ABNORMAL
-  - BORING
-  - DYSFUNCTIONAL
--
-  - EVIL
-  - ABNORMAL
-  - BORING
-  - DYSFUNCTIONAL
-  - FACTIOUS
-  - CHAOTIC
--
-  - FACTIOUS
-  - EVIL
-  - ABNORMAL
-  - DYSFUNCTIONAL
-  - BORING
-  - CHAOTIC
--
-  - ABNORMAL
-  - FACTIOUS
-  - BORING
-  - CHAOTIC
-  - EVIL
-  - DYSFUNCTIONAL
--
-  - CHAOTIC
-  - EVIL
-  - DYSFUNCTIONAL
-  - FACTIOUS
-  - ABNORMAL
--
-  - FACTIOUS
-  - EVIL
-  - CHAOTIC
-  - BORING
-  - ABNORMAL
--
-  - FACTIOUS
-  - ABNORMAL
-  - EVIL
-  - BORING
-  - CHAOTIC
--
-  - CHAOTIC
-  - ABNORMAL
-  - DYSFUNCTIONAL
-  - FACTIOUS
-  - BORING
--
-  - DYSFUNCTIONAL
-  - EVIL
-  - ABNORMAL
--
-  - EVIL
-  - FACTIOUS
-  - DYSFUNCTIONAL
-  - ABNORMAL
-  - BORING
-  - CHAOTIC
--
-  - BORING
-  - ABNORMAL
--
-  - FACTIOUS
-  - EVIL
-  - CHAOTIC
-  - BORING
-  - ABNORMAL
--
-  - CHAOTIC
-  - DYSFUNCTIONAL
-  - ABNORMAL
-  - BORING
-  - FACTIOUS
--
-  - FACTIOUS
-  - EVIL
--
-  - CHAOTIC
-  - DYSFUNCTIONAL
-  - BORING
-  - ABNORMAL
-  - EVIL
-  - FACTIOUS
--
-  - FACTIOUS
-  - EVIL
-  - CHAOTIC
-  - DYSFUNCTIONAL
-  - BORING
-  - ABNORMAL
--
-  - CHAOTIC
-  - BORING
-  - FACTIOUS
-  - EVIL
-  - DYSFUNCTIONAL
-  - ABNORMAL
--
-  - EVIL
-  - FACTIOUS
-  - BORING
--
-  - BORING
-  - FACTIOUS
-  - EVIL
-  - ABNORMAL
-  - DYSFUNCTIONAL
+- [FACTIOUS, ABNORMAL, DYSFUNCTIONAL, EVIL, CHAOTIC]
+- [BORING, EVIL, DYSFUNCTIONAL, FACTIOUS, ABNORMAL, CHAOTIC]
+- [EVIL, CHAOTIC, DYSFUNCTIONAL, FACTIOUS, ABNORMAL]
+- [CHAOTIC, DYSFUNCTIONAL, EVIL, FACTIOUS, ABNORMAL, BORING]
+- [FACTIOUS, EVIL, BORING, ABNORMAL, CHAOTIC, DYSFUNCTIONAL]
+- [EVIL, ABNORMAL, CHAOTIC, FACTIOUS, DYSFUNCTIONAL]
+- [EVIL, FACTIOUS, CHAOTIC, ABNORMAL, BORING, DYSFUNCTIONAL]
+- [EVIL, ABNORMAL, BORING, DYSFUNCTIONAL, FACTIOUS, CHAOTIC]
+- [FACTIOUS, EVIL, ABNORMAL, DYSFUNCTIONAL, BORING, CHAOTIC]
+- [ABNORMAL, FACTIOUS, BORING, CHAOTIC, EVIL, DYSFUNCTIONAL]
+- [CHAOTIC, EVIL, DYSFUNCTIONAL, FACTIOUS, ABNORMAL]
+- [FACTIOUS, EVIL, CHAOTIC, BORING, ABNORMAL]
+- [FACTIOUS, ABNORMAL, EVIL, BORING, CHAOTIC]
+- [CHAOTIC, ABNORMAL, DYSFUNCTIONAL, FACTIOUS, BORING]
+- [DYSFUNCTIONAL, EVIL, ABNORMAL]
+- [EVIL, FACTIOUS, DYSFUNCTIONAL, ABNORMAL, BORING, CHAOTIC]
+- [BORING, ABNORMAL]
+- [FACTIOUS, EVIL, CHAOTIC, BORING, ABNORMAL]
+- [CHAOTIC, DYSFUNCTIONAL, ABNORMAL, BORING, FACTIOUS]
+- [FACTIOUS, EVIL]
+- [CHAOTIC, DYSFUNCTIONAL, BORING, ABNORMAL, EVIL, FACTIOUS]
+- [FACTIOUS, EVIL, CHAOTIC, DYSFUNCTIONAL, BORING, ABNORMAL]
+- [CHAOTIC, BORING, FACTIOUS, EVIL, DYSFUNCTIONAL, ABNORMAL]
+- [EVIL, FACTIOUS, BORING]
+- [BORING, FACTIOUS, EVIL, ABNORMAL, DYSFUNCTIONAL]
 - [FACTIOUS]
--
-  - FACTIOUS
-  - BORING
-  - CHAOTIC
-  - DYSFUNCTIONAL
-  - ABNORMAL
-  - EVIL
--
-  - EVIL
-  - FACTIOUS
-  - CHAOTIC
--
-  - CHAOTIC
-  - ABNORMAL
-  - EVIL
-  - BORING
-  - FACTIOUS
-  - DYSFUNCTIONAL
--
-  - EVIL
-  - FACTIOUS
-  - DYSFUNCTIONAL
-  - ABNORMAL
-  - CHAOTIC
-  - BORING
--
-  - DYSFUNCTIONAL
-  - CHAOTIC
-  - BORING
-  - EVIL
-  - ABNORMAL
-  - FACTIOUS
--
-  - BORING
-  - EVIL
-  - FACTIOUS
-  - ABNORMAL
--
-  - BORING
-  - ABNORMAL
-  - EVIL
-  - CHAOTIC
-  - DYSFUNCTIONAL
-  - FACTIOUS
--
-  - BORING
-  - CHAOTIC
-  - DYSFUNCTIONAL
-  - ABNORMAL
-  - EVIL
-  - FACTIOUS
--
-  - FACTIOUS
-  - DYSFUNCTIONAL
-  - BORING
-  - EVIL
--
-  - FACTIOUS
-  - EVIL
-  - CHAOTIC
-  - DYSFUNCTIONAL
-  - ABNORMAL
-  - BORING
+- [FACTIOUS, BORING, CHAOTIC, DYSFUNCTIONAL, ABNORMAL, EVIL]
+- [EVIL, FACTIOUS, CHAOTIC]
+- [CHAOTIC, ABNORMAL, EVIL, BORING, FACTIOUS, DYSFUNCTIONAL]
+- [EVIL, FACTIOUS, DYSFUNCTIONAL, ABNORMAL, CHAOTIC, BORING]
+- [DYSFUNCTIONAL, CHAOTIC, BORING, EVIL, ABNORMAL, FACTIOUS]
+- [BORING, EVIL, FACTIOUS, ABNORMAL]
+- [BORING, ABNORMAL, EVIL, CHAOTIC, DYSFUNCTIONAL, FACTIOUS]
+- [BORING, CHAOTIC, DYSFUNCTIONAL, ABNORMAL, EVIL, FACTIOUS]
+- [FACTIOUS, DYSFUNCTIONAL, BORING, EVIL]
+- [FACTIOUS, EVIL, CHAOTIC, DYSFUNCTIONAL, ABNORMAL, BORING]
 ---
 Core:
   average_choice_rank:
@@ -744,48 +502,12 @@ Core:
         - [ABNORMAL]
       quantity: 1
   choice_rank:
-    ABNORMAL:
-      - 3
-      - 10
-      - 5
-      - 8
-      - 12
-      - 3
-    BORING:
-      - 10
-      - 4
-      - 8
-      - 6
-      - 7
-      - 5
-    CHAOTIC:
-      - 8
-      - 6
-      - 11
-      - 4
-      - 5
-      - 5
-    DYSFUNCTIONAL:
-      - 3
-      - 6
-      - 11
-      - 6
-      - 5
-      - 6
-    EVIL:
-      - 12
-      - 11
-      - 5
-      - 9
-      - 4
-      - 1
-    FACTIOUS:
-      - 14
-      - 11
-      - 5
-      - 8
-      - 3
-      - 4
+    ABNORMAL: [3, 10, 5, 8, 12, 3]
+    BORING: [10, 4, 8, 6, 7, 5]
+    CHAOTIC: [8, 6, 11, 4, 5, 5]
+    DYSFUNCTIONAL: [3, 6, 11, 6, 5, 6]
+    EVIL: [12, 11, 5, 9, 4, 1]
+    FACTIOUS: [14, 11, 5, 8, 3, 4]
   choice_to_index:
     ABNORMAL: 0
     BORING: 1
@@ -794,24 +516,12 @@ Core:
     EVIL: 4
     FACTIOUS: 5
   choice_to_result:
-    ABNORMAL:
-      - 6
-      - placed
-    BORING:
-      - 4
-      - placed
-    CHAOTIC:
-      - 3
-      - placed
-    DYSFUNCTIONAL:
-      - 5
-      - placed
-    EVIL:
-      - 1
-      - selected
-    FACTIOUS:
-      - 2
-      - placed
+    ABNORMAL: [6, placed]
+    BORING: [4, placed]
+    CHAOTIC: [3, placed]
+    DYSFUNCTIONAL: [5, placed]
+    EVIL: [1, selected]
+    FACTIOUS: [2, placed]
   choices:
     ABNORMAL: abnormal and antisocial
     BORING: boring as anything
@@ -828,7 +538,7 @@ Core:
     5: FACTIOUS
   name: Test Vote 005
   seats: 1
-  timestamp: Tue Mar 15 23:55:27 2022
+  timestamp: Wed Mar 16 00:51:07 2022
   total_ballots: 50
 RankedPairs:
   average_choice_rank:
@@ -1270,48 +980,12 @@ RankedPairs:
         - [ABNORMAL]
       quantity: 1
   choice_rank:
-    ABNORMAL:
-      - 3
-      - 10
-      - 5
-      - 8
-      - 12
-      - 3
-    BORING:
-      - 10
-      - 4
-      - 8
-      - 6
-      - 7
-      - 5
-    CHAOTIC:
-      - 8
-      - 6
-      - 11
-      - 4
-      - 5
-      - 5
-    DYSFUNCTIONAL:
-      - 3
-      - 6
-      - 11
-      - 6
-      - 5
-      - 6
-    EVIL:
-      - 12
-      - 11
-      - 5
-      - 9
-      - 4
-      - 1
-    FACTIOUS:
-      - 14
-      - 11
-      - 5
-      - 8
-      - 3
-      - 4
+    ABNORMAL: [3, 10, 5, 8, 12, 3]
+    BORING: [10, 4, 8, 6, 7, 5]
+    CHAOTIC: [8, 6, 11, 4, 5, 5]
+    DYSFUNCTIONAL: [3, 6, 11, 6, 5, 6]
+    EVIL: [12, 11, 5, 9, 4, 1]
+    FACTIOUS: [14, 11, 5, 8, 3, 4]
   choice_to_index:
     ABNORMAL: 0
     BORING: 1
@@ -1320,24 +994,12 @@ RankedPairs:
     EVIL: 4
     FACTIOUS: 5
   choice_to_result:
-    ABNORMAL:
-      - 5
-      - placed
-    BORING:
-      - 4
-      - placed
-    CHAOTIC:
-      - 3
-      - placed
-    DYSFUNCTIONAL:
-      - 6
-      - placed
-    EVIL:
-      - 1
-      - selected
-    FACTIOUS:
-      - 2
-      - placed
+    ABNORMAL: [5, placed]
+    BORING: [4, placed]
+    CHAOTIC: [3, placed]
+    DYSFUNCTIONAL: [6, placed]
+    EVIL: [1, selected]
+    FACTIOUS: [2, placed]
   choices:
     ABNORMAL: abnormal and antisocial
     BORING: boring as anything
@@ -1373,51 +1035,21 @@ RankedPairs:
     4: EVIL
     5: FACTIOUS
   majority:
-    - cand:
-        - EVIL
-        - ABNORMAL
-    - cand:
-        - CHAOTIC
-        - DYSFUNCTIONAL
-    - cand:
-        - EVIL
-        - DYSFUNCTIONAL
-    - cand:
-        - FACTIOUS
-        - ABNORMAL
-    - cand:
-        - FACTIOUS
-        - CHAOTIC
-    - cand:
-        - EVIL
-        - CHAOTIC
-    - cand:
-        - FACTIOUS
-        - DYSFUNCTIONAL
-    - cand:
-        - FACTIOUS
-        - BORING
-    - cand:
-        - EVIL
-        - BORING
-    - cand:
-        - BORING
-        - DYSFUNCTIONAL
-    - cand:
-        - CHAOTIC
-        - ABNORMAL
-    - cand:
-        - CHAOTIC
-        - BORING
-    - cand:
-        - ABNORMAL
-        - DYSFUNCTIONAL
-    - cand:
-        - EVIL
-        - FACTIOUS
-    - cand:
-        - ABNORMAL
-        - BORING
+    - cand: [EVIL, ABNORMAL]
+    - cand: [CHAOTIC, DYSFUNCTIONAL]
+    - cand: [EVIL, DYSFUNCTIONAL]
+    - cand: [FACTIOUS, ABNORMAL]
+    - cand: [EVIL, CHAOTIC]
+    - cand: [FACTIOUS, CHAOTIC]
+    - cand: [FACTIOUS, DYSFUNCTIONAL]
+    - cand: [FACTIOUS, BORING]
+    - cand: [EVIL, BORING]
+    - cand: [BORING, DYSFUNCTIONAL]
+    - cand: [CHAOTIC, ABNORMAL]
+    - cand: [CHAOTIC, BORING]
+    - cand: [ABNORMAL, DYSFUNCTIONAL]
+    - cand: [EVIL, FACTIOUS]
+    - cand: [ABNORMAL, BORING]
   name: Test Vote 005
   pair:
     ABNORMAL:
@@ -1531,7 +1163,7 @@ RankedPairs:
         mov: -1
         preference: 22
   seats: 1
-  timestamp: Tue Mar 15 23:55:28 2022
+  timestamp: Wed Mar 16 00:51:08 2022
   total_ballots: 50
   winners:
     - [EVIL]
@@ -1980,48 +1612,12 @@ STV:
         - [ABNORMAL]
       quantity: 1
   choice_rank:
-    ABNORMAL:
-      - 3
-      - 10
-      - 5
-      - 8
-      - 12
-      - 3
-    BORING:
-      - 10
-      - 4
-      - 8
-      - 6
-      - 7
-      - 5
-    CHAOTIC:
-      - 8
-      - 6
-      - 11
-      - 4
-      - 5
-      - 5
-    DYSFUNCTIONAL:
-      - 3
-      - 6
-      - 11
-      - 6
-      - 5
-      - 6
-    EVIL:
-      - 12
-      - 11
-      - 5
-      - 9
-      - 4
-      - 1
-    FACTIOUS:
-      - 14
-      - 11
-      - 5
-      - 8
-      - 3
-      - 4
+    ABNORMAL: [3, 10, 5, 8, 12, 3]
+    BORING: [10, 4, 8, 6, 7, 5]
+    CHAOTIC: [8, 6, 11, 4, 5, 5]
+    DYSFUNCTIONAL: [3, 6, 11, 6, 5, 6]
+    EVIL: [12, 11, 5, 9, 4, 1]
+    FACTIOUS: [14, 11, 5, 8, 3, 4]
   choice_to_index:
     ABNORMAL: 0
     BORING: 1
@@ -2030,24 +1626,12 @@ STV:
     EVIL: 4
     FACTIOUS: 5
   choice_to_result:
-    ABNORMAL:
-      - 6
-      - eliminated
-    BORING:
-      - 3
-      - eliminated
-    CHAOTIC:
-      - 4
-      - eliminated
-    DYSFUNCTIONAL:
-      - 5
-      - eliminated
-    EVIL:
-      - 2
-      - placed
-    FACTIOUS:
-      - 1
-      - selected
+    ABNORMAL: [6, eliminated]
+    BORING: [3, eliminated]
+    CHAOTIC: [4, eliminated]
+    DYSFUNCTIONAL: [5, eliminated]
+    EVIL: [2, placed]
+    FACTIOUS: [1, selected]
   choices:
     ABNORMAL: abnormal and antisocial
     BORING: boring as anything
@@ -2069,13 +1653,7 @@ STV:
     5: FACTIOUS
   name: Test Vote 005
   rounds:
-    - candidates:
-        - FACTIOUS
-        - EVIL
-        - BORING
-        - CHAOTIC
-        - DYSFUNCTIONAL
-        - ABNORMAL
+    - candidates: [FACTIOUS, EVIL, BORING, CHAOTIC, DYSFUNCTIONAL, ABNORMAL]
       number: 1
       quota: 25
       result:
@@ -2113,12 +1691,7 @@ STV:
           votes: 14
           winner: 0
       votes_used: 50
-    - candidates:
-        - FACTIOUS
-        - EVIL
-        - BORING
-        - CHAOTIC
-        - DYSFUNCTIONAL
+    - candidates: [FACTIOUS, EVIL, BORING, CHAOTIC, DYSFUNCTIONAL]
       number: 2
       quota: 25
       result:
@@ -2151,11 +1724,7 @@ STV:
           votes: 15
           winner: 0
       votes_used: 50
-    - candidates:
-        - FACTIOUS
-        - EVIL
-        - BORING
-        - CHAOTIC
+    - candidates: [FACTIOUS, EVIL, BORING, CHAOTIC]
       number: 3
       quota: 25
       result:
@@ -2183,10 +1752,7 @@ STV:
           votes: 16
           winner: 0
       votes_used: 50
-    - candidates:
-        - FACTIOUS
-        - EVIL
-        - BORING
+    - candidates: [FACTIOUS, EVIL, BORING]
       number: 4
       quota: 24.5
       result:
@@ -2209,9 +1775,7 @@ STV:
           votes: 17
           winner: 0
       votes_used: 49
-    - candidates:
-        - FACTIOUS
-        - EVIL
+    - candidates: [FACTIOUS, EVIL]
       number: 5
       quota: 23.5
       result:
@@ -2254,7 +1818,7 @@ STV:
       tally: {}
       votes_used: 0
   seats: 1
-  timestamp: Tue Mar 15 23:55:28 2022
+  timestamp: Wed Mar 16 00:51:07 2022
   total_ballots: 50
   winners:
     - [FACTIOUS]
@@ -2699,48 +2263,12 @@ Schulze:
         - [ABNORMAL]
       quantity: 1
   choice_rank:
-    ABNORMAL:
-      - 3
-      - 10
-      - 5
-      - 8
-      - 12
-      - 3
-    BORING:
-      - 10
-      - 4
-      - 8
-      - 6
-      - 7
-      - 5
-    CHAOTIC:
-      - 8
-      - 6
-      - 11
-      - 4
-      - 5
-      - 5
-    DYSFUNCTIONAL:
-      - 3
-      - 6
-      - 11
-      - 6
-      - 5
-      - 6
-    EVIL:
-      - 12
-      - 11
-      - 5
-      - 9
-      - 4
-      - 1
-    FACTIOUS:
-      - 14
-      - 11
-      - 5
-      - 8
-      - 3
-      - 4
+    ABNORMAL: [3, 10, 5, 8, 12, 3]
+    BORING: [10, 4, 8, 6, 7, 5]
+    CHAOTIC: [8, 6, 11, 4, 5, 5]
+    DYSFUNCTIONAL: [3, 6, 11, 6, 5, 6]
+    EVIL: [12, 11, 5, 9, 4, 1]
+    FACTIOUS: [14, 11, 5, 8, 3, 4]
   choice_to_index:
     ABNORMAL: 0
     BORING: 1
@@ -2749,24 +2277,12 @@ Schulze:
     EVIL: 4
     FACTIOUS: 5
   choice_to_result:
-    ABNORMAL:
-      - 5
-      - placed
-    BORING:
-      - 4
-      - placed
-    CHAOTIC:
-      - 3
-      - placed
-    DYSFUNCTIONAL:
-      - 6
-      - placed
-    EVIL:
-      - 1
-      - selected
-    FACTIOUS:
-      - 2
-      - placed
+    ABNORMAL: [5, placed]
+    BORING: [4, placed]
+    CHAOTIC: [3, placed]
+    DYSFUNCTIONAL: [6, placed]
+    EVIL: [1, selected]
+    FACTIOUS: [2, placed]
   choices:
     ABNORMAL: abnormal and antisocial
     BORING: boring as anything
@@ -2783,13 +2299,7 @@ Schulze:
     5: FACTIOUS
   name: Test Vote 005
   rounds:
-    - candidates:
-        - ABNORMAL
-        - BORING
-        - CHAOTIC
-        - DYSFUNCTIONAL
-        - EVIL
-        - FACTIOUS
+    - candidates: [ABNORMAL, BORING, CHAOTIC, DYSFUNCTIONAL, EVIL, FACTIOUS]
       number: 1
       pair:
         ABNORMAL:
@@ -2938,12 +2448,7 @@ Schulze:
         type: winner
       win_flag:
         EVIL: 1
-    - candidates:
-        - ABNORMAL
-        - BORING
-        - CHAOTIC
-        - DYSFUNCTIONAL
-        - FACTIOUS
+    - candidates: [ABNORMAL, BORING, CHAOTIC, DYSFUNCTIONAL, FACTIOUS]
       number: 2
       pair:
         ABNORMAL:
@@ -3046,11 +2551,7 @@ Schulze:
         type: winner
       win_flag:
         FACTIOUS: 1
-    - candidates:
-        - ABNORMAL
-        - BORING
-        - CHAOTIC
-        - DYSFUNCTIONAL
+    - candidates: [ABNORMAL, BORING, CHAOTIC, DYSFUNCTIONAL]
       number: 3
       pair:
         ABNORMAL:
@@ -3114,10 +2615,7 @@ Schulze:
         type: winner
       win_flag:
         CHAOTIC: 1
-    - candidates:
-        - ABNORMAL
-        - BORING
-        - DYSFUNCTIONAL
+    - candidates: [ABNORMAL, BORING, DYSFUNCTIONAL]
       number: 4
       pair:
         ABNORMAL:
@@ -3156,9 +2654,7 @@ Schulze:
         type: winner
       win_flag:
         BORING: 1
-    - candidates:
-        - ABNORMAL
-        - DYSFUNCTIONAL
+    - candidates: [ABNORMAL, DYSFUNCTIONAL]
       number: 5
       pair:
         ABNORMAL:
@@ -3189,7 +2685,7 @@ Schulze:
       pair: {}
       win_flag: {}
   seats: 1
-  timestamp: Tue Mar 15 23:55:28 2022
+  timestamp: Wed Mar 16 00:51:08 2022
   total_ballots: 50
   winners:
     - [EVIL]

@@ -17,9 +17,9 @@ Readonly::Scalar my $pvroot => dirname($Bin);
 Readonly::Scalar my $count_script => "$pvroot/src/perl/prefvote/bin/vote-count";
 
 # configuration
-$YAML::InlineSeries = 1;
+$YAML::InlineSeries = 10;
 
-# collect run data for all voting methods, with and without avg choice rank (ACR) tiebreaking
+# collect run data for all voting methods
 sub collect_rundata
 {
     my $path = shift;
