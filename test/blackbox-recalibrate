@@ -1,0 +1,77 @@
+#!/usr/bin/perl
+# recalibrate PrefVote blackbox test baseline data by running the reference implementation (Perl)
+use Modern::Perl qw(2018);
+use utf8;
+use Carp qw(croak);
+use Readonly;
+use FindBin qw($Bin);
+use File::Basename qw(dirname);
+use File::Copy qw(cp);;
+use YAML;
+use IPC::Run qw(run);
+
+# constants
+Readonly::Array my @methods => qw(Core STV Schulze RankedPairs);
+Readonly::Scalar my $progname => $0;
+Readonly::Scalar my $pvroot => dirname($Bin);
+Readonly::Scalar my $count_script => "$pvroot/src/perl/prefvote/bin/vote-count";
+
+# configuration
+$YAML::InlineSeries = 1;
+
+# collect run data for all voting methods, with and without avg choice rank (ACR) tiebreaking
+sub collect_rundata
+{
+    my $path = shift;
+    my %rundata;
+
+    # loop through voting methods - run vote counting with and without ACR tiebreaking
+    foreach my $method (@methods) {
+        my $yaml_text;
+        my @cmd = ($count_script, "--format=yaml", "--method=$method", $path);
+        run \@cmd, \undef, \$yaml_text;
+        my @raw_rundata = YAML::Load($yaml_text);
+        if (not exists $raw_rundata[0]{$method}) {
+            croak "malformed YAML output from $path: $method voting result not found";
+        }
+        $rundata{$method} = $raw_rundata[0]{$method};
+    }
+    return \%rundata;
+}
+
+# handle recalibration of each file
+sub process_file
+{
+    my $path = shift;
+
+    # verify $path exists and is a file
+    if (not -e $path) {
+        croak "$progname: file $path does not exist";
+    }
+    if (not -f $path) {
+        croak "$progname: $path is not a file";
+    }
+
+    # read YAML data from file
+    # @yaml_doc is a list containing 3 YAML documents: 0=vote metadata, 1=ballots, 2=optional blackbox test data
+    my @yaml_doc = YAML::LoadFile($path);
+    if (not scalar @yaml_doc) {
+        croak "$progname: failed to parse YAML from $path";
+    }
+
+    # make backup copy of file
+    my $backup_file = $path.".bak";
+    cp($path, $backup_file)
+        or croak "$progname: failed to back up $path: $!";
+
+    # construct and replace new blackbox testing data
+    $yaml_doc[2] = collect_rundata($path);
+    YAML::DumpFile($path, @yaml_doc);
+}
+
+# process command line
+my @files = @ARGV;
+
+foreach my $path (@files) {
+    process_file($path);
+}
