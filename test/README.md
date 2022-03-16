@@ -21,11 +21,11 @@ Numbers in each cell are test cases planned/passed/failed.
 <tbody>
 <tr>
 <td>Perl whitebox</td>
-<td>319/319/0</td>
+<td>321/321/0</td>
 <td>195/195/0</td>
 <td>182/182/0</td>
 <td>132/132/0</td>
-<td>828/828/0</td>
+<td>830/830/0</td>
 </tr>
 <tr>
 <td>Rust whitebox</td>
@@ -37,11 +37,11 @@ Numbers in each cell are test cases planned/passed/failed.
 </tr>
 <tr>
 <td>Perl blackbox</td>
-<td>6433/6433/0</td>
-<td>7401/7401/0</td>
-<td>8528/8528/0</td>
-<td>6851/6851/0</td>
-<td>29213/29213/0</td>
+<td>7758/7758/0</td>
+<td>8922/8922/0</td>
+<td>10279/10279/0</td>
+<td>8259/8259/0</td>
+<td>35218/35218/0</td>
 </tr>
 <tr>
 <td>Rust blackbox</td>
@@ -53,11 +53,11 @@ Numbers in each cell are test cases planned/passed/failed.
 </tr>
 <tr>
 <td>total</td>
-<td>6752/6752/0</td>
-<td>7596/7596/0</td>
-<td>8710/8710/0</td>
-<td>6983/6983/0</td>
-<td>30041/30041/0</td>
+<td>8079/8079/0</td>
+<td>9117/9117/0</td>
+<td>10461/10461/0</td>
+<td>8391/8391/0</td>
+<td>36048/36048/0</td>
 </tr>
 </tbody>
 </table>
