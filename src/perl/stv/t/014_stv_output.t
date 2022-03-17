@@ -3,7 +3,7 @@
 use Modern::Perl qw(2015); # require 5.20.0 or later
 use autodie;
 use open ":std", ":encoding(UTF-8)";
-use Test::More tests => 92;
+use Test::More tests => 93;
 use Test::Exception;
 use Readonly;
 use Data::Dumper;
@@ -215,7 +215,8 @@ STV:
 Readonly::Array my @result_expected => (
           {
             'seats' => 1,
-            'name' => 'Test Vote'
+            'name' => 'Test Vote',
+            'total_ballots' => 50,
           },
           {
             'rows' => [
@@ -330,7 +331,7 @@ Readonly::Array my @result_expected => (
     dies_ok(sub {PrefVote::Core::Output::main() }, "dies as expected on empty stdin");
 }
 
-# test with mock-stdin data (88 tests)
+# test with mock-stdin data (89 tests)
 {
     local @ARGV = qw(--format=rawcapture --method=stv);
     my $vote_obj;
@@ -339,7 +340,8 @@ Readonly::Array my @result_expected => (
     lives_ok(sub {PrefVote::Core::Output::main() }, "main processes YAML result");
     my $output = PrefVote::Core::Output::RawCapture::get_output();
     # expected result entry 0
-    is(scalar keys %{$output->[0]}, 2, "output record 0: 2 items");
+    is(scalar keys %{$output->[0]}, scalar keys %{$result_expected[0]},
+        "output record 0: ".(scalar keys %{$result_expected[0]})." items");
     foreach my $key (keys %{$result_expected[0]}) {
         is($output->[0]{$key}, $result_expected[0]{$key}, "output record 0: $key=".$result_expected[0]{$key});
     }

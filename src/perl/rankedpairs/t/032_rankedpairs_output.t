@@ -3,7 +3,7 @@
 use Modern::Perl qw(2015); # require 5.20.0 or later
 use autodie;
 use open ":std", ":encoding(UTF-8)";
-use Test::More tests => 103;
+use Test::More tests => 104;
 use Test::Exception;
 use Readonly;
 use Data::Dumper;
@@ -694,7 +694,8 @@ RankedPairs:
 Readonly::Array my @result_expected => (
     {
     'seats' => 1,
-    'name' => 'Test Vote'
+    'name' => 'Test Vote',
+    'total_ballots' => 50,
     },
     {
     'rows' => [
@@ -749,29 +750,29 @@ Readonly::Array my @result_expected => (
                 [
                   'EVIL',
                   "\x{1f6c7}",
-                  "1 \x{2705} \x{1f512}",
-                  "12 \x{2705} \x{1f512}",
-                  "7 \x{2705} \x{1f512}",
-                  "17 \x{2705} \x{1f512}",
-                  "14 \x{2705} \x{1f512}"
+                  "1 \x{2705}\x{1f512}",
+                  "12 \x{2705}\x{1f512}",
+                  "7 \x{2705}\x{1f512}",
+                  "17 \x{2705}\x{1f512}",
+                  "14 \x{2705}\x{1f512}"
                 ],
                 [
                   'FACTIOUS',
                   "-1 \x{274c}",
                   "\x{1f6c7}",
-                  "12 \x{2705} \x{1f512}",
-                  "10 \x{2705} \x{1f512}",
-                  "13 \x{2705} \x{1f512}",
-                  "11 \x{2705} \x{1f512}"
+                  "12 \x{2705}\x{1f512}",
+                  "10 \x{2705}\x{1f512}",
+                  "13 \x{2705}\x{1f512}",
+                  "11 \x{2705}\x{1f512}"
                 ],
                 [
                   'CHAOTIC',
                   "-12 \x{274c}",
                   "-12 \x{274c}",
                   "\x{1f6c7}",
-                  "2 \x{2705} \x{1f512}",
-                  "2 \x{2705} \x{1f512}",
-                  "15 \x{2705} \x{1f512}"
+                  "2 \x{2705}\x{1f512}",
+                  "2 \x{2705}\x{1f512}",
+                  "15 \x{2705}\x{1f512}"
                 ],
                 [
                   'BORING',
@@ -780,7 +781,7 @@ Readonly::Array my @result_expected => (
                   "-2 \x{274c}",
                   "\x{1f6c7}",
                   "0 \x{1f535}",
-                  "6 \x{2705} \x{1f512}"
+                  "6 \x{2705}\x{1f512}"
                 ],
                 [
                   'ABNORMAL',
@@ -789,7 +790,7 @@ Readonly::Array my @result_expected => (
                   "-2 \x{274c}",
                   "0 \x{1f535}",
                   "\x{1f6c7}",
-                  "1 \x{2705} \x{1f512}"
+                  "1 \x{2705}\x{1f512}"
                 ],
                 [
                   'DYSFUNCTIONAL',
@@ -823,7 +824,7 @@ Readonly::Array my @result_expected => (
     dies_ok(sub {PrefVote::Core::Output::main() }, "dies as expected on empty stdin");
 }
 
-# test with mock-stdin data (99 tests)
+# test with mock-stdin data (100 tests)
 {
     local @ARGV = qw(--format=rawcapture --method=rankedpairs);
     my $vote_obj;
@@ -832,7 +833,8 @@ Readonly::Array my @result_expected => (
     lives_ok(sub {PrefVote::Core::Output::main() }, "main processes YAML result");
     my $output = PrefVote::Core::Output::RawCapture::get_output();
     # expected result entry 0
-    is(scalar keys %{$output->[0]}, 2, "output record 0: 2 items");
+    is(scalar keys %{$output->[0]}, scalar keys %{$result_expected[0]},
+        "output record 0: ".(scalar keys %{$result_expected[0]})." items");
     foreach my $key (keys %{$result_expected[0]}) {
         is($output->[0]{$key}, $result_expected[0]{$key}, "output record 0: $key=".$result_expected[0]{$key});
     }

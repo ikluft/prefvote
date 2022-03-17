@@ -58,7 +58,7 @@ sub do_counting_table
             my $locked = ($pair->{$i}{$j}{lock} // 0);
             my $icon = ($margin == 0) ? PrefVote::Core::Output::symbol("tie")
                 : (($margin > 0) ? PrefVote::Core::Output::symbol("win") : PrefVote::Core::Output::symbol("lose"));
-            my $lock_icon = $locked ? " ".PrefVote::Core::Output::symbol("lock") : "";
+            my $lock_icon = $locked ? PrefVote::Core::Output::symbol("lock") : "";
             push @row, "$margin $icon$lock_icon";
         }
         push @result_rows, \@row;
