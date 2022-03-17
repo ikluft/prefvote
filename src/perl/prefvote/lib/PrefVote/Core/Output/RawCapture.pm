@@ -44,7 +44,7 @@ sub do_header
 
     # save title and other heading info as if printing it
     my %out_rec;
-    foreach my $key (qw(seats name)) {
+    foreach my $key (qw(seats name total_ballots)) {
         if (exists $result_data->{$key}) {
             $out_rec{$key} = $result_data->{$key};
         }

@@ -42,10 +42,12 @@ sub do_header
 {
     my ($class, $result_data) = @_;
     my $seats = $result_data->{seats};
+    my $total_ballots = $result_data->{total_ballots};
     my $title = "Results: ".$result_data->{name};
     say $title;
     say "-" x length $title;
-    say "$seats seat".($seats>1 ? "s" : "")." available";
+    say "$seats seat".($seats>1 ? "s" : "")." available "
+        ."\N{VERTICAL LINE} $total_ballots ballots";
     say;
     return;
 }

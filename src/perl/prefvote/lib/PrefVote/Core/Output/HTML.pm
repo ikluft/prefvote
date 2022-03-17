@@ -21,7 +21,6 @@ use base qw(PrefVote);
 sub htmlify
 {
     my $str = escape_html(shift);
-    $str =~ s/\s+/&nbsp;/gx;
     return $str
 }
 
@@ -40,7 +39,7 @@ sub generate_html_table
         say "<thead>";
         say "<tr>";
         foreach my $col_item (@$header) {
-            say "<th style=\"white-space: nowrap;\">".htmlify($col_item)."</th>";
+            say "<th>".htmlify($col_item)."</th>";
         }
         say "</tr>";
         say "</thead>";
@@ -51,7 +50,7 @@ sub generate_html_table
     foreach my $row (@$rows) {
         say "<tr>";
         foreach my $col_item (@$row) {
-            say "<td style=\"white-space: nowrap;\">".htmlify($col_item)."</td>";
+            say "<td>".htmlify($col_item)."</td>";
         }
         say "</tr>";
     }
@@ -68,10 +67,12 @@ sub do_header
     # vote result heading
     # scope limited to h2 level heading - assumes this will be inserted in a larger document
     my $seats = $result_data->{seats};
+    my $total_ballots = $result_data->{total_ballots};
     my $title = "Results: ".$result_data->{name};
     say "<div id=\"prefvote\">";
     say "<h2>".htmlify($title)."</h2>";
-    say "<p>".htmlify($seats)." seat".($seats>1 ? "s" : "")." available</p>";
+    say "<p>".htmlify($seats)." seat".($seats>1 ? "s" : "")." available "
+        ."&VerticalBar; ".htmlify($total_ballots)." ballots</p>";
     return;
 }
 
