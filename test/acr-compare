@@ -1,0 +1,143 @@
+#!/usr/bin/env perl 
+#  PODNAME: acr-compare
+#  compare voting methods with & without Average Choice Ranking (ACR) tiebreaking
+
+use Modern::Perl qw(2018);
+use utf8;
+use Carp qw(croak);
+use Readonly;
+use FindBin;
+use File::Basename;
+use Text::Table::Tiny 1.02 qw(generate_table);
+use YAML::XS;
+use IPC::Run qw(run);
+
+# constants
+Readonly::Array my @methods => qw(Core STV Schulze RankedPairs);
+Readonly::Scalar my $pvroot => dirname($FindBin::RealBin);
+Readonly::Scalar my $datadir => "$pvroot/test/inputs/100-rcv-test";
+Readonly::Scalar my $count_script => "$pvroot/src/perl/prefvote/bin/vote-count";
+
+# collect run data for all voting methods, with and without avg choice rank (ACR) tiebreaking
+sub collect_rundata
+{
+    my $path = shift;
+    my %rundata;
+
+    # loop through voting methods - run vote counting with and without ACR tiebreaking
+    foreach my $method (@methods) {
+        my $yaml_text;
+        my @cmd = ($count_script, "--format=yaml", "--method=$method", $path);
+        run \@cmd, \undef, \$yaml_text;
+        my @raw_rundata = YAML::XS::Load($yaml_text);
+        if (not exists $raw_rundata[0]{$method}) {
+            croak "malformed YAML output from $path: $method voting result not found";
+        }
+        $rundata{$method} = $raw_rundata[0]{$method};
+
+        # collect non-ACR result for voting methods except Core
+        next if $method eq "Core";
+        my $method_key = $method."-notb"; # suffix means no-tiebreaking
+        push @cmd, "--no-tiebreak";
+        my $yaml_text_notb;
+        run \@cmd, \undef, \$yaml_text_notb;
+        my @raw_rundata_notb = YAML::XS::Load($yaml_text_notb);
+        if (not exists $raw_rundata_notb[0]{$method}) {
+            croak "malformed YAML output from $path: $method_key voting result not found";
+        }
+        $rundata{$method_key} = $raw_rundata_notb[0]{$method};
+    }
+    return \%rundata;
+}
+
+# output formatting for avg choice rank (ACR) data
+sub acr_fmt
+{
+    my ($rundata, $choice) = @_;
+    my $acr = $rundata->{Core}{average_choice_rank};
+    my $cr = $rundata->{Core}{choice_rank};
+    my $total_place = 0;
+    my $total_votes = 0;
+    my $cols = scalar @{$cr->{$choice}};
+    for (my $i=0; $i<$cols; $i++) {
+        $total_votes += $cr->{$choice}[$i];
+        $total_place += ($i+1)*$cr->{$choice}[$i];
+    }
+    return sprintf "%7.5f (%d/%d)", $acr->{$choice}, $total_place, $total_votes;
+}
+
+# load data and do comparison
+sub do_compare
+{
+    my $path = shift;
+    my @yaml_doc = YAML::XS::LoadFile($path);
+    my $metadata = $yaml_doc[0];
+    my $rundata = collect_rundata($path);
+
+    # print title
+    say "title: ".$metadata->{params}{name}." (".$rundata->{Core}{total_ballots}." ballots)";
+
+    # collect some runtime data locations
+    my $choices = $rundata->{Core}{choices};
+
+    # compute pairwise victories (pwv) to estimate Condorcet
+    # using this we can see where Schulze & Ranked Pairs resolve ambiguities
+    my %pwv;
+    my %victories;
+    {
+        my $rp_pair = $rundata->{RankedPairs}{pair};
+        foreach my $choice (keys %$choices) {
+            my $pairwise_victory = 0;
+            foreach my $opponent (keys %$rp_pair) {
+                my $mov = $rp_pair->{$choice}{$opponent}{mov} // 0;
+                if ($mov > 0) {
+                    $pairwise_victory++;
+                } elsif ($mov == 0) {
+                    #$pairwise_victory += 0.5;
+                }
+            }
+            $victories{$choice} = $pairwise_victory;
+        }
+        my @pwv_order = sort {$victories{$b} <=> $victories{$a}} keys %victories;
+        for (my $i=0; $i<scalar @pwv_order; $i++) {
+            if ($i>0 and $victories{$pwv_order[$i]} == $victories{$pwv_order[$i-1]}) {
+                $pwv{$pwv_order[$i]} = $pwv{$pwv_order[$i-1]};
+            } else {
+                $pwv{$pwv_order[$i]} = $i+1;
+            }
+        }
+    }
+
+    # compare result order
+    my @choices = keys %$choices;
+    my $num_choices = scalar @choices;
+    my @core_order = sort {$rundata->{Core}{choice_to_result}{$a}[0] <=> $rundata->{Core}{choice_to_result}{$b}[0]} @choices;
+    my @table = (["choice", "Copeland", "avg choice rank", @methods]);
+    for (my $i=0; $i<$num_choices; $i++) {
+        my @row = ($core_order[$i], $pwv{$core_order[$i]}." (".$victories{$core_order[$i]}.")",
+            acr_fmt($rundata, $core_order[$i]));
+        foreach my $method (@methods) {
+            if ($method eq "Core") {
+                push @row, $rundata->{$method}{choice_to_result}{$core_order[$i]}[0];
+            } else {
+                push @row, $rundata->{$method}{choice_to_result}{$core_order[$i]}[0]." / "
+                    .$rundata->{$method."-notb"}{choice_to_result}{$core_order[$i]}[0];
+            }
+        }
+        push @table, \@row;
+    }
+    say generate_table(rows =>\@table, header_row => 1, style => 'boxrule');
+    say "";
+}
+
+# main
+opendir(my $dh, $datadir) || die "Can't opendir $datadir: $!";
+my @yaml_files = sort grep { /^[^.].*\.(yaml|yml)$/ and -f "$datadir/$_" } readdir($dh);
+closedir $dh;
+
+binmode(STDOUT, ":encoding(UTF-8)");
+say join " ", @yaml_files;
+
+foreach my $file (@yaml_files) {
+    do_compare($datadir."/".$file);
+}
