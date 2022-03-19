@@ -112,10 +112,9 @@ sub do_compare
     my @choices = keys %$choices;
     my $num_choices = scalar @choices;
     my @core_order = sort {$rundata->{Core}{choice_to_result}{$a}[0] <=> $rundata->{Core}{choice_to_result}{$b}[0]} @choices;
-    my @table = (["choice", "Copeland", "avg choice rank", @methods]);
+    my @table = (["choice", "avg choice rank", @methods, "Copeland"]);
     for (my $i=0; $i<$num_choices; $i++) {
-        my @row = ($core_order[$i], $pwv{$core_order[$i]}." (".$victories{$core_order[$i]}.")",
-            acr_fmt($rundata, $core_order[$i]));
+        my @row = ($core_order[$i], acr_fmt($rundata, $core_order[$i]));
         foreach my $method (@methods) {
             if ($method eq "Core") {
                 push @row, $rundata->{$method}{choice_to_result}{$core_order[$i]}[0];
@@ -124,6 +123,7 @@ sub do_compare
                     .$rundata->{$method."-notb"}{choice_to_result}{$core_order[$i]}[0];
             }
         }
+        push @row, $pwv{$core_order[$i]}." (".$victories{$core_order[$i]}.")";
         push @table, \@row;
     }
     say generate_table(rows =>\@table, header_row => 1, style => 'boxrule');
