@@ -1,5 +1,5 @@
 # PrefVote::Schulze::Output
-# ABSTRACT: Gbase class for output formatting in PrefVote::Schulze
+# ABSTRACT: output formatting for PrefVote::Schulze
 # derived from Vote::Schulze by Ian Kluft
 # Copyright (c) 2022 by Ian Kluft
 # Open Source license: Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
@@ -75,7 +75,7 @@ __END__
 
 =head1 NAME
 
-PrefVote::Schulze::Output - base class for output formatting in PrefVote::Schulze
+PrefVote::Schulze::Output - output formatting for PrefVote::Schulze
 
 =head1 SYNOPSIS
 

@@ -1,5 +1,5 @@
 # PrefVote::RankedPairs::Output
-# ABSTRACT: Gbase class for output formatting in PrefVote::RankedPairs
+# ABSTRACT: output formatting for PrefVote::RankedPairs
 # derived from Vote::RankedPairs by Ian Kluft
 # Copyright (c) 2022 by Ian Kluft
 # Open Source license: Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
@@ -77,7 +77,7 @@ __END__
 
 =head1 NAME
 
-PrefVote::RankedPairs::Output - base class for output formatting in PrefVote::RankedPairs
+PrefVote::RankedPairs::Output - output formatting for PrefVote::RankedPairs
 
 =head1 SYNOPSIS
 
