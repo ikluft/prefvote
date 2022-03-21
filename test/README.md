@@ -2,6 +2,12 @@
 
 PrefVote is designed for multiple programming language implementations using a common test suite. The test suite consists of "black box" test specs used across all languages, plus "white box" unit tests within each language's source code directory. The test harness collects [Test Anything Protocol (TAP)](https://testanything.org/) data from each language's unit tests to report the results.
 
+## Scripts in the test directory
+
+* acr-compare: comparison of voting methods with and without average-choice-rank (ACR) tie-breaking
+* blackbox-recalibrate: resets blackbox test data after changes are made to the runtime environment
+* run-tests: perform whitebox tests (unit tests) and blackbox test suites
+
 ## Progress on the test suite
 
 Numbers in each cell are test cases planned/passed/failed.

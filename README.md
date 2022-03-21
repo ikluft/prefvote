@@ -1,8 +1,8 @@
 # PrefVote
 
-PrefVote is a project to promote preference voting methods and algorithms. It is derived from the Vote::STV software written by Ian Kluft in Perl originally in 1999.
+PrefVote is a project to promote preference voting. It supports several ranked-choice voting methods and algorithms. It was originally derived from the Vote::STV software written by Ian Kluft in Perl in 1999, with periodic maintenance over the years.
 
-Since the project's original language Perl has strengths in prototyping, it's the reference implementation in this project for multiple language implementations. With translations to multiple programming languages, the library is designed with a [common test suite](test/) among the different implementations to verify proper functioning.
+Since the project's original language Perl has strengths in prototyping, that's the reference implementation in this project for multiple language implementations. With translations to multiple programming languages, the library is designed with a [common test suite](test/) among the different implementations to verify proper functioning.
 
 ## About preference voting algorithms
 
