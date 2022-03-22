@@ -100,9 +100,80 @@ PrefVote::RankedPairs:PairData - internal candidate-pair data for RankedPairs me
 
 =head1 SYNOPSIS
 
+use PrefVote::RankedPairs::PairData;
+my $pairdata_ref = PrefVote::RankedPairs::PairData->new();
+
+$pairdata_ref->add_preference(1);
+my $count = $pairdata_ref->preference();
+
+$pairdata_ref->mov(10);
+my $mov = $pairdata_ref->mov();
+
+$pairdata_ref->set_lock();
+my $locked = $pairdata_ref->get_lock();
 
 =head1 DESCRIPTION
 
+A PrefVote::RankedPairs:PairData object contains data pertaining to a pair of candidates.
+Outside the scope of this object, PrefVote::RankedPairs keeps a sparse table (two-level hash) of the
+candidates being compared: candidate 1 (represented by the outer hash) and candidate 2 (inner hash).
+An instance of this object is contained within each entry of that table.
+
+=head1 ATTRIBUTES
+
+Attributes include accessor methods of the same name. With no parameter, it gets the value.
+With a parameter it sets the value.
+
+=over 1
+
+=item preference
+
+Integer tally of the votes cast which favor Candidate 1 over Candidate 2.
+It does not contain votes the opposite direction, Candidate 2 over Candidate 1.
+If those votes exist, they are tallied in the appropriate cell in the table.
+
+See "mov" for the result of subtracting Candidate 2's preference from Candidate 1's.
+
+=item mov
+
+Margin of victory is the result after subtracting Candidate 2's preference votes from Candidate 1's.
+If Candidate 1 is more preferred, then this number is positive.
+If Candidate 2 is more preferred, then this is negative.
+In a tie, the number is zero (0).
+
+=item lock
+
+This is a boolean flag which, if true, indicates the comparison of Candidate 1 to Candidate 2 has been locked
+for inclusion in the final results.
+A pair is locked by the Ranked Pairs method when the comparison is a win (positive margin of victory)
+and does not conflict with candidate pairs with larger margins of victory.
+
+=back
+
+=head1 METHODS
+
+=over 1
+
+=item add_preference
+
+=item get_mov()
+
+This reads the mov (margin of victory) attribute.
+If it isn't defined, this method returns zero and leaves the attribute undefined.
+By using this method, the mov attribute should only exist if a value has been set,
+and is not set by a side-effect of reading it.
+
+=item set_lock()
+
+This sets the lock flag true.
+
+=item get_lock()
+
+This reads the lock flag attribute.
+If it isn't defined, this method returns false (zero) and leaves the attribute undefined.
+By using this method, the flag should only exist if set to true, and is not set by a side-effect of reading it.
+
+=back
 
 =head1 SEE ALSO
 
