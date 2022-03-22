@@ -114,8 +114,10 @@ my $locked = $pairdata_ref->get_lock();
 
 =head1 DESCRIPTION
 
+⛔ This is for PrefVote internal use only.
+
 A PrefVote::RankedPairs:PairData object contains data pertaining to a pair of candidates.
-Outside the scope of this object, PrefVote::RankedPairs keeps a sparse table (two-level hash) of the
+Outside the scope of this object, L<PrefVote::RankedPairs> has a sparse table (two-level hash) of the
 candidates being compared: candidate 1 (represented by the outer hash) and candidate 2 (inner hash).
 An instance of this object is contained within each entry of that table.
 
@@ -176,6 +178,11 @@ By using this method, the flag should only exist if set to true, and is not set 
 =back
 
 =head1 SEE ALSO
+
+L<PrefVote::RankedPairs>
+
+L<https://github.com/ikluft/prefvote>
+
 
 =head1 BUGS AND LIMITATIONS
 
