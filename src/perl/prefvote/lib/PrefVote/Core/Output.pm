@@ -310,6 +310,38 @@ This is the place that calls the output() method of any voting method classes de
 PrefVote::Core::Output launches a subprocess with itself as the program mainline, receiving the YAML results
 via its standard input pipe and calling the subclass' output() method to format it.
 
+=head1 EXAMPLE
+
+An example from running PrefVote test suite data through PrefVote::STV and text output follows:
+
+=over
+
+ Results: Test Vote 006
+ 2 seats available | 100 ballots
+ ┌───────────────┬───────────────────────────┬────────────┐
+ │ Abbreviation  │ Name/description          │ Result     │
+ ├───────────────┼───────────────────────────┼────────────┤
+ │ BORING        │ boring as anything        │ 1/selected │
+ │ DYSFUNCTIONAL │ dysfunctional incompetent │ 2/selected │
+ │ FACTIOUS      │ factious/divisive         │ 3/placed   │
+ │ EVIL          │ evil villain              │ 4/placed   │
+ │ ABNORMAL      │ abnormal and antisocial   │ 5/placed   │
+ │ CHAOTIC       │ chaotic unpredictable     │ 6/placed   │
+ └───────────────┴───────────────────────────┴────────────┘
+ Average ballot ranking positions
+ ┌───────────────┬─────────────────┐
+ │ Candidate     │ average ranking │
+ ├───────────────┼─────────────────┤
+ │ BORING        │ 2.86301         │
+ │ DYSFUNCTIONAL │ 2.88            │
+ │ FACTIOUS      │ 2.95946         │
+ │ EVIL          │ 2.98611         │
+ │ ABNORMAL      │ 3.16667         │
+ │ CHAOTIC       │ 3.32857         │
+ └───────────────┴─────────────────┘
+
+=back
+
 =head1 SEE ALSO
 
 L<PrefVote::Core>

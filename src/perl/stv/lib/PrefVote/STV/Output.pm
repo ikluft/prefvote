@@ -100,6 +100,37 @@ This should not be called externally - use L<PrefVote::Core::Output>
 
 PrefVote::STV::Output is used by L<PrefVote::Core::Output> to format output from STV votes.
 
+=head1 EXAMPLE
+
+An example from running PrefVote test suite data through PrefVote::STV and text output follows:
+
+=over
+
+ Results: Test Vote 006
+ 2 seats available | 100 ballots
+ ┌───────────────┬───────────────────────────┬──────────────┐
+ │ Abbreviation  │ Name/description          │ Result       │
+ ├───────────────┼───────────────────────────┼──────────────┤
+ │ DYSFUNCTIONAL │ dysfunctional incompetent │ 1/selected   │
+ │ BORING        │ boring as anything        │ 2/selected   │
+ │ EVIL          │ evil villain              │ 3/placed     │
+ │ ABNORMAL      │ abnormal and antisocial   │ 4/eliminated │
+ │ FACTIOUS      │ factious/divisive         │ 5/eliminated │
+ │ CHAOTIC       │ chaotic unpredictable     │ 6/eliminated │
+ └───────────────┴───────────────────────────┴──────────────┘
+ ┌─────────┬──────────┬───────────────┬────────────┬─────────────┬──────────┬──────────┬─────────┐
+ │ Round # │ Quota    │ DYSFUNCTIONAL │ BORING     │ EVIL        │ ABNORMAL │ FACTIOUS │ CHAOTIC │
+ ├─────────┼──────────┼───────────────┼────────────┼─────────────┼──────────┼──────────┼─────────┤
+ │ 1       │ 33.33333 │ 24            │ 14         │ 17          │ 18       │ 14       │ 13 ❌   │
+ │ 2       │ 31.66667 │ 25            │ 17         │ 18          │ 19       │ 16 ❌    │ ❌      │
+ │ 3       │ 31.33333 │ 28            │ 23         │ 22          │ 21 ❌    │ ❌       │ ❌      │
+ │ 4       │ 31       │ 33 ✅         │ 31         │ 29          │ ❌       │ ❌       │ ❌      │
+ │ 5       │ 20.58586 │ ✅            │ 32.0303 ✅ │ 29.72727    │ ❌       │ ❌       │ ❌      │
+ │ 6       │ 11.47544 │ ✅            │ ✅         │ 34.42632 ✅ │ ❌       │ ❌       │ ❌      │
+ └─────────┴──────────┴───────────────┴────────────┴─────────────┴──────────┴──────────┴─────────┘
+
+=back
+
 =head1 SEE ALSO
 
 L<PrefVote::Core::Output>
