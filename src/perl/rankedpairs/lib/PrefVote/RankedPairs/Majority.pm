@@ -99,11 +99,56 @@ PrefVote::RankedPairs:Majority - internal pairwise majority structure for Ranked
 
 =head1 SYNOPSIS
 
+my $majority_ref = PrefVote::RankedPairs::Majority->new(cand => \@pair);
+
+my @majority_elements = $majority_ref->cand_all();
+my $str = majority_ref->stringify();
 
 =head1 DESCRIPTION
 
+⛔ This is for PrefVote internal use only.
+
+A PrefVote::RankedPairs::Majority object contains two strings representing a pair of choices/candidates
+in a L<PrefVote::RankedPairs> vote. The Ranked Pairs algorithm sorts (ranks) candidate pairs (majorities)
+by the strength of the margin of victory between them.
+PrefVote::RankedPairs tracks those pairs with an array of PrefVote::RankedPairs::Majority objects,
+which is sorts using margin of victory (mov) data from PrefVote::RankedPairs::PairData objects 
+which were populated during vote counting.
+
+=head1 ATTRIBUTES
+
+=over 1
+
+=item cand
+
+Array of 2 strings which contains the names of the two choices/candidates naming a pairwise comparison.
+
+=back
+
+=head1 METHODS
+
+=over 1
+
+=item cands()
+
+Returns an array of strings with the names of the 2 choices/candidates in this pair.
+
+=item cmp_pair()
+
+Performs a comparison of the canididates in the pair and, like the <=> operator,
+returns 1, 0 or -1 if candidate 1 beats, ties or loses to candidate 2.
+
+=item stringify()
+
+Returns a string with the two canididate names in the pair, joined by a greater-than sign ">" between them.
+
+=back
 
 =head1 SEE ALSO
+
+L<PrefVote::RankedPairs>
+
+L<https://github.com/ikluft/prefvote>
 
 =head1 BUGS AND LIMITATIONS
 
