@@ -36,11 +36,12 @@ sub print_result_list
 sub main
 {
     # command-line processing
-    my ($debug, $test_mode, $out_format, $method, $no_tiebreak);
+    my ($debug, $test_mode, $out_format, $method, %config);
     GetOptions("debug" => \$debug, "test" => \$test_mode, "format|outformat:s" => \$out_format,
-        "method:s" => \$method, "no-tiebreak" => \$no_tiebreak);
+        "method:s" => \$method, "config=s" => \%config);
     if (not @ARGV) {
-        say STDERR "usage: $0 [--debug] [--test] [--yaml|--rawyaml] [--method=votingmethod] yaml_file";
+        say STDERR "usage: $0 [--debug] [--test] [--yaml|--rawyaml] [--method=votingmethod] [--config key=value] "
+            ."yaml_file";
         exit 0;
     }
 
@@ -54,8 +55,8 @@ sub main
         # set debugging in PrefVote hierarchy
         $vote_obj->debug(1);
     }
-    if ($no_tiebreak) {
-        $vote_obj->config("no-tiebreak", 1);
+    foreach my $key (keys %config) {
+        $vote_obj->config($key, $config{$key});
     }
 
     # run count() for the voting method

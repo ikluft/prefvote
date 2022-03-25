@@ -38,7 +38,7 @@ sub collect_rundata
         # collect non-ACR result for voting methods except Core
         next if $method eq "Core";
         my $method_key = $method."-notb"; # suffix means no-tiebreaking
-        push @cmd, "--no-tiebreak";
+        push @cmd, "--config", "no-tiebreak=1";
         my $yaml_text_notb;
         run \@cmd, \undef, \$yaml_text_notb;
         my @raw_rundata_notb = YAML::XS::Load($yaml_text_notb);
