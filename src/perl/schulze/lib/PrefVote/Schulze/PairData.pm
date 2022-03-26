@@ -112,11 +112,54 @@ PrefVote::Schulze:PairData - internal candidate-pair data for Schulze method
 
 =head1 SYNOPSIS
 
+use PrefVote::Schulze::PairData;
+my $pairdata_ref = PrefVote::Schulze::PairData->new();
+
+$pairdata_ref->add_preference(1);
+my $count = $pairdata_ref->preference();
+
 
 =head1 DESCRIPTION
 
 
+⛔ This is for PrefVote internal use only.
+
+A PrefVote::Schulze:PairData object contains data pertaining to a pair of candidates.
+Outside the scope of this object, L<PrefVote::Schulze> has a sparse table (two-level hash) of the
+candidates being compared: candidate 1 (represented by the outer hash) and candidate 2 (inner hash).
+An instance of this object is contained within each entry of that table.
+
+=head1 ATTRIBUTES
+
+Attributes include accessor methods of the same name. With no parameter, it gets the value.
+With a parameter it sets the value.
+
+=over 1
+
+=item preference
+
+Integer tally of the votes cast which favor Candidate 1 over Candidate 2.
+It does not contain votes the opposite direction, Candidate 2 over Candidate 1.
+If those votes exist, they are tallied in the appropriate cell in the table
+for Candidate 2 against Candidate 1, the opposite order of this cell.
+
+=back
+
+=head1 METHODS
+
+=over 1
+
+=item add_preference(n)
+
+This method adds n votes to the tally in the preference attribute, first initializing it to zero if it didn't exist.
+
+=back
+
 =head1 SEE ALSO
+
+L<PrefVote::Schulze>
+
+L<https://github.com/ikluft/prefvote>
 
 =head1 BUGS AND LIMITATIONS
 

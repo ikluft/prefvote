@@ -132,7 +132,8 @@ With a parameter it sets the value.
 
 Integer tally of the votes cast which favor Candidate 1 over Candidate 2.
 It does not contain votes the opposite direction, Candidate 2 over Candidate 1.
-If those votes exist, they are tallied in the appropriate cell in the table.
+If those votes exist, they are tallied in the appropriate cell in the table
+for Candidate 2 against Candidate 1, the opposite order of this cell.
 
 See "mov" for the result of subtracting Candidate 2's preference from Candidate 1's.
 
@@ -156,7 +157,9 @@ and does not conflict with candidate pairs with larger margins of victory.
 
 =over 1
 
-=item add_preference
+=item add_preference(n)
+
+This method adds n votes to the tally in the preference attribute, first initializing it to zero if it didn't exist.
 
 =item get_mov()
 
@@ -182,7 +185,6 @@ By using this method, the flag should only exist if set to true, and is not set 
 L<PrefVote::RankedPairs>
 
 L<https://github.com/ikluft/prefvote>
-
 
 =head1 BUGS AND LIMITATIONS
 
