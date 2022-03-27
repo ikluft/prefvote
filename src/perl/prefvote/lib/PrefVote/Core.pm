@@ -191,7 +191,7 @@ has testspec => (
 
 # By default PrefVote::Core sets ballot-input ties policy to false.
 # Override this in voting method subclasses which allow input ties. (i.e. Schulze)
-my $ballot_input_ties_policy = 0; # only change this for testing purposes, override in subclass to enable it
+my $ballot_input_ties_policy = __PACKAGE__->config("input-ties") // 0; # only change this for testing purposes
 sub ballot_input_ties_policy
 {
     my $value = shift;

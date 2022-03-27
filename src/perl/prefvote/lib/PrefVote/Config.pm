@@ -63,6 +63,31 @@ PrefVote::Config maintains a singleton configuration for the PrefVote class hier
 Since the top-level PrefVote class provides this to the entire hierarchy, do not use this class directly.
 Use any relevant subclass of PrefVote instead.
 
+=head2 RECOGNIZED CONFIGURATIONS
+
+The following configutation strings are recognized. Subclasses may define more of their own.
+All configuration entries default to non-existent and undefined.
+
+=over 1
+
+=item no-tiebreak
+
+If defined, this contains a boolean flag that inhibits the PrefVote system's use of L<PrefVote::Core>
+"average choice rank" (ACR) data for tie-breaking. This is recognized by L<PrefVote::STV>, L<PrefVote::Schulze> and
+L<PrefVote::RankedPairs>.
+
+=item input-ties
+
+(experimental)
+If defined, this contains a boolean flag that enables input ties in the format of "A/B" to indicate a voter cast
+an equal tied vote between two choices.
+This is recognized by L<PrefVote::Core> and inherited by all other voting methods.
+It does not affect L<PrefVote::Schulze> which sets input ties on by its definition.
+The STV and RankedPairs code currently does not expect input ties to occur, and currently will fail when it is set
+and any input-tied votes are received.
+
+=back
+
 =head1 SEE ALSO
 
 L<PrefVote>

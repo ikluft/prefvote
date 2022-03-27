@@ -9,6 +9,7 @@ use Modern::Perl qw(2015); # require 5.20.0 or later
 use autodie;
 use Carp qw(confess);;
 use YAML::XS; # RPM: perl-YAML-LibYAML, DEB: libyaml-libyaml-perl
+use PrefVote;
 use PrefVote::Core;
 use Getopt::Long;
 use Data::Dumper;
@@ -45,6 +46,12 @@ sub main
         exit 0;
     }
 
+    # transfer command-line config into PrefVote::Config
+    # this needs to be done before instantiating $vote_obj so that it has configuration available
+    foreach my $key (keys %config) {
+        PrefVote->config($key, $config{$key});
+    }
+
     # count votes
     my @opts = ();
     if (defined $method) {
@@ -54,9 +61,6 @@ sub main
     if ($debug) {
         # set debugging in PrefVote hierarchy
         $vote_obj->debug(1);
-    }
-    foreach my $key (keys %config) {
-        $vote_obj->config($key, $config{$key});
     }
 
     # run count() for the voting method
