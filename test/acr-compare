@@ -131,13 +131,20 @@ sub do_compare
 }
 
 # main
-opendir(my $dh, $datadir) || die "Can't opendir $datadir: $!";
-my @yaml_files = sort grep { /^[^.].*\.(yaml|yml)$/ and -f "$datadir/$_" } readdir($dh);
-closedir $dh;
+my @yaml_files;
+if (scalar @ARGV > 0) {
+    # get file list from command line
+    @yaml_files = @ARGV;
+} else {
+    # get file list from YAML-suffixed files in blackbox test data directory
+    opendir(my $dh, $datadir) || die "Can't opendir $datadir: $!";
+    @yaml_files = map { $datadir."/".$_ } sort grep { /^[^.].*\.(yaml|yml)$/ and -f "$datadir/$_" } readdir($dh);
+    closedir $dh;
+}
 
 binmode(STDOUT, ":encoding(UTF-8)");
-say join " ", @yaml_files;
+#say join " ", @yaml_files;
 
 foreach my $file (@yaml_files) {
-    do_compare($datadir."/".$file);
+    do_compare($file);
 }
