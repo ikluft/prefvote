@@ -1,0 +1,47 @@
+#!/usr/bin/perl
+# test-overview: generate a Markdown overview of results of a blackbox test data file
+
+use Modern::Perl qw(2018);
+use utf8;
+use Carp qw(croak);
+use Readonly;
+use FindBin;
+use File::Basename;
+use IPC::Run qw(run);
+
+# constants
+Readonly::Array my @methods => qw(Core STV Schulze RankedPairs);
+Readonly::Scalar my $pvroot => dirname($FindBin::RealBin);
+Readonly::Scalar my $count_script => "$pvroot/src/perl/prefvote/bin/vote-count";
+Readonly::Array my @yaml_suffixes => qw(.yaml .yml);
+Readonly::Scalar my $markdown_suffix => ".md";
+
+#for method in core stv schulze rankedpairs; do PERL5LIB=$PWD/prefvote/lib:$PWD/stv/lib:$PWD/schulze/lib:$PWD/rankedpairs/lib:$PERL5LIB prefvote/bin/vote-count --format=text --method=$method ../../test/inputs/100-rcv-test/006-rcv-test.yaml; done
+
+# process test data file into a Markdown overview
+sub process_test_file
+{
+    my $yaml_file = shift;
+    my($filename, $dirs, $suffix) = fileparse($yaml_file, @yaml_suffixes);
+    #say "filename=$filename dirs=$dirs suffix=$suffix";
+    my $outfile = $dirs.$filename.$markdown_suffix;
+    if (-f $outfile) {
+        croak "$0: file exists: $outfile";
+    }
+    open (my $out_fh, ">", $outfile)
+        or croak "$0: failed to open $outfile for writing: $!";
+
+    # generate Markdown
+    say $out_fh "# test data overview: $filename.$suffix";
+    #...
+}
+
+# main
+if (scalar @ARGV == 0) {
+    say "usage: $0 file [...]";
+    exit 0;
+}
+my @yaml_files = @ARGV;
+foreach my $yaml_file (@yaml_files) {
+    process_test_file($yaml_file);
+}
