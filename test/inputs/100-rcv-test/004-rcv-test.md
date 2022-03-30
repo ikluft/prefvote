@@ -1,4 +1,4 @@
-# Black-box test data overview for 004-rcv-test.yaml
+# Black-box test data overview for [004-rcv-test.yaml](004-rcv-test.yaml)
 
 <blockquote>
 title: Test Vote 004 (250 ballots)

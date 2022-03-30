@@ -33,7 +33,7 @@ sub process_test_file
         or croak "$0: failed to open $outfile for writing: $!";
 
     # generate title
-    say $out_fh "# Black-box test data overview for $filename$suffix";
+    say $out_fh "# Black-box test data overview for [$filename$suffix]($filename$suffix)";
     say $out_fh "";
     
     # summary table
