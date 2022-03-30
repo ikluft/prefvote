@@ -13,15 +13,16 @@ use IPC::Run qw(run);
 Readonly::Array my @methods => qw(Core STV Schulze RankedPairs);
 Readonly::Scalar my $pvroot => dirname($FindBin::RealBin);
 Readonly::Scalar my $count_script => "$pvroot/src/perl/prefvote/bin/vote-count";
+Readonly::Scalar my $acr_compare_script => "$pvroot/test/acr-compare";
 Readonly::Array my @yaml_suffixes => qw(.yaml .yml);
 Readonly::Scalar my $markdown_suffix => ".md";
-
-#for method in core stv schulze rankedpairs; do PERL5LIB=$PWD/prefvote/lib:$PWD/stv/lib:$PWD/schulze/lib:$PWD/rankedpairs/lib:$PERL5LIB prefvote/bin/vote-count --format=text --method=$method ../../test/inputs/100-rcv-test/006-rcv-test.yaml; done
 
 # process test data file into a Markdown overview
 sub process_test_file
 {
     my $yaml_file = shift;
+
+    # open Markdown overview file for output
     my($filename, $dirs, $suffix) = fileparse($yaml_file, @yaml_suffixes);
     #say "filename=$filename dirs=$dirs suffix=$suffix";
     my $outfile = $dirs.$filename.$markdown_suffix;
@@ -31,9 +32,32 @@ sub process_test_file
     open (my $out_fh, ">", $outfile)
         or croak "$0: failed to open $outfile for writing: $!";
 
-    # generate Markdown
-    say $out_fh "# test data overview: $filename.$suffix";
-    #...
+    # generate title
+    say $out_fh "# Black-box test data overview for $filename$suffix";
+    say $out_fh "";
+    
+    # summary table
+    my $summary_text;
+    my @s_cmd = ($acr_compare_script, "--html", $yaml_file);
+    run \@s_cmd, \undef, \$summary_text;
+    say $out_fh "<blockquote>";
+    say $out_fh $summary_text;
+    say $out_fh "</blockquote>";
+    say $out_fh "";
+
+    # results for each voting method
+    foreach my $method (@methods) {
+        my $results_text;
+        my @r_cmd = ($count_script, "--format=html", "--method=$method", $yaml_file);
+        say $out_fh "## Results for $method method";
+        say $out_fh "<blockquote>";
+        run \@r_cmd, \undef, \$results_text;
+        say $out_fh $results_text;
+        say $out_fh "</blockquote>";
+        say $out_fh "";
+    }
+
+    close $out_fh;
 }
 
 # main

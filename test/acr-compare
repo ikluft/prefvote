@@ -6,9 +6,11 @@ use Modern::Perl qw(2018);
 use utf8;
 use Carp qw(croak);
 use Readonly;
+use Getopt::Long;
 use FindBin;
 use File::Basename;
 use Text::Table::Tiny 1.02 qw(generate_table);
+use HTML::Escape qw(escape_html);
 use YAML::XS;
 use IPC::Run qw(run);
 
@@ -17,6 +19,9 @@ Readonly::Array my @methods => qw(Core STV Schulze RankedPairs);
 Readonly::Scalar my $pvroot => dirname($FindBin::RealBin);
 Readonly::Scalar my $datadir => "$pvroot/test/inputs/100-rcv-test";
 Readonly::Scalar my $count_script => "$pvroot/src/perl/prefvote/bin/vote-count";
+
+# global flags
+my $html_mode = 0;
 
 # collect run data for all voting methods, with and without avg choice rank (ACR) tiebreaking
 sub collect_rundata
@@ -64,6 +69,40 @@ sub acr_fmt
         $total_place += ($i+1)*$cr->{$choice}[$i];
     }
     return sprintf "%7.5f (%d/%d)", $acr->{$choice}, $total_place, $total_votes;
+}
+
+sub html_table
+{
+    my %opts = @_;
+    my $rows = $opts{rows};
+
+    # table heading
+    say "<table>";
+
+    # generate header from first row
+    if ($opts{header_row} // 0) {
+        my $header = shift @$rows;
+        say "<thead>";
+        say "<tr>";
+        foreach my $col_item (@$header) {
+            say "<th>".escape_html($col_item)."</th>";
+        }
+        say "</tr>";
+        say "</thead>";
+    }
+
+    # generate table from remainder of rows
+    say "<tbody>";
+    foreach my $row (@$rows) {
+        say "<tr>";
+        foreach my $col_item (@$row) {
+            say "<td>".escape_html($col_item)."</td>";
+        }
+        say "</tr>";
+    }
+    say "</tbody>";
+    say "</table>";
+    return;
 }
 
 # load data and do comparison
@@ -126,11 +165,16 @@ sub do_compare
         push @row, $pwv{$core_order[$i]}." (".$victories{$core_order[$i]}.")";
         push @table, \@row;
     }
-    say generate_table(rows =>\@table, header_row => 1, style => 'boxrule');
-    say "";
+    if ($html_mode) {
+        say html_table(rows =>\@table, header_row => 1);
+    } else {
+        say generate_table(rows =>\@table, header_row => 1, style => 'boxrule');
+        say "";
+    }
 }
 
 # main
+GetOptions( "html" => \$html_mode);
 my @yaml_files;
 if (scalar @ARGV > 0) {
     # get file list from command line
