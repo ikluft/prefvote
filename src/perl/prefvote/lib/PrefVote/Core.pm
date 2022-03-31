@@ -452,12 +452,12 @@ sub read_yaml
 # input ballots to a PrefVote::Core-subclass voting method
 sub ingest_ballots
 {
-    my ($vote_obj, $yaml_ballots) = @_;
+    my ($vote_obj, $ballots) = @_;
 
     # ingest ballots from 2nd YAML document
     my $submitted = 0;
     my $accepted = 0;
-    foreach my $ballot (@$yaml_ballots) {
+    foreach my $ballot (@$ballots) {
         $submitted++;
         if ( eval { $vote_obj->submit_ballot(@$ballot) }) {
             $accepted++;
@@ -500,7 +500,7 @@ sub count
 # this may throw exceptions for method mismatch
 sub determine_method
 {
-    my ($opts, $yaml_vote_def) = @_;
+    my ($opts, $vote_def) = @_;
 
     # if a specific method was selected by %opts, make sure it's supported
     my $selected_method;
@@ -515,7 +515,7 @@ sub determine_method
 
     # translate a voting method string into a voting-method class within this hierarchy
     # instantiate the voting object from 1st YAML document
-    my $method_list = $yaml_vote_def->{method};
+    my $method_list = $vote_def->{method};
     my @methods_allowed = split(/\s+/x, $method_list);
     my $method;
     if (scalar @methods_allowed > 1) {
