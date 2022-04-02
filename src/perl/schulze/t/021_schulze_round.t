@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # 021_schulze_round.t - tests for PrefVote::Schulze::Round
-use Modern::Perl qw(2015); # require 5.20.0 or later
+use Modern::Perl qw(2013); # require 5.16.0 or later
 use autodie;
 use Test::More tests => 37;
 use Test::Exception;

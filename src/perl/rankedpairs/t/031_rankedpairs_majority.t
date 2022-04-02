@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # 031_rankedpairs_majority.t - tests for PrefVote::RankedPairs::Majority
-use Modern::Perl qw(2015); # require 5.20.0 or later
+use Modern::Perl qw(2013); # require 5.16.0 or later
 use autodie;
 use Test::More tests => 6;
 use Test::Exception;

@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # 003_core_ballot.t - tests for PrefVote::Core::Ballot
-use Modern::Perl qw(2015); # require 5.20.0 or later
+use Modern::Perl qw(2013); # require 5.16.0 or later
 use autodie;
 use Carp qw(croak);
 use Test::More tests => 28;

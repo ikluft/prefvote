@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # 022_schulze_output.t - tests for PrefVote::Schulze::Output
-use Modern::Perl qw(2015); # require 5.20.0 or later
+use Modern::Perl qw(2013); # require 5.16.0 or later
 use autodie;
 use open ":std", ":encoding(UTF-8)";
 use Test::More tests => 104;

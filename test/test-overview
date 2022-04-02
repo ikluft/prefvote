@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # test-overview: generate a Markdown overview of results of a blackbox test data file
 
-use Modern::Perl qw(2018);
+use Modern::Perl qw(2013);
 use utf8;
 use Carp qw(croak);
 use Readonly;

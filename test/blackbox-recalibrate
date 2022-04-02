@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # recalibrate PrefVote blackbox test baseline data by running the reference implementation (Perl)
-use Modern::Perl qw(2018);
+use Modern::Perl qw(2013);
 use utf8;
 use Carp qw(croak);
 use Readonly;

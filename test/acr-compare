@@ -2,7 +2,7 @@
 #  PODNAME: acr-compare
 #  compare voting methods with & without Average Choice Ranking (ACR) tiebreaking
 
-use Modern::Perl qw(2018);
+use Modern::Perl qw(2013);
 use utf8;
 use Carp qw(croak);
 use Readonly;
