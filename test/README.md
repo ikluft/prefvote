@@ -77,10 +77,11 @@ Randomly-generated black-box test data files and their run results for each voti
 [001-rcv-test.yaml](inputs/100-rcv-test/001-rcv-test.md) ○ [002-rcv-test.yaml](inputs/100-rcv-test/002-rcv-test.md) ○ [003-rcv-test.yaml](inputs/100-rcv-test/003-rcv-test.md) ○ [004-rcv-test.yaml](inputs/100-rcv-test/004-rcv-test.md) ○ [005-rcv-test.yaml](inputs/100-rcv-test/005-rcv-test.md) ○ [006-rcv-test.yaml](inputs/100-rcv-test/006-rcv-test.md)
 
 Column headings in result overviews:
+
 * **choice**: name of voting choice (fictitious candidates used in black-box data)
 * **avg choice rank**: floating point numbers for average ballot position ranking of each choice, followed in parentheses with the integer totals for the total places and total occurrences which were divided to compute it
 * **Core**: PrefVote::Core ranking - these are always in order of i-n since the ACR comparison is ordered relative to Core
 * **STV**: PrefVote::STV result place 1-n with/without (slash between them) using ACR/Core for tie-breaking
 * **Schulze**: PrefVote::Schulze result place 1-n with/without (slash between them) using ACR/Core for tie-breaking
 * **RankedPairs**: PrefVote::RankedPairs result place 1-n with/without (slash between them) using ACR/Core for tie-breaking
-* **Copeland**: as an estimate of the Condorcet results, the Copeland result order is shown, with the Copeland score in parentheses (Copeland score is the total pairwise races against other candidates won by a candidate)
+* **Copeland**: To compare with unoptimized Condorcet results, the Copeland result order is shown, with the Copeland score in parentheses. Copeland score is simply the total pairwise races against other candidates won by a candidate. This is just a numeric score, and does not corespond to a P{refVote module. The implemented algorithms all have tie-breaking optimizations.
