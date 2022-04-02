@@ -151,7 +151,7 @@ sub do_compare
     my @choices = keys %$choices;
     my $num_choices = scalar @choices;
     my @core_order = sort {$rundata->{Core}{choice_to_result}{$a}[0] <=> $rundata->{Core}{choice_to_result}{$b}[0]} @choices;
-    my @table = (["choice", "avg choice rank", @methods, "Copeland"]);
+    my @table = (["choice", "avg choice rank", @methods, "Condorcet"]);
     for (my $i=0; $i<$num_choices; $i++) {
         my @row = ($core_order[$i], acr_fmt($rundata, $core_order[$i]));
         foreach my $method (@methods) {
