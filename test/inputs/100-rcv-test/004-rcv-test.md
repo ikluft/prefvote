@@ -11,7 +11,7 @@ title: Test Vote 004 (250 ballots)
 <th>STV</th>
 <th>Schulze</th>
 <th>RankedPairs</th>
-<th>Copeland</th>
+<th>Condorcet</th>
 </tr>
 </thead>
 <tbody>
