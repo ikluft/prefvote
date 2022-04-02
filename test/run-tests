@@ -2,7 +2,7 @@
 # PODNAME: run-tests
 # test script launcher for PrefVote preference voting system
 
-use Modern::Perl qw(2015); # require 5.20.0 or later
+use Modern::Perl qw(2013); # require 5.16.0 or later
 use autodie;
 use Carp qw(croak);
 use Config;
@@ -10,6 +10,8 @@ use English;
 use Cwd;
 use Readonly;
 use Getopt::Long;
+use FindBin;
+use File::Basename;
 use Term::ANSIColor;
 use IO::Interactive qw(is_interactive);
 use IPC::Run qw(run);
@@ -20,6 +22,7 @@ use Text::Table::Tiny 1.02 qw/ generate_table /;
 use HTML::Escape qw(escape_html);
 
 # configuration settings per language implementation
+Readonly::Scalar my $pvroot => dirname($FindBin::RealBin);
 Readonly::Array my @supported_languages => (qw(perl rust));
 Readonly::Array my @supported_methods => (qw(Core STV Schulze RankedPairs));
 Readonly::Hash my %config => (
@@ -31,7 +34,7 @@ Readonly::Hash my %config => (
     },
     blackbox => {
         name => "black box tests",
-        data => "test/inputs",
+        data => '${pvroot}/test/inputs',
         test_re => qr{\.(yaml|yml)$},
     },
     perl => {
@@ -39,21 +42,21 @@ Readonly::Hash my %config => (
         build => 'dzil build',
         whitebox => {
             dirs => {
-                Core => 'src/perl/prefvote',
-                STV => 'src/perl/stv',
-                Schulze => 'src/perl/schulze',
-                RankedPairs => 'src/perl/rankedpairs',
+                Core => '${pvroot}/src/perl/prefvote',
+                STV => '${pvroot}/src/perl/stv',
+                Schulze => '${pvroot}/src/perl/schulze',
+                RankedPairs => '${pvroot}/src/perl/rankedpairs',
             },
             testdir => "t",
             test_re => qr{\.t$},
-            tp_args => [switches => ['-I../prefvote/lib', '-Ilib']],
+            tp_args => [switches => ['-Isrc/perl/prefvote/lib', '-Ilib']],
         },
         prove_params => "--lib",
         blackbox => {
             env => {
                 PERL5LIB => '${cwd}/prefvote/lib:${cwd}/stv/lib:${env/PERL5LIB}',
             },
-            cmd => [ 'src/perl/prefvote/bin/vote-count', "--test", '--method=${var/method}'],
+            cmd => [ '${pvroot}/src/perl/prefvote/bin/vote-count', "--test", '--method=${var/method}'],
             tp_args => [switches => ['-Isrc/perl/prefvote/lib', '-Isrc/perl/stv/lib']],
         }
     },
@@ -309,6 +312,11 @@ sub str_subst
         return $orig_cwd;
     }
 
+    # PrefVote root directory
+    if ($query_parts[0] eq 'pvroot') {
+        return $pvroot;
+    }
+
     # default to blank
     return "";
 }
@@ -399,11 +407,11 @@ sub run_whitebox_tests
         warn "whitebox tests not configured for language $lang";
         return;
     }
-    my $dir = $config{$lang}{whitebox}{dirs}{$method};
+    my $dir = str_expand($config{$lang}{whitebox}{dirs}{$method}, \%opts);
     defined $dir or next;
     ( -d "$dir" ) or croak "configure whitebox testing directory $dir is not a directory";
     chdir $dir;
-    my $testdir = $config{$lang}{whitebox}{testdir};
+    my $testdir = str_expand($config{$lang}{whitebox}{testdir}, \%opts);
     my $test_re = $config{$lang}{whitebox}{test_re};
     if ( -d $testdir ) {
         # enter whitebox test directory and find test scripts
@@ -461,7 +469,7 @@ sub run_blackbox_tests
     # TODO add language-specific blackbox test build parameters here
 
     # enter blackbox test directory and find test data files
-    my $testdir = $config{blackbox}{data};
+    my $testdir = str_expand($config{blackbox}{data}, \%opts);
     my $test_re = $config{blackbox}{test_re};
     my @test_files = find_test_files($testdir, $test_re);
 
