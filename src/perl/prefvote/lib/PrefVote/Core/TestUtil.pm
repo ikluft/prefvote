@@ -93,7 +93,45 @@ dependence on a test module.
 
 =item do_tests ( @tests )
 
+The list of tests provided to this function are counted to provide a plan to Test::More, and then run one-by-one
+by passing them to do_test().
+
 =item do_test ( \%test )
+
+The I<test> parameter is a hash reference describing a test to perform.
+This data will be fed to functions of L<Test::More> to report results in the TAP (Test Anything Protocol) format.
+The hash contains at least I<type> and I<description> parameters, and then in some cases others depending on the type.
+
+=over 1
+
+=item type
+
+The type determines which function from L<Test::More> will be called in this test.
+It must be one of the following strings: is, cmp_ok, ok, pass, fail.
+For the I<is> type, I<description>, I<value> and I<expected> must be provided in the test hashref.
+For the I<cmp_ok> type, I<description>, I<op>, I<value> and I<expected> must be provided.
+For the I<ok> type, I<description>, I<value> must be provided.
+For I<pass> and I<fail>, only I<description> is needed.
+
+=item description
+
+This is a descriptive name for the test to be performed. It should be unique from other tests.
+
+=item value
+
+Required for I<is>, I<cmp_ok> and I<ok> tests, this indicates the value received for the test.
+
+=item expected
+
+Required for I<is> and I<cmp_ok> tests, this indicates an expected value to compare to the I<value> for the test.
+
+=item op
+
+Required for I<cmp_ok>, this string indicates a Perl binary operator to perform between
+the expected value and the value.
+The expession must result in a boolean value indicated pass (nonzero) or fail (zero).
+
+=back
 
 =back
 
