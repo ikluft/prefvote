@@ -126,9 +126,93 @@ PrefVote::Core::TestSpec - PrefVote blackbox testing checklist processing
 
 =head1 SYNOPSIS
 
+  # blackbox testing structure
+  # example from PrefVote::STV, used this way by classes with data for black-box testing
+  Readonly::Hash my %blackbox_spec => (
+      winners => [qw(list set string)],
+      eliminated => [qw(list set string)],
+      rounds => [qw(list PrefVote::STV::Round)],
+  );
+  PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, spec => \%blackbox_spec, parent => 'PrefVote::Core');
+
+  # PrefVote::Core::blackbox_check method calls PrefVote::Core::TestSpec::check()
+  # example from PrefVote::Core's bin/vote-count
+  my @tests = $vote_obj->blackbox_check();
+  PrefVote::Core::TestUtil::do_tests(@tests);
 
 =head1 DESCRIPTION
 
+The TestSpec class contains a testing checklist for a class.
+Each class in PrefVote must define one if it contains data for inspection in blackbox testing.
+The test checklist contains a hash of the attributes and their data types for the client class which is to be tested.
+
+=head1 ATTRIBUTES
+
+=over 1
+
+=item checklist
+
+This hashref contains the testing checklist representing a client class for blackbox testing.
+Each key matches the name of an attribute of the client class, and contains data type info for testing that attribute.
+The data type info is an arrayref containing strings indicating either a container data type
+(I<hash>, I<list> or I<set>) or value type (I<string>, I<bool>, I<int> or I<fp>).
+
+=over 1
+
+=item hash
+
+a hash using a string as a key, containing nodes of the data type specified next in the array from the checklist,
+which may include another layer of container
+
+=item list
+
+an array of nodes of the data type specified next in the array from the checklist,
+which may include another layer of container
+
+=item set
+
+an unordered set of nodes of the data type specified next in the array from the checklist, which cannot be a container
+
+=item string
+
+string value
+
+=item bool
+
+boolean value expressed as integer 0 (false) or 1 (true)
+
+=item int
+
+integer value
+
+=item fp
+
+floating point value - precision will be limited to the internal storage precision limit of PrefVote
+which is 10 digits past the decimal point
+
+=back
+
+=item testroot
+
+This is a reference to a L<PrefVote::Core::TestNode> object which is the root of this TestSpec's client class' instance
+being tested.
+It is the root of a tree, and so may contain references to subnodes of L<PrefVote::Core::TestNode>.
+
+=back
+
+=head1 METHODS
+
+=over 1
+
+=item register_blackbox_spec
+
+=item get_spec_registry
+
+=item get_blackbox_spec
+
+=item check
+
+=back
 
 =head1 SEE ALSO
 
