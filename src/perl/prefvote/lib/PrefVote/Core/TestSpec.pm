@@ -206,11 +206,35 @@ It is the root of a tree, and so may contain references to subnodes of L<PrefVot
 
 =item register_blackbox_spec
 
+This is called by classes to declare the structure of data for black-box testing.
+The first parameter is the name of the client class, which should just be provided by using __PACKAGE__.
+Parameters after that are key/value pairs.
+Currently I<spec> and I<parent> are recognized.
+
+The I<spec> parameter is required. It is a hashref which will be used to initialize the I<checklist> attribute above.
+
+The I<parent> parameter is optional. If provided it must be a string with the name of the parent class
+for black-box testing. With this info, the parent class' test spec will be inherited by the current client class.
+So its attributes should not be duplicated in the checklist data for this client class.
+
 =item get_spec_registry
+
+⛔ This is only used for testing.
+
+This returns the internal spec registry, which is a hashref mapping class names to their test checklist structures.
 
 =item get_blackbox_spec
 
+⛔ This is for PrefVote internal use only.
+
+This is called by L<PrefVote::Core::TestNode> to look up black-box test structure metadata.
+
 =item check
+
+This is called by L<PrefVote::Core> to generate a list of black-box tests.
+It should not be called directly - instead use L<PrefVote::Core>'s blackbox_check() method.
+That list can then be provided to PrefVote::Core::TestUtil::do_tests() to run the tests and generate TAP results.
+
 
 =back
 
