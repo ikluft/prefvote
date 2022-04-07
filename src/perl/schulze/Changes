@@ -14,7 +14,7 @@ Change log for PrefVote::Schulze
  [MINOR]
 
  [REVISION]
- - new PrefVote::Schulze source tree after split of PrefVote::Core and PrefVote::STV
+ - new PrefVote::Schulze implementation
 
  [SECURITY]
 
