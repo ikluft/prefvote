@@ -235,10 +235,12 @@ This is called by L<PrefVote::Core> to generate a list of black-box tests.
 It should not be called directly - instead use L<PrefVote::Core>'s blackbox_check() method.
 That list can then be provided to PrefVote::Core::TestUtil::do_tests() to run the tests and generate TAP results.
 
-
 =back
 
 =head1 SEE ALSO
+
+L<PrefVote>
+L<https://github.com/ikluft/prefvote>
 
 =head1 BUGS AND LIMITATIONS
 

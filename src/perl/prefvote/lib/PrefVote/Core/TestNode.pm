@@ -478,11 +478,21 @@ PrefVote::Core::TestNode - PrefVote blackbox testing internal tree-node structur
 
 =head1 SYNOPSIS
 
+L<PrefVote::Core::TestNode> is used internally by L<PrefVote::Core::TestSpec>
 
 =head1 DESCRIPTION
 
+⛔ This is for PrefVote internal use only.
+
+Instances of L<PrefVote::Core::TestNode> represent nodes in a tree-structured set of data collected from prior
+runs of PrefVote, which have been inspected for use in black-box testing.
+Each node represents a data item to test its value, or for container types their correct number of items.
+Container type nodes may have any number of subnodes.
 
 =head1 SEE ALSO
+
+L<PrefVote::Core::TestSpec>
+L<https://github.com/ikluft/prefvote>
 
 =head1 BUGS AND LIMITATIONS
 
