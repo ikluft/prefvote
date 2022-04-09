@@ -489,6 +489,17 @@ runs of PrefVote, which have been inspected for use in black-box testing.
 Each node represents a data item to test its value, or for container types their correct number of items.
 Container type nodes may have any number of subnodes.
 
+=head1 METHODS
+
+=over 1
+
+=item check
+
+This is called by L<PrefVote::Core::TestSpec> to recursively generate a black-box test tree and return the tests
+to perform based on it.
+
+=back
+
 =head1 SEE ALSO
 
 L<PrefVote::Core::TestSpec>
