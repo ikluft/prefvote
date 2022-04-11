@@ -20,7 +20,7 @@ After the reference implementation in Perl, next up for language implementations
 
 ## Tie-breaking modifications to algorithms
 
-PrefVote modifies all the algorithms in one way. It adds a tie-breaking factor of the average ballot-position ranking of a choice/candidate. It started as experimentation with intuition that the average ranking of a choice was indicative of the will of the voters. Though it wouldn't be acceptable as a primary factor because averages don't have quantitative data. Test runs show that it approximates Condorcet results fairly well and converges with Condorcet by around 100 random ballots. It didn't need to be so close to Condorcet to convey meaning about voter's preferences. This restores ballot-position ordering data which Condorcet lacks.
+PrefVote modifies all the algorithms in one way. It adds a tie-breaking factor using the average ballot-position ranking of a choice/candidate. It started as experimentation with intuition that the average ranking of a choice was indicative of the will of the voters. Though it wouldn't be acceptable as a primary factor because averages don't have quantitative data. Test runs show that it approximates Condorcet results fairly well and converges with Condorcet by around 100 random ballots. It didn't even need to be that close to Condorcet to convey meaning about voter's preferences. So this tie-breaking method restores ballot-position ordering information which Condorcet lacks.
 
 PrefVote's Core module from which all the voting methods inherit common code is not a voting method itself. But in performing the counting of average choice ranking (ACR) for other methods to use for tie-breaking, it contains results which can be displayed for testing purposes. Since it only uses average ranking, it really must not be used for actual voting. There is a principle in voting that every vote counts. That means quantitative factors must be the primary ordering for results. But ACR turns out to be surprisingly well-suited to be a second sorting factor for tie-breaking.
 
@@ -32,7 +32,7 @@ Notes about all the following examples:
 
 - Candidate names are fictitious, just to get names that start with A, B, C, D, E and F as used universally throughout the test suite. The names are whimsical based on the difficult dilemma voters sometimes feel they are choosing between in real candidates.
 
-- Even for a relatively small set of test data, this shows the importance of algorithm definition to handling of ranked-choice votes. The various algorithms can lead to different results following procedures that can vary in behavior when vote counts are close. This example was one where a close race came out differently.
+- Even for a relatively small set of test data, this shows the importance of algorithm definition to handling of ranked-choice votes. The various algorithms can lead to different results which are valid by the definition of how each method does its counting. Following the procedures of each method, they can vary in behavior when vote counts are close. Typically they won't vary when results are not close. This example was one where a close race came out differently.
 
 ### Single Transferable Vote (STV) results from the example data
 
@@ -296,7 +296,7 @@ Notes about the STV example:
 
 Notes about the Schulze example:
 
-- The Schulze method is a Condorcet voting method. So it aggregates the ranked preferences from each ballot into total occurrences of preference of each pair of candidates. In all Condorcet methods, if one candidate is preferred over all others then it is the winner. The Schulze method also considers paths of preferences in a graph to pick between candidates when there isn't a single Condorcet winner.
+- The Schulze method is a Condorcet voting method. So it aggregates the ranked preferences from each ballot into pairwise preference of each of the candidates. In all Condorcet methods, if one candidate is preferred over all others then it is considered the Condorcet winner. The Schulze method also considers paths of preferences in a graph to pick between candidates when there isn't a single Condorcet winner.
 
 - As with the STV results, the first table in the example is the final ranking order of the voting results. It indicates selected, tied, and placed candidates as above. There is no concept of eliminated candidates in the Schulze method. After the winner is found in each round, the vote is re-run for as many rounds as needed until all the candidates are ordered in the result.
 
@@ -424,8 +424,8 @@ Notes about the Schulze example:
 
 Notes about the Ranked Pairs example:
 
-- Ranked Pairs is also a Condorcet method, like Schulze. So there are fewer differences between them. And in this example there are no differences at all. Though other files in the test suite do have some modest differences when breaking ties.
+- Ranked Pairs is also a Condorcet method, like Schulze. So there are fewer differences between them. And in this example there are no differences at all. Though other files in the test suite do have some modest differences between them when breaking ties.
 
 - The lock icon (🔒) in the results indicate candidate majority pairings which were "locked" and accepted for use in the result order because they did not conflict with pairs with larger margins of victory. Table entries without a lock icon would be because they were a loss or tie, or a conflict with larger majorities. For example if A>B and B>C then C>A is not locked due to a conflict.
 
-- I modified the Ranked Pairs implementation in the case of tie-breaking. Rather than select a random ballot to count a second time as Tideman recommended in his 1987 paper, I used average ballot-position ranking as a second priority sorting field. This was then retrofitted as a tie-breaker in STV and Schulze and adopted as a design feature of PrefVote.
+- I modified the Ranked Pairs implementation in the case of tie-breaking. Rather than select a random ballot to count a second time as Tideman recommended in his 1987 paper, I used average ballot-position ranking as a second priority sorting field. This was then retrofitted as a tie-breaker in STV and Schulze and adopted as a design feature of PrefVote::Core.
