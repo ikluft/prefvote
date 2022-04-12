@@ -797,17 +797,81 @@ PrefVote::Core - common code for all PrefVote voting methods
 
 =over 1
 
+=item name
+
+=item choice_to_index
+
+=item index_to_choice
+
+=item choice_to_result
+
+=item choices
+
+=item seats
+
+=item ballots
+
+=item total_ballots
+
+=item choice_rank
+
+=item average_choice_rank
+
+=item testspec
+
 =back
 
 =head1 METHODS
 
 =over 1
 
+=item suffix
+
+=item choice_exists
+
+=item get_choices
+
+=item save_ranking
+
+=item average_ranking
+
+=item gen_choice_hex
+
+=item ballot_to_hex
+
+=item submit_ballot
+
+=item ingest_ballots
+
+=item count
+
+=item save_c2r
+
+=item result_yaml
+
+=item format_output
+
+=item blackbox_check
+
 =back
 
 =head1 FUNCTIONS
 
 =over 1
+
+=item ballot_input_ties_policy(flag)
+
+=item class_or_obj(self)
+
+=item supported_method(method)
+
+=item read_yaml(filepath)
+
+=item determine_method({key => value, ...}, votedef)
+
+=item yaml2vote(key => value, ...)
+
+=item result_node(node)
 
 =back
 
