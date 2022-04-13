@@ -877,6 +877,9 @@ PrefVote::Core - common code for all PrefVote voting methods
 
 =head1 SEE ALSO
 
+L<PrefVote>
+L<https://github.com/ikluft/prefvote>
+
 =head1 BUGS AND LIMITATIONS
 
 Please report bugs via GitHub at L<https://github.com/ikluft/prefvote/issues>

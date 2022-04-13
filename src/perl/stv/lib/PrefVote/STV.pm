@@ -426,9 +426,50 @@ PrefVote::STV - Single Transferable Vote (STV) counting
 
 =head1 DESCRIPTION
 
+=head1 ATTRIBUTES
+
+=over 1
+
+=item winners
+
+=item eliminated
+
+=item rounds
+
+=back
+
+=head1 METHODS
+
+=over 1
+
+=item new_round()
+
+=item current_round()
+
+=item add_winner(name, ...)
+
+=item add_eliminated(name, ...)
+
+=item cand_is_winner(name)
+
+=item cand_is_eliminated(name)
+
+=item run_tally()
+
+=item process_winners()
+
+=item eliminate_losers()
+
+=item count()
+
+=item results()
+
+=back
 
 =head1 SEE ALSO
 
+L<PrefVote::Core>
+L<https://github.com/ikluft/prefvote>
 
 =head1 BUGS AND LIMITATIONS
 
