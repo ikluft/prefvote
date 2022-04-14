@@ -149,8 +149,29 @@ PrefVote::Schulze - Schulze Method vote counting module for PrefVote
 
 =head1 DESCRIPTION
 
+=head1 ATTRIBUTES
+
+=over 1
+
+=item winners
+
+=item rounds
+
+=back 
+
+=head1 METHODS
+
+=over 1
+
+=item new_round()
+
+=item count()
+
+=back 
 
 =head1 SEE ALSO
+
+L<PrefVote::Core>
 
 Schulze Method on Wikipedia L<https://en.wikipedia.org/wiki/Schulze_method>
 

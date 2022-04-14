@@ -469,7 +469,10 @@ PrefVote::STV - Single Transferable Vote (STV) counting
 =head1 SEE ALSO
 
 L<PrefVote::Core>
-L<https://github.com/ikluft/prefvote>
+
+Single Transferable Vote (STV) method on Wikipedia L<https://en.wikipedia.org/wiki/Single_transferable_vote>
+
+PrefVote on GitHub L<https://github.com/ikluft/prefvote>
 
 =head1 BUGS AND LIMITATIONS
 
