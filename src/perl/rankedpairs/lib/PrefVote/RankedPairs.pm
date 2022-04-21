@@ -474,6 +474,69 @@ PrefVote::RankedPairs - Ranked Pairs Method vote counting module for PrefVote
 
 =head1 DESCRIPTION
 
+=head1 ATTRIBUTES
+
+=over 1
+
+=item winners
+
+=item pair
+
+=item majority
+
+=item graph
+
+=back
+
+=head1 METHODS
+
+=over 1
+
+=item make_pair_node 
+
+=item add_preference
+
+=item get_preference
+
+=item set_mov
+
+=item get_mov
+
+=item set_lock
+
+=item get_lock
+
+=item graph_add_link
+
+=item cand_total_wins
+
+=item cand_total_mov
+
+=item tally_preferences
+
+=item sort_pairs
+
+=item depth_first_search
+
+=item is_conflict
+
+=item lock_pairs
+
+=item cmp_choice
+
+=item graph_to_order
+
+=item count
+
+=back
+
+=head1 FUNCTIONS
+
+=over 1
+
+=item item2list
+
+=back
 
 =head1 SEE ALSO
 
