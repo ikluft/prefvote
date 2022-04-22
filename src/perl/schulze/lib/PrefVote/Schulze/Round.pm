@@ -688,10 +688,73 @@ PrefVote::Schulze::Round - internal voting-round structure used by PrefVote::Sch
 
 =head1 SYNOPSIS
 
-
 =head1 DESCRIPTION
 
 ⛔ This is for PrefVote internal use only.
+
+=head1 ATTRIBUTES
+
+=over 1
+
+=item pair
+
+=item win_flag
+
+=back
+
+=head1 METHODS
+
+=over 1
+
+=item make_pair_node
+
+=item add_preference
+
+=item get_preference
+
+=item set_predecessor
+
+=item get_predecessor
+
+=item set_strength
+
+=item get_strength
+
+=item set_win_order
+
+=item get_win_order
+
+=item tally_preferences
+
+=item get_path
+
+=item add_path
+
+=item compute_strongest_paths
+
+=item compute_potential_winners
+
+=item get_forbidden
+
+=item set_forbidden
+
+=item break_tie
+
+=item final_rank_links
+
+=item narrow_winners
+
+=item do_computation
+
+=back
+
+=head1 FUNCTIONS
+
+=over 1
+
+=item item2list
+
+=back
 
 =head1 SEE ALSO
 
