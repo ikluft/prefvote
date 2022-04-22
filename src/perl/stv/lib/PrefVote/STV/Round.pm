@@ -178,7 +178,35 @@ PrefVote::STV::Round - internal voting-round structure used by PrefVote::STV
 =head1 DESCRIPTION
 
 
+=head1 ATTRIBUTES
+
+=over 1
+
+=item votes_used
+
+=item quota
+
+=item tally
+
+=back
+
+=head1 METHODS
+
+=over 1
+
+=item init_candidate_tally
+
+=item add_votes_used
+
+=item sort_candidates
+
+=back
+
 =head1 SEE ALSO
+
+L<PrefVote:STV>
+
+L<https://github.com/ikluft/prefvote>
 
 =head1 BUGS AND LIMITATIONS
 
