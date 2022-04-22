@@ -171,8 +171,46 @@ PrefVote::STV::Tally - internal per-round candidate tally structure used by Pref
 
 =head1 DESCRIPTION
 
+⛔ This is for PrefVote internal use only.
+
+
+=head1 ATTRIBUTES
+
+=over 1
+
+=item name
+
+=item votes
+
+=item winner
+
+=item eliminated
+
+=item place
+
+=item transfer
+
+=item surplus
+
+=back
+
+=head1 METHODS
+
+=over 1
+
+=item add_votes
+
+=item mark_as_winner
+
+=item mark_as_eliminated
+
+=back
 
 =head1 SEE ALSO
+
+L<PrefVote:STV>
+
+L<https://github.com/ikluft/prefvote>
 
 =head1 BUGS AND LIMITATIONS
 
