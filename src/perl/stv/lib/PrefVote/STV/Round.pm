@@ -174,9 +174,18 @@ PrefVote::STV::Round - internal voting-round structure used by PrefVote::STV
 
 =head1 SYNOPSIS
 
+  # from unit test code - not a full example
+  my @candidate_names = qw(ABNORMAL BORING CHAOTIC DYSFUNCTIONAL EVIL FACTIOUS);
+  my $stv_round_ref = PrefVote::STV::Round->new(number => 1, candidates => @candidate_names);
+  $stv_round_ref->init_candidate_tally();
+  $stv_round_ref->add_votes_used(10);
+  $stv_round_ref->sort_candidates(sub{ return $_[1] cmp $_[0] });
 
 =head1 DESCRIPTION
 
+I<PrefVote::STV::Round> keeps the data for a voting round in L<PrefVote::STV>.
+
+It is a subclass of L<PrefVote::Core::Round>, and therefore contains the data and methods of that class as well.
 
 =head1 ATTRIBUTES
 
@@ -184,9 +193,18 @@ PrefVote::STV::Round - internal voting-round structure used by PrefVote::STV
 
 =item votes_used
 
+'votes_used' is a floating point number of the total votes consumed by counting.
+During the count it's a running total. Afterward, it's the final total.
+
 =item quota
 
+'Quota' is a floating point number with the threshold of votes required to win the round, expressed as a fraction.
+It is a function of seats available and candidates running.
+
 =item tally
+
+'Tally' is a hash keyed by candidate names which each contain that candidate's tally in the round's count,
+as a L<PrefVote::STV::Tally> object.
 
 =back
 
@@ -194,11 +212,21 @@ PrefVote::STV::Round - internal voting-round structure used by PrefVote::STV
 
 =over 1
 
-=item init_candidate_tally
+=item init_candidate_tally ()
 
-=item add_votes_used
+This must be called once for each I<PrefVote::STV::Round> object to initialize the candidates and set votes to zero.
+It calls init_round_candidates() in L<PrefVote::Core::Round> to initialize the superclass' data.
 
-=item sort_candidates
+=item add_votes_used ( int votes )
+
+This adds to the total votes used, or consumed, in the current round's vote-counting.
+
+=item sort_candidates ( [coderef sort_fn] )
+
+This should be called once after votes have been counted, to sort the candidates in result order.
+It takes an optional code reference parameter as a sorting function, which can be used for testing purposes
+if full vote totals have not been added to the object.
+By default the sort order is descending by vote totals in the current round.
 
 =back
 
