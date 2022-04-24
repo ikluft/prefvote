@@ -215,8 +215,58 @@ PrefVote::Core::Round - internal voting-round structure provided by PrefVote::Co
 
 =head1 DESCRIPTION
 
+I<PrefVote::Core::Round> contains data in common among L<PrefVote> voting methods which use multiple rounds of
+vote counting. It serves as a superclass providing data and methods used by L<PrefVote::STV::Round>
+and L<PrefVote::Schulze::Round>.
+
+=head1 ATTRIBUTES
+
+=over 1
+
+=item number
+
+'Number' is the integer number of the current voting round, starting from 1 so it can be used in displaying results.
+
+=item prev
+
+'Prev' is a reference to the I<PrefVote::Core::Round> object for the previous voting round.
+
+=item candidates
+
+'Candidates' is an array reference containing the candidate ID strings of the candidates who are active in this round.
+Candidates are considered active based on the specific voting method, which is defined by a subclass,
+but always omits candidates which won previous rounds.
+In voting methods which eliminate candidates from the bottom of the results,
+those are also omitted from following rounds.
+
+=item result
+
+'Result' is an array of L<PrefVote::Core::Result> objects indicating the results of the round.
+Resuls will list any candidates who won the round.
+For voting methods which allow elimination of candidates, those would be indicated here too.
+
+=back
+
+=head1 METHODS
+
+=over 1
+
+=item init_round_candidates ()
+
+This performs initialization of the round data. It must be called once before other processing of the round.
+
+=item set_result (...result instatiation parameters...)
+
+Set the results for the round. The parameters are passed directly to the new() method of L<PrefVote::Core::Result>.
+
+=back
 
 =head1 SEE ALSO
+
+L<PrefVote:Core>
+
+L<https://github.com/ikluft/prefvote>
+
 
 =head1 BUGS AND LIMITATIONS
 
