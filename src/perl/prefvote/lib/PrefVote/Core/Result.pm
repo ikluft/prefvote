@@ -80,9 +80,45 @@ PrefVote::Core::Result - internal voting-result structure used by PrefVote::Core
 
 ⛔ This is for PrefVote internal use only.
 
-PrefVote::Core::Result is used to store results of L<PrefVote::Core::Round> structures for voting methods which use rounds, including STV and Schulze.
+PrefVote::Core::Result is used to store results from a single L<PrefVote::Core::Round> structure for voting methods which use rounds, including STV and Schulze.
 
 The result of the round is recorded with the name field containing a L<Set::Tiny> of strings with candidate/choice names. The type parameter is an enumeration with either of the strings "winner" or "eliminated". A PrefVote::Core::Result shoild not be created in a PrefVote::Core::Round if there was no result in the round.
+
+=head1 ATTRIBUTES
+
+=over 1
+
+=item name
+
+'Name' is a L<Set::Tiny> containing the name(s) of candidates in the results of this round.
+All candidates listed in the set are tied.
+The type of result (win or elimination) is determined by the type attribute.
+
+=item type
+
+'Type' is a string containing either 'winner' or 'eliminated' to indicate the type of result.
+
+=back
+
+=head1 METHODS
+
+=over 1
+
+=item name_all()
+
+returns a list of strings which are the candidate ID strings contained in the set from the 'name' attribute.
+
+=item name_count()
+
+returns an integer with the number of candidates contained in the set from the 'name' attribute.
+
+=item name_empty()
+
+returns a boolean value true if the 'name' attribute is empty, false otherwise.
+Under normal circumstances this should be true when the I<PrefVote::Core::Result> object was instantiated at all.
+When there are no results for a round, the round's result would be an undefined value.
+
+=back
 
 =head1 SEE ALSO
 
