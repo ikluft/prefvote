@@ -41,7 +41,7 @@ sub main
     GetOptions("debug" => \$debug, "test" => \$test_mode, "format|outformat:s" => \$out_format,
         "method:s" => \$method, "config=s" => \%config);
     if (not @ARGV) {
-        say STDERR "usage: $0 [--debug] [--test] [--yaml|--rawyaml] [--method=votingmethod] [--config key=value] "
+        say STDERR "usage: $0 [--debug] [--test] [--format=output-format] [--method=votingmethod] [--config key=value] "
             ."yaml_file";
         exit 0;
     }
@@ -133,9 +133,36 @@ vote-count vote-data.yaml
 
 =head1 OPTIONS
 
+=over
+
+=item --test
+
+This is a boolean flag which selects black-box testing mode.
+The input YAML data must contain a section with expected test results from a previous verified run.
+
+--test is mutually exclusive with --format.
+
+=item --format=yaml|rawyaml|text|markdown|html|rawcapture
+
+This option specifies an output format.
+"yaml" results in generating YAML output suitable for use in black-box testing.
+"rawyaml" is an unfiltered data dump in YAML format.
+
+--format is mutually exlusive with --test.
+
+=item --method
+
+=item --config
+
+=item --debug
+
+=back
+
 =head1 EXIT STATUS
 
 =head1 SEE ALSO
+
+L<PrefVote::Core>
 
 =head1 BUGS AND LIMITATIONS
 
