@@ -129,7 +129,22 @@ vote-count
 
 =head1 USAGE
 
-vote-count vote-data.yaml
+  vote-count [--test] [--format=output-type] [--method=voting-method]
+    [--config key=name] [--debug] vote-data.yaml
+
+The voting data file provided on the command line is read as YAML containing two or three "YAML documents",
+actually sections within the same file.
+The first YAML document is the definition of a survey or election including a title and the options or candidates.
+The second YAML document contains the survey responses or ballots - these must have been gathered from whichever
+source the votes were cast in.
+The optional third YAML document is used only for testing (when I<--test> is specified),
+and contains data structures from a varified correct
+run of counting the supplied votes to compare with the result computed by the software.
+
+L<PrefVote> implements multiple preference voting (ranked choice) algorithms.
+By design, all of PrefVote's voting methods are multi-winner methods which may be configured for a single winner.
+All of PrefVote's voting methods use Average Choice Rank (ACR), the average ballot position of a choice or candidate,
+as a tie-breaker if quantitative vote counts are equal.
 
 =head1 OPTIONS
 
@@ -140,19 +155,68 @@ vote-count vote-data.yaml
 This is a boolean flag which selects black-box testing mode.
 The input YAML data must contain a section with expected test results from a previous verified run.
 
---test is mutually exclusive with --format.
+--test is mutually exclusive with --format. If neither is selected it defaults to printing simple results.
 
 =item --format=yaml|rawyaml|text|markdown|html|rawcapture
 
 This option specifies an output format.
 "yaml" results in generating YAML output suitable for use in black-box testing.
 "rawyaml" is an unfiltered data dump in YAML format.
+The other options correspond with a subclass of PrefVote::Core::Output which handles formatting,
+either I<text>, I<markdown>, I<html> or I<rawcapture>.
+The I<rawcapture> output format is intended as machine-readable - all the machine-readable formats are for testing.
+The rest are intended as human-readable output formats.
 
---format is mutually exlusive with --test.
+--format is mutually exlusive with --test. If neither is selected it defaults to printing simple results.
 
-=item --method
+=item --method=core|stv|schulze|rankedpairs
 
-=item --config
+This selects the voting method.
+
+=over 1
+
+=item core
+
+I<Core> isn't really a voting method but represents the common code for all the voting methods supplied by
+L<PrefVote::Core>.
+It uses the average ballot position of a choice or candidate, such as first, second, third, etc.
+That's referred to as Average Choice Rank (ACR) in L<PrefVote::Core>.
+Core can be used like a voting method for testing purposes, but should never be used for an actual survey or election.
+Since it only uses an average, a hypothetical worst case scenario would be if a candidate received only one vote
+but was in first place there, and then averages higher than all the other candidate regardless how many more votes
+they receive.
+
+Quantitative information, which is not present in an average, should be used as highest priority first criteria
+for deciding the winner of an election.
+As a feature of L<PrefVote>, all voting methods use the average choice rank (ACR) for tie-breaking because
+it is a qualitative measure of voters' intent on chocies or candidates,
+appropriate for cases when quantitative results are equal.
+
+=item stv
+
+I<STV> is the Single Transferable Vote method.
+In multiple rounds of vote-counting, any canidates with meet the quota is a winner for that round and
+the next available place in the election result.
+
+The quota to win a round is a fraction based on the number of winning seats available.
+When a choice wins a round, or more than one wins in a tie, it is considered to consume a fraction of each of the
+ballots cast, in the amount necessary to meet the quota. The remaining fractions of each ballot transfer to
+the next preference on each ballot.
+
+If no choices win a round, then the choice(s) in last place is/are eliminated.
+Their votes transferred to the next available preference on each ballot.
+
+=item schulze
+
+I<Schulze> is the Schulze Method by Marcus Schulze. [...]
+
+=item rankedpairs
+
+I<RankedPairs> is the Ranked Pairs method. [...]
+
+=back
+
+=item --config key=value
 
 =item --debug
 
