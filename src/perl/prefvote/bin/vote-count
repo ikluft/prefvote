@@ -206,23 +206,40 @@ the next preference on each ballot.
 If no choices win a round, then the choice(s) in last place is/are eliminated.
 Their votes transferred to the next available preference on each ballot.
 
+Support for the Single Transferable Vote voting method requires installing L<PrefVote::STV>.
+
 =item schulze
 
-I<Schulze> is the Schulze Method by Marcus Schulze. [...]
+I<Schulze> is the Schulze Method by Marcus Schulze. Schulze is a Condorcet method which starts by making pairwise
+comparisones between each of the choices. A choice which wins by a majority against all the others in pairwise
+comparison wins. But often it isn't that simple and the Schulze method uses graph theory to map an order of the
+choices based on the voter preferences.
+
+Support for the Schulze voting method requires installing L<PrefVote::Schulze>.
 
 =item rankedpairs
 
-I<RankedPairs> is the Ranked Pairs method. [...]
+I<RankedPairs> is the Ranked Pairs method by Nicolaus Tideman. Ranked Pairs is also a Condorcet method using
+pairwise comparisons of the choices to select a winner. It orders pairwise comparisons by margin of victory
+and gives precedence to the larger victories.
+
+Support for the Ranked Pairs voting method requires installing L<PrefVote::RankedPairs>.
 
 =back
 
 =item --config key=value
 
+Configuration strings in PrefVote can be set via this option. --config may be specified more than once.
+
 =item --debug
+
+This sets the boolean debugging flag which turns on large amounts of output of internal data structures.
 
 =back
 
 =head1 EXIT STATUS
+
+Returns 0 for success, 1 for failure.
 
 =head1 SEE ALSO
 
