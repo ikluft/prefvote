@@ -146,6 +146,9 @@ By design, all of PrefVote's voting methods are multi-winner methods which may b
 All of PrefVote's voting methods use Average Choice Rank (ACR), the average ballot position of a choice or candidate,
 as a tie-breaker if quantitative vote counts are equal.
 
+For the format of the YAML input file, see the documentation for the voting method selected from among
+L<PrefVote::Core>, L<PrefVote::STV>, L<PrefVote::Schulze> or L<PrefVote::RankedPairs>.
+
 =head1 OPTIONS
 
 =over
@@ -230,6 +233,31 @@ Support for the Ranked Pairs voting method requires installing L<PrefVote::Ranke
 =item --config key=value
 
 Configuration strings in PrefVote can be set via this option. --config may be specified more than once.
+
+Supported configuration settings:
+
+=over 1
+
+=item no-tiebreak
+
+takes a boolean value, 1 for true or 0 for false.
+This indicating PrefVote voting methods should disable the
+normal tie-breaking by Average Choice Rank (ACR).
+The default is false, which allows tie-breaking with ACR.
+This setting is used by the STV, Schulze and RankedPairs voting methods.
+
+=item input-ties
+
+(for use in testing only)
+takes a boolean value, 1 for true or 0 for false.
+This overrides the setting from the voting method class on whether it accepts ties among choices in ballot inputs.
+Usually L<PrefVote::Core> counts the input ballots for the other voting method classes,
+and only accepts tied choices on ballots if the voting method's definition can accept ties on ballots.
+For testing purposes this can be overridden, to test validity of inputs where ties are enabled or disabled.
+It would have unpredictable, undefined and unsupported results if used with a voting method such as STV whose
+definition requires ballots to express voters' strict preference ordering without ties.
+
+=back
 
 =item --debug
 
