@@ -93,7 +93,7 @@ sub count
     # stop now if there are no votes
     return if $self->total_ballots() == 0;
 
-    # loop forever until a valid result is established
+    # loop forever until: no candidates are left to compare or a round fails to reach a result
     for ( ;; ) {
         # start new round
         $self->debug_print("count: new round\n");
@@ -118,8 +118,8 @@ sub count
                 $self->winners_push(set($round_result->name_all()));
             }
         } else {
-            # no result in previous round? A new round can't have a different result. Bail out.
-            $self->debug_print("no this round - bail out\n");
+            # no result in this round? A new round can't have a different result without changing choices. Bail out.
+            $self->debug_print("no result this round - bail out\n");
             last;
         }
     }    
