@@ -38,9 +38,10 @@ Readonly::Hash my %blackbox_spec => (
 PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, spec => \%blackbox_spec,
     parent => 'PrefVote::Core::Round');
 
-# 2-level hash of candidate-pair preference totals
-# This shows total votes where 1st index candidate if preferred over a 2nd index candidate.
-# Totals are unidirectional and must be combined to determine which candidate has greater number either direction.
+# 2-level hash of choice/candidate-pair preference totals
+# This shows total votes where a 1st index choice/candidate is preferred over a 2nd index choice/candidate.
+# Totals are unidirectional and must be combined with their corresponding opposite pair to determine which
+# choice/candidate is actually more favored.
 has pair => (
     is => 'rw',
     isa => HashRef[HashRef[InstanceOf['PrefVote::Schulze::PairData']]],
@@ -688,15 +689,35 @@ PrefVote::Schulze::Round - internal voting-round structure used by PrefVote::Sch
 
 =head1 SYNOPSIS
 
+  # snippet from unit tests
+  use PrefVote::Schulze::Round;
+  my @candidate_names = qw(A B C D E F);
+  my $schulze_round_ref = PrefVote::Schulze::Round->new(number => 1, candidates => \@candidate_names);
+  schulze_round_ref->add_preference("A", "F", 1);
+  my $pref_a_f = schulze_round_ref->get_preference("A", "F");
+
 =head1 DESCRIPTION
 
 ⛔ This is for PrefVote internal use only.
+
+A PrefVote::Schulze::Round object contains data for one round of vote-counting in the Schulze Method.
+It should only be called from L<PrefVote::Schulze>.
+
+The Schulze Method counts votes in a Condorcet-style pairwise comparison of choices or candidates.
+While all Condorcet methods are the same in making a choice/candidate the winner if it wins pairwise comparisons
+against all other choices/candidates.
+All the methods differ in how they do their computation and particularly in how they handle counts where there
+isn't a clear Condorcet winner.
+PrefVote::Schulze::Round is the core of the Schulze algorithm, which arranges choices into an ordering using
+a graph structure of pairwise comparisons between choices/candidates.
 
 =head1 ATTRIBUTES
 
 =over 1
 
 =item pair
+
+
 
 =item win_flag
 
