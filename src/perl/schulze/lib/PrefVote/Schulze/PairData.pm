@@ -112,12 +112,11 @@ PrefVote::Schulze:PairData - internal candidate-pair data for Schulze method
 
 =head1 SYNOPSIS
 
-use PrefVote::Schulze::PairData;
-my $pairdata_ref = PrefVote::Schulze::PairData->new();
+  use PrefVote::Schulze::PairData;
+  my $pairdata_ref = PrefVote::Schulze::PairData->new();
 
-$pairdata_ref->add_preference(1);
-my $count = $pairdata_ref->preference();
-
+  $pairdata_ref->add_preference(1);
+  my $count = $pairdata_ref->preference();
 
 =head1 DESCRIPTION
 
