@@ -717,9 +717,30 @@ a graph structure of pairwise comparisons between choices/candidates.
 
 =item pair
 
+This is a two-dimensional hash table of pairwise comparisons between choices/candidates.
+Each index is a choice/candidate id code assigned by L<PrefVote::Core>.
 
+Following the customary notation of Schulze's algorithm to call the first subscript i and the second one j,
+each item is a comparison of i to j, and does not include data for the opposite direction comparison of j to i,
+which exists in the pair table under those subscripts.
+
+Each entry of the table, when they exist, contains a reference to a L<PrefVote::Schulze::PairData> object.
+These initially only contain a count of votes for choice/candidate i over j.
+As the Schulze algorithm progresses, data for each edge in the graph computation is stored here,
+including strength of the strongest path from i to j,
+a flag to indicate if i→j is the winning direction for the graph edge,
+or a flag for tie-breaking indicating the edge has been forbidden to prevent ambiguous usage in both directions.
+
+This is a sparse table. So entries are optional. For example, there should not be any entries where i equals j
+because a choice/candidate can only be pairwise-compared to other choices/candidates in a ranked choice ballot.
 
 =item win_flag
+
+This is a hash table indexed by L<PrefVote::Core> choice/candidate id code.
+Each element contains a boolean flag, defaulting to false if non-existent,
+indicating the choice/candidate is a winner of the round.
+
+Ties are possible, which would be indicated by more than one choice/candidate with this flag set.
 
 =back
 
