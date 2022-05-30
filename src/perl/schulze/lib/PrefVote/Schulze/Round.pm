@@ -729,7 +729,8 @@ These initially only contain a count of votes for choice/candidate i over j.
 As the Schulze algorithm progresses, data for each edge in the graph computation is stored here,
 including strength of the strongest path from i to j,
 a flag to indicate if i→j is the winning direction for the graph edge,
-or a flag for tie-breaking indicating the edge has been forbidden to prevent ambiguous usage in both directions.
+or a flag used by the Schulze Method for tie-breaking indicating the edge has been forbidden
+to prevent ambiguous usage of the same edge in both directions of the pairwise comparisons for the choice/candidate.
 
 This is a sparse table. So entries are optional. For example, there should not be any entries where i equals j
 because a choice/candidate can only be pairwise-compared to other choices/candidates in a ranked choice ballot.
@@ -748,15 +749,26 @@ Ties are possible, which would be indicated by more than one choice/candidate wi
 
 =over 1
 
-=item make_pair_node
+=item make_pair_node( i, j)
 
-=item add_preference
+If the node doesn't already exist, it creates a L<PrefVote::Schulze::PairData> object as the pair node i→j.
 
-=item get_preference
+=item add_preference( i, j, quantity)
 
-=item set_predecessor
+adds to the pair node i→j with quantity added to the number of votes favoring candidate i over j.
+
+=item get_preference(i, j)
+
+reads the pair node i→j and returns the value of the preference of i over j.
+
+=item set_predecessor(i, j, value)
+
+Used for graph analysis in the Schulze Method, this sets the predecessor value for i→j.
+See the Schulze algorithm definition for details.
 
 =item get_predecessor
+
+returns the graph predecessor value for i→j.
 
 =item set_strength
 
