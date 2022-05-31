@@ -766,19 +766,34 @@ reads the pair node i→j and returns the value of the preference of i over j.
 Used for graph analysis in the Schulze Method, this sets the predecessor value for i→j.
 See the Schulze algorithm definition for details.
 
-=item get_predecessor
+=item get_predecessor(i, j)
 
 returns the graph predecessor value for i→j.
 
-=item set_strength
+=item set_strength(i, j, value)
 
-=item get_strength
+sets the strength of the strongest path for I<i→j> to <value>.
 
-=item set_win_order
+=item get_strength(i, j)
 
-=item get_win_order
+returns the strength of the strongest path for I<i→j>.
+
+=item set_win_order(i, j, flag)
+
+sets a boolean value I<flag> indicating I<i→j> is, if true, the winning direction for that choice/candidate pair.
+The flag must not be set to true in both I<i→j> and I<j→i> directions.
+
+=item get_win_order(i, j)
+
+returns a boolean value indicating whether I<i→j> is the winning direction for that choice/candidate pair.
+A true values indicates it is the winning direction.
+The flag must not be set to true in both I<i→j> and I<j→i> directions.
 
 =item tally_preferences
+
+computes choice/candidate pair preference totals across the pair matrix.
+Each ballot ranks voter preferences in order.
+This totals all the preferences from the ballots and places totals in the entries for each pair of choices/candidates.
 
 =item get_path
 
