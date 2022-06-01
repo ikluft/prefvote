@@ -795,13 +795,29 @@ computes choice/candidate pair preference totals across the pair matrix.
 Each ballot ranks voter preferences in order.
 This totals all the preferences from the ballots and places totals in the entries for each pair of choices/candidates.
 
-=item get_path
+=item get_path(src, dest)
 
-=item add_path
+computes the path (chain of choice/candidate preferences) between two choices/candidates src→dest, if a path exists.
+According to the definition of the Schulze voting method,
+this uses the L<Floyd–Warshall algorithm|https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm>
+to compute the shortest path in a directed graph.
 
-=item compute_strongest_paths
+=item add_path(src, dest)
 
-=item compute_potential_winners
+adds a path (chain of choice/candidate preferences) to the history of a route between nodes.
+This calls I<get_path> to compute a path between two choices/candidates src→dest.
+If a path was found, it is added to the history of paths found between these choices/candidates.
+
+=item compute_strongest_paths()
+
+performs Stage 2 of the Schulze algorithm, calculation of the strengths of the strongest paths
+between all pairs of choices/candidates.
+
+=item compute_potential_winners()
+
+performs Stage 3 of the Schulze algorithm, calculation of the binary relation 𝚶 
+(the set of paths that win over their opposite direction for the same pair)
+and the set of potential winning choices/candidates.
 
 =item get_forbidden
 
