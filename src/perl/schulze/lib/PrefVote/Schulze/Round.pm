@@ -819,9 +819,25 @@ performs Stage 3 of the Schulze algorithm, calculation of the binary relation �
 (the set of paths that win over their opposite direction for the same pair)
 and the set of potential winning choices/candidates.
 
-=item get_forbidden
+=item get_forbidden(cand1, cand2, m, n)
 
-=item set_forbidden
+is a read accessor for the forbidden-link flag matrix.
+
+This is used by the Schulze Method's tie-breaking algorithm.
+The forbidden-link flag matrix is a 2D sparse matrix in which values are only set if true,
+and return false if non-existent.
+The indices cand1 and cand2 represent a path from cand1→cand2, which contains another hash indexed
+with a string "m-n" or "n-m" (substituting the strings from the parameters m and n),
+using m and n in ascending order.
+A true value indicates that both directions of m→n and n→m are forbidden from the path cand1→cand2
+because they were used in the graph paths favoring each direction.
+The tie-breaking algorithm discards such paths and recomputes new paths without them.
+
+=item set_forbidden(cand1, cand2, m, n)
+
+is a write accessor for the forbidden-link flag matrix.
+
+See I<get_forbidden> above for details on the forbidden links' usage in the Schulze tie-breaking algorithm.
 
 =item break_tie
 
