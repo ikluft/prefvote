@@ -839,7 +839,13 @@ is a write accessor for the forbidden-link flag matrix.
 
 See I<get_forbidden> above for details on the forbidden links' usage in the Schulze tie-breaking algorithm.
 
-=item break_tie
+=item break_tie(m, n)
+
+is called by I<final_rank_links()> when the Schulze TBRL (tie-breaking ranking of links) algorithm
+detects a tie between choices/candidates m↔n when the graph paths each direction between them
+have an edge in common in the same direction.
+The tie-breaking algorithm marks that edge as forbidden for use between m↔n and recomputes the paths.
+This usually occurs when m and n are "clones", similar choices/candidates which the voters ranked similarly.
 
 =item final_rank_links
 
