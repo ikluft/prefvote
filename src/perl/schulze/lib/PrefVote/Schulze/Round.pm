@@ -174,7 +174,7 @@ sub get_win_order
 }
 
 # return a ballot item as a list, whether it was a single scalar or a tie-group set
-sub item2list
+sub _item2list
 {
     my $item = shift;
     if (ref $item eq 'Set::Tiny') {
@@ -221,11 +221,11 @@ sub tally_preferences
         for (my $pos1=0; $pos1 < scalar @ballot_items - 1; $pos1++) {
             # mark all following items on the ballot as less-favored than the current item
             # This adds 2 levels of loops to support potential ties within each position.
-            my @item1 = item2list($ballot_items[$pos1]);
+            my @item1 = _item2list($ballot_items[$pos1]);
             foreach my $cand_i (@item1) {
                 $seen_on_ballot{$cand_i} = 1;
                 for (my $pos2=$pos1+1; $pos2 < scalar @ballot_items; $pos2++) {
-                    my @item2 = item2list($ballot_items[$pos2]);
+                    my @item2 = _item2list($ballot_items[$pos2]);
                     foreach my $cand_j (@item2) {
                         $seen_on_ballot{$cand_j} = 1;
                         $self->add_preference($cand_i, $cand_j, $ballot->{quantity});
@@ -852,14 +852,6 @@ This usually occurs when m and n are "clones", similar choices/candidates which 
 =item narrow_winners
 
 =item do_computation
-
-=back
-
-=head1 FUNCTIONS
-
-=over 1
-
-=item item2list
 
 =back
 
