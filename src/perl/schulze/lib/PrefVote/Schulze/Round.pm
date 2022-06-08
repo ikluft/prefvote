@@ -447,7 +447,7 @@ sub break_tie
                 next if $i eq $j;
                 if ($self->get_strength($m, $n) == $self->get_preference($i, $j)) {
                     $self->set_forbidden($i, $j, $m, $n);
-                    $self->debug_print("final_rank_links($m-$n): set_forbidden $i-$j");
+                    $self->debug_print("brak_time($m-$n): set_forbidden $i-$j");
                 }
             }
         }
@@ -459,11 +459,11 @@ sub break_tie
                 if ($self->get_forbidden($i, $j, $m, $n)) {
                     my $value = $minimum_link;
                     $self->set_strength($i, $j, $value);
-                    $self->debug_print("final_rank_links($m-$n): min-link $i-$j => $value");
+                    $self->debug_print("brak_time($m-$n): min-link $i-$j => $value");
                 } else {
                     my $value = $self->get_preference($i, $j);
                     $self->set_strength($i, $j, $value);
-                    $self->debug_print("final_rank_links($m-$n): pref $i-$j => $value");
+                    $self->debug_print("brak_time($m-$n): pref $i-$j => $value");
                 }
             }
         }
@@ -480,7 +480,7 @@ sub break_tie
                     my $min_strength_ji_ik = ($strength_ji < $strength_ik) ? $strength_ji : $strength_ik;
                     if ($strength_jk < $min_strength_ji_ik) {
                         $self->set_strength($j, $k, $min_strength_ji_ik);
-                        $self->debug_print("final_rank_links($m-$n): min-strength $j-$k "
+                        $self->debug_print("brak_time($m-$n): min-strength $j-$k "
                                 ."=> $min_strength_ji_ik");
                     }
                 }
@@ -498,7 +498,7 @@ sub break_tie
             $self->win_flag_delete($n, 1);
             $tie_broken = 1;
             $changes_made = 1;
-            $self->debug_print("final_rank_links: tie $m/$n broken in favor of $m");
+            $self->debug_print("brak_time tie $m/$n broken in favor of $m");
         } elsif ($q_path_nm > $q_path_mn) {
             # tie resolved in favor of n
             $self->set_win_order($n, $m, 1);
@@ -507,11 +507,11 @@ sub break_tie
             $self->win_flag_delete($m, 1);
             $tie_broken = 1;
             $changes_made = 1;
-            $self->debug_print("final_rank_links: tie $m/$n broken in favor of $n");
+            $self->debug_print("brak_time tie $m/$n broken in favor of $n");
         } elsif ($q_path_mn == $minimum_link and $q_path_nm == $minimum_link) {
             # tie could not be resolved
             $tie_broken = 1;
-            $self->debug_print("final_rank_links: tie $m/$n unresolved");
+            $self->debug_print("brak_time tie $m/$n unresolved");
         }
     }
     return $changes_made;
@@ -521,7 +521,8 @@ sub break_tie
 # Stage 4: tie-breaking ranking of links TBRL (from Schulze 5.1)
 # Schulze method can have resolvable ties when the same link is used both directions in a path between two choices.
 #
-# Note: this is implemented per the paper - it's a very brute-force algorithm. An alternative I tried didn't help.
+# Note: this is implemented per the paper - it's a very brute-force algorithm. An alternative I experimented with
+# didn't help. So we're stuck with this for now.
 sub final_rank_links
 {
     my $self = shift;
@@ -662,7 +663,7 @@ sub do_computation
         $self->final_rank_links();
     }
 
-    # Stage 5: additional tie-breaking by average ballot placement (added by PrefVote, not in Schulze definition)
+    # Stage 5: tie-breaking by average ballot placement (not in Schulze definition; PrefVote adds this to all methods)
     if (scalar $self->win_flag_keys() != 1) {
         $self->debug_print("do_computation: supplemental tie-breaking");
         $self->narrow_winners($schulze_ref);
@@ -849,9 +850,27 @@ This usually occurs when m and n are "clones", similar choices/candidates which 
 
 =item final_rank_links
 
+performs the part of the Schulze algorithm called Tie-breaking ranking of links (TBRL).
+The Schulze method can have resolvable ties when the same link is used both directions in a path between two choices.
+This uses a brute-force loop through all combinations of choices/candidates, calling the break_tie() method inside
+that nested loop when a tie is detected.
+
 =item narrow_winners
 
+narrows the set of winning choices/candidates in a round by the average choice rank (ACR) from L<PrefVote::Core>,
+by using PrefVote::Core::average_ranking() to sort winning candidates.
+This is not a part of the Schulze method's definition, but a tie-breaking factor added by PrefVote to all its methods.
+This is much less susceptible to a tie, and therefore more likely to break the tie.
+
+However, PrefVote's definition of the ACR data, which is an average lacking quantitative information,
+requires that it must be used as a secondary factor only if quantitative methods fail to resolve ties.
+Quantitative data is higher priority to follow the philosophy that every vote counts.
+Only in a tie does the average ranking come in.
+
 =item do_computation
+
+performs the Schulze method processing for a round of vote counting.
+For round n, it counts the nth ranked choice/candidate, or more than one if there is tie for the round.
 
 =back
 
