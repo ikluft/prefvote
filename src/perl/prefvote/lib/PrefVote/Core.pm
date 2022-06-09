@@ -799,15 +799,32 @@ PrefVote::Core - common code for all PrefVote voting methods
 
 =item name
 
+the name or title of the poll to be performed
+
 =item choice_to_index
+
+a hash using a choice/candidate's identifier string as the key and containing the hexadecimal index code for
+that choice/candidate
 
 =item index_to_choice
 
+a hash using the hexadecimal index code for a choice/candidate as the key and containing
+the choice/candidate's identifier string
+
 =item choice_to_result
+
+a hash using a choice/candidate's identifier string as the key and containing the results for that
+choice/candidate
 
 =item choices
 
+a hash using a choice/candidate's identifier string as the key and containing a longer printable name or description
+for the choice/candidate
+
 =item seats
+
+integer number of seats to be filled by this vote.
+If not provided the default is 1.
 
 =item ballots
 
