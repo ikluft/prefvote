@@ -793,6 +793,12 @@ PrefVote::Core - common code for all PrefVote voting methods
 
 =head1 DESCRIPTION
 
+I<PrefVote::Core> is the common code base between voting methods supported by L<PrefVote>.
+It handles data and code in common among the preference voting systems, including
+input and tallying of ranked choice ballots, indexing of choices/candidates,
+computing average choice rank (ACR) as tie-breaking data, storage of basic results,
+and black-box testing infrastructure.
+
 =head1 ATTRIBUTES
 
 =over 1
@@ -827,6 +833,20 @@ integer number of seats to be filled by this vote.
 If not provided the default is 1.
 
 =item ballots
+
+a hash indexed by a hash string (see below) and containing references to L<PrefVote::Core::Ballot> structures.
+
+The hash string used as the index contains a unique representation of the ballot
+by concatenating the hexadecimal number representation for each choice/candidate in the order they appear
+on the ballot.
+On voting methods which allow ballot-input ties (ranking two or more choices/candidates as equal),
+those equal items are enclosed in square brackets and listed in ascending sorted order within them.
+Together these represent a unique combination of voting preferences for a ballot.
+
+The  L<PrefVote::Core::Ballot> structure also contains an integer quantity of the number of ballots
+in which that combination occurred.
+Each combination present in the submitted ballots will only occur once in the hash.
+The quantity says how many of them were received.
 
 =item total_ballots
 
