@@ -850,11 +850,29 @@ The quantity says how many of them were received.
 
 =item total_ballots
 
+is an integer value of the number of ballots that were counted.
+
 =item choice_rank
+
+is a workspace to tally each choice/candidate's number of times at each position on a ranked choice ballot.
+This is used after all ballots have been tallied to compute the average choice rank (ACR) which PrefVote uses
+for tie-breaking in all its supported voting methods.
+
+It's a hash structure indexed by the candidate's identifier string, and containing an array of integers
+each with a tally of the number of times the choice/candidate occurred in the nth place on a ballot.
 
 =item average_choice_rank
 
+is a hash indexed by the choice/candidate identifier string, and containing the average choice rank (ACR) for
+that choice/candidate.
+PrefVote uses ACR for tie-breaking.
+
 =item testspec
+
+is optional and only assigned a value when black-box testing is being done.
+It contains a reference to a L<PrefVote::Core::TestSpec> tree,
+which defines a tree of tests to run in comparison against this PrefVote::Core object,
+or any subclass of it for supported voting methods.
 
 =back
 
