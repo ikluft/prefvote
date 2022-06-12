@@ -880,15 +880,38 @@ or any subclass of it for supported voting methods.
 
 =over 1
 
-=item choice_exists
+=item choice_exists(str)
 
-=item get_choices
+returns true if the string parameter is a valid choice/candidate identifier string as configured for this vote.
+This is used for validating choices during ballot input processing.
 
-=item save_ranking
+=item get_choices()
 
-=item average_ranking
+returns a list of choice/candidate identifier strings for the current vote.
 
-=item gen_choice_hex
+=item save_ranking(ballot)
+
+is called by submit_ballot() to record the rankings of an individual ballot.
+The ballot parameter is a list of strings (not an array reference) with choice/candidate identifier strings.
+
+=item average_ranking(choice)
+
+returns the average choice rank (ACR) for a choice/candidate.
+This is the average of all the ballot positions where this choice/candidate occurred on ballots,
+where 1 is first place, 2 is second place and so on.
+The choice parameter is a choice/candidate identifier string.
+
+In voting methods which allow tied input rankings, such as Schulze, all tied choices/candidates will be recorded
+with the same number from ballots where input ties occur.
+
+=item gen_choice_hex()
+
+is used by I<PrefVote::Core> during initialization to generate the lookup tables choice_to_index and index_to_choice
+to convert both directions between choice/candidate identifier strings and a sequential hexadecimal number to use
+as their hash index abbreviations.
+
+The hexadecimal index is also in ballot combination index strings by concatenating them
+sequentially in ballot order.
 
 =item ballot_to_hex
 
