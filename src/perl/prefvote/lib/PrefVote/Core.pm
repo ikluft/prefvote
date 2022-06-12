@@ -219,8 +219,8 @@ sub class_or_obj
     return $coo->instance();
 }
 
-# get class suffix
-sub suffix
+# get class suffix, which for subclasses of PrefVote::Core is the voting methods name
+sub _suffix
 {
     my ($class_or_obj) = @_;
     my $self = class_or_obj($class_or_obj);
@@ -729,7 +729,7 @@ sub result_yaml
 
     # return result under item named for voting method class suffix
     # this makes the YAML output drop-in compatible with the input for black-box test data
-    my $suffix = $self->suffix();
+    my $suffix = $self->_suffix();
     return {$suffix => $result_out};
 }
 
@@ -879,8 +879,6 @@ or any subclass of it for supported voting methods.
 =head1 METHODS
 
 =over 1
-
-=item suffix
 
 =item choice_exists
 
