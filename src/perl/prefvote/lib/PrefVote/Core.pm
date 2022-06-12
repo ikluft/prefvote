@@ -915,6 +915,11 @@ sequentially in ballot order.
 
 =item ballot_to_hex
 
+converts a ballot combination to a hex index string by concatenating the hexadecimal codes for the choices/candidates
+in ballot order.
+For voting methods which allow ties input rankings, such as Schulze, square brackets enclose the tied items,
+listed in ascending order to ensure uniqueness and matching when compared.
+
 =item submit_ballot
 
 =item ingest_ballots
