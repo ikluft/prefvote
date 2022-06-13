@@ -913,14 +913,32 @@ as their hash index abbreviations.
 The hexadecimal index is also in ballot combination index strings by concatenating them
 sequentially in ballot order.
 
-=item ballot_to_hex
+=item ballot_to_hex(@ballot)
 
-converts a ballot combination to a hex index string by concatenating the hexadecimal codes for the choices/candidates
+receives a ballot combination as an array of strings
+and converts it to a hex index string by concatenating the hexadecimal codes for the choices/candidates
 in ballot order.
 For voting methods which allow ties input rankings, such as Schulze, square brackets enclose the tied items,
 listed in ascending order to ensure uniqueness and matching when compared.
 
-=item submit_ballot
+This is called by submit_ballot().
+
+=item submit_ballot(@ballot)
+
+receives a ballot as an array of strings and stores it for later counting after all have been received.
+
+It throws exceptions if the ballot has content errors.
+Exceptions should be caught and considered rejected ballots which have not been stored for counting.
+Exceptions only reject the ballot and should not be fatal for the program.
+Errors which result in exceptions are as follows:
+
+=over 1
+
+=item an empty ballot
+
+=item a ballot input tie is given in a voting method which doesn't accept them
+
+=back
 
 =item ingest_ballots
 
