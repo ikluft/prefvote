@@ -942,7 +942,25 @@ Errors which result in exceptions are as follows:
 
 =item ingest_ballots
 
-=item count
+is called by yaml2vote() after it instantiates an object of I<PrefVote::Core> or a derivative class.
+This reads the 2nd YAML document in the input, which contains a list of ballots to be counted.
+
+=item count()
+
+counts votes in the I<PrefVote::Core> object.
+
+The count() method must be overridden in each class derived from I<PrefVote::Core>.
+
+In I<PrefVote::Core> this method is only for testing purposes because it isn't a valid voting method.
+The voting method must be provided by a derived class specifically written to handle them.
+Since I<PrefVote::Core> contains average ballot positions of each candidate, that data is used f or testing
+purposes.
+But average ballot position doesn't take quantity votes into account,
+which must be used in the first pass of any valid voting method.
+
+An example of what could easily go wrong if I<PrefVote::Core> was used to count real ranked-choice ballots
+is if a choice/candidate was ranked first place on one or few ballots, leaving a high average rank
+even with few votes in favor.
 
 =item save_c2r
 
