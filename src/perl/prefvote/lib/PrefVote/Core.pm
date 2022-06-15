@@ -962,7 +962,32 @@ An example of what could easily go wrong if I<PrefVote::Core> was used to count 
 is if a choice/candidate was ranked first place on one or few ballots, leaving a high average rank
 even with few votes in favor.
 
-=item save_c2r
+=item save_c2r(winners => [wlist], eliminated => [elist])
+
+is a method which must be called by subclasses of I<PrefVote::Core> to record their voting results.
+The I<winners> parmeter is required, and must contain a list in order from first place to last of the winning
+choices/candidates by their identifier strings.
+The I<eliminated> parameter is optional,
+provided only by voting methods whose definition includes elimination of candidates
+such as Single Transferable Vote (STV).
+
+save_c2r() uses the I<winners> and I<eliminated> to populate the I<choice_to_result> hash attribute withs
+and array containing each choice/candidate's numeric place and a disposition string:
+"selected" for winner(s) up to the number of seats up for election,
+"tied" if a tie between multiple choices/candidates spans more than available seats,
+"placed" if a choice/candidate placed in the results but did not attain one of the available seats, and
+"eliminated" if a choice/candidate was eliminated from contention (such as in STV).
+
+In case of any choice/candidate marked "tied", it is the software's responsibility to report that the count
+resulted in an unresolved tie.
+The organization using the software should have already made a policy before the poll how to handle ties.
+For low-stakes polls, such as where to meet for dinner, a random selection such as a coin-toss may be acceptable.
+For high-stakes elections, a runoff may be a more appropriate action.
+For polls on approval of a proposal or measure, a tie should mean failure to achieve a majority.
+
+I<PrefVote::Core> makes average choice rank (ACR) data available to subclasses which must use it for tie-breaking,
+except when the I<no-tiebreak> configuration flag is set.
+Ties should be extremely unlikely with ACR tie-breaking enabled.
 
 =item result_yaml
 
