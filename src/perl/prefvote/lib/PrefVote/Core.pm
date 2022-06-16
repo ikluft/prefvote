@@ -991,6 +991,11 @@ Ties should be extremely unlikely with ACR tie-breaking enabled.
 
 =item result_yaml
 
+returns a summary of this I<PrefVote::Core> or derivative object which is suitable to hand off to YAML::Dump()
+to generate YAML output of the results.
+
+This is primarily for testing purposes and is too detailed for display to users or voters.
+
 =item format_output
 
 =item blackbox_check
