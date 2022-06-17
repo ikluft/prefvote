@@ -989,14 +989,41 @@ I<PrefVote::Core> makes average choice rank (ACR) data available to subclasses w
 except when the I<no-tiebreak> configuration flag is set.
 Ties should be extremely unlikely with ACR tie-breaking enabled.
 
-=item result_yaml
+=item result_yaml()
 
 returns a summary of this I<PrefVote::Core> or derivative object which is suitable to hand off to YAML::Dump()
 to generate YAML output of the results.
 
-This is primarily for testing purposes and is too detailed for display to users or voters.
+It is called by the I<format_output()> method if the format "yaml" is specified.
+The data returned is too detailed and technical for display to users or voters.
+The output is intended to be processed by another program supplied by the developer whose code called this.
 
-=item format_output
+=item format_output(format)
+
+uses the I<format> parameter to determine the function to call for output formatting.
+
+=over 1
+
+=item yaml
+
+calls L<YAML::XS> I<Dump()> using the output of the I<result_yaml()> method.
+This detailed data is intended for use by an external program provided by a developer.
+
+=item rawyaml
+
+calls L<YAML::XS> I<Dump()> using this object.
+This is intended for testing only, and is used to create black box testing baseline data from the current run.
+
+=item others
+
+delegates output formatting to the appropriate subclass of L<PrefVote::Core::Output> named by the parameter.
+Currently supported formats are Text, Markdown, HTML and rawcapture.
+The "rawcapture" format is intended for testing.
+The others are intended for human-readable display.
+
+To add new formats, a new subclass of L<PrefVote::Core::Output> must be created to handle it.
+
+=back
 
 =item blackbox_check
 
