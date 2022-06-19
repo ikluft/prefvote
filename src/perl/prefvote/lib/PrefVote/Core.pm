@@ -1025,7 +1025,22 @@ To add new formats, a new subclass of L<PrefVote::Core::Output> must be created 
 
 =back
 
-=item blackbox_check
+=item blackbox_check()
+
+initiates a black-box test run by calling the I<check()> method on the I<testspec> attribute,
+which is an instance of L<PrefVote::Core::TestSpec>.
+It passes the current object as a parameter to I<check()>.
+
+It builds a test tree by querying metadata about testable subclasses of L<PrefVote>,
+which are those that stored their test trees via the I<register_blackbox_spec()> class method.
+Each node in the test tree corresponds to an attribute in that class' objects.
+A test is generated comparing the node's value with a value from a previous run stored in the
+YAML input data's 3rd document.
+
+If there is no 3rd document data in the YAML file, then black-box testing is skipped.
+
+It returns a test tree which may be run by L<Test::More>.
+The L<vote-count> script performs that task when given the I<--test> command-line option.
 
 =back
 
