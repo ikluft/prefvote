@@ -21,7 +21,6 @@ use Scalar::Util 'reftype';
 use YAML::XS;
 use PrefVote::Core::Ballot;
 use PrefVote::Core::Exception;
-use PrefVote::Core::InternalDataException;
 use PrefVote::Core::MethodMismatchException;
 use PrefVote::Core::TestSpec;
 
@@ -194,6 +193,7 @@ has testspec => (
 my $ballot_input_ties_policy = __PACKAGE__->config("input-ties") // 0; # only change this for testing purposes
 sub ballot_input_ties_policy
 {
+    shift if ref $_[0] and $_[0]->isa("PrefVote::Core"); # discard unneeded $self parameter if called as a method
     my $value = shift;
     if (defined $value) {
         $ballot_input_ties_policy = ($value ? 1 : 0)

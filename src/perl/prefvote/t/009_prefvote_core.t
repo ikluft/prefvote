@@ -148,15 +148,17 @@ sub ballot_tests
             lives_ok(sub {$combo = $vote_obj->submit_ballot(@{$test->{ballot}}); }, "ballot $summary_str");
             my $hex_index = $vote_obj->ballot_to_hex(array2ballot($test->{ballot}));
             is($hex_index, $test->{hex}, "computed hex_index ".$test->{hex}." as expected");
-            is($hex_index, $combo, "combo $combo from submit_ballot matches hex_index");
-            my $ballot_obj = $vote_obj->{ballots}{$combo};
-            ok(defined $ballot_obj, "ballot lookup returns data");
-            isa_ok($ballot_obj, "PrefVote::Core::Ballot", "ballot lookup returns correct object");
-            is($ballot_obj->quantity(), 1, "ballot quantity starts at 1");
-            lives_ok(sub {$vote_obj->submit_ballot(@{$test->{ballot}}); }, "ballot $summary_str resubmit"); 
-            is($ballot_obj->quantity(), 2, "ballot quantity increments to 2 after identical ballot");
-            if (exists $test->{total}) {
-                is($ballot_obj->items_count(), $test->{total}, "ballot $summary_str has $test->{total} valid items");
+            is($hex_index, $combo, "combo ".($combo // "undef")." from submit_ballot matches hex_index");
+            if (defined $combo) {
+                my $ballot_obj = $vote_obj->{ballots}{$combo};
+                ok(defined $ballot_obj, "ballot lookup returns data");
+                isa_ok($ballot_obj, "PrefVote::Core::Ballot", "ballot lookup returns correct object");
+                is($ballot_obj->quantity(), 1, "ballot quantity starts at 1");
+                lives_ok(sub {$vote_obj->submit_ballot(@{$test->{ballot}}); }, "ballot $summary_str resubmit"); 
+                is($ballot_obj->quantity(), 2, "ballot quantity increments to 2 after identical ballot");
+                if (exists $test->{total}) {
+                    is($ballot_obj->items_count(), $test->{total}, "ballot $summary_str has $test->{total} valid items");
+                }
             }
         }
     }
