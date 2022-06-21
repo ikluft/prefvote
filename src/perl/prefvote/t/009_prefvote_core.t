@@ -3,7 +3,7 @@
 
 use Modern::Perl qw(2013); # require 5.16.0 or later
 use autodie;
-use Test::More tests => 86;
+use Test::More tests => 72;
 use Test::Exception;
 use File::Basename;
 use Readonly;
@@ -148,8 +148,8 @@ sub ballot_tests
             lives_ok(sub {$combo = $vote_obj->submit_ballot(@{$test->{ballot}}); }, "ballot $summary_str");
             my $hex_index = $vote_obj->ballot_to_hex(array2ballot($test->{ballot}));
             is($hex_index, $test->{hex}, "computed hex_index ".$test->{hex}." as expected");
-            is($hex_index, $combo, "combo ".($combo // "undef")." from submit_ballot matches hex_index");
             if (defined $combo) {
+                is($hex_index, $combo, "combo ".($combo // "undef")." from submit_ballot matches hex_index");
                 my $ballot_obj = $vote_obj->{ballots}{$combo};
                 ok(defined $ballot_obj, "ballot lookup returns data");
                 isa_ok($ballot_obj, "PrefVote::Core::Ballot", "ballot lookup returns correct object");
