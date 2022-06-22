@@ -193,7 +193,7 @@ has testspec => (
 my $ballot_input_ties_policy = __PACKAGE__->config("input-ties") // 0; # only change this for testing purposes
 sub ballot_input_ties_policy
 {
-    shift if ref $_[0] and $_[0]->isa("PrefVote::Core"); # discard unneeded $self parameter if called as a method
+    shift; # discard unneeded $self parameter - it doesn't matter if this is called as a class or object method
     my $value = shift;
     if (defined $value) {
         $ballot_input_ties_policy = ($value ? 1 : 0)
@@ -880,6 +880,8 @@ or any subclass of it for supported voting methods.
 
 =over 1
 
+=item ballot_input_ties_policy(flag)
+
 =item choice_exists(str)
 
 returns true if the string parameter is a valid choice/candidate identifier string as configured for this vote.
@@ -1047,8 +1049,6 @@ The L<vote-count> script performs that task when given the I<--test> command-lin
 =head1 FUNCTIONS
 
 =over 1
-
-=item ballot_input_ties_policy(flag)
 
 =item class_or_obj(self)
 

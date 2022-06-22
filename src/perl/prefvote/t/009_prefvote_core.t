@@ -134,7 +134,7 @@ sub ballot_tests
 
     # run through array of ballot input tests (22 tests)
     foreach my $test (@ballot_tests) {
-        PrefVote::Core::ballot_input_ties_policy($test->{allow_ties} // 0); # allow ballot input ties for testing
+        PrefVote::Core->ballot_input_ties_policy($test->{allow_ties} // 0); # allow ballot input ties for testing
         my @summary;
         foreach my $item (@{$test->{ballot}}) {
             push @summary, summary_name($vote_obj->choices(), $item);
@@ -169,7 +169,7 @@ sub ballot_tests
     }
 
     # count ballots (1 test)
-    is($vote_obj->total_ballots(), 8, "obj->total_ballots() = 8");
+    is($vote_obj->total_ballots(), 4, "obj->total_ballots() = 4");
     return;
 }
 
