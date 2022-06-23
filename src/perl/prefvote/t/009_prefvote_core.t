@@ -3,13 +3,14 @@
 
 use Modern::Perl qw(2013); # require 5.16.0 or later
 use autodie;
-use Test::More tests => 72;
+use Test::More tests => 86;
 use Test::Exception;
 use File::Basename;
 use Readonly;
 use Set::Tiny qw(set);
 use YAML::XS;
 use PrefVote::Core;
+use PrefVote::Core::Ballot;
 
 # constants for test fixtures
 Readonly::Hash my %core_params => (
@@ -134,7 +135,10 @@ sub ballot_tests
 
     # run through array of ballot input tests (22 tests)
     foreach my $test (@ballot_tests) {
-        PrefVote::Core->ballot_input_ties_policy($test->{allow_ties} // 0); # allow ballot input ties for testing
+        # allow ballot input ties for testing
+        PrefVote::Core->ballot_input_ties_policy($test->{allow_ties} // 0);
+        PrefVote::Core::Ballot::ballot_input_ties_flag($test->{allow_ties} // 0);
+
         my @summary;
         foreach my $item (@{$test->{ballot}}) {
             push @summary, summary_name($vote_obj->choices(), $item);
@@ -169,7 +173,7 @@ sub ballot_tests
     }
 
     # count ballots (1 test)
-    is($vote_obj->total_ballots(), 4, "obj->total_ballots() = 4");
+    is($vote_obj->total_ballots(), 8, "obj->total_ballots() = 8");
     return;
 }
 
