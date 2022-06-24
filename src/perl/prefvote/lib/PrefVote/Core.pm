@@ -882,6 +882,11 @@ or any subclass of it for supported voting methods.
 
 =item ballot_input_ties_policy(flag)
 
+can be called as either a class or object method to set the flag which allows ballots to have choices tied.
+In PrefVote this is called "ballot input ties" to differentiate it from ties in voting results.
+Under L<PrefVote::Core> this flag defaults to false.
+Voting methods which need to set it to default true, such as L<PrefVote::Schulze>, must override the method to do so.
+
 =item choice_exists(str)
 
 returns true if the string parameter is a valid choice/candidate identifier string as configured for this vote.
