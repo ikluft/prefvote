@@ -206,11 +206,11 @@ sub ballot_input_ties_policy
 # value: hashref with place (integer), 
 
 # utility for functions to select between class and object
-sub class_or_obj
+sub _class_or_obj
 {
     my $coo = shift;
     if (not $coo->isa(__PACKAGE__)) {
-        PrefVote::Core::Exception->throw(description => "class_or_obj: parameter not in class hierarchy"
+        PrefVote::Core::Exception->throw(description => "_class_or_obj: parameter not in class hierarchy"
             .((ref $coo) ? ref $coo : $coo));
     }
     if (ref $coo) {
@@ -223,7 +223,7 @@ sub class_or_obj
 sub _suffix
 {
     my ($class_or_obj) = @_;
-    my $self = class_or_obj($class_or_obj);
+    my $self = _class_or_obj($class_or_obj);
     my $class_suffix = ref $self;
     $class_suffix =~ s/^.*:://x; # remove everything except the last part of the class name
     return $class_suffix;
@@ -234,7 +234,7 @@ sub choice_exists
 {
     my ($class_or_obj, $str) = @_;
     return 0 if not defined $str;
-    my $self = class_or_obj($class_or_obj);
+    my $self = _class_or_obj($class_or_obj);
     return $self->choices_exists($str) ? 1 : 0;
 }
 
@@ -242,7 +242,7 @@ sub choice_exists
 sub get_choices
 {
     my $class_or_obj = shift;
-    my $self = class_or_obj($class_or_obj);
+    my $self = _class_or_obj($class_or_obj);
     return $self->choices_keys();
 }
 
@@ -1054,8 +1054,6 @@ The L<vote-count> script performs that task when given the I<--test> command-lin
 =head1 FUNCTIONS
 
 =over 1
-
-=item class_or_obj(self)
 
 =item supported_method(method)
 
