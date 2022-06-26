@@ -1057,6 +1057,9 @@ The L<vote-count> script performs that task when given the I<--test> command-lin
 
 =item supported_method(method)
 
+returns true if the method string passed as a parameter matches any of the supported voting methods.
+The matching is not case-sensitive.
+
 =item read_yaml(filepath)
 
 =item determine_method({key => value, ...}, votedef)
