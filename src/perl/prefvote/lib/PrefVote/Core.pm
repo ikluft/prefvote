@@ -1062,6 +1062,12 @@ The matching is not case-sensitive.
 
 =item read_yaml(filepath)
 
+uses the I<filepath> parameter as a string with the filename of a YAML file to read and parse.
+It returns a list of the parsed YAML document structures found in that file.
+
+This function throws exceptions if the filepath names a file which doesn't exist or is not a regular file.
+It also throws an exception if the content of that file can't be parsed by L<YAML::XS>.
+
 =item determine_method({key => value, ...}, votedef)
 
 =item yaml2vote(key => value, ...)
