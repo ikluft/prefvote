@@ -1070,6 +1070,14 @@ It also throws an exception if the content of that file can't be parsed by L<YAM
 
 =item determine_method({key => value, ...}, votedef)
 
+determines which class will handle the vote counting and processing.
+It returns the name of a class which is either L<PrefVote::Core> or a subclass of it.
+The votedef parameter comes from the YAML input file first parsed YAML document.
+It must contain a I<method> attribute which contains a space-delimeted string of one or more voting method names,
+which are all the voting methods allowed/supported for this YAML data file.
+Usually only one would be specified, whichever was defined for the vote.
+For testing more than one is useful to test the same data on multiple ranked-choice voting methods.
+
 =item yaml2vote(key => value, ...)
 
 =item result_node(node)
