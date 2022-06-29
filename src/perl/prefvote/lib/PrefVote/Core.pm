@@ -1078,7 +1078,14 @@ which are all the voting methods allowed/supported for this YAML data file.
 Usually only one would be specified, whichever was defined for the vote.
 For testing more than one is useful to test the same data on multiple ranked-choice voting methods.
 
-=item yaml2vote(key => value, ...)
+The optional key/value parameters currently only support a key of "method" and a voting method to select.
+The method parameter is required if the votedef structure allows more than one voting method,
+in order to select which one to use.
+
+Currently supported voting methods are Core (testing only), STV, Schulze and RankedPairs.
+New voting methods can be implemented by adding a new subclass of L<PrefVote::Core>.
+
+=item yaml2vote({key => value, ...}, filepath)
 
 =item result_node(node)
 
