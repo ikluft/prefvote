@@ -1087,6 +1087,19 @@ New voting methods can be implemented by adding a new subclass of L<PrefVote::Co
 
 =item yaml2vote({key => value, ...}, filepath)
 
+reads a YAML input file and constructs an object of I<PrefVote::Core>
+or the appropriate subclass to handle the selected voting method.
+
+It takes a file path as a parameter.
+Optionally a hash reference may be provided inserted as the first option in order to provide
+key/value configuration options.
+The options are passed to determine_method() so the only currently supported option is "method",
+which must be provided if the YAML data allows more that one type of voting method on the data.
+It determines which voting method to use on this run.
+
+The scenario of a vote definition supporting more than one type of voting method is mainly for testing,
+where black-box tests may run the same ranked-chocie ballot data through multiple voting methods, one at a time.
+
 =item result_node(node)
 
 =back
