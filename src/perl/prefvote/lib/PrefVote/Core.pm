@@ -676,7 +676,7 @@ sub save_c2r
 }
 
 # collect detailed result nodes recursively for generation of YAML tests
-sub result_node
+sub _result_node
 {
     my $node = shift;
 
@@ -694,7 +694,7 @@ sub result_node
     if (reftype $node eq "ARRAY") {
         my $result = [];
         foreach my $entry (@$node) {
-            push @$result, result_node($entry);
+            push @$result, _result_node($entry);
         }
         return $result;
     }
@@ -704,7 +704,7 @@ sub result_node
         my $result = {};
         foreach my $key (keys %$node) {
             next if $key eq "prev"; # omit all prev links since we know they're duplication
-            $result->{$key} = result_node($node->{$key});
+            $result->{$key} = _result_node($node->{$key});
         }
         return $result;
     }
@@ -723,7 +723,7 @@ sub result_yaml
     my $result_out = {};
     foreach my $key (keys %$self) {
         next if $key eq "testspec"; # omit any current testspec since we use this to build a future testspec
-        $result_out->{$key} = result_node($self->{$key});
+        $result_out->{$key} = _result_node($self->{$key});
     }
     $result_out->{timestamp} = localtime;
 
@@ -1099,8 +1099,6 @@ It determines which voting method to use on this run.
 
 The scenario of a vote definition supporting more than one type of voting method is mainly for testing,
 where black-box tests may run the same ranked-chocie ballot data through multiple voting methods, one at a time.
-
-=item result_node(node)
 
 =back
 
