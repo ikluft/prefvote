@@ -168,10 +168,6 @@ __END__
 # POD documentation
 =encoding utf8
 
-=head1 NAME
-
-PrefVote::STV::Round - internal voting-round structure used by PrefVote::STV
-
 =head1 SYNOPSIS
 
   # from unit test code - not a full example

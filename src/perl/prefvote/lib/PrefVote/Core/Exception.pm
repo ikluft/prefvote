@@ -25,10 +25,6 @@ __END__
 # POD documentation
 =encoding utf8
 
-=head1 NAME
-
-PrefVote::Core::Exception - general exception class for all voting methods
-
 =head1 SYNOPSIS
 
     if (@missing) {

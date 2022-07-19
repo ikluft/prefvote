@@ -75,10 +75,6 @@ __END__
 # POD documentation
 =encoding utf8
 
-=head1 NAME
-
-PrefVote::RankedPairs::Output - output formatting for PrefVote::RankedPairs
-
 =head1 SYNOPSIS
 
 This should not be called externally - use L<PrefVote::Core::Output>

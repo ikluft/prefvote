@@ -44,10 +44,6 @@ __END__
 # POD documentation
 =encoding utf8
 
-=head1 NAME
-
-PrefVote::Config - configuration singleton class for PrefVote hierarchy
-
 =head1 SYNOPSIS
 
     use PrefVote::Config;

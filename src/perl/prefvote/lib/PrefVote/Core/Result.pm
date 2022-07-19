@@ -60,10 +60,6 @@ __END__
 # POD documentation
 =encoding utf8
 
-=head1 NAME
-
-PrefVote::Core::Result - internal voting-result structure used by PrefVote::Core
-
 =head1 SYNOPSIS
 
     use PrefVote::Core::Result;

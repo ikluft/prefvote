@@ -60,10 +60,6 @@ __END__
 # POD documentation
 =encoding utf8
 
-=head1 NAME
-
-PrefVote - Preference voting system
-
 =head1 SYNOPSIS
 
 In standard Perl5:

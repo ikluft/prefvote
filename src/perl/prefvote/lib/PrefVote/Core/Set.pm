@@ -91,10 +91,6 @@ __END__
 # POD documentation
 =encoding utf8
 
-=head1 NAME
-
-PrefVote::Core::Set - Set data type which extends Types::Standard
-
 =head1 SYNOPSIS
 
 In class containing a set:

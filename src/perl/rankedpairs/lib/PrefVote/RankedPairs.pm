@@ -462,10 +462,6 @@ __END__
 # POD documentation
 =encoding utf8
 
-=head1 NAME
-
-PrefVote::RankedPairs - Ranked Pairs Method vote counting module for PrefVote
-
 =head1 SYNOPSIS
 
   use PrefVote::RankedPairs;

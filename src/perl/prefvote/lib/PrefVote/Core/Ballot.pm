@@ -213,10 +213,6 @@ __END__
 # POD documentation
 =encoding utf8
 
-=head1 NAME
-
-PrefVote::Core::Ballot - ballot structure for PrefVote voting system classes
-
 =head1 SYNOPSIS
 
 As used by PrefVote::Core:

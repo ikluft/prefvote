@@ -414,10 +414,6 @@ __END__
 # POD documentation
 =encoding utf8
 
-=head1 NAME
-
-PrefVote::STV - Single Transferable Vote (STV) counting
-
 =head1 SYNOPSIS
 
   use PrefVote::STV;

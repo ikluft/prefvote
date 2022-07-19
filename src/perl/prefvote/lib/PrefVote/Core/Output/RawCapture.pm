@@ -100,10 +100,6 @@ __END__
 # POD documentation
 =encoding utf8
 
-=head1 NAME
-
-PrefVote::Core::Output::RawCapture - PrefVote result output capture, for testing purposes only
-
 =head1 SYNOPSIS
 
 This should not be called externally - use L<PrefVote::Core::Output>

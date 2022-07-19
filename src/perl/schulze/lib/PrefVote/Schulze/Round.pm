@@ -684,10 +684,6 @@ __END__
 # POD documentation
 =encoding utf8
 
-=head1 NAME
-
-PrefVote::Schulze::Round - internal voting-round structure used by PrefVote::Schulze
-
 =head1 SYNOPSIS
 
   # snippet from unit tests

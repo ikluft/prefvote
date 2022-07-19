@@ -93,10 +93,6 @@ __END__
 # POD documentation
 =encoding utf8
 
-=head1 NAME
-
-PrefVote::RankedPairs:Majority - internal pairwise majority structure for Ranked Pairs method
-
 =head1 SYNOPSIS
 
 my $majority_ref = PrefVote::RankedPairs::Majority->new(cand => \@pair);

@@ -94,10 +94,6 @@ __END__
 # POD documentation
 =encoding utf8
 
-=head1 NAME
-
-PrefVote::RankedPairs:PairData - internal candidate-pair data for RankedPairs method
-
 =head1 SYNOPSIS
 
 use PrefVote::RankedPairs::PairData;

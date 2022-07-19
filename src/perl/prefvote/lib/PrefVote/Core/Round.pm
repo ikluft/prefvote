@@ -206,10 +206,6 @@ __END__
 # POD documentation
 =encoding utf8
 
-=head1 NAME
-
-PrefVote::Core::Round - internal voting-round structure provided by PrefVote::Core for voting methods
-
 =head1 SYNOPSIS
 
 

@@ -68,10 +68,6 @@ __END__
 # POD documentation
 =encoding utf8
 
-=head1 NAME
-
-PrefVote::Core::TestUtil - testing utilities to contain Test::More runtime dependency away from non-test modules
-
 =head1 SYNOPSIS
 
     require PrefVote::Core::TestUtil;

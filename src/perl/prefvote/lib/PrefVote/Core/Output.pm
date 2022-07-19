@@ -288,10 +288,6 @@ __END__
 # POD documentation
 =encoding utf8
 
-=head1 NAME
-
-PrefVote::Core::Output - output formatting base class for PrefVote
-
 =head1 SYNOPSIS
 
 As called from PrefVote::Core:

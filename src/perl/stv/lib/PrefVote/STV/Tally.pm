@@ -160,10 +160,6 @@ __END__
 # POD documentation
 =encoding utf8
 
-=head1 NAME
-
-PrefVote::STV::Tally - internal per-round candidate tally structure used by PrefVote::STV
-
 =head1 SYNOPSIS
 
   my $stv_tally_ref = PrefVote::STV::Tally->new(name => 'test1');

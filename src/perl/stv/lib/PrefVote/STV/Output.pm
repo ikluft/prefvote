@@ -86,10 +86,6 @@ __END__
 # POD documentation
 =encoding utf8
 
-=head1 NAME
-
-PrefVote::STV::Output - output formatting for PrefVote::STV
-
 =head1 SYNOPSIS
 
 This should not be called externally - use L<PrefVote::Core::Output>

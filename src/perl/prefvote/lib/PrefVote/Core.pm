@@ -771,10 +771,6 @@ __END__
 # POD documentation
 =encoding utf8
 
-=head1 NAME
-
-PrefVote::Core - common code for all PrefVote voting methods
-
 =head1 SYNOPSIS
 
     use PrefVote::Core;

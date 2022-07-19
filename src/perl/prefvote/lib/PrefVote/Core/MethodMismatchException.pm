@@ -25,10 +25,6 @@ __END__
 # POD documentation
 =encoding utf8
 
-=head1 NAME
-
-PrefVote::Core::MethodMismatchException - voting method mismatch exception
-
 =head1 SYNOPSIS
 
 Throwing this exception directly:

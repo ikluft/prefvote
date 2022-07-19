@@ -82,10 +82,6 @@ __END__
 
 =encoding utf8
 
-=head1 NAME
-
-PrefVote::Core::Float - floating point utilities for PrefVote subclasses
-
 =head1 SYNOPSIS
 
 floating point equality comparison utility function:

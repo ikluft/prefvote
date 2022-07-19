@@ -43,10 +43,6 @@ __END__
 # POD documentation
 =encoding utf8
 
-=head1 NAME
-
-PrefVote::Debug - debug flag singleton class for PrefVote hierarchy
-
 =head1 SYNOPSIS
 
     use PrefVote::Debug;

@@ -106,10 +106,6 @@ __END__
 # POD documentation
 =encoding utf8
 
-=head1 NAME
-
-PrefVote::Schulze:PairData - internal candidate-pair data for Schulze method
-
 =head1 SYNOPSIS
 
   use PrefVote::Schulze::PairData;

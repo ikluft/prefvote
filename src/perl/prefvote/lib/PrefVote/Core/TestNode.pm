@@ -472,10 +472,6 @@ __END__
 # POD documentation
 =encoding utf8
 
-=head1 NAME
-
-PrefVote::Core::TestNode - PrefVote blackbox testing internal tree-node structure aggregating refs to testing data
-
 =head1 SYNOPSIS
 
 L<PrefVote::Core::TestNode> is used internally by L<PrefVote::Core::TestSpec>

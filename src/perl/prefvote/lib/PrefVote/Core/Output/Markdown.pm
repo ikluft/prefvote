@@ -91,10 +91,6 @@ __END__
 # POD documentation
 =encoding utf8
 
-=head1 NAME
-
-PrefVote::Core::Output::Markdown - result Markdown output formatting for PrefVote
-
 =head1 SYNOPSIS
 
 This should not be called externally - use L<PrefVote::Core::Output>

@@ -36,10 +36,6 @@ __END__
 # POD documentation
 =encoding utf8
 
-=head1 NAME
-
-PrefVote::Exception - top-level exception class for PrefVote hierarchy
-
 =head1 SYNOPSIS
 
 Usage from CLI mainline:

@@ -25,10 +25,6 @@ __END__
 # POD documentation
 =encoding utf8
 
-=head1 NAME
-
-PrefVote::Core::InternalDataException - invalid internal data exception
-
 =head1 SYNOPSIS
 
 Throwing this exception directly:
