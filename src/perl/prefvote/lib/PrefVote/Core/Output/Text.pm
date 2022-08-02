@@ -58,7 +58,6 @@ sub do_table
 # generate footer
 sub do_footer
 {
-    my ($class, $result_data) = @_;
     # nothing to do
     return;
 }

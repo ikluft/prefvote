@@ -27,6 +27,7 @@ use Types::Standard qw(Enum);
 use Types::Common::String qw(NonEmptySimpleStr);
 use Types::Common::Numeric qw(PositiveOrZeroNum);
 use PrefVote::Core::Set qw(Set);
+use PrefVote::Core::TestSpec;
 extends 'PrefVote';
 
 # constants

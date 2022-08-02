@@ -334,7 +334,6 @@ sub node_list
     $self->debug_print("node_list(".join(" ", @$value).")");
     my $cl_count = scalar @{$self->{plan}};
     my $value_count = scalar @$value;
-    my $count_cmp = $cl_count <=> $value_count;
     push @tests, {type => "is", expected => $cl_count, value => $value_count,
         description => join("-", $self->path())." list length=$cl_count"};
     if ($cl_count==1) {
@@ -380,7 +379,6 @@ sub node_set
     $self->debug_print("node_set(".join(" ", $value->elements()).")");
     my $cl_count = scalar @{$self->{plan}};
     my $value_count = $value->size();
-    my $count_cmp = $cl_count <=> $value_count;
     push @tests, {type => "is", expected => $cl_count, value => $value_count,
         description => join("-", $self->path())." set size=$cl_count"};
     for (my $i=0; $i<$cl_count; $i++) {
@@ -440,8 +438,7 @@ sub check
         # return floating point comparison test
         # use PrefVote::Core::Float::fp_equal() since == operator doesn't work right for fp
         my $fp_eq = fp_equal($self->{plan}, $self->value());
-        return ({type => "ok", value => fp_equal($self->{plan}, $self->value()),
-            description => $desc_str});
+        return ({type => "ok", value => $fp_eq, description => $desc_str});
     }
 
     # generate tests for hashes
