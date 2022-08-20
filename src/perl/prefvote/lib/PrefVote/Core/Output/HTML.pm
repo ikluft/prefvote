@@ -8,7 +8,7 @@
 ## no critic (Modules::RequireExplicitPackage)
 # 'use strict' and 'use warnings' included here
 # This solves a catch-22 where parts of Perl::Critic want both package and use-strict to be first
-use Modern::Perl qw(2013); # require 5.16.0 or later
+use Modern::Perl qw(2013);    # require 5.16.0 or later
 ## use critic (Modules::RequireExplicitPackage)
 
 package PrefVote::Core::Output::HTML;
@@ -21,7 +21,7 @@ use base qw(PrefVote);
 sub htmlify
 {
     my $str = escape_html(shift);
-    return $str
+    return $str;
 }
 
 # generate HTML table from an array
@@ -34,12 +34,12 @@ sub generate_html_table
     say "<table>";
 
     # generate header from first row
-    if ($opts{header_row} // 0) {
+    if ( $opts{header_row} // 0 ) {
         my $header = shift @$rows;
         say "<thead>";
         say "<tr>";
         foreach my $col_item (@$header) {
-            say "<th>".htmlify($col_item)."</th>";
+            say "<th>" . htmlify($col_item) . "</th>";
         }
         say "</tr>";
         say "</thead>";
@@ -50,7 +50,7 @@ sub generate_html_table
     foreach my $row (@$rows) {
         say "<tr>";
         foreach my $col_item (@$row) {
-            say "<td>".htmlify($col_item)."</td>";
+            say "<td>" . htmlify($col_item) . "</td>";
         }
         say "</tr>";
     }
@@ -62,39 +62,44 @@ sub generate_html_table
 # generate header
 sub do_header
 {
-    my ($class, $result_data) = @_;
+    my ( $class, $result_data ) = @_;
 
     # vote result heading
     # scope limited to h2 level heading - assumes this will be inserted in a larger document
-    my $seats = $result_data->{seats};
+    my $seats         = $result_data->{seats};
     my $total_ballots = $result_data->{total_ballots};
-    my $title = "Results: ".$result_data->{name};
+    my $title         = "Results: " . $result_data->{name};
     say "<div id=\"prefvote\">";
-    say "<h2>".htmlify($title)."</h2>";
-    say "<p>".htmlify($seats)." seat".($seats>1 ? "s" : "")." available "
-        ."&VerticalBar; ".htmlify($total_ballots)." ballots</p>";
+    say "<h2>" . htmlify($title) . "</h2>";
+    say "<p>"
+        . htmlify($seats) . " seat"
+        . ( $seats > 1 ? "s" : "" )
+        . " available "
+        . "&VerticalBar; "
+        . htmlify($total_ballots)
+        . " ballots</p>";
     return;
 }
 
 # generate table of contents
 sub do_toc
 {
-    my ($class, $result_data, $toc_rows) = @_;
-    generate_html_table(rows => $toc_rows, header_row => 1);
+    my ( $class, $result_data, $toc_rows ) = @_;
+    generate_html_table( rows => $toc_rows, header_row => 1 );
     return;
 }
 
 # generate table
 sub do_table
 {
-    my ($class, $result_data, $result_rows, $title, $subtitle) = @_;
-    if (defined $title) {
-        say "<h3>".$title."</h3>";
+    my ( $class, $result_data, $result_rows, $title, $subtitle ) = @_;
+    if ( defined $title ) {
+        say "<h3>" . $title . "</h3>";
     }
-    if (defined $subtitle) {
-        say "<p>".$subtitle."</p>";
+    if ( defined $subtitle ) {
+        say "<p>" . $subtitle . "</p>";
     }
-    generate_html_table(rows => $result_rows, header_row => 1);
+    generate_html_table( rows => $result_rows, header_row => 1 );
     return;
 }
 

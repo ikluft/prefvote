@@ -8,9 +8,8 @@
 ## no critic (Modules::RequireExplicitPackage)
 # 'use strict' and 'use warnings' included here
 # This solves a catch-22 where parts of Perl::Critic want both package and use-strict to be first
-use Modern::Perl qw(2013); # require 5.16.0 or later
+use Modern::Perl qw(2013);    # require 5.16.0 or later
 ## use critic (Modules::RequireExplicitPackage)
-
 
 package PrefVote::Core::Output;
 
@@ -30,17 +29,18 @@ use PrefVote::Core::Float qw(float_external);
 
 # constants for output
 Readonly::Hash my %symbols => (
-    "win" => "\N{WHITE HEAVY CHECK MARK}",
-    "lose" => "\N{CROSS MARK}",
-    "tie" => "\N{LARGE BLUE CIRCLE}",
-    "lock" => "\N{LOCK}",
-    "n/a" => "\N{PROHIBITED SIGN}",
+    "win"     => "\N{WHITE HEAVY CHECK MARK}",
+    "lose"    => "\N{CROSS MARK}",
+    "tie"     => "\N{LARGE BLUE CIRCLE}",
+    "lock"    => "\N{LOCK}",
+    "n/a"     => "\N{PROHIBITED SIGN}",
     "unknown" => "\N{WHITE QUESTION MARK ORNAMENT}",
 );
 my %symbol_alias;
 
 # allow a string as mock stdin for testing
 my $testing_mock_stdin;
+
 sub set_mock_stdin
 {
     $testing_mock_stdin = shift;
@@ -50,13 +50,20 @@ sub set_mock_stdin
 # launch external piped-input formatter script using this class as the mainline
 sub do_output
 {
-    my ($format, $voting_method, $yaml_ref) = @_;
-    $voting_method =~ s/^.*:://x; # voting method suffix only - this allows optionally providing whole class name
-    
+    my ( $format, $voting_method, $yaml_ref ) = @_;
+    $voting_method =~
+        s/^.*:://x;  # voting method suffix only - this allows optionally providing whole class name
+
     # pipe the YAML to a subprocess running main() from this class
-    my @output_cmd = ($Config{perlpath}, "-M".__PACKAGE__, "-e", __PACKAGE__."::main", "--", "--format=$format",
-        "--method=$voting_method", (__PACKAGE__->debug()?"--debug":()));
-    run \@output_cmd, sub {if(my $line = shift @$yaml_ref){return $line}}, \*STDOUT;
+    my @output_cmd = (
+        $Config{perlpath}, "-M" . __PACKAGE__,
+        "-e",              __PACKAGE__ . "::main",
+        "--",              "--format=$format",
+        "--method=$voting_method", ( __PACKAGE__->debug() ? "--debug" : () )
+    );
+    run \@output_cmd, sub {
+        if ( my $line = shift @$yaml_ref ) { return $line }
+    }, \*STDOUT;
     return;
 }
 
@@ -64,9 +71,9 @@ sub do_output
 sub symbol
 {
     my $name = shift;
-    return $symbols{$name} if (exists $symbols{$name});
-    if (exists $symbol_alias{$name} and exists $symbols{$symbol_alias{$name}}) {
-        return $symbols{$symbol_alias{$name}};
+    return $symbols{$name} if ( exists $symbols{$name} );
+    if ( exists $symbol_alias{$name} and exists $symbols{ $symbol_alias{$name} } ) {
+        return $symbols{ $symbol_alias{$name} };
     }
     return $symbols{unknown};
 }
@@ -74,7 +81,7 @@ sub symbol
 # set aliases for use in symbol lookup
 sub set_symbol_alias
 {
-    my ($alias, $name) = @_;
+    my ( $alias, $name ) = @_;
     $symbol_alias{$alias} = $name;
     return;
 }
@@ -84,7 +91,7 @@ sub set_symbol_alias
 sub stdinslurp
 {
     my $str;
-    if (defined $testing_mock_stdin) {
+    if ( defined $testing_mock_stdin ) {
         $str = $testing_mock_stdin;
         undef $testing_mock_stdin;
     } else {
@@ -98,13 +105,15 @@ sub stdinslurp
 # get list of candidates
 sub candidates_list
 {
-    my ($class, $result_data) = @_;
+    my ( $class, $result_data ) = @_;
 
     # get list of candidates ordered by choice_to_result list
     # list is sorted by 1: result place (ascending), 2: candidate key string (alphabetical)
     # the second sort factor keeps results in order for testing
-    my $c2r = $result_data->{choice_to_result};
-    my @candidates = sort {($c2r->{$a}[0]==$c2r->{$b}[0]) ? ($a cmp $b) : ($c2r->{$a}[0]<=>$c2r->{$b}[0])} keys %$c2r;
+    my $c2r        = $result_data->{choice_to_result};
+    my @candidates = sort {
+        ( $c2r->{$a}[0] == $c2r->{$b}[0] ) ? ( $a cmp $b ) : ( $c2r->{$a}[0] <=> $c2r->{$b}[0] )
+    } keys %$c2r;
     return @candidates;
 }
 
@@ -112,13 +121,13 @@ sub candidates_list
 # requires $format_class (::Text, ::Markdown, ::HTML, etc) implement functions: do_header, do_toc, do_table, do_footer
 sub output
 {
-    my ($class, $format_class, $method_class, $result_data) = @_;
+    my ( $class, $format_class, $method_class, $result_data ) = @_;
 
     # generate candidate names list
     my @candidates = $class->candidates_list($result_data);
 
     # set up for table generation
-    binmode(STDOUT, ':encoding(UTF-8)');
+    binmode( STDOUT, ':encoding(UTF-8)' );
 
     # print heading
     $format_class->do_header($result_data);
@@ -126,14 +135,14 @@ sub output
     # generate candidate table of contents
     my @toc_rows;
     my $c2r = $result_data->{choice_to_result};
-    push @toc_rows, ["Abbreviation", "Name/description", "Result"];
+    push @toc_rows, [ "Abbreviation", "Name/description", "Result" ];
     foreach my $name (@candidates) {
-        push @toc_rows, [$name, $result_data->{choices}{$name}, join("/",@{$c2r->{$name}})];
+        push @toc_rows, [ $name, $result_data->{choices}{$name}, join( "/", @{ $c2r->{$name} } ) ];
     }
-    $format_class->do_toc($result_data, \@toc_rows);
+    $format_class->do_toc( $result_data, \@toc_rows );
 
     # generate output table
-    $method_class->do_counting_table($format_class, $result_data);
+    $method_class->do_counting_table( $format_class, $result_data );
 
     # generate footer (if needed)
     $format_class->do_footer($result_data);
@@ -148,20 +157,20 @@ sub output
 # DO NOT USE PrefVote::Core FOR ACTUAL VOTE COUNTING - USE A SUBCLASS WHICH IMPLEMENTS A PROPER VOTING METHOD
 sub do_counting_table
 {
-    my ($class, $format_class, $result_data) = @_;
+    my ( $class, $format_class, $result_data ) = @_;
 
     # generate candidate names list
     my @candidates = PrefVote::Core::Output->candidates_list($result_data);
-    my $num_cands = scalar @candidates;
-    my $acr = $result_data->{average_choice_rank};
+    my $num_cands  = scalar @candidates;
+    my $acr        = $result_data->{average_choice_rank};
 
     # generate output table
     my @result_rows;
-    push @result_rows, ['Candidate', 'average ranking'];
+    push @result_rows, [ 'Candidate', 'average ranking' ];
     foreach my $cand (@candidates) {
-        push @result_rows, [$cand, float_external($acr->{$cand}) // $num_cands];
+        push @result_rows, [ $cand, float_external( $acr->{$cand} ) // $num_cands ];
     }
-    $format_class->do_table($result_data, \@result_rows, "Average ballot ranking positions");
+    $format_class->do_table( $result_data, \@result_rows, "Average ballot ranking positions" );
 
     return;
 }
@@ -170,77 +179,79 @@ sub do_counting_table
 # this allows formatting or voting-method string parameters to be case-insensitive match to formatting class suffix
 sub class_search
 {
-    my ($search, $type) = @_;
+    my ( $search, $type ) = @_;
 
     # try the raw search string as a class first
     my $class_name = $search;
     ## no critic (BuiltinFunctions::ProhibitStringyEval)
-    if (eval "require $class_name") {
+    if ( eval "require $class_name" ) {
         __PACKAGE__->debug_print("class_search: $type = $class_name");
-        return $search; # success
+        return $search;    # success
     }
     ## critic (BuiltinFunctions::ProhibitStringyEval)
 
     # search INC path for class if the string wasn't an exact match
-    my @search_components = split('::', $search);
-    my $search_filename = (pop @search_components).".pm";
-    my $search_subpath = join('/', @search_components);
+    my @search_components = split( '::', $search );
+    my $search_filename   = ( pop @search_components ) . ".pm";
+    my $search_subpath    = join( '/', @search_components );
     __PACKAGE__->debug_print("search_filename=$search_filename search_subpath=$search_subpath");
     foreach my $inc_dir (@INC) {
         -d $inc_dir or next;
         my $inc_search_path = "$inc_dir/$search_subpath";
-        -d $inc_search_path or next;
-        opendir(my $dirhandle, $inc_search_path) or next;
+        -d $inc_search_path                        or next;
+        opendir( my $dirhandle, $inc_search_path ) or next;
         my @all_files = readdir($dirhandle);
-        __PACKAGE__->debug_print("class_search: grepping files ".join(" ", @all_files));
-        my @files = sort grep {(fc($_) eq fc($search_filename)) and -f "$inc_search_path/$_"}
+        __PACKAGE__->debug_print( "class_search: grepping files " . join( " ", @all_files ) );
+        my @files = sort grep { ( fc($_) eq fc($search_filename) ) and -f "$inc_search_path/$_" }
             @all_files;
         foreach my $file (@files) {
-            my $basename = (substr($file, -3) eq ".pm") ? substr($file, 0, -3) : $file;
-            $class_name = join("::", @search_components, $basename);
+            my $basename = ( substr( $file, -3 ) eq ".pm" ) ? substr( $file, 0, -3 ) : $file;
+            $class_name = join( "::", @search_components, $basename );
             __PACKAGE__->debug_print("class_search: candidate $file -> $class_name");
             ## no critic (BuiltinFunctions::ProhibitStringyEval)
-            if (eval "require $class_name") {
+            if ( eval "require $class_name" ) {
                 __PACKAGE__->debug_print("class_search: $type = $class_name");
-                return $class_name; # success
+                return $class_name;    # success
             }
             ## critic (BuiltinFunctions::ProhibitStringyEval)
         }
     }
 
     # couldn't find it - throw exception
-    PrefVote::Core::Exception->throw(description => "could not load $type class $search");
+    PrefVote::Core::Exception->throw( description => "could not load $type class $search" );
 }
 
 # mainline to launch appropriate formatter subclass and forward YAML data to it
 sub main
 {
-    my ($debug, $format, $method);
+    my ( $debug, $format, $method );
     __PACKAGE__->debug_print("main()");
 
     # exception-catching wrapper
-    my ($exitcode, $evalcode);
+    my ( $exitcode, $evalcode );
     $evalcode = eval {
+
         # process command line
-        GetOptions ("debug" => \$debug, "format=s" => \$format, "method=s" => \$method);
-        if (not defined $format or not defined $method) {
+        GetOptions( "debug" => \$debug, "format=s" => \$format, "method=s" => \$method );
+        if ( not defined $format or not defined $method ) {
             croak "usage: $0 --format=output_format --method=voting_method";
         }
         if ($debug) {
             $Data::Dumper::Sortkeys = 1;
-            $Data::Dumper::Indent = 1;
+            $Data::Dumper::Indent   = 1;
             PrefVote::Core::Output->debug(1);
         }
 
         # check if a class which can handle the requested format exists
-        my $format_class = class_search("PrefVote::Core::Output::$format", "formatting");
+        my $format_class = class_search( "PrefVote::Core::Output::$format", "formatting" );
 
         # check if a class which can handle the requested voting method exists
         my $voting_method = PrefVote::Core::supported_method($method);
-        if (not defined $voting_method) {
+        if ( not defined $voting_method ) {
             croak "$method is not a supported voting method";
         }
-        my $method_class = class_search("PrefVote::".$voting_method."::Output", "voting method");
+        my $method_class =
+            class_search( "PrefVote::" . $voting_method . "::Output", "voting method" );
 
         # slurp standard input
         my $yaml_textref = stdinslurp();
@@ -248,29 +259,33 @@ sub main
         # decode results data from YAML
         #__PACKAGE__->debug_print("output() receieved YAML: ".Dumper($yaml_textref));
         my @yaml_docs = YAML::XS::Load($$yaml_textref);
-        __PACKAGE__->debug_print("output() decoded YAML: ".Dumper(\@yaml_docs));
+        __PACKAGE__->debug_print( "output() decoded YAML: " . Dumper( \@yaml_docs ) );
         my $result_data_root = $yaml_docs[0];
 
         # double check proper formatting and voting method from received data
         # top level hash should be named for votring method
-        if (not exists $result_data_root->{$voting_method}) {
+        if ( not exists $result_data_root->{$voting_method} ) {
             croak "voting method $voting_method data not found in input";
         }
-        if (ref $result_data_root->{$voting_method} ne "HASH") {
+        if ( ref $result_data_root->{$voting_method} ne "HASH" ) {
             croak "voting method $voting_method data not formatted correctly";
         }
 
         # format the output
         # invert boolean success code into program exit code
-        $exitcode = __PACKAGE__->output($format_class, $method_class, $result_data_root->{$voting_method}) ? 0 : 1;
-        return 1; # eval completed
+        $exitcode =
+            __PACKAGE__->output( $format_class, $method_class, $result_data_root->{$voting_method} )
+            ? 0
+            : 1;
+        return 1;    # eval completed
     };
 
     # process exceptions
-    if (not $evalcode) {
+    if ( not $evalcode ) {
         my $e = $EVAL_ERROR;
-        if (ref $e and $e->isa("PrefVote::Exception")) {
-            say "exception: ".$e->{description};
+        if ( ref $e and $e->isa("PrefVote::Exception") ) {
+            say "exception: " . $e->{description};
+
             #say $e->stack_trace();
             say Dumper($e);
         } else {

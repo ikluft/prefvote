@@ -8,7 +8,7 @@
 ## no critic (Modules::RequireExplicitPackage)
 # 'use strict' and 'use warnings' included here
 # This solves a catch-22 where parts of Perl::Critic want both package and use-strict to be first
-use Modern::Perl qw(2013); # require 5.16.0 or later
+use Modern::Perl qw(2013);    # require 5.16.0 or later
 ## use critic (Modules::RequireExplicitPackage)
 
 package PrefVote;
@@ -18,38 +18,38 @@ use Moo;
 use MooX::TypeTiny;
 use PrefVote::Config;
 use PrefVote::Debug;
-use PrefVote::Exception;  # pre-load in case exception is thrown
+use PrefVote::Exception;      # pre-load in case exception is thrown
 
 # cache a class-scoped reference to the config & debug instances
 my $config_ref = PrefVote::Config->instance();
-my $debug_ref = PrefVote::Debug->instance(debug => (($ENV{PREFVOTE_DEBUG} // 0) ? 1 : 0));
+my $debug_ref  = PrefVote::Debug->instance( debug => ( ( $ENV{PREFVOTE_DEBUG} // 0 ) ? 1 : 0 ) );
 
 # wrapper for PrefVote::Debug's debug method
 sub debug
 {
-    my ($self, $value) = @_;
+    my ( $self, $value ) = @_;
     return defined $value ? $debug_ref->debug($value) : $debug_ref->debug();
 }
 
 # wrapper for PrefVote::Debug's debug_print method
 sub debug_print
 {
-    my ($self_or_class, @args) = @_;
-    my $prefix = (ref $self_or_class) ? ref $self_or_class : $self_or_class;
-    return $debug_ref->debug_print({prefix => $prefix}, @args);
+    my ( $self_or_class, @args ) = @_;
+    my $prefix = ( ref $self_or_class ) ? ref $self_or_class : $self_or_class;
+    return $debug_ref->debug_print( { prefix => $prefix }, @args );
 }
 
 # accessor for PrefVote::Config hash of config items
 sub config
 {
-    my ($self_or_class, @args) = @_;
+    my ( $self_or_class, @args ) = @_;
     return $config_ref->accessor(@args);
 }
 
 # check if a config entry exists
 sub config_exists
 {
-    my ($self_or_class, $key) = @_;
+    my ( $self_or_class, $key ) = @_;
     return $config_ref->exists($key);
 }
 

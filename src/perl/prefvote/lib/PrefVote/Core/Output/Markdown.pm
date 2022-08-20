@@ -8,7 +8,7 @@
 ## no critic (Modules::RequireExplicitPackage)
 # 'use strict' and 'use warnings' included here
 # This solves a catch-22 where parts of Perl::Critic want both package and use-strict to be first
-use Modern::Perl qw(2013); # require 5.16.0 or later
+use Modern::Perl qw(2013);    # require 5.16.0 or later
 ## use critic (Modules::RequireExplicitPackage)
 
 package PrefVote::Core::Output::Markdown;
@@ -23,15 +23,15 @@ sub generate_md_table
     my $rows = $opts{rows};
 
     # generate header from first row
-    if ($opts{header_row} // 0) {
+    if ( $opts{header_row} // 0 ) {
         my $header = shift @$rows;
-        say "| ".join(" | ", @$header)." |";
-        say "|".("---|" x scalar @$header);
+        say "| " . join( " | ", @$header ) . " |";
+        say "|" . ( "---|" x scalar @$header );
     }
 
     # generate table from remainder of rows
     foreach my $row (@$rows) {
-        say "| ".join(" | ", @$row)." |";
+        say "| " . join( " | ", @$row ) . " |";
     }
     say;
     return;
@@ -40,14 +40,16 @@ sub generate_md_table
 # generate header
 sub do_header
 {
-    my ($class, $result_data) = @_;
-    my $seats = $result_data->{seats};
+    my ( $class, $result_data ) = @_;
+    my $seats         = $result_data->{seats};
     my $total_ballots = $result_data->{total_ballots};
-    my $title = "Results: ".$result_data->{name};
+    my $title         = "Results: " . $result_data->{name};
     say $title;
     say "-" x length $title;
-    say "$seats seat".($seats>1 ? "s" : "")." available "
-        ."\N{VERTICAL LINE} $total_ballots ballots";
+    say "$seats seat"
+        . ( $seats > 1 ? "s" : "" )
+        . " available "
+        . "\N{VERTICAL LINE} $total_ballots ballots";
     say;
     return;
 }
@@ -55,22 +57,22 @@ sub do_header
 # generate table of contents
 sub do_toc
 {
-    my ($class, $result_data, $toc_rows) = @_;
-    generate_md_table(rows => $toc_rows, header_row => 1);
+    my ( $class, $result_data, $toc_rows ) = @_;
+    generate_md_table( rows => $toc_rows, header_row => 1 );
     return;
 }
 
 # generate table
 sub do_table
 {
-    my ($class, $result_data, $result_rows, $title, $subtitle) = @_;
-    if (defined $title) {
-        say "## ".$title;
+    my ( $class, $result_data, $result_rows, $title, $subtitle ) = @_;
+    if ( defined $title ) {
+        say "## " . $title;
     }
-    if (defined $subtitle) {
+    if ( defined $subtitle ) {
         say $subtitle;
     }
-    generate_md_table(rows => $result_rows, header_row => 1);
+    generate_md_table( rows => $result_rows, header_row => 1 );
     return;
 }
 

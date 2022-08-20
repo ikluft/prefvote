@@ -8,7 +8,7 @@
 ## no critic (Modules::RequireExplicitPackage)
 # 'use strict' and 'use warnings' included here
 # This solves a catch-22 where parts of Perl::Critic want both package and use-strict to be first
-use Modern::Perl qw(2013); # require 5.16.0 or later
+use Modern::Perl qw(2013);    # require 5.16.0 or later
 ## use critic (Modules::RequireExplicitPackage)
 
 #
@@ -30,90 +30,93 @@ use PrefVote::Core::Float qw(float_internal PVPositiveOrZeroNum);
 
 # constants
 Readonly::Hash my %blackbox_spec => (
-    name => [qw(string)],
-    votes => [qw(fp)],
-    winner => [qw(bool)],
+    name       => [qw(string)],
+    votes      => [qw(fp)],
+    winner     => [qw(bool)],
     eliminated => [qw(bool)],
-    place => [qw(int)],
-    transfer => [qw(fp)],
-    surplus => [qw(fp)],
+    place      => [qw(int)],
+    transfer   => [qw(fp)],
+    surplus    => [qw(fp)],
 );
-PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, spec => \%blackbox_spec);
+PrefVote::Core::TestSpec->register_blackbox_spec( __PACKAGE__, spec => \%blackbox_spec );
 
 # candidate name (identifier string)
 has 'name' => (
-    is => 'ro',
-    isa => Str,
+    is       => 'ro',
+    isa      => Str,
     required => 1,
 );
 
 # candidate vote total
 has votes => (
-    is => 'rw',
-    isa => PVPositiveOrZeroNum,
+    is      => 'rw',
+    isa     => PVPositiveOrZeroNum,
     default => 0,
 );
 around votes => sub {
-    my ($orig, $self, $param) = @_;
-    return $orig->($self, (defined $param ? (float_internal($param)) : ()));
+    my ( $orig, $self, $param ) = @_;
+    return $orig->( $self, ( defined $param ? ( float_internal($param) ) : () ) );
 };
 
 # flag: winner of current or previous round (exclude from later rounds)
 has winner => (
-    is => 'rw',
-    isa => Bool,
+    is      => 'rw',
+    isa     => Bool,
     default => 0,
 );
 
 # flag: eliminated in current or previous round (exclude from later rounds)
 has eliminated => (
-    is => 'rw',
-    isa => Bool,
+    is      => 'rw',
+    isa     => Bool,
     default => 0,
 );
 
 # result: finished in nth place
 has place => (
-    is => 'rw',
+    is  => 'rw',
     isa => PositiveInt,
 );
 
 # total votes available for transfer
 has transfer => (
-    is => 'rw',
+    is  => 'rw',
     isa => PVPositiveOrZeroNum,
 );
 around transfer => sub {
-    my ($orig, $self, $param) = @_;
-    return $orig->($self, (defined $param ? (float_internal($param)) : ()));
+    my ( $orig, $self, $param ) = @_;
+    return $orig->( $self, ( defined $param ? ( float_internal($param) ) : () ) );
 };
 
 # fraction of votes which exceed the quota needed to win, and are available for transfer
 has surplus => (
-    is => 'rw',
+    is  => 'rw',
     isa => PVPositiveOrZeroNum,
 );
 around surplus => sub {
-    my ($orig, $self, $param) = @_;
-    return $orig->($self, (defined $param ? (float_internal($param)) : ()));
+    my ( $orig, $self, $param ) = @_;
+    return $orig->( $self, ( defined $param ? ( float_internal($param) ) : () ) );
 };
 
 # add to total votes
 # use this instead of direct accessor since we only add to vote totals
 sub add_votes
 {
-    my $self = shift;
+    my $self  = shift;
     my $votes = shift;
 
     PVPositiveOrZeroNum->validate($votes);
-    if ($votes < 0) {
-        PrefVote::STV::Tally::NegativeIncrementException->throw({classname => __PACKAGE__,
-            attribute => 'votes',
-            description => "negative incrememnt is invalid",
-        });
+    if ( $votes < 0 ) {
+        PrefVote::STV::Tally::NegativeIncrementException->throw(
+            {
+                classname   => __PACKAGE__,
+                attribute   => 'votes',
+                description => "negative incrememnt is invalid",
+            }
+        );
     }
     my $new_votes = $self->votes() + $votes;
-    $self->votes(float_internal($new_votes));
+    $self->votes( float_internal($new_votes) );
     return $votes;
 }
 
@@ -121,12 +124,13 @@ sub add_votes
 # if there is a tie, call this once per winning candidate
 sub mark_as_winner
 {
-    my ($self, %opts) = @_;
+    my ( $self, %opts ) = @_;
+
     #$self->debug_print("mark_as_winner(".$self->{name}."): opts = ".join(" ", %opts));
     $self->winner(1);
     foreach my $key (qw(place votes surplus transfer)) {
-        if (exists $opts{$key}) {
-            $self->$key($opts{$key});
+        if ( exists $opts{$key} ) {
+            $self->$key( $opts{$key} );
         }
     }
     return;
@@ -136,6 +140,7 @@ sub mark_as_winner
 sub mark_as_eliminated
 {
     my $self = shift;
+
     #$self->debug_print("mark_as_eliminated(".$self->{name}.")");
     $self->eliminated(1);
     return;

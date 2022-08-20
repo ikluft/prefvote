@@ -2,12 +2,12 @@
 # ABSTRACT: Set data type which extends Types::Standard
 # Copyright (c) 1998-2022 by Ian Kluft
 # Open Source license: Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
- 
+
 # pragmas to silence some warnings from Perl::Critic
 ## no critic (Modules::RequireExplicitPackage)
 # 'use strict' and 'use warnings' included here
 # This solves a catch-22 where parts of Perl::Critic want both package and use-strict to be first
-use Modern::Perl qw(2013); # require 5.16.0 or later
+use Modern::Perl qw(2013);    # require 5.16.0 or later
 ## use critic (Modules::RequireExplicitPackage)
 
 package PrefVote::Core::Set;
@@ -25,12 +25,12 @@ use Set::Tiny qw(set);
 
 # define Set type to use Set::Tiny under the umbrella of Type::Tiny & Type::Library
 my $set_type = Type::Tiny::Class->new(
-    name => "Set",
+    name  => "Set",
     class => "Set::Tiny",
 
     constraint_generator => sub {
         my $param = shift;
-        if (not defined $param) {
+        if ( not defined $param ) {
             ## no critic (Variables::ProhibitPackageVars)
             return $Type::Tiny::parameterize_type;
         }
@@ -38,9 +38,9 @@ my $set_type = Type::Tiny::Class->new(
         return sub {
             return unless ref $_;
             return unless $_->isa("Set::Tiny");
-            foreach my $value ($_->elements()) {
+            foreach my $value ( $_->elements() ) {
                 $param->check($value) or return;
-            };
+            }
             return !!1;
         };
     },
@@ -50,22 +50,22 @@ my $set_type = Type::Tiny::Class->new(
         Types::TypeTiny::assert_TypeTiny($parent);
         Types::TypeTiny::assert_TypeTiny($child);
         Types::TypeTiny::assert_TypeTiny($param);
-        if (not $param->has_coercion) {
+        if ( not $param->has_coercion ) {
             return;
         }
 
-        my $coercion = Type::Coercion->new(type_constraint => $child);
+        my $coercion = Type::Coercion->new( type_constraint => $child );
         $coercion->add_type_coercions(
             $parent => sub {
                 my $value = @_ ? $_[0] : $_;
 
                 my $new_set = set();
-                if (reftype $value eq "ARRAY") {
-                    for my $item ( @$value ) {
-                        $new_set->insert($param->coerce($item));
+                if ( reftype $value eq "ARRAY" ) {
+                    for my $item (@$value) {
+                        $new_set->insert( $param->coerce($item) );
                     }
                 } else {
-                    $new_set->insert($param->coerce($value));
+                    $new_set->insert( $param->coerce($value) );
                 }
                 return $new_set;
             },
@@ -74,8 +74,7 @@ my $set_type = Type::Tiny::Class->new(
     },
 );
 $set_type->coercion->add_type_coercions(
-    Undef, sub { return set() },
-    Value, sub { return set($_) },
+    Undef,    sub { return set() }, Value, sub { return set($_) },
     ArrayRef, sub { return set(@$_) },
 );
 

@@ -8,7 +8,7 @@
 ## no critic (Modules::RequireExplicitPackage)
 # 'use strict' and 'use warnings' included here
 # This solves a catch-22 where parts of Perl::Critic want both package and use-strict to be first
-use Modern::Perl qw(2013); # require 5.16.0 or later
+use Modern::Perl qw(2013);    # require 5.16.0 or later
 ## use critic (Modules::RequireExplicitPackage)
 
 package PrefVote::Core::MethodMismatchException;
@@ -16,7 +16,7 @@ package PrefVote::Core::MethodMismatchException;
 use Moo;
 use Types::Standard qw(Str);
 extends 'PrefVote::Core::Exception';
-has attribute => (is => 'ro', isa =>Str);
+has attribute => ( is => 'ro', isa => Str );
 
 1;
 

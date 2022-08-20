@@ -7,7 +7,7 @@
 ## no critic (Modules::RequireExplicitPackage)
 # 'use strict' and 'use warnings' included here
 # This solves a catch-22 where parts of Perl::Critic want both package and use-strict to be first
-use Modern::Perl qw(2013); # require 5.16.0 or later
+use Modern::Perl qw(2013);    # require 5.16.0 or later
 ## use critic (Modules::RequireExplicitPackage)
 
 package PrefVote::Schulze;
@@ -31,55 +31,60 @@ extends 'PrefVote::Core';
 # blackbox testing structure
 Readonly::Hash my %blackbox_spec => (
     winners => [qw(list set string)],
-    rounds => [qw(list PrefVote::Schulze::Round)],
+    rounds  => [qw(list PrefVote::Schulze::Round)],
 );
-PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, spec => \%blackbox_spec, parent => 'PrefVote::Core');
-__PACKAGE__->ballot_input_ties_policy(1); # set flag for Core: this class allows input ballots to set A/B ties
+PrefVote::Core::TestSpec->register_blackbox_spec( __PACKAGE__,
+    spec   => \%blackbox_spec,
+    parent => 'PrefVote::Core'
+);
+__PACKAGE__->ballot_input_ties_policy(1)
+    ;    # set flag for Core: this class allows input ballots to set A/B ties
 
 # list of names of winners in order by place, ties shown by an ArrayRef to the tied candidates
 has winners => (
-    is => 'rw',
-    isa => ArrayRef[Set[Str]],
-    default => sub { return [] },
+    is          => 'rw',
+    isa         => ArrayRef [ Set [Str] ],
+    default     => sub { return [] },
     handles_via => 'Array',
-    handles => {
-        winners_all => 'all',
+    handles     => {
+        winners_all   => 'all',
         winners_count => 'count',
-        winners_push => 'push',
+        winners_push  => 'push',
     },
 );
 
 # list of rounds of Schulze vote counting
 has rounds => (
-    is => 'rw',
-    isa => ArrayRef[InstanceOf["PrefVote::Schulze::Round"]],
-    default => sub { return [] },
+    is          => 'rw',
+    isa         => ArrayRef [ InstanceOf ["PrefVote::Schulze::Round"] ],
+    default     => sub { return [] },
     handles_via => 'Array',
-    handles => {
+    handles     => {
         rounds_count => 'count',
-        rounds_get => 'get',
-        rounds_push => 'push',
+        rounds_get   => 'get',
+        rounds_push  => 'push',
     },
 );
 
 # set up a new round
 sub new_round
 {
-    my $self = shift;
-    my $number = $self->rounds_count()+1;
+    my $self   = shift;
+    my $number = $self->rounds_count() + 1;
 
     # pick arguments for first or later rounds
     my @args;
-    if ($number == 1) {
+    if ( $number == 1 ) {
+
         # sort the list so results will be consistent for testing
-        @args = (candidates => [sort $self->get_choices()]);
+        @args = ( candidates => [ sort $self->get_choices() ] );
     } else {
-        @args = (prev => $self->rounds_get(-1));
+        @args = ( prev => $self->rounds_get(-1) );
     }
 
     # instantiate and save new round
-    my $round = PrefVote::Schulze::Round->new(number => $number, @args);
-    $round->init_round_candidates(); # initialization for PrefVote::Core::Round
+    my $round = PrefVote::Schulze::Round->new( number => $number, @args );
+    $round->init_round_candidates();    # initialization for PrefVote::Core::Round
     $self->rounds_push($round);
 
     return $round;
@@ -94,14 +99,15 @@ sub count
     return if $self->total_ballots() == 0;
 
     # loop forever until: no candidates are left to compare or a round fails to reach a result
-    for ( ;; ) {
+    for ( ; ; ) {
+
         # start new round
         $self->debug_print("count: new round\n");
         my $round = $self->new_round();
 
         # done if we've exhausted the candidates
-        $self->debug_print("count: round->candidates -> ".Dumper($round->{candidates}));
-        if ($round->candidates_empty()) {
+        $self->debug_print( "count: round->candidates -> " . Dumper( $round->{candidates} ) );
+        if ( $round->candidates_empty() ) {
             $self->debug_print("count: no candidates remaining in new round\n");
             last;
         }
@@ -113,19 +119,20 @@ sub count
 
         # save result
         my $round_result = $round->result();
-        if (defined $round_result) {
-            if ($round_result->type() eq "winner") {
-                $self->winners_push(set($round_result->name_all()));
+        if ( defined $round_result ) {
+            if ( $round_result->type() eq "winner" ) {
+                $self->winners_push( set( $round_result->name_all() ) );
             }
         } else {
-            # no result in this round? A new round can't have a different result without changing choices. Bail out.
+
+# no result in this round? A new round can't have a different result without changing choices. Bail out.
             $self->debug_print("no result this round - bail out\n");
             last;
         }
-    }    
+    }
 
     # save per-candidate final results in PrefVote::Core's choice_to_result map
-    $self->save_c2r(winners => $self->winners());
+    $self->save_c2r( winners => $self->winners() );
 
     return;
 }

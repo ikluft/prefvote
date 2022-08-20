@@ -8,7 +8,7 @@
 ## no critic (Modules::RequireExplicitPackage)
 # 'use strict' and 'use warnings' included here
 # This solves a catch-22 where parts of Perl::Critic want both package and use-strict to be first
-use Modern::Perl qw(2013); # require 5.16.0 or later
+use Modern::Perl qw(2013);    # require 5.16.0 or later
 ## use critic (Modules::RequireExplicitPackage)
 
 package PrefVote::Core::Ballot;
@@ -44,25 +44,26 @@ my $ballot_input_ties_flag = 0;
 
 # blackbox testing structure
 Readonly::Hash my %blackbox_spec => (
-    items => [qw(list set string)],
+    items    => [qw(list set string)],
     quantity => [qw(int)],
-    hex_id => [qw(string)],
+    hex_id   => [qw(string)],
 );
-PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, spec => \%blackbox_spec);
- 
+PrefVote::Core::TestSpec->register_blackbox_spec( __PACKAGE__, spec => \%blackbox_spec );
+
 # per-ballot array of vote items
 # Each item is a Set type to allow for voting methods which allow ballot-input ties. But not all do.
 # PrefVote::Core class method ballot_input_ties_policy() defaults to false. Override it to true to enable ballot ties.
 has items => (
-    is => 'ro',
-    isa => ArrayRef[Set[NonEmptySimpleStr]],
-    required => 1,
+    is         => 'ro',
+    isa        => ArrayRef [ Set [NonEmptySimpleStr] ],
+    required   => 1,
     constraint => sub {
+
         # if %choices is non-empty, use it to look up valid values in ballot items
         my $items_ref = $_;
         if (%choices) {
             foreach my $item (@$items_ref) {
-                if (not exists $choices{$item}) {
+                if ( not exists $choices{$item} ) {
                     return 0;
                 }
             }
@@ -73,15 +74,15 @@ has items => (
 
 # quantity is a multiplier for the number of times this combination of items has occurred
 has quantity => (
-    is => 'rw',
-    isa => PositiveInt,
+    is       => 'rw',
+    isa      => PositiveInt,
     required => 1,
 );
 
 # hexadecimal identifier string used to cross-check hash lookups from PrefVote::Core
 has hex_id => (
-    is => 'ro',
-    isa => NonEmptySimpleStr,
+    is       => 'ro',
+    isa      => NonEmptySimpleStr,
     required => 1,
 );
 
@@ -95,8 +96,8 @@ has hex_id => (
 sub ballot_input_ties_flag
 {
     my $value = shift;
-    if (defined $value) {
-        $ballot_input_ties_flag = ($value ? 1 : 0)
+    if ( defined $value ) {
+        $ballot_input_ties_flag = ( $value ? 1 : 0 );
     }
     return $ballot_input_ties_flag;
 }
@@ -119,25 +120,35 @@ sub set_choices
 # get list of choices
 sub get_choices
 {
-    return wantarray ? (keys %choices) : \%choices;
+    return wantarray ? ( keys %choices ) : \%choices;
 }
 
 # enforce ballot-input ties only allowed when ballot_input_ties_flag() is true
 sub enforce_ballot_item_ties
 {
     my $item_set = shift;
-    if (ref $item_set ne "Set::Tiny") {
-        PrefVote::Core::InternalDataException->throw(classname => __PACKAGE__, attribute => "ballot item",
-            description => "ballot item is not a ref to Set::Tiny")
+    if ( ref $item_set ne "Set::Tiny" ) {
+        PrefVote::Core::InternalDataException->throw(
+            classname   => __PACKAGE__,
+            attribute   => "ballot item",
+            description => "ballot item is not a ref to Set::Tiny"
+        );
     }
-    if ($item_set->is_empty()) {
-        PrefVote::Core::InternalDataException->throw(classname => __PACKAGE__, attribute => "ballot item",
-            description => "bad data: ballot item set is empty")
+    if ( $item_set->is_empty() ) {
+        PrefVote::Core::InternalDataException->throw(
+            classname   => __PACKAGE__,
+            attribute   => "ballot item",
+            description => "bad data: ballot item set is empty"
+        );
     }
-    return if ballot_input_ties_flag(); # no further checks if ballot-item ties are allowed
-    if ($item_set->size() > 1) {
-        PrefVote::Core::InternalDataException->throw(classname => __PACKAGE__, attribute => "ballot item",
-            description => "ballot item set has more than one item in voting method that doesn't support input ties")
+    return if ballot_input_ties_flag();    # no further checks if ballot-item ties are allowed
+    if ( $item_set->size() > 1 ) {
+        PrefVote::Core::InternalDataException->throw(
+            classname   => __PACKAGE__,
+            attribute   => "ballot item",
+            description =>
+"ballot item set has more than one item in voting method that doesn't support input ties"
+        );
     }
     return;
 }
@@ -149,10 +160,10 @@ sub items_all
 {
     my $self = shift;
     my @result;
-    foreach my $item (@{$self->{items}}) {
+    foreach my $item ( @{ $self->{items} } ) {
         enforce_ballot_item_ties($item);
-        if ($item->size() > 1 and ballot_input_ties_flag()) {
-            push @result, set($item->elements());
+        if ( $item->size() > 1 and ballot_input_ties_flag() ) {
+            push @result, set( $item->elements() );
         } else {
             push @result, $item->elements();
         }
@@ -165,27 +176,27 @@ sub items_all
 # If ballot_input_ties_flag() is false then enforce one item per ballot-item set - throw an exception otherwise.
 sub items_join
 {
-    my $self = shift;
+    my $self      = shift;
     my $separator = shift;
     my @result;
-    foreach my $item (@{$self->{items}}) {
+    foreach my $item ( @{ $self->{items} } ) {
         enforce_ballot_item_ties($item);
-        if ($item->size() > 1) {
-            push @result, join("/", sort $item->elements());
+        if ( $item->size() > 1 ) {
+            push @result, join( "/", sort $item->elements() );
         } else {
             push @result, $item->elements();
         }
     }
-    return join($separator, @result);
+    return join( $separator, @result );
 }
 
 # return a count of ballot choices - including totals for ballot-item sets with ties of more than one choice.
 # If ballot_input_ties_flag() is false then enforce one item per ballot-item set - throw an exception otherwise.
 sub items_count
 {
-    my $self = shift;
+    my $self  = shift;
     my $total = 0;
-    foreach my $item (@{$self->{items}}) {
+    foreach my $item ( @{ $self->{items} } ) {
         $total += $item->size();
     }
     return $total;

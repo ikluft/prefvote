@@ -8,7 +8,7 @@
 ## no critic (Modules::RequireExplicitPackage)
 # 'use strict' and 'use warnings' included here
 # This solves a catch-22 where parts of Perl::Critic want both package and use-strict to be first
-use Modern::Perl qw(2013); # require 5.16.0 or later
+use Modern::Perl qw(2013);    # require 5.16.0 or later
 ## use critic (Modules::RequireExplicitPackage)
 
 package PrefVote::Core::Output::RawCapture;
@@ -40,47 +40,47 @@ sub clear_output
 # generate header
 sub do_header
 {
-    my ($class, $result_data) = @_;
+    my ( $class, $result_data ) = @_;
 
     # save title and other heading info as if printing it
     my %out_rec;
     foreach my $key (qw(seats name total_ballots)) {
-        if (exists $result_data->{$key}) {
+        if ( exists $result_data->{$key} ) {
             $out_rec{$key} = $result_data->{$key};
         }
     }
-    push_output(\%out_rec);
+    push_output( \%out_rec );
     return;
 }
 
 # generate table of contents
 sub do_toc
 {
-    my ($class, $result_data, $toc_rows) = @_;
+    my ( $class, $result_data, $toc_rows ) = @_;
 
     # save table of contents data as if printing it
     my %out_rec;
     $out_rec{rows} = $toc_rows;
-    push_output(\%out_rec);
+    push_output( \%out_rec );
     return;
 }
 
 # generate table
 sub do_table
 {
-    my ($class, $result_data, $result_rows, $title, $subtitle) = @_;
+    my ( $class, $result_data, $result_rows, $title, $subtitle ) = @_;
 
     # save table data as if printing it
     my %out_rec;
 
-    if (defined $title) {
+    if ( defined $title ) {
         $out_rec{title} = $title;
     }
-    if (defined $subtitle) {
+    if ( defined $subtitle ) {
         $out_rec{subtitle} = $subtitle;
     }
     $out_rec{rows} = $result_rows;
-    push_output(\%out_rec);
+    push_output( \%out_rec );
     return;
 }
 

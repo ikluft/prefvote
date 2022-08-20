@@ -7,7 +7,7 @@
 ## no critic (Modules::RequireExplicitPackage)
 # 'use strict' and 'use warnings' included here
 # This solves a catch-22 where parts of Perl::Critic want both package and use-strict to be first
-use Modern::Perl qw(2013); # require 5.16.0 or later
+use Modern::Perl qw(2013);    # require 5.16.0 or later
 ## use critic (Modules::RequireExplicitPackage)
 
 package PrefVote::RankedPairs::PairData;
@@ -28,37 +28,37 @@ extends 'PrefVote';
 # blackbox testing structure
 Readonly::Hash my %blackbox_spec => (
     preference => [qw(int)],
-    mov => [qw(int)],
-    lock => [qw(int)],
+    mov        => [qw(int)],
+    lock       => [qw(int)],
 );
 
 # preference: total votes showing preference of candidate i over j
 # optional - should return 0 if nonexistent
 has preference => (
-    is => 'rw',
+    is  => 'rw',
     isa => PositiveOrZeroInt,
 );
 
 # margin of victory (0 for tie)
 has mov => (
-    is => 'rw',
+    is  => 'rw',
     isa => Int,
 );
 
 # flag: the pair is locked
 has lock => (
-    is => 'rw',
+    is  => 'rw',
     isa => Bool,
 );
 
 # add to pair node's preference total
 sub add_preference
 {
-    my $self = shift;
+    my $self     = shift;
     my $quantity = shift;
 
     # add to total
-    my $total = $quantity + ($self->preference() // 0);
+    my $total = $quantity + ( $self->preference() // 0 );
     $self->preference($total);
     return $total;
 }

@@ -8,7 +8,7 @@
 ## no critic (Modules::RequireExplicitPackage)
 # 'use strict' and 'use warnings' included here
 # This solves a catch-22 where parts of Perl::Critic want both package and use-strict to be first
-use Modern::Perl qw(2013); # require 5.16.0 or later
+use Modern::Perl qw(2013);    # require 5.16.0 or later
 ## use critic (Modules::RequireExplicitPackage)
 
 package PrefVote::Core::Output::Text;
@@ -22,36 +22,38 @@ use Text::Table::Tiny 1.02 qw/ generate_table /;
 # generate header
 sub do_header
 {
-    my ($class, $result_data) = @_;
+    my ( $class, $result_data ) = @_;
 
     # print title
-    my $seats = $result_data->{seats};
+    my $seats         = $result_data->{seats};
     my $total_ballots = $result_data->{total_ballots};
-    say "Results: ".$result_data->{name};
-    say "$seats seat".($seats>1 ? "s" : "")." available "
-        ."\N{VERTICAL LINE} $total_ballots ballots";
+    say "Results: " . $result_data->{name};
+    say "$seats seat"
+        . ( $seats > 1 ? "s" : "" )
+        . " available "
+        . "\N{VERTICAL LINE} $total_ballots ballots";
     return;
 }
 
 # generate table of contents
 sub do_toc
 {
-    my ($class, $result_data, $toc_rows) = @_;
-    say generate_table(rows => $toc_rows, header_row => 1, style => 'boxrule');
+    my ( $class, $result_data, $toc_rows ) = @_;
+    say generate_table( rows => $toc_rows, header_row => 1, style => 'boxrule' );
     return;
 }
 
 # generate table
 sub do_table
 {
-    my ($class, $result_data, $result_rows, $title, $subtitle) = @_;
-    if (defined $title) {
+    my ( $class, $result_data, $result_rows, $title, $subtitle ) = @_;
+    if ( defined $title ) {
         say $title;
     }
-    if (defined $subtitle) {
+    if ( defined $subtitle ) {
         say $subtitle;
     }
-    say generate_table(rows => $result_rows, header_row => 1, style => 'boxrule');
+    say generate_table( rows => $result_rows, header_row => 1, style => 'boxrule' );
     return;
 }
 

@@ -8,7 +8,7 @@
 ## no critic (Modules::RequireExplicitPackage)
 # 'use strict' and 'use warnings' included here
 # This solves a catch-22 where parts of Perl::Critic want both package and use-strict to be first
-use Modern::Perl qw(2013); # require 5.16.0 or later
+use Modern::Perl qw(2013);    # require 5.16.0 or later
 ## use critic (Modules::RequireExplicitPackage)
 
 #
@@ -35,22 +35,22 @@ Readonly::Hash my %blackbox_spec => (
     name => [qw(set string)],
     type => [qw(string)],
 );
-PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, spec => \%blackbox_spec);
+PrefVote::Core::TestSpec->register_blackbox_spec( __PACKAGE__, spec => \%blackbox_spec );
 
 has name => (
-    is => 'ro',
-    isa => Set[NonEmptySimpleStr],
+    is       => 'ro',
+    isa      => Set [NonEmptySimpleStr],
     required => 1,
-    handles => {
-        name_all => 'elements',
+    handles  => {
+        name_all   => 'elements',
         name_count => 'size',
         name_empty => 'is_empty',
     },
 );
 
 has type => (
-    is =>'ro',
-    isa => Enum[qw(winner eliminated)],
+    is       => 'ro',
+    isa      => Enum [qw(winner eliminated)],
     required => 1,
 );
 

@@ -9,7 +9,7 @@
 ## no critic (Modules::RequireExplicitPackage)
 # 'use strict' and 'use warnings' included here
 # This solves a catch-22 where parts of Perl::Critic want both package and use-strict to be first
-use Modern::Perl qw(2013); # require 5.16.0 or later
+use Modern::Perl qw(2013);    # require 5.16.0 or later
 ## use critic (Modules::RequireExplicitPackage)
 
 package PrefVote::STV;
@@ -33,48 +33,51 @@ extends 'PrefVote::Core';
 
 # blackbox testing structure
 Readonly::Hash my %blackbox_spec => (
-    winners => [qw(list set string)],
+    winners    => [qw(list set string)],
     eliminated => [qw(list set string)],
-    rounds => [qw(list PrefVote::STV::Round)],
+    rounds     => [qw(list PrefVote::STV::Round)],
 );
-PrefVote::Core::TestSpec->register_blackbox_spec(__PACKAGE__, spec => \%blackbox_spec, parent => 'PrefVote::Core');
+PrefVote::Core::TestSpec->register_blackbox_spec( __PACKAGE__,
+    spec   => \%blackbox_spec,
+    parent => 'PrefVote::Core'
+);
 
 # list of names of winners in order by place, ties shown by an ArrayRef to the tied candidates
 has winners => (
-    is => 'rw',
-    isa => ArrayRef[Set[Str]],
-    default => sub { return [] },
+    is          => 'rw',
+    isa         => ArrayRef [ Set [Str] ],
+    default     => sub { return [] },
     handles_via => 'Array',
-    handles => {
-        winners_all => 'all',
+    handles     => {
+        winners_all   => 'all',
         winners_count => 'count',
-        winners_push => 'push',
+        winners_push  => 'push',
     },
 );
 
 # list of names of eliminated candidates in order by occurrence, ties shown by an ArrayRef to the tied candidates
 has eliminated => (
-    is => 'rw',
-    isa => ArrayRef[Set[Str]],
-    default => sub { return [] },
+    is          => 'rw',
+    isa         => ArrayRef [ Set [Str] ],
+    default     => sub { return [] },
     handles_via => 'Array',
-    handles => {
-        eliminated_all => 'all',
+    handles     => {
+        eliminated_all   => 'all',
         eliminated_count => 'count',
-        eliminated_push => 'push',
+        eliminated_push  => 'push',
     },
 );
 
 # list of rounds of STV counting
 has rounds => (
-    is => 'rw',
-    isa => ArrayRef[InstanceOf["PrefVote::STV::Round"]],
-    default => sub { return [] },
+    is          => 'rw',
+    isa         => ArrayRef [ InstanceOf ["PrefVote::STV::Round"] ],
+    default     => sub { return [] },
     handles_via => 'Array',
-    handles => {
+    handles     => {
         rounds_count => 'count',
-        rounds_get => 'get',
-        rounds_push => 'push',
+        rounds_get   => 'get',
+        rounds_push  => 'push',
     },
 );
 
@@ -86,20 +89,21 @@ my %result_cache;
 # start a new round
 sub new_round
 {
-    my $self = shift;
-    my $number = $self->rounds_count()+1;
-    
+    my $self   = shift;
+    my $number = $self->rounds_count() + 1;
+
     # pick arguments for first or later rounds
     my @args;
-    if ($number == 1) {
-        @args = (candidates => [$self->get_choices()]);
+    if ( $number == 1 ) {
+        @args = ( candidates => [ $self->get_choices() ] );
     } else {
-        @args = (prev => $self->rounds_get(-1));
+        @args = ( prev => $self->rounds_get(-1) );
     }
 
     # instantiate and save new round
-    my $round = PrefVote::STV::Round->new(number => $number, @args);
-    $round->init_candidate_tally(); # initialization for PrefVote::STV::Round - also calls PrefVote::Core::Round init
+    my $round = PrefVote::STV::Round->new( number => $number, @args );
+    $round->init_candidate_tally()
+        ;    # initialization for PrefVote::STV::Round - also calls PrefVote::Core::Round init
     $self->rounds_push($round);
 
     return $round;
@@ -115,22 +119,22 @@ sub current_round
 # add winning candidate
 sub add_winner
 {
-    my ($self, @win_list) = @_;
+    my ( $self, @win_list ) = @_;
 
     # save winners in order
-    $self->winners_push(set(@win_list));
+    $self->winners_push( set(@win_list) );
 
     # add winners to round result
     my $round = $self->current_round();
     $round->set_result(
-        name => clone(\@win_list),
+        name => clone( \@win_list ),
         type => "winner",
     );
 
     # cache win result for each candidate for handling following rounds
     my $tally = $self->current_round()->tally();
     foreach my $name (@win_list) {
-        $result_cache{$name} = {winner => 1, transfer => $tally->{$name}{transfer}};
+        $result_cache{$name} = { winner => 1, transfer => $tally->{$name}{transfer} };
     }
     return;
 }
@@ -138,21 +142,21 @@ sub add_winner
 # add eliminated candidate
 sub add_eliminated
 {
-    my ($self, @elim_list) = @_;
+    my ( $self, @elim_list ) = @_;
 
     # save eliminations in order
-    $self->eliminated_push(set(@elim_list));
+    $self->eliminated_push( set(@elim_list) );
 
     # add eliminations to round result
     my $round = $self->current_round();
     $round->set_result(
-        name => clone(\@elim_list),
+        name => clone( \@elim_list ),
         type => "eliminated",
     );
 
     # cache elimination result for each candidate for handling following rounds
     foreach my $name (@elim_list) {
-        $result_cache{$name} = {eliminated => 1};
+        $result_cache{$name} = { eliminated => 1 };
     }
     return;
 }
@@ -161,7 +165,7 @@ sub add_eliminated
 # return boolean
 sub cand_is_winner
 {
-    my $self = shift;
+    my $self      = shift;
     my $cand_name = shift;
     return exists $result_cache{$cand_name}{winner};
 }
@@ -170,7 +174,7 @@ sub cand_is_winner
 # return boolean
 sub cand_is_eliminated
 {
-    my $self = shift;
+    my $self      = shift;
     my $cand_name = shift;
     return exists $result_cache{$cand_name}{eliminated};
 }
@@ -179,9 +183,9 @@ sub cand_is_eliminated
 # return floating point number, or undef if not a winner
 sub cand_transfer_ratio
 {
-    my $self = shift;
+    my $self      = shift;
     my $cand_name = shift;
-    if (not exists $result_cache{$cand_name}{transfer}) {
+    if ( not exists $result_cache{$cand_name}{transfer} ) {
         return;
     }
     return $result_cache{$cand_name}{transfer};
@@ -190,24 +194,26 @@ sub cand_transfer_ratio
 # initial tally with vote transfers
 sub run_tally
 {
-    my $self = shift;
+    my $self  = shift;
     my $round = $self->current_round();
 
     # loop through votes tallying with transfers
-    foreach my $combo ($self->ballots_keys()) {
+    foreach my $combo ( $self->ballots_keys() ) {
+
         # loop through choices
-        my $ballot = $self->ballots_get($combo);
-        my $selection = undef;
-        my $fraction = 1;
+        my $ballot       = $self->ballots_get($combo);
+        my $selection    = undef;
+        my $fraction     = 1;
         my @ballot_items = $ballot->items_all();
         foreach my $choice (@ballot_items) {
+
             # STV can assume it received only single-item sets in each ballot item
             if ( $self->debug() and ref($choice) ne "" ) {
                 print STDERR "choice is ref "
-                    .ref($choice)
-                    ." in #".$round->votes_used().": "
-                    .$ballot->as_string()
-                    ." (x".$ballot->quantity().")\n";
+                    . ref($choice) . " in #"
+                    . $round->votes_used() . ": "
+                    . $ballot->as_string() . " (x"
+                    . $ballot->quantity() . ")\n";
             }
 
             # Handle vote transfers - this is a key point
@@ -227,28 +233,28 @@ sub run_tally
             # this loop to find each candidate's place
             # in the results) then individual ballots
             # may be cut in fractions more than once.
-            if ($self->cand_is_winner($choice))
-            {
+            if ( $self->cand_is_winner($choice) ) {
                 my $transfer_ratio = $self->cand_transfer_ratio($choice);
                 $fraction *= $transfer_ratio;
                 next;
             }
 
-            # Candidates in this round are eligible to receive vote transfers.
-            # Check for candidates not previously eliminated because previous winners were already filtered out above.
-            if (not $self->cand_is_eliminated($choice)) {
+# Candidates in this round are eligible to receive vote transfers.
+# Check for candidates not previously eliminated because previous winners were already filtered out above.
+            if ( not $self->cand_is_eliminated($choice) ) {
                 $selection = $choice;
                 last;
             }
         }
 
         if ( defined $selection ) {
-            my $sel_ref = $round->tally_get($selection);
-            my $votes = $sel_ref->votes();
+            my $sel_ref        = $round->tally_get($selection);
+            my $votes          = $sel_ref->votes();
             my $vote_increment = $fraction * $ballot->{quantity};
             $sel_ref->add_votes($vote_increment);
             $round->add_votes_used($vote_increment);
-            #$self->debug_print("run_tally: $selection +$vote_increment (frac=$fraction) ".join("-",@ballot_items));
+
+#$self->debug_print("run_tally: $selection +$vote_increment (frac=$fraction) ".join("-",@ballot_items));
         }
     }
     return;
@@ -257,29 +263,45 @@ sub run_tally
 # process candidates over quota as winners
 sub process_winners
 {
-    my $self = shift;
-    my $round = $self->current_round();
+    my $self            = shift;
+    my $round           = $self->current_round();
     my @round_candidate = $round->candidates_all();
 
     # quota exceeded - we have a winner!
     my @round_winner;
-    my $place = $self->winners_count()+1;
-    my $tiebreak_disabled = $self->config("no-tiebreak") // 0; # config flag to disable tie-breaking by avg rank
-    foreach my $curr_key ( @round_candidate ) {
+    my $place             = $self->winners_count() + 1;
+    my $tiebreak_disabled = $self->config("no-tiebreak")
+        // 0;    # config flag to disable tie-breaking by avg rank
+    foreach my $curr_key (@round_candidate) {
+
         # mark all the candidates over quota who are tied for first place as winners
-        if (($round->tally_get($curr_key)->votes() == $round->tally_get($round_candidate[0])->votes()) and
-            ($tiebreak_disabled
-                or fp_equal($self->average_ranking($curr_key),$self->average_ranking($round_candidate[0]))))
+        if (
+            (
+                $round->tally_get($curr_key)->votes() ==
+                $round->tally_get( $round_candidate[0] )->votes()
+            )
+            and (
+                $tiebreak_disabled
+                or fp_equal(
+                    $self->average_ranking($curr_key),
+                    $self->average_ranking( $round_candidate[0] )
+                )
+            )
+            )
         {
-            my $c_votes = $round->tally_get($curr_key)->votes();
-            my $c_surplus = $c_votes - $round->quota();
+            my $c_votes        = $round->tally_get($curr_key)->votes();
+            my $c_surplus      = $c_votes - $round->quota();
             my $transfer_ratio = $c_surplus / $c_votes;
             push @round_winner, $curr_key;
 
             # mark this candidate a winner
-            $round->tally_get($curr_key)->mark_as_winner(place => $place, votes => $c_votes, surplus => $c_surplus,
-                transfer => $transfer_ratio);
-            $self->debug_print( "winner: $curr_key with transfer ratio $transfer_ratio");
+            $round->tally_get($curr_key)->mark_as_winner(
+                place    => $place,
+                votes    => $c_votes,
+                surplus  => $c_surplus,
+                transfer => $transfer_ratio
+            );
+            $self->debug_print("winner: $curr_key with transfer ratio $transfer_ratio");
         } else {
             last;
         }
@@ -293,9 +315,9 @@ sub process_winners
 # in round with no winner, eliminate last-place candidates
 sub eliminate_losers
 {
-    my $self = shift;
-    my $round = $self->current_round();
-    my @round_candidate = $round->candidates_all(); # list of candidate names
+    my $self            = shift;
+    my $round           = $self->current_round();
+    my @round_candidate = $round->candidates_all();    # list of candidate names
 
     # no candidate met quota: eliminate last-place candidate(s) and count again on next round
     my $i;
@@ -303,15 +325,23 @@ sub eliminate_losers
 
     # mark candidates tied for last as eliminated
     my @round_eliminated;
-    my $tiebreak_disabled = $self->config("no-tiebreak") // 0; # config flag to disable tie-breaking by avg rank
-    for ( $i = (scalar @round_candidate)-1; $i > 0; $i-- ) {
+    my $tiebreak_disabled = $self->config("no-tiebreak")
+        // 0;    # config flag to disable tie-breaking by avg rank
+    for ( $i = ( scalar @round_candidate ) - 1 ; $i > 0 ; $i-- ) {
         my $indexed_cand = $round_candidate[$i];
-        if (($round->tally_get($last_cand)->votes() == $round->tally_get($indexed_cand)->votes()) and
-            ($tiebreak_disabled
-                or fp_equal($self->average_ranking($last_cand),$self->average_ranking($indexed_cand))))
+        if (
+            ( $round->tally_get($last_cand)->votes() == $round->tally_get($indexed_cand)->votes() )
+            and (
+                $tiebreak_disabled
+                or fp_equal(
+                    $self->average_ranking($last_cand),
+                    $self->average_ranking($indexed_cand)
+                )
+            )
+            )
         {
             $round->tally_get($indexed_cand)->mark_as_eliminated();
-            $self->debug_print("eliminated: ".$indexed_cand."\n");
+            $self->debug_print( "eliminated: " . $indexed_cand . "\n" );
             push @round_eliminated, $indexed_cand;
         }
     }
@@ -330,7 +360,8 @@ sub count
     return if $self->total_ballots() == 0;
 
     # loop forever until a valid result is established
-    for ( ;; ) {
+    for ( ; ; ) {
+
         # start new round
         $self->debug_print("new round\n");
         my $round = $self->new_round();
@@ -347,55 +378,61 @@ sub count
         # look for candidates meeting the quota ("majority" if two candidates)
 
         # done if we've exhausted the candidates
-        $self->debug_print("round->candidates -> ".Dumper($round->{candidates}));
-        if ($round->candidates_empty()) {
+        $self->debug_print( "round->candidates -> " . Dumper( $round->{candidates} ) );
+        if ( $round->candidates_empty() ) {
             $self->debug_print("no candidates remaining in new round\n");
             last;
         }
 
         # sort in descending order
-        my $tiebreak_disabled = $self->config("no-tiebreak") // 0; # config flag to disable tie-breaking by avg rank
-        my @round_candidate = $round->sort_candidates(sub {
-            # 1st/primary comparison: votes for candidate in descending order
-            my $votes0 = $round->tally_get($_[0])->votes();
-            my $votes1 = $round->tally_get($_[1])->votes();
-            if ($votes0 != $votes1) {
-                return $votes1 <=> $votes0;
-            }
-
-            # 2nd comparison: average ballot-ranking position in ascending order
-            if (not $tiebreak_disabled) {
-                my $acr0 = $self->average_ranking($_[0]);
-                my $acr1 = $self->average_ranking($_[1]);
-                if (not fp_equal($acr0, $acr1)) {
-                    return fp_cmp($acr0, $acr1);
+        my $tiebreak_disabled = $self->config("no-tiebreak")
+            // 0;    # config flag to disable tie-breaking by avg rank
+        my @round_candidate = $round->sort_candidates(
+            sub {
+                # 1st/primary comparison: votes for candidate in descending order
+                my $votes0 = $round->tally_get( $_[0] )->votes();
+                my $votes1 = $round->tally_get( $_[1] )->votes();
+                if ( $votes0 != $votes1 ) {
+                    return $votes1 <=> $votes0;
                 }
-            }
 
-            # 3rd comparison: alphabetical (so ties in testing keep consistent order)
-            return $_[0] cmp $_[1];
-        });
+                # 2nd comparison: average ballot-ranking position in ascending order
+                if ( not $tiebreak_disabled ) {
+                    my $acr0 = $self->average_ranking( $_[0] );
+                    my $acr1 = $self->average_ranking( $_[1] );
+                    if ( not fp_equal( $acr0, $acr1 ) ) {
+                        return fp_cmp( $acr0, $acr1 );
+                    }
+                }
+
+                # 3rd comparison: alphabetical (so ties in testing keep consistent order)
+                return $_[0] cmp $_[1];
+            }
+        );
 
         # Do we have a quota?
         # In a 1-seat race, a quota is a simple 50%+1 majority.
         # If N seats are up for election and V votes were cast,
         # a quota is V/(N+1)
-        $round->quota($round->votes_used() / ($self->seats()+1));
+        $round->quota( $round->votes_used() / ( $self->seats() + 1 ) );
         if ( $round->quota() <= 0.0001 ) {
             last;
         }
-        if ($round->tally_get($round_candidate[0])->votes() > $round->quota() + .00001 ) {
+        if ( $round->tally_get( $round_candidate[0] )->votes() > $round->quota() + .00001 ) {
+
             # quota exceeded - we have a winner!
             $self->process_winners();
         } else {
+
             # no quota: eliminate last-place candidate(s) and count again on next round
             $self->eliminate_losers();
         }
+
         #$self->debug_print("round ".($round->number())." result_cache = ".Dumper(\%result_cache));
     }
 
     # save per-candidate final results in PrefVote::Core's choice_to_result map
-    $self->save_c2r(winners => $self->winners(), eliminated => $self->eliminated());
+    $self->save_c2r( winners => $self->winners(), eliminated => $self->eliminated() );
 
     return;
 }
@@ -404,7 +441,7 @@ sub count
 sub results
 {
     my $self = shift;
-    return {winners => $self->{winners}, eliminated => $self->{eliminated}};
+    return { winners => $self->{winners}, eliminated => $self->{eliminated} };
 }
 
 1;

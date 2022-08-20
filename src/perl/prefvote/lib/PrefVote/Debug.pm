@@ -8,7 +8,7 @@
 ## no critic (Modules::RequireExplicitPackage)
 # 'use strict' and 'use warnings' included here
 # This solves a catch-22 where parts of Perl::Critic want both package and use-strict to be first
-use Modern::Perl qw(2013); # require 5.16.0 or later
+use Modern::Perl qw(2013);    # require 5.16.0 or later
 ## use critic (Modules::RequireExplicitPackage)
 
 package PrefVote::Debug;
@@ -18,21 +18,21 @@ use Types::Standard qw(Bool);
 with 'MooX::Singleton';
 
 has debug => (
-    is => 'rw',
-    isa => Bool,
+    is       => 'rw',
+    isa      => Bool,
     required => 1,
 );
 
 # print debug message
 sub debug_print
 {
-    my ($self, @args) = @_;
+    my ( $self, @args ) = @_;
     my %opts;
-    if (ref $args[0] eq "HASH") {
-        %opts = %{shift @args};
+    if ( ref $args[0] eq "HASH" ) {
+        %opts = %{ shift @args };
     }
-    my $prefix = $opts{prefix} // caller; # caller package name
-    $self->{debug} and say STDERR $prefix.": ".join(" ", @args);
+    my $prefix = $opts{prefix} // caller;    # caller package name
+    $self->{debug} and say STDERR $prefix . ": " . join( " ", @args );
     return;
 }
 
