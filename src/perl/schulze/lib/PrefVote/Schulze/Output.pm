@@ -62,8 +62,10 @@ sub do_counting_table
                 ( $round->{pair}{$j}{$i}{preference} // 0 );
             my $icon =
                 ( $margin == 0 ) ? PrefVote::Core::Output::symbol("tie")
-                : ( ( $margin > 0 ) ? PrefVote::Core::Output::symbol("win")
-                : PrefVote::Core::Output::symbol("lose") );
+                : (
+                ( $margin > 0 ) ? PrefVote::Core::Output::symbol("win")
+                : PrefVote::Core::Output::symbol("lose")
+                );
             push @row, "$margin $icon";
         }
         push @result_rows, \@row;

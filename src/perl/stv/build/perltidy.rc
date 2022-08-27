@@ -4,3 +4,5 @@
 --output-line-ending=unix
 --continuation-indentation=4
 --opening-sub-brace-on-new-line
+--indent-block-comments
+--static-block-comments
