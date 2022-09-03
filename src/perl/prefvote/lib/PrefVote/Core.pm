@@ -834,6 +834,20 @@ input and tallying of ranked choice ballots, indexing of choices/candidates,
 computing average choice rank (ACR) as tie-breaking data, storage of basic results,
 and black-box testing infrastructure.
 
+It is important to understand that I<PrefVote::Core> alone is not a valid voting method.
+For counting any real votes or polls, this must be used as the superclass for a ranked-choice
+voting method, such as L<PrefVote::STV>, L<PrefVote::Schulze> or L<PrefVote::RankedPairs>.
+Those methods make quantitative counts, such that a greater number of votes for one choice
+will make it win over another if all other things are equal. That is a required expectation
+in any voting system.
+
+I<PrefVote::Core> collects average choice rank (ACR) data to be used for tie-breaking in any
+of the supported voting methods. I<PrefVote::Core> may be run alone for testing purposes and
+will use ACR data in that case. However, the reason ACR is not appropriate as a voting method
+on its own is because it is an average ranking, regardless of the number of votes cast for a
+particular choice.
+It only makes sense for tie-breaking, where becomes meaningful if everything else is equal.
+
 =head1 ATTRIBUTES
 
 =over 1
