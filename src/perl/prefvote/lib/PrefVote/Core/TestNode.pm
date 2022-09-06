@@ -241,9 +241,7 @@ sub subnode
                 PrefVote::Core::InternalDataException->throw(
                     classname   => __PACKAGE__,
                     attribute   => "name",
-                    description => "set node does not contain "
-                        . $opts{name} . " at "
-                        . join( "-", $self->path() )
+                    description => "set node does not contain " . $opts{name} . " at " . join( "-", $self->path() )
                 );
             }
             $subvalue = $value->element( $opts{name} );
@@ -254,9 +252,7 @@ sub subnode
                 PrefVote::Core::InternalDataException->throw(
                     classname   => __PACKAGE__,
                     attribute   => "name",
-                    description => "hash node does not contain "
-                        . $opts{name} . " at "
-                        . join( "-", $self->path() )
+                    description => "hash node does not contain " . $opts{name} . " at " . join( "-", $self->path() )
                 );
             }
             $subvalue = $value->{ $opts{name} };
@@ -276,15 +272,13 @@ sub subnode
                 PrefVote::Core::InternalDataException->throw(
                     classname   => __PACKAGE__,
                     attribute   => "name",
-                    description => "array node does not contain "
-                        . $opts{name} . " at "
-                        . join( "-", $self->path() )
+                    description => "array node does not contain " . $opts{name} . " at " . join( "-", $self->path() )
                 );
             }
             $subvalue = $value->[ $opts{name} ];
         }
 
-     # verify the type of the child node and if it's in PrefVote hierarchy, enter its test spec tree
+        # verify the type of the child node and if it's in PrefVote hierarchy, enter its test spec tree
         my $subvalue_type = ref $subvalue;
         if ( in_hierarchy($subvalue_type) ) {
             my $lookahead_spec = $self->spectype( $opts{name} );
@@ -311,7 +305,7 @@ sub subnode
     # save the sub-node under this node
     $self->add_child($subnode);
 
-# collect and return the blackbox tests from the new node (and any sub-tree it creates in the process)
+    # collect and return the blackbox tests from the new node (and any sub-tree it creates in the process)
     return $subnode->check();
 }
 
@@ -321,8 +315,7 @@ sub node_obj
     my $self = shift;
     my @tests;
 
-    $self->debug_print(
-        "node_obj(" . ( ref $self->objref() ) . "-" . $self->objpath_join("-") . ")" );
+    $self->debug_print( "node_obj(" . ( ref $self->objref() ) . "-" . $self->objpath_join("-") . ")" );
     my $spec = PrefVote::Core::TestSpec->get_blackbox_spec( ref $self->{objref} );
     foreach my $attr ( keys %$spec ) {
         if ( exists $self->{plan}{$attr} ) {
@@ -431,8 +424,7 @@ sub node_list
 
         # create description text for test
         my $description = join( "-", $self->path(), $i ) . " matches " . $self->{plan}[$i];
-        $self->debug_print(
-            "node_list compare): $description from " . join( " ", @{ $self->{plan} } ) );
+        $self->debug_print( "node_list compare): $description from " . join( " ", @{ $self->{plan} } ) );
 
         # list item comparison
         push @tests,
@@ -481,8 +473,7 @@ sub node_set
         # create description text for test
         my $item        = $self->{plan}[$i];
         my $description = join( "-", $self->path(), $item ) . " matches $item";
-        $self->debug_print(
-            "node_set compare): $description from " . join( " ", @{ $self->{plan} } ) );
+        $self->debug_print( "node_set compare): $description from " . join( " ", @{ $self->{plan} } ) );
 
         # return tests depending on whether the item was found
         if ( $value->contains($item) ) {
@@ -497,9 +488,8 @@ sub node_set
                 );
         } else {
 
-         # if it isn't found in the set, there's no value to point at for comparison so just fail it
-            push @tests,
-                { type => "fail", expected => $item, value => undef, description => $description };
+            # if it isn't found in the set, there's no value to point at for comparison so just fail it
+            push @tests, { type => "fail", expected => $item, value => undef, description => $description };
         }
     }
     return @tests;

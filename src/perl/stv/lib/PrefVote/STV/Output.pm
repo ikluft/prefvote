@@ -45,7 +45,7 @@ sub do_counting_table
 {
     my ( $class, $format_class, $result_data ) = @_;
 
-  # set symbol aliases in PrefVote::Core::Output so it accepts STV's "winner" and "eliminated" names
+    # set symbol aliases in PrefVote::Core::Output so it accepts STV's "winner" and "eliminated" names
     PrefVote::Core::Output::set_symbol_alias( "winner"     => "win" );
     PrefVote::Core::Output::set_symbol_alias( "eliminated" => "lose" );
 

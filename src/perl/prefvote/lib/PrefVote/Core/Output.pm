@@ -51,15 +51,13 @@ sub set_mock_stdin
 sub do_output
 {
     my ( $format, $voting_method, $yaml_ref ) = @_;
-    $voting_method =~
-        s/^.*:://x;  # voting method suffix only - this allows optionally providing whole class name
+    $voting_method =~ s/^.*:://x;    # voting method suffix only - this allows optionally providing whole class name
 
     # pipe the YAML to a subprocess running main() from this class
     my @output_cmd = (
         $Config{perlpath}, "-M" . __PACKAGE__,
         "-e",              __PACKAGE__ . "::main",
-        "--",              "--format=$format",
-        "--method=$voting_method", ( __PACKAGE__->debug() ? "--debug" : () )
+        "--",              "--format=$format", "--method=$voting_method", ( __PACKAGE__->debug() ? "--debug" : () )
     );
     run \@output_cmd, sub {
         if ( my $line = shift @$yaml_ref ) { return $line }
@@ -110,10 +108,9 @@ sub candidates_list
     # get list of candidates ordered by choice_to_result list
     # list is sorted by 1: result place (ascending), 2: candidate key string (alphabetical)
     # the second sort factor keeps results in order for testing
-    my $c2r        = $result_data->{choice_to_result};
-    my @candidates = sort {
-        ( $c2r->{$a}[0] == $c2r->{$b}[0] ) ? ( $a cmp $b ) : ( $c2r->{$a}[0] <=> $c2r->{$b}[0] )
-    } keys %$c2r;
+    my $c2r = $result_data->{choice_to_result};
+    my @candidates =
+        sort { ( $c2r->{$a}[0] == $c2r->{$b}[0] ) ? ( $a cmp $b ) : ( $c2r->{$a}[0] <=> $c2r->{$b}[0] ) } keys %$c2r;
     return @candidates;
 }
 
@@ -202,8 +199,7 @@ sub class_search
         opendir( my $dirhandle, $inc_search_path ) or next;
         my @all_files = readdir($dirhandle);
         __PACKAGE__->debug_print( "class_search: grepping files " . join( " ", @all_files ) );
-        my @files = sort grep { ( fc($_) eq fc($search_filename) ) and -f "$inc_search_path/$_" }
-            @all_files;
+        my @files = sort grep { ( fc($_) eq fc($search_filename) ) and -f "$inc_search_path/$_" } @all_files;
         foreach my $file (@files) {
             my $basename = ( substr( $file, -3 ) eq ".pm" ) ? substr( $file, 0, -3 ) : $file;
             $class_name = join( "::", @search_components, $basename );
@@ -250,8 +246,7 @@ sub main
         if ( not defined $voting_method ) {
             croak "$method is not a supported voting method";
         }
-        my $method_class =
-            class_search( "PrefVote::" . $voting_method . "::Output", "voting method" );
+        my $method_class = class_search( "PrefVote::" . $voting_method . "::Output", "voting method" );
 
         # slurp standard input
         my $yaml_textref = stdinslurp();

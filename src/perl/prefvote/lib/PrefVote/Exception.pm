@@ -29,8 +29,7 @@ sub stringify
           "$class exception: "
         . $self->{description} . " "
         . join( "",
-        map { "\n$_: " . ( $self->{$_} // "undef" ) }
-            ( sort grep { $_ ne "description" } ( keys %$self ) ) )
+        map { "\n$_: " . ( $self->{$_} // "undef" ) } ( sort grep { $_ ne "description" } ( keys %$self ) ) )
         . "\n";
 }
 

@@ -102,8 +102,7 @@ sub new_round
 
     # instantiate and save new round
     my $round = PrefVote::STV::Round->new( number => $number, @args );
-    $round->init_candidate_tally()
-        ;    # initialization for PrefVote::STV::Round - also calls PrefVote::Core::Round init
+    $round->init_candidate_tally();    # initialization for PrefVote::STV::Round - also calls PrefVote::Core::Round init
     $self->rounds_push($round);
 
     return $round;
@@ -239,8 +238,8 @@ sub run_tally
                 next;
             }
 
-# Candidates in this round are eligible to receive vote transfers.
-# Check for candidates not previously eliminated because previous winners were already filtered out above.
+            # Candidates in this round are eligible to receive vote transfers.
+            # Check for candidates not previously eliminated because previous winners were already filtered out above.
             if ( not $self->cand_is_eliminated($choice) ) {
                 $selection = $choice;
                 last;
@@ -254,7 +253,7 @@ sub run_tally
             $sel_ref->add_votes($vote_increment);
             $round->add_votes_used($vote_increment);
 
-#$self->debug_print("run_tally: $selection +$vote_increment (frac=$fraction) ".join("-",@ballot_items));
+            #$self->debug_print("run_tally: $selection +$vote_increment (frac=$fraction) ".join("-",@ballot_items));
         }
     }
     return;
@@ -270,23 +269,14 @@ sub process_winners
     # quota exceeded - we have a winner!
     my @round_winner;
     my $place             = $self->winners_count() + 1;
-    my $tiebreak_disabled = $self->config("no-tiebreak")
-        // 0;    # config flag to disable tie-breaking by avg rank
+    my $tiebreak_disabled = $self->config("no-tiebreak") // 0;    # config flag to disable tie-breaking by avg rank
     foreach my $curr_key (@round_candidate) {
 
         # mark all the candidates over quota who are tied for first place as winners
         if (
-            (
-                $round->tally_get($curr_key)->votes() ==
-                $round->tally_get( $round_candidate[0] )->votes()
-            )
-            and (
-                $tiebreak_disabled
-                or fp_equal(
-                    $self->average_ranking($curr_key),
-                    $self->average_ranking( $round_candidate[0] )
-                )
-            )
+            ( $round->tally_get($curr_key)->votes() == $round->tally_get( $round_candidate[0] )->votes() )
+            and ( $tiebreak_disabled
+                or fp_equal( $self->average_ranking($curr_key), $self->average_ranking( $round_candidate[0] ) ) )
             )
         {
             my $c_votes        = $round->tally_get($curr_key)->votes();
@@ -325,19 +315,13 @@ sub eliminate_losers
 
     # mark candidates tied for last as eliminated
     my @round_eliminated;
-    my $tiebreak_disabled = $self->config("no-tiebreak")
-        // 0;    # config flag to disable tie-breaking by avg rank
+    my $tiebreak_disabled = $self->config("no-tiebreak") // 0;    # config flag to disable tie-breaking by avg rank
     for ( $i = ( scalar @round_candidate ) - 1 ; $i > 0 ; $i-- ) {
         my $indexed_cand = $round_candidate[$i];
         if (
             ( $round->tally_get($last_cand)->votes() == $round->tally_get($indexed_cand)->votes() )
-            and (
-                $tiebreak_disabled
-                or fp_equal(
-                    $self->average_ranking($last_cand),
-                    $self->average_ranking($indexed_cand)
-                )
-            )
+            and ( $tiebreak_disabled
+                or fp_equal( $self->average_ranking($last_cand), $self->average_ranking($indexed_cand) ) )
             )
         {
             $round->tally_get($indexed_cand)->mark_as_eliminated();
@@ -385,9 +369,8 @@ sub count
         }
 
         # sort in descending order
-        my $tiebreak_disabled = $self->config("no-tiebreak")
-            // 0;    # config flag to disable tie-breaking by avg rank
-        my @round_candidate = $round->sort_candidates(
+        my $tiebreak_disabled = $self->config("no-tiebreak") // 0;    # config flag to disable tie-breaking by avg rank
+        my @round_candidate   = $round->sort_candidates(
             sub {
                 # 1st/primary comparison: votes for candidate in descending order
                 my $votes0 = $round->tally_get( $_[0] )->votes();

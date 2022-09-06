@@ -17,8 +17,7 @@ use autodie;
 use Readonly;
 use Math::Round qw(nearest);
 use Exporter qw(import);
-our @EXPORT_OK =
-    qw(fp_equal fp_cmp float_limit float_external float_internal PVNum PVPositiveOrZeroNum);
+our @EXPORT_OK = qw(fp_equal fp_cmp float_limit float_external float_internal PVNum PVPositiveOrZeroNum);
 
 # class definitions
 use Type::Library -base, -declare => qw(PVNum PVPositiveOrZeroNum);
@@ -30,9 +29,9 @@ use Type::Coercion ();
 BEGIN { extends "Types::Standard" }
 
 # constants
-Readonly::Scalar my $fp_external_precision => 5;     # 5 digits max past decimal point
-Readonly::Scalar my $fp_internal_precision => 10;    # 10 digits max past decimal point
-Readonly::Scalar my $fp_epsilon => 2**-24;    # fp epsilon for fp_equal() based on 32-bit floats
+Readonly::Scalar my $fp_external_precision => 5;         # 5 digits max past decimal point
+Readonly::Scalar my $fp_internal_precision => 10;        # 10 digits max past decimal point
+Readonly::Scalar my $fp_epsilon            => 2**-24;    # fp epsilon for fp_equal() based on 32-bit floats
 
 # floating point equality comparison utility function
 # FP must not be compared with == operator - instead check if difference is within "machine epsilon" precision

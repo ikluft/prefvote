@@ -46,7 +46,7 @@ Readonly::Hash my %blackbox_spec => (
     name             => [qw(string)],
     choice_to_index  => [qw(hash string)],
     index_to_choice  => [qw(hash string)],
-    choice_to_result => [qw(hash list string)],    # list of strings is all we can do for a tuple
+    choice_to_result => [qw(hash list string)],              # list of strings is all we can do for a tuple
     choices          => [qw(hash string)],
     seats            => [qw(int)],
     ballots          => [qw(hash PrefVote::Core::Ballot)],
@@ -93,8 +93,8 @@ has index_to_choice => (
 # Placed choices got a result in sequence after the last seat was filled.
 # Eliminated candidates still have place numbers depending on the order or strength of elimination.
 has choice_to_result => (
-    is  => 'rw',
-    isa => Map [ NonEmptySimpleStr, Tuple [ Int, Enum [qw(selected tied placed eliminated)] ] ],
+    is          => 'rw',
+    isa         => Map [ NonEmptySimpleStr, Tuple [ Int, Enum [qw(selected tied placed eliminated)] ] ],
     handles_via => 'Hash',
     handles     => {
         c2r_exists => 'exists',
@@ -181,8 +181,8 @@ has
     },
     ),
 
-# blackbox testing checklist structure
-# this is filled from the extra data from YAML input file, used for testing all PrefVote language implementations
+    # blackbox testing checklist structure
+    # this is filled from the extra data from YAML input file, used for testing all PrefVote language implementations
     has testspec => (
     is       => 'ro',
     isa      => InstanceOf ["PrefVote::Core::TestSpec"],
@@ -191,13 +191,11 @@ has
 
 # By default PrefVote::Core sets ballot-input ties policy to false.
 # Override this in voting method subclasses which allow input ties. (i.e. Schulze)
-my $ballot_input_ties_policy = __PACKAGE__->config("input-ties")
-    // 0;    # only change this for testing purposes
+my $ballot_input_ties_policy = __PACKAGE__->config("input-ties") // 0;    # only change this for testing purposes
 
 sub ballot_input_ties_policy
 {
-    shift
-        ; # discard unneeded $self parameter - it doesn't matter if this is called as a class or object method
+    shift;    # discard unneeded $self parameter - it doesn't matter if this is called as a class or object method
     my $value = shift;
     if ( defined $value ) {
         $ballot_input_ties_policy = ( $value ? 1 : 0 );
@@ -215,8 +213,7 @@ sub _class_or_obj
     my $coo = shift;
     if ( not $coo->isa(__PACKAGE__) ) {
         PrefVote::Core::Exception->throw(
-            description => "_class_or_obj: parameter not in class hierarchy"
-                . ( ( ref $coo ) ? ref $coo : $coo ) );
+            description => "_class_or_obj: parameter not in class hierarchy" . ( ( ref $coo ) ? ref $coo : $coo ) );
     }
     if ( ref $coo ) {
         return $coo;
@@ -301,7 +298,7 @@ sub average_ranking
         return $self->acr_get($choice);
     }
 
-# set defualt result last place case if no data, which can happen if a candidate never appeared on any ballots
+    # set defualt result last place case if no data, which can happen if a candidate never appeared on any ballots
     my $result = $self->choices_count();    # default result is last place
 
     # process average if data exists
@@ -332,10 +329,9 @@ sub gen_choice_hex
 
     # compute how many hex digits are needed for all the choices
     my $count     = $self->choices_count();
-    my $hexdigits = int( log($count) / log(16) )
-        ;    # compute number of hex digits necessary to contain total choices
+    my $hexdigits = int( log($count) / log(16) );    # compute number of hex digits necessary to contain total choices
 
-# initialize lookup tables - we can't count a default value being set yet since this is called from a trigger
+    # initialize lookup tables - we can't count a default value being set yet since this is called from a trigger
     $self->choice_to_index( {} );
     $self->index_to_choice( {} );
 
@@ -360,7 +356,7 @@ sub ballot_to_hex
     foreach my $item (@ballot) {
         my $set_hex = "";
 
- # sort elements within a ballot-input tie group for consistency and enclose them in square brackets
+        # sort elements within a ballot-input tie group for consistency and enclose them in square brackets
         foreach my $set_item ( sort $item->elements() ) {
             if ( $self->c2i_exists($set_item) ) {
                 $set_hex .= $self->c2i_get($set_item);
@@ -401,8 +397,7 @@ sub submit_ballot
 
         # handle ballot-input tie if allowed by this voting method
         if ( not $self->ballot_input_ties_policy() ) {
-            PrefVote::Core::Exception->throw(
-                description => "ballot-input ties not allowed in " . ( ref $self ) );
+            PrefVote::Core::Exception->throw( description => "ballot-input ties not allowed in " . ( ref $self ) );
         }
         my @set_items;
         foreach my $set_item ( split( "/", $item ) ) {
@@ -429,7 +424,7 @@ sub submit_ballot
     # make a string of this ballot combination for lookup
     my $hex_id = $self->ballot_to_hex(@filtered_ballot);
 
-# check if this combination already exists and increment it if it does, if not create/save new combo
+    # check if this combination already exists and increment it if it does, if not create/save new combo
     my $ballot;
     my $action;
     if ( $self->ballots_exists($hex_id) ) {
@@ -447,8 +442,7 @@ sub submit_ballot
     }
     $self->debug_print( "accepting $action: ", $ballot->as_string() );
     $self->{total_ballots}++;
-    return
-        $hex_id; # returns index key, whose absence can be used to detect if an exception was thrown
+    return $hex_id;    # returns index key, whose absence can be used to detect if an exception was thrown
 }
 
 # read YAML input
@@ -498,8 +492,7 @@ sub count
     my $self = shift;
 
     # sort results
-    my @order = sort { fp_cmp( $self->average_ranking($a), $self->average_ranking($b) ) }
-        $self->choices_keys();
+    my @order = sort { fp_cmp( $self->average_ranking($a), $self->average_ranking($b) ) } $self->choices_keys();
     my @winners;
     while ( scalar @order ) {
         my $cand     = shift @order;
@@ -529,9 +522,7 @@ sub determine_method
         my $supported_method = supported_method( $opts->{method} );
         if ( not defined $supported_method ) {
             PrefVote::Core::MethodMismatchException->throw(
-                      description => "specified voting method "
-                    . ( $opts->{method} // "(undef)" )
-                    . " is not supported" );
+                description => "specified voting method " . ( $opts->{method} // "(undef)" ) . " is not supported" );
         }
         $selected_method = $supported_method;
     }
@@ -550,8 +541,7 @@ sub determine_method
                 }
             }
             if ( not defined $method ) {
-                PrefVote::Core::MethodMismatchException->throw(
-                          description => "specified voting method "
+                PrefVote::Core::MethodMismatchException->throw( description => "specified voting method "
                         . "$selected_method not found in allowed options "
                         . join( " ", @methods_allowed ) );
             }
@@ -569,8 +559,7 @@ sub determine_method
         $method = $methods_allowed[0];
     }
     if ( not defined $method ) {
-        PrefVote::Core::Exception->throw(
-            description => "$selected_method not found in input file's voting methods" );
+        PrefVote::Core::Exception->throw( description => "$selected_method not found in input file's voting methods" );
     }
     return $method;
 }
@@ -589,12 +578,11 @@ sub yaml2vote
     my $filepath  = $args[0];
     my @yaml_docs = read_yaml($filepath);
 
-# save the first YAML document as the definition of the vote for entry into a PrefVote::Core structure
+    # save the first YAML document as the definition of the vote for entry into a PrefVote::Core structure
     my $yaml_vote_def = shift @yaml_docs;
     if ( ref $yaml_vote_def ne "HASH" ) {
         PrefVote::Core::Exception->throw(
-            description => "$0: misformatted YAML input: 1st document must be in "
-                . "map/hash format" );
+            description => "$0: misformatted YAML input: 1st document must be in " . "map/hash format" );
     }
     foreach my $key (qw(method params)) {
         if ( not exists $yaml_vote_def->{$key} ) {
@@ -607,8 +595,7 @@ sub yaml2vote
     my $yaml_ballots = shift @yaml_docs;
     if ( ref $yaml_ballots ne "ARRAY" ) {
         PrefVote::Core::Exception->throw(
-            description => "$0: misformatted YAML input: 2nd document "
-                . "must be in list/array format" );
+            description => "$0: misformatted YAML input: 2nd document " . "must be in list/array format" );
     }
 
     # save any additional YAML documents in extra, available for testing
@@ -638,13 +625,11 @@ sub yaml2vote
         }
     }
     ## no critic (Subroutines::ProtectPrivateSubs)
-    PrefVote::Core->_clear_instance()
-        ;    # replace the singleton: toss out previous instance if it exists
+    PrefVote::Core->_clear_instance();    # replace the singleton: toss out previous instance if it exists
     ## use critic (Subroutines::ProtectPrivateSubs)
     my $vote_obj = eval { $class->instance(%$params) };
     if ( not defined $vote_obj ) {
-        PrefVote::Core::Exception->throw(
-            description => "failed to instantiate object of $class: $@" );
+        PrefVote::Core::Exception->throw( description => "failed to instantiate object of $class: $@" );
     }
 
     # ingest ballots from 2nd YAML document
@@ -699,8 +684,8 @@ sub save_c2r
         }
     }
 
-# compute average_choice_rank for candidates where it didn't exist so it will be recorded with YAML results
-# this happens for any candidate where it wasn't computed on demand for tie-breaking
+    # compute average_choice_rank for candidates where it didn't exist so it will be recorded with YAML results
+    # this happens for any candidate where it wasn't computed on demand for tie-breaking
     foreach my $choice ( $self->choices_keys() ) {
         if ( not $self->acr_exists($choice) ) {
             $self->average_ranking($choice);
@@ -744,7 +729,7 @@ sub _result_node
         return $result;
     }
 
-# We got something else? Instead of throwing an exception, return it raw. YAML will tag whatever it is.
+    # We got something else? Instead of throwing an exception, return it raw. YAML will tag whatever it is.
     return $node;
 }
 
@@ -758,8 +743,7 @@ sub result_yaml
     my $result_out = {};
     foreach my $key ( keys %$self ) {
         next
-            if $key eq
-            "testspec";    # omit any current testspec since we use this to build a future testspec
+            if $key eq "testspec";    # omit any current testspec since we use this to build a future testspec
         $result_out->{$key} = _result_node( $self->{$key} );
     }
     $result_out->{timestamp} = localtime;
@@ -791,8 +775,7 @@ sub format_output
 
     # run output handler
     require PrefVote::Core::Output;
-    PrefVote::Core::Output::do_output( $format, ref $self,
-        [ YAML::XS::Dump( $self->result_yaml() ) ] );
+    PrefVote::Core::Output::do_output( $format, ref $self, [ YAML::XS::Dump( $self->result_yaml() ) ] );
     return;
 }
 

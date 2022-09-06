@@ -58,8 +58,7 @@ sub do_counting_table
             }
 
             # add margin of victory and win/lose icon
-            my $margin = ( $round->{pair}{$i}{$j}{preference} // 0 ) -
-                ( $round->{pair}{$j}{$i}{preference} // 0 );
+            my $margin = ( $round->{pair}{$i}{$j}{preference} // 0 ) - ( $round->{pair}{$j}{$i}{preference} // 0 );
             my $icon =
                 ( $margin == 0 ) ? PrefVote::Core::Output::symbol("tie")
                 : (

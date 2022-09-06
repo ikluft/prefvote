@@ -37,8 +37,7 @@ PrefVote::Core::TestSpec->register_blackbox_spec( __PACKAGE__,
     spec   => \%blackbox_spec,
     parent => 'PrefVote::Core'
 );
-__PACKAGE__->ballot_input_ties_policy(1)
-    ;    # set flag for Core: this class allows input ballots to set A/B ties
+__PACKAGE__->ballot_input_ties_policy(1);    # set flag for Core: this class allows input ballots to set A/B ties
 
 # list of names of winners in order by place, ties shown by an ArrayRef to the tied candidates
 has winners => (
@@ -125,7 +124,7 @@ sub count
             }
         } else {
 
-# no result in this round? A new round can't have a different result without changing choices. Bail out.
+            # no result in this round? A new round can't have a different result without changing choices. Bail out.
             $self->debug_print("no result this round - bail out\n");
             last;
         }

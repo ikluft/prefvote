@@ -84,8 +84,8 @@ sub init_round_candidates
     # throw exception if there is no candidate list and no previous round link
     if ( $self->candidates_empty() and ( not exists $self->{prev} ) ) {
 
-# The object wasn't provided with enough info to get started.
-# This needs new() to get a candidate list on the first round and a link to previous rounds after that.
+        # The object wasn't provided with enough info to get started.
+        # This needs new() to get a candidate list on the first round and a link to previous rounds after that.
         PrefVote::Core::Round::PrevMissingException->throw(
             {
                 classname   => __PACKAGE__,
@@ -94,18 +94,17 @@ sub init_round_candidates
         );
     }
 
-# collect candidates from previous round for this round
-# this occurs every round except the first, when the initial candidate list must be established by new()
+    # collect candidates from previous round for this round
+    # this occurs every round except the first, when the initial candidate list must be established by new()
     if ( exists $self->{prev} ) {
         my $prev = $self->{prev};
     CAND_LOOP: foreach my $cand_key ( $prev->candidates_all() ) {
 
-# candidate is available for current round's list if they didn't win or get eliminated in previous round
+            # candidate is available for current round's list if they didn't win or get eliminated in previous round
             if ( exists $prev->{result} ) {
                 foreach my $result_cand ( $prev->{result}->name_all() ) {
                     if ( $result_cand eq $cand_key ) {
-                        next CAND_LOOP
-                            ; # found in previous round's results - skip adding candidate to current round
+                        next CAND_LOOP;    # found in previous round's results - skip adding candidate to current round
                     }
                 }
             }
@@ -113,8 +112,7 @@ sub init_round_candidates
             # add candidate to the current round
             $self->candidates_push($cand_key);
         }
-        $self->debug_print(
-            "init_round_candidates: candidates " . $self->candidates_join(" ") . "\n" );
+        $self->debug_print( "init_round_candidates: candidates " . $self->candidates_join(" ") . "\n" );
     }
 
     return;
@@ -172,15 +170,13 @@ sub set_result
             {
                 classname   => __PACKAGE__,
                 attribute   => 'name',
-                description => "invalid candidate name ($opts{type}): "
-                    . join( " ", @invalid_candidates ),
+                description => "invalid candidate name ($opts{type}): " . join( " ", @invalid_candidates ),
             }
         );
     }
 
     # instantiate and save result object
-    $self->result(
-        PrefVote::Core::Result->new( type => $opts{type}, name => set( @{ $opts{name} } ) ) );
+    $self->result( PrefVote::Core::Result->new( type => $opts{type}, name => set( @{ $opts{name} } ) ) );
     return;
 }
 

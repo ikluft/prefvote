@@ -74,7 +74,8 @@ my $set_type = Type::Tiny::Class->new(
     },
 );
 $set_type->coercion->add_type_coercions(
-    Undef,    sub { return set() }, Value, sub { return set($_) },
+    Undef,    sub { return set() },
+    Value,    sub { return set($_) },
     ArrayRef, sub { return set(@$_) },
 );
 

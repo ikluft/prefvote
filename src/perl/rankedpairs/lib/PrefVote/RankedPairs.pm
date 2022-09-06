@@ -129,10 +129,9 @@ sub add_preference
 sub get_preference
 {
     my ( $self, $cand_i, $cand_j ) = @_;
-    return 0 if not exists $self->{pair}{$cand_i};             # use zero if the node doesn't exist
-    return 0 if not exists $self->{pair}{$cand_i}{$cand_j};    # use zero if the node doesn't exist
-    return $self->{pair}{$cand_i}{$cand_j}->preference()
-        // 0;    # return preference, or zero if the node didn't have it
+    return 0 if not exists $self->{pair}{$cand_i};               # use zero if the node doesn't exist
+    return 0 if not exists $self->{pair}{$cand_i}{$cand_j};      # use zero if the node doesn't exist
+    return $self->{pair}{$cand_i}{$cand_j}->preference() // 0;   # return preference, or zero if the node didn't have it
 }
 
 # set a candidate-pair margin of victory (mov) in matrix entry
@@ -246,8 +245,8 @@ sub tally_preferences
             }
         }
 
-     # all choices omitted from the ballot (unranked) count as less-preferred than all on the ballot
-     # no comparison is made between unranked choices - the voter didn't provide data on that
+        # all choices omitted from the ballot (unranked) count as less-preferred than all on the ballot
+        # no comparison is made between unranked choices - the voter didn't provide data on that
         my @included = keys %seen_on_ballot;
         my @omitted  = grep { not exists $seen_on_ballot{$_} } @choices;
         foreach my $in (@included) {
@@ -282,8 +281,7 @@ sub sort_pairs
             if ( $pref_ij == $pref_ji ) {
 
                 # tied candidates ordered alphabetically for consistent results in testing
-                $self->majority_push(
-                    PrefVote::RankedPairs::Majority->new( cand => [ sort @cand ] ) );
+                $self->majority_push( PrefVote::RankedPairs::Majority->new( cand => [ sort @cand ] ) );
                 next;
             }
 
@@ -291,8 +289,7 @@ sub sort_pairs
             if ( $pref_ij < $pref_ji ) {
 
                 # candidates in reverse order for j > i
-                $self->majority_push(
-                    PrefVote::RankedPairs::Majority->new( cand => [ reverse @cand ] ) );
+                $self->majority_push( PrefVote::RankedPairs::Majority->new( cand => [ reverse @cand ] ) );
                 next;
             }
 
@@ -357,7 +354,7 @@ sub is_conflict
         return 1;
     }
 
-# do a depth-first search of the graph to detect a path from cand2 to cand1, which would cause a cycle
+    # do a depth-first search of the graph to detect a path from cand2 to cand1, which would cause a cycle
     if ( $self->depth_first_search( target => $cand1, node => $cand2, visited => {} ) ) {
         $self->debug_print("is_conflict($cand1, $cand2) -> true (cycle detected)");
         return 1;
@@ -408,8 +405,7 @@ sub cmp_choice
     }
 
     # 2nd comparison: choice/candidate's average ballot placement in ascending order
-    my $tiebreak_disabled = $self->config("no-tiebreak")
-        // 0;    # config flag to disable tie-breaking by avg rank
+    my $tiebreak_disabled = $self->config("no-tiebreak") // 0;    # config flag to disable tie-breaking by avg rank
     if ( not $tiebreak_disabled ) {
         my $place1 = $self->average_ranking($cand1);
         my $place2 = $self->average_ranking($cand2);
@@ -427,8 +423,7 @@ sub graph_to_order
     my $self = shift;
 
     # sort list of choices to begin graph traversal
-    my @choices = sort { $self->cmp_choice( $a, $b ) }
-        $self->choices_keys();    # list of candidates ordered by cmp_choice
+    my @choices = sort { $self->cmp_choice( $a, $b ) } $self->choices_keys(); # list of candidates ordered by cmp_choice
 
     # detect ties and build result rankings
     while ( scalar @choices ) {

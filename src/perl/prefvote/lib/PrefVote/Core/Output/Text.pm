@@ -28,10 +28,7 @@ sub do_header
     my $seats         = $result_data->{seats};
     my $total_ballots = $result_data->{total_ballots};
     say "Results: " . $result_data->{name};
-    say "$seats seat"
-        . ( $seats > 1 ? "s" : "" )
-        . " available "
-        . "\N{VERTICAL LINE} $total_ballots ballots";
+    say "$seats seat" . ( $seats > 1 ? "s" : "" ) . " available " . "\N{VERTICAL LINE} $total_ballots ballots";
     return;
 }
 

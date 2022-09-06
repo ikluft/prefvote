@@ -72,7 +72,7 @@ sub cmp_pair
         return $mov1 <=> $mov2;
     }
 
-   # if margin of victory was equal, secondary comparison is for lesser opposition (ascending order)
+    # if margin of victory was equal, secondary comparison is for lesser opposition (ascending order)
     my $oppose1 = $rp_obj->get_preference( reverse @$pair1 );
     my $oppose2 = $rp_obj->get_preference( reverse @$pair2 );
     return $oppose2 <=> $oppose1;

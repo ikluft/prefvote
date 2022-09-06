@@ -146,8 +146,7 @@ sub enforce_ballot_item_ties
         PrefVote::Core::InternalDataException->throw(
             classname   => __PACKAGE__,
             attribute   => "ballot item",
-            description =>
-"ballot item set has more than one item in voting method that doesn't support input ties"
+            description => "ballot item set has more than one item in voting method that doesn't support input ties"
         );
     }
     return;

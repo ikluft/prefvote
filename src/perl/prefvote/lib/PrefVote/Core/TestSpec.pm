@@ -122,7 +122,7 @@ sub check
         objpath => [],
         parent  => undef
     );
-    $self->testroot($root_node);  # save test tree for later inspection/troubleshooting if necessary
+    $self->testroot($root_node);    # save test tree for later inspection/troubleshooting if necessary
     __PACKAGE__->debug_print( "root node: " . Dumper($root_node) );
     return $root_node->check();
 }

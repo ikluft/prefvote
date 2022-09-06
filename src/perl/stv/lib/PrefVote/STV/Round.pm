@@ -91,8 +91,7 @@ sub init_candidate_tally
     foreach my $cand_name ( @{ $self->{candidates} } ) {
         $self->tally_set( $cand_name, PrefVote::STV::Tally->new( name => $cand_name ) );
     }
-    $self->debug_print(
-        "init_candidate_tally: tally structs " . join( " ", $self->tally_keys() ) . "\n" );
+    $self->debug_print( "init_candidate_tally: tally structs " . join( " ", $self->tally_keys() ) . "\n" );
     return;
 }
 
@@ -125,8 +124,8 @@ sub sort_candidates
     my ( $self, $sort_fn ) = @_;
     if ( not defined $sort_fn ) {
 
-# default sorting function is descending order by vote tally
-# alternative sort functions are for testing (i.e. alphabetical sort allows testing without using votes)
+        # default sorting function is descending order by vote tally
+        # alternative sort functions are for testing (i.e. alphabetical sort allows testing without using votes)
         my $tally_ref = $self->tally();
         $sort_fn = sub {
 
@@ -145,8 +144,7 @@ sub sort_candidates
             {
                 classname   => __PACKAGE__,
                 attribute   => 'sort_fn',
-                description => "sorting function parameter is not a CODE reference: got "
-                    . ( ref $sort_fn ),
+                description => "sorting function parameter is not a CODE reference: got " . ( ref $sort_fn ),
             }
         );
     }

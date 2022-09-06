@@ -97,10 +97,9 @@ sub add_preference
 sub get_preference
 {
     my ( $self, $cand_i, $cand_j ) = @_;
-    return 0 if not exists $self->{pair}{$cand_i};             # use zero if the node doesn't exist
-    return 0 if not exists $self->{pair}{$cand_i}{$cand_j};    # use zero if the node doesn't exist
-    return $self->{pair}{$cand_i}{$cand_j}->preference()
-        // 0;    # return preference, or zero if the node didn't have it
+    return 0 if not exists $self->{pair}{$cand_i};               # use zero if the node doesn't exist
+    return 0 if not exists $self->{pair}{$cand_i}{$cand_j};      # use zero if the node doesn't exist
+    return $self->{pair}{$cand_i}{$cand_j}->preference() // 0;   # return preference, or zero if the node didn't have it
 }
 
 # set predecessor in matrix entry
@@ -145,7 +144,7 @@ sub get_strength
 {
     my ( $self, $cand_i, $cand_j ) = @_;
 
-# make sure the node exists even on read because we'll assign default (preference[i,j]-preference[j,i]) if needed
+    # make sure the node exists even on read because we'll assign default (preference[i,j]-preference[j,i]) if needed
     $self->make_pair_node( $cand_i, $cand_j );
 
     # get the strength value
@@ -153,8 +152,7 @@ sub get_strength
 
     # if it wasn't defined, assign the default value preference[i,j]-preference[j,i]
     if ( not defined $strength ) {
-        $strength =
-            $self->get_preference( $cand_i, $cand_j ) - $self->get_preference( $cand_j, $cand_i );
+        $strength = $self->get_preference( $cand_i, $cand_j ) - $self->get_preference( $cand_j, $cand_i );
         $self->{pair}{$cand_i}{$cand_j}->strength($strength);
     }
     return $strength;
@@ -172,10 +170,9 @@ sub set_win_order
 sub get_win_order
 {
     my ( $self, $cand_i, $cand_j ) = @_;
-    return 0 if not exists $self->{pair}{$cand_i};             # use zero if the node doesn't exist
-    return 0 if not exists $self->{pair}{$cand_i}{$cand_j};    # use zero if the node doesn't exist
-    return $self->{pair}{$cand_i}{$cand_j}->win_order()
-        // 0;    # return win_order, or zero if the node didn't have it
+    return 0 if not exists $self->{pair}{$cand_i};               # use zero if the node doesn't exist
+    return 0 if not exists $self->{pair}{$cand_i}{$cand_j};      # use zero if the node doesn't exist
+    return $self->{pair}{$cand_i}{$cand_j}->win_order() // 0;    # return win_order, or zero if the node didn't have it
 }
 
 # return a ballot item as a list, whether it was a single scalar or a tie-group set
@@ -207,8 +204,7 @@ sub tally_preferences
                 next if $cand1 eq $cand2;
                 next if not exists $prev->{pair}{$cand1}{$cand2};
                 if ( exists $prev->{pair}{$cand1}{$cand2}{preference} ) {
-                    $self->add_preference( $cand1, $cand2,
-                        $prev->{pair}{$cand1}{$cand2}{preference} );
+                    $self->add_preference( $cand1, $cand2, $prev->{pair}{$cand1}{$cand2}{preference} );
                 }
             }
         }
@@ -243,8 +239,8 @@ sub tally_preferences
             }
         }
 
-     # all choices omitted from the ballot (unranked) count as less-preferred than all on the ballot
-     # no comparison is made between unranked choices - the voter didn't provide data on that
+        # all choices omitted from the ballot (unranked) count as less-preferred than all on the ballot
+        # no comparison is made between unranked choices - the voter didn't provide data on that
         my @included = keys %seen_on_ballot;
         my @omitted  = grep { not exists $seen_on_ballot{$_} } @choices;
         foreach my $in (@included) {
@@ -319,20 +315,20 @@ sub compute_strongest_paths
 {
     my $self = shift;
 
-# from Schulze algorithm definition 2.3.1:
-# Stage 2 calculation of the strengths of the strongest paths
-# (lack of comments in the pseudocode is as shown in the paper - see below where I added some in the code)
-# for i : = 1 to C
-#   for j : = 1 to C
-#       if ( i ≠ j ) then
-#           for k : = 1 to C
-#               if ( i ≠ k ) then
-#                   if ( j ≠ k ) then
-#                       if ( PD[j,k] <D minD { PD[j,i], PD[i,k] } ) then
-#                           PD[j,k] : = minD { PD[j,i], PD[i,k] }
-#                           pred[j,k] : = pred[i,k]
+    # from Schulze algorithm definition 2.3.1:
+    # Stage 2 calculation of the strengths of the strongest paths
+    # (lack of comments in the pseudocode is as shown in the paper - see below where I added some in the code)
+    # for i : = 1 to C
+    #   for j : = 1 to C
+    #       if ( i ≠ j ) then
+    #           for k : = 1 to C
+    #               if ( i ≠ k ) then
+    #                   if ( j ≠ k ) then
+    #                       if ( PD[j,k] <D minD { PD[j,i], PD[i,k] } ) then
+    #                           PD[j,k] : = minD { PD[j,i], PD[i,k] }
+    #                           pred[j,k] : = pred[i,k]
 
-# nested loops i,j,k through candidates/choices to check if P[j,k] has a lower minimum than P[j,i] & P[i,k]
+    # nested loops i,j,k through candidates/choices to check if P[j,k] has a lower minimum than P[j,i] & P[i,k]
     my @candidates = $self->candidates_all();    # list of candidates in this round
     foreach my $i (@candidates) {
         foreach my $j (@candidates) {
@@ -341,11 +337,10 @@ sub compute_strongest_paths
                 next if $i eq $k or $j eq $k;
 
                 # find the minimum strength link on the strongest path from j to i to k
-                my $strength_ik = $self->get_strength( $i, $k );
-                my $strength_ji = $self->get_strength( $j, $i );
-                my $strength_jk = $self->get_strength( $j, $k );
-                my $min_strength_ji_ik =
-                    ( $strength_ji < $strength_ik ) ? $strength_ji : $strength_ik;
+                my $strength_ik        = $self->get_strength( $i, $k );
+                my $strength_ji        = $self->get_strength( $j, $i );
+                my $strength_jk        = $self->get_strength( $j, $k );
+                my $min_strength_ji_ik = ( $strength_ji < $strength_ik ) ? $strength_ji : $strength_ik;
                 if ( $strength_jk < $min_strength_ji_ik ) {
                     $self->set_strength( $j, $k, $min_strength_ji_ik );
                     $self->set_predecessor( $j, $k, $self->get_predecessor( $i, $k ) );
@@ -364,23 +359,22 @@ sub compute_potential_winners
     my $self = shift;
     $self->debug_print("compute_potential_winners: begin");
 
-# Schulze algorithm definition of Stage 3 calculation of the binary relation 𝚶 and the set of potential winners:
-# (lack of comments in the pseudocode is as shown in the paper - see below where I added some in the code)
-#   for i : = 1 to C
-#       winner[i] : = true
-#       for j : = 1 to C
-#           if ( i ≠ j ) then
-#               if ( PD[j,i] >D P D[i,j] ) then
-#                   ji ∈ 𝚶
-#                   winner[i] : = false
-#               else
-#                   ji ∉ 𝚶
+    # Schulze algorithm definition of Stage 3 calculation of the binary relation 𝚶 and the set of potential winners:
+    # (lack of comments in the pseudocode is as shown in the paper - see below where I added some in the code)
+    #   for i : = 1 to C
+    #       winner[i] : = true
+    #       for j : = 1 to C
+    #           if ( i ≠ j ) then
+    #               if ( PD[j,i] >D P D[i,j] ) then
+    #                   ji ∈ 𝚶
+    #                   winner[i] : = false
+    #               else
+    #                   ji ∉ 𝚶
 
-# nested loops i,j through candidates/choices eliminating candidates from potential winners if beaten by anyone
+    # nested loops i,j through candidates/choices eliminating candidates from potential winners if beaten by anyone
     my @candidates = $self->candidates_all();    # list of candidates in this round
     foreach my $i (@candidates) {
-        my $unbeaten =
-            1;    # assume each candidate is a winner until we find any candidate who beats them
+        my $unbeaten = 1;    # assume each candidate is a winner until we find any candidate who beats them
         foreach my $j (@candidates) {
             next if $i eq $j;
 
@@ -426,10 +420,8 @@ sub get_forbidden
     # order names in index to recognize forbidden links either direction
     my $forbid_index = ( $cand_m lt $cand_n ) ? "$cand_m-$cand_n" : "$cand_n-$cand_m";
     return 0
-        if not exists $self->{pair}{$cand1}{$cand2}{forbidden}
-        ;    # just use zero if the node doesn't exist
-    return $self->{pair}{$cand1}{$cand2}->forbidden_contains($forbid_index)
-        ;    # true if link forbidden for this pair
+        if not exists $self->{pair}{$cand1}{$cand2}{forbidden};    # just use zero if the node doesn't exist
+    return $self->{pair}{$cand1}{$cand2}->forbidden_contains($forbid_index);    # true if link forbidden for this pair
 }
 
 sub set_forbidden
@@ -494,16 +486,14 @@ sub break_tie
                 foreach my $k (@candidates) {
                     next if $i eq $k or $j eq $k;
 
-               # find the minimum strength non-forbidden link on the strongest path from j to i to k
-                    my $strength_ik = $self->get_strength( $i, $k );
-                    my $strength_ji = $self->get_strength( $j, $i );
-                    my $strength_jk = $self->get_strength( $j, $k );
-                    my $min_strength_ji_ik =
-                        ( $strength_ji < $strength_ik ) ? $strength_ji : $strength_ik;
+                    # find the minimum strength non-forbidden link on the strongest path from j to i to k
+                    my $strength_ik        = $self->get_strength( $i, $k );
+                    my $strength_ji        = $self->get_strength( $j, $i );
+                    my $strength_jk        = $self->get_strength( $j, $k );
+                    my $min_strength_ji_ik = ( $strength_ji < $strength_ik ) ? $strength_ji : $strength_ik;
                     if ( $strength_jk < $min_strength_ji_ik ) {
                         $self->set_strength( $j, $k, $min_strength_ji_ik );
-                        $self->debug_print(
-                            "brak_time($m-$n): min-strength $j-$k " . "=> $min_strength_ji_ik" );
+                        $self->debug_print( "brak_time($m-$n): min-strength $j-$k " . "=> $min_strength_ji_ik" );
                     }
                 }
             }
@@ -552,58 +542,58 @@ sub final_rank_links
 {
     my $self = shift;
 
-# defintion of Stage 4 TBRL from Schulze 5.1
-# (lack of comments in the pseudocode is as shown in the paper - see below where I added some in the code)
-#   xy : = min σ { ij | i,j ∈ {1,...,C}, i ≠ j }
-#   for m : = 1 to C–1
-#       for n : = m+1 to C
-#           if ( Pσ [m,n] ≈σ Pσ[n,m] ) then
-#               Qσ [m,n] : = Pσ[m,n]
-#               for i : = 1 to C
-#                   for j : = 1 to C
-#                       if ( i ≠ j ) then
-#                           forbidden[i,j] : = false
-#               bool1 : = false
-#               while ( bool1 = false )
-#                   for i : = 1 to C
-#                       for j : = 1 to C
-#                           if ( i ≠ j ) then
-#                               if ( Qσ[m,n] ≈σ ij ) then
-#                                   forbidden[i,j] : = true
-#                   for i : = 1 to C
-#                       for j : = 1 to C
-#                           if ( i ≠ j ) then
-#                               if ( forbidden[i,j] = true ) then
-#                                   Qσ[i,j] : = xy
-#                               else
-#                                   Qσ[i,j] : = ij
-#                   for i : = 1 to C
-#                       for j : = 1 to C
-#                           if ( i ≠ j ) then
-#                               for k : = 1 to C
-#                                   if ( i ≠ k ) then
-#                                       if ( j ≠ k ) then
-#                                           if ( Qσ[j,k] <σ minσ { Qσ[j,i], Qσ[i,k] } ) then
-#                                               Qσ[j,k] : = minσ { Qσ[j,i], Qσ[i,k] }
-#                   if ( Qσ[m,n] >σ Qσ[n,m] ) then
-#                       𝚶final(σ) : = 𝚶final(σ) + {mn}
-#                       𝐒final(σ) : = 𝐒final(σ) \ {n}
-#                       bool1 : = true
-#                   else
-#                       if ( Qσ[m,n] <σ Qσ[n,m] ) then
-#                           𝚶final(σ) : = 𝚶final(σ) + {nm}
-#                           𝐒final(σ) : = 𝐒final(σ) \ {m}
-#                           bool1 : = true
-#                       else
-#                       if ( Qσ[m,n] = xy and Qσ [n,m] = xy ) then
-#                           bool1 : = true
+    # defintion of Stage 4 TBRL from Schulze 5.1
+    # (lack of comments in the pseudocode is as shown in the paper - see below where I added some in the code)
+    #   xy : = min σ { ij | i,j ∈ {1,...,C}, i ≠ j }
+    #   for m : = 1 to C–1
+    #       for n : = m+1 to C
+    #           if ( Pσ [m,n] ≈σ Pσ[n,m] ) then
+    #               Qσ [m,n] : = Pσ[m,n]
+    #               for i : = 1 to C
+    #                   for j : = 1 to C
+    #                       if ( i ≠ j ) then
+    #                           forbidden[i,j] : = false
+    #               bool1 : = false
+    #               while ( bool1 = false )
+    #                   for i : = 1 to C
+    #                       for j : = 1 to C
+    #                           if ( i ≠ j ) then
+    #                               if ( Qσ[m,n] ≈σ ij ) then
+    #                                   forbidden[i,j] : = true
+    #                   for i : = 1 to C
+    #                       for j : = 1 to C
+    #                           if ( i ≠ j ) then
+    #                               if ( forbidden[i,j] = true ) then
+    #                                   Qσ[i,j] : = xy
+    #                               else
+    #                                   Qσ[i,j] : = ij
+    #                   for i : = 1 to C
+    #                       for j : = 1 to C
+    #                           if ( i ≠ j ) then
+    #                               for k : = 1 to C
+    #                                   if ( i ≠ k ) then
+    #                                       if ( j ≠ k ) then
+    #                                           if ( Qσ[j,k] <σ minσ { Qσ[j,i], Qσ[i,k] } ) then
+    #                                               Qσ[j,k] : = minσ { Qσ[j,i], Qσ[i,k] }
+    #                   if ( Qσ[m,n] >σ Qσ[n,m] ) then
+    #                       𝚶final(σ) : = 𝚶final(σ) + {mn}
+    #                       𝐒final(σ) : = 𝐒final(σ) \ {n}
+    #                       bool1 : = true
+    #                   else
+    #                       if ( Qσ[m,n] <σ Qσ[n,m] ) then
+    #                           𝚶final(σ) : = 𝚶final(σ) + {nm}
+    #                           𝐒final(σ) : = 𝐒final(σ) \ {m}
+    #                           bool1 : = true
+    #                       else
+    #                       if ( Qσ[m,n] = xy and Qσ [n,m] = xy ) then
+    #                           bool1 : = true
 
-# note: lowest link value $minimum_link was computed for a baseline in compute_potential_winners() loop
-# and saved in a file-scoped variable
-# ($minimum_link is called "xy" in the paper's pseudocode)
+    # note: lowest link value $minimum_link was computed for a baseline in compute_potential_winners() loop
+    # and saved in a file-scoped variable
+    # ($minimum_link is called "xy" in the paper's pseudocode)
 
-# nested loops m,n through candidates/choices looking for ties
-# attempt to break ties by marking cloned links in tied paths as forbidden and recomputing those strongest paths
+    # nested loops m,n through candidates/choices looking for ties
+    # attempt to break ties by marking cloned links in tied paths as forbidden and recomputing those strongest paths
     my @candidates   = $self->candidates_all();    # list of candidates in this round
     my $changes_made = 0;
     for ( my $m_index = 0 ; $m_index < ( scalar @candidates ) - 1 ; $m_index++ ) {
@@ -614,9 +604,8 @@ sub final_rank_links
             my $path_nm = $self->get_strength( $n, $m );
             if ( $path_mn == $path_nm ) {
 
- # we found a tie... these choices/candidates are probably so-called "clones", similar to each other
-                $self->debug_print(
-                    "final_rank_links: tie found between $m and $n in round " . $self->number() );
+                # we found a tie... these choices/candidates are probably so-called "clones", similar to each other
+                $self->debug_print( "final_rank_links: tie found between $m and $n in round " . $self->number() );
                 $changes_made += $self->break_tie( $m, $n );
             }
         }
@@ -637,15 +626,13 @@ sub narrow_winners
     my $self        = shift;
     my $schulze_ref = shift;    # ref to PrefVote::Schulze object
 
-# skip step if configuration flag disables PrefVotes's tie-breaking by average rank to strictly follow algorithm
-    my $tiebreak_disabled = $self->config("no-tiebreak")
-        // 0;                   # config flag to disable tie-breaking by avg rank
+    # skip step if configuration flag disables PrefVotes's tie-breaking by average rank to strictly follow algorithm
+    my $tiebreak_disabled = $self->config("no-tiebreak") // 0;    # config flag to disable tie-breaking by avg rank
     return if $tiebreak_disabled;
 
     # sort winners by average ballot placement order
     my @winning_group =
-        sort { fp_cmp( $schulze_ref->average_ranking($a), $schulze_ref->average_ranking($b) ) }
-        $self->win_flag_keys();
+        sort { fp_cmp( $schulze_ref->average_ranking($a), $schulze_ref->average_ranking($b) ) } $self->win_flag_keys();
 
     # clear win_flag hash pending re-computation
     $self->win_flag_clear();
@@ -656,12 +643,7 @@ sub narrow_winners
 
     # set win_flag for any choice in @winning_group equal to leader (using fp_equal comparison)
     foreach my $cand (@winning_group) {
-        if (
-            fp_equal(
-                $schulze_ref->average_ranking($leader), $schulze_ref->average_ranking($cand)
-            )
-            )
-        {
+        if ( fp_equal( $schulze_ref->average_ranking($leader), $schulze_ref->average_ranking($cand) ) ) {
             $self->win_flag_set( $cand, 1 );
         }
     }
@@ -674,19 +656,19 @@ sub do_computation
     my $self        = shift;
     my $schulze_ref = shift;    # ref to PrefVote::Schulze object
 
-# preparation: convert ballot preferences to candidate-pair preference totals, or obtain them from previous round
-# This needs the $schulze_ref in order to access ballot data in the first round.
+    # preparation: convert ballot preferences to candidate-pair preference totals, or obtain them from previous round
+    # This needs the $schulze_ref in order to access ballot data in the first round.
     $self->debug_print("do_computation: tally");
     $self->tally_preferences($schulze_ref);
 
-# Stage 1: initialization loop is replaced by lazy assignments upon read of undefined candidate-pair
-# matrix values in get_predecessor() and get_strength().
+    # Stage 1: initialization loop is replaced by lazy assignments upon read of undefined candidate-pair
+    # matrix values in get_predecessor() and get_strength().
 
     # Stage 2: calculation of the strengths of the strongest paths (from Schulze 2.3.1)
     $self->debug_print("do_computation: compute paths");
     $self->compute_strongest_paths();
 
-# Stage 3: calculation of the binary relation 𝚶 and the set of potential winners (from Schulze 2.3.1)
+    # Stage 3: calculation of the binary relation 𝚶 and the set of potential winners (from Schulze 2.3.1)
     $self->debug_print("do_computation: compute potential winners");
     $self->compute_potential_winners();
 
@@ -697,13 +679,13 @@ sub do_computation
         $self->final_rank_links();
     }
 
-# Stage 5: tie-breaking by average ballot placement (not in Schulze definition; PrefVote adds this to all methods)
+    # Stage 5: tie-breaking by average ballot placement (not in Schulze definition; PrefVote adds this to all methods)
     if ( scalar $self->win_flag_keys() != 1 ) {
         $self->debug_print("do_computation: supplemental tie-breaking");
         $self->narrow_winners($schulze_ref);
     }
 
-# set round winner(s) from candidate(s) with win_flag set - more than one indicates a tie for this place
+    # set round winner(s) from candidate(s) with win_flag set - more than one indicates a tie for this place
     $self->debug_print( "do_computation: set result " . join( " ", $self->win_flag_keys() ) );
     $self->set_result( type => "winner", name => [ $self->win_flag_keys() ] );
 
