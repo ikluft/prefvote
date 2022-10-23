@@ -39,3 +39,14 @@ inc/
 
 # vim/gvim swap files
 .*.swp
+
+# omit test builds
+prefvote/PrefVote-*.tar.gz
+prefvote/PrefVote-*/
+rankedpairs/PrefVote-RankedPairs-*.tar.gz
+rankedpairs/PrefVote-RankedPairs-*/
+schulze/PrefVote-Schulze-*.tar.gz
+schulze/PrefVote-Schulze-*/
+stv/PrefVote-STV-*.tar.gz
+stv/PrefVote-STV-*/
+
