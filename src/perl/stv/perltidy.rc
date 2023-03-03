@@ -7,3 +7,5 @@
 --indent-block-comments
 --static-block-comments
 --nooutdent-long-lines
+--noadd-semicolons
+--delete-semicolons
