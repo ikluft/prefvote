@@ -31,7 +31,7 @@ sub generate_html_table
     my $rows = $opts{rows};
 
     # table heading
-    say "<table>";
+    say '<table border=1>';
 
     # generate header from first row
     if ( $opts{header_row} // 0 ) {
@@ -75,9 +75,9 @@ sub do_header
         . htmlify($seats) . " seat"
         . ( $seats > 1 ? "s" : "" )
         . " available "
-        . "&VerticalBar; "
+        . "\N{BLACK CIRCLE} "
         . htmlify($total_ballots)
-        . " ballots</p>";
+        . " ballots processed</p>";
     return;
 }
 

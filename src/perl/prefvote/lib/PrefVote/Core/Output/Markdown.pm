@@ -33,7 +33,7 @@ sub generate_md_table
     foreach my $row (@$rows) {
         say "| " . join( " | ", @$row ) . " |";
     }
-    say;
+    say "";
     return;
 }
 
@@ -47,7 +47,7 @@ sub do_header
     say $title;
     say "-" x length $title;
     say "$seats seat" . ( $seats > 1 ? "s" : "" ) . " available " . "\N{VERTICAL LINE} $total_ballots ballots";
-    say;
+    say "";
     return;
 }
 
