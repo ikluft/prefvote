@@ -1,11 +1,11 @@
 ---
-name: Perl
+name: Perl-Core
 # yamllint disable rule:line-length
 on:  # yamllint disable-line rule:truthy
   push:
-    paths: ['src/perl/rankedpairs/**', '.github/workflows/test-perl-rankedpairs.yml']
+    paths: ['src/perl/prefvote/**', '.github/workflows/test-perl-core.yml']
   pull_request:
-    paths: ['src/perl/rankedpairs/**', '.github/workflows/test-perl-rankedpairs.yml']
+    paths: ['src/perl/prefvote/**', '.github/workflows/test-perl-core.yml']
   workflow_dispatch:
   # schedule:
   #   - cron: '42 5 * * *'
@@ -33,16 +33,14 @@ jobs:
           perl -v
       - name: Install Dist::Zilla
         run: |
-          cd src/perl/rankedpairs
           cpanm -v
-          cpanm --dev --notest ExtUtils::MakeMaker~'>= 7.65_02'  # use dev release with fix for spurious errors
+          cpanm --dev --notest ExtUtils::MakeMaker
           cpanm --notest Dist::Zilla Test::Pod Pod::Markdown
           dzil --version
       - name: Install Modules
         run: |
-          cd src/perl/rankedpairs
-          dzil authordeps --missing | cpanm --notest
-          dzil listdeps --develop --missing | cpanm --notest
+          cd src/perl
+          for subdir in prefvote stv schulze rankedpairs; do echo "=== deps $subdir"; dzil authordeps --missing | cpanm --notest; dzil listdeps --missing | grep -v PrefVote | cpanm --notest; done
       - name: Show Errors on Windows
         if: ${{ failure() && startsWith( matrix.runner, 'windows-')}}
         run: |
@@ -59,5 +57,5 @@ jobs:
            cat  /Users/runner/.cpanm/work/*/build.log
       - name: Run tests
         run: |
-          cd src/perl/rankedpairs
-          dzil test --release
+          cd src/perl
+          PERL5LIB="$PERL5LIB:$PWD/prefvote/lib" for subdir in prefvote stv schulze rankedpairs; do echo "=== test $subdir"; dzil test --release; done
