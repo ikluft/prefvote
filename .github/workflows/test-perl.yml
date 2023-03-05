@@ -1,5 +1,5 @@
 ---
-name: Perl-Core
+name: Perl
 # yamllint disable rule:line-length
 on:  # yamllint disable-line rule:truthy
   push:
