@@ -14,7 +14,7 @@ use PrefVote::Core::TestSpec;
 #
 use Moo;
 use MooX::TypeTiny;
-use PrefVote::Core::Types qw(Set);
+use PrefVote::Core::Set qw(Set);
 use Types::Standard qw(Bool Str Int StrictNum ArrayRef HashRef InstanceOf);
 extends 'PrefVote';
 

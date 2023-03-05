@@ -8,9 +8,6 @@ use Test::More;
 my @classes = qw(
         PrefVote::STV
         PrefVote::STV::Output
-        PrefVote::STV::Output::HTML
-        PrefVote::STV::Output::Markdown
-        PrefVote::STV::Output::Text
         PrefVote::STV::Round
         PrefVote::STV::Tally
         );

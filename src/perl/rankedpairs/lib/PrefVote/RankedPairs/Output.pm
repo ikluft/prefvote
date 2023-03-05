@@ -28,7 +28,6 @@ sub do_counting_table
     my @candidates = PrefVote::Core::Output->candidates_list($result_data);
 
     # generate victory matrix
-    my $c2r  = $result_data->{choice_to_result};
     my $pair = $result_data->{pair};
 
     # start with heading row

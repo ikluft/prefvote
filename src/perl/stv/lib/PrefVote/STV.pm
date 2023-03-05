@@ -26,9 +26,9 @@ use PrefVote::STV::Tally;
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Standard qw(Str ArrayRef HashRef InstanceOf);
+use Types::Standard       qw(Str ArrayRef HashRef InstanceOf);
 use PrefVote::Core::Float qw(fp_equal fp_cmp);
-use PrefVote::Core::Set qw(Set);
+use PrefVote::Core::Set   qw(Set);
 extends 'PrefVote::Core';
 
 # blackbox testing structure
@@ -37,7 +37,8 @@ Readonly::Hash my %blackbox_spec => (
     eliminated => [qw(list set string)],
     rounds     => [qw(list PrefVote::STV::Round)],
 );
-PrefVote::Core::TestSpec->register_blackbox_spec( __PACKAGE__,
+PrefVote::Core::TestSpec->register_blackbox_spec(
+    __PACKAGE__,
     spec   => \%blackbox_spec,
     parent => 'PrefVote::Core'
 );
@@ -248,7 +249,6 @@ sub run_tally
 
         if ( defined $selection ) {
             my $sel_ref        = $round->tally_get($selection);
-            my $votes          = $sel_ref->votes();
             my $vote_increment = $fraction * $ballot->{quantity};
             $sel_ref->add_votes($vote_increment);
             $round->add_votes_used($vote_increment);
@@ -444,6 +444,8 @@ __END__
 
 =head1 ATTRIBUTES
 
+These attributes are in addition to those inherited from L<PrefVote::Core>.
+
 =over 1
 
 =item winners
@@ -455,6 +457,8 @@ __END__
 =back
 
 =head1 METHODS
+
+These methods are in addition to those inherited from L<PrefVote::Core>.
 
 =over 1
 
