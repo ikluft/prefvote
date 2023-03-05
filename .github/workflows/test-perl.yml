@@ -3,9 +3,9 @@ name: Perl
 # yamllint disable rule:line-length
 on:  # yamllint disable-line rule:truthy
   push:
-    paths: ['src/perl/prefvote/**', '.github/workflows/test-perl-core.yml']
+    paths: ['src/perl/**', '.github/workflows/test-perl.yml']
   pull_request:
-    paths: ['src/perl/prefvote/**', '.github/workflows/test-perl-core.yml']
+    paths: ['src/perl/**', '.github/workflows/test-perl.yml']
   workflow_dispatch:
   # schedule:
   #   - cron: '42 5 * * *'
