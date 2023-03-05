@@ -58,4 +58,5 @@ jobs:
       - name: Run tests
         run: |
           cd src/perl
-          PERL5LIB="$PERL5LIB:$PWD/prefvote/lib" for subdir in prefvote stv schulze rankedpairs; do echo "=== test $subdir"; ( cd $subdir; dzil test --release ) done
+          export PERL5LIB="$PERL5LIB:$PWD/prefvote/lib"
+          for subdir in prefvote stv schulze rankedpairs; do echo "=== test $subdir"; ( cd $subdir; dzil test --release ) done
