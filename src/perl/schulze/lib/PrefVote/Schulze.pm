@@ -5,13 +5,14 @@
 
 # pragmas to silence some warnings from Perl::Critic
 ## no critic (Modules::RequireExplicitPackage)
-# 'use strict' and 'use warnings' included here
 # This solves a catch-22 where parts of Perl::Critic want both package and use-strict to be first
-use Modern::Perl qw(2013);    # require 5.16.0 or later
+use strict;
+use warnings;
 ## use critic (Modules::RequireExplicitPackage)
 
 package PrefVote::Schulze;
 
+use utf8;
 use autodie;
 use Data::Dumper;
 use Readonly;

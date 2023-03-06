@@ -5,7 +5,10 @@
 # Copyright (c) 1998-2022 by Ian Kluft
 # Open Source license: Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
 
-use Modern::Perl qw(2013); # require 5.16.0 or later
+use strict;
+use warnings;
+use utf8;
+use feature qw(say);
 use autodie;
 use Carp qw(confess);;
 use YAML::XS; # RPM: perl-YAML-LibYAML, DEB: libyaml-libyaml-perl
