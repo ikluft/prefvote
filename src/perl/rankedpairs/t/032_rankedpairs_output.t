@@ -817,7 +817,7 @@ Readonly::Array my @result_expected => (
 
 # test fail-as-expected on empty stdin (2 tests)
 {
-    local @ARGV = qw(--format=rawcapture --method=rankedpairs);
+    local @ARGV = qw(--format=RawCapture --method=rankedpairs);
     my $vote_obj;
     lives_ok(sub {$vote_obj = PrefVote::RankedPairs->instance(%core_params)}, "2: instantiate PrefVote::RankedPairs");
     PrefVote::Core::Output::set_mock_stdin("");
@@ -826,7 +826,7 @@ Readonly::Array my @result_expected => (
 
 # test with mock-stdin data (100 tests)
 {
-    local @ARGV = qw(--format=rawcapture --method=rankedpairs);
+    local @ARGV = qw(--format=RawCapture --method=rankedpairs);
     my $vote_obj;
     lives_ok(sub {$vote_obj = PrefVote::RankedPairs->instance(%core_params)}, "2: instantiate PrefVote::RankedPairs");
     PrefVote::Core::Output::set_mock_stdin($mock_input);
