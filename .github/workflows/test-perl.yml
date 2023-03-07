@@ -55,8 +55,27 @@ jobs:
         if: ${{ failure() && startsWith( matrix.runner, 'macos-')}}
         run: |
            cat  /Users/runner/.cpanm/work/*/build.log
+#      - name: Run tests (Linux/MacOS)
+#        if: ${{ ! startsWith( matrix.runner, 'windows-')}}
+#        shell: bash
+#        run: |
+#          cd src/perl
+#          export PERL5LIB="$PERL5LIB:$PWD/prefvote/lib"
+#          for subdir in prefvote stv schulze rankedpairs
+#          do
+#            echo "=== test $subdir"
+#            ( cd $subdir; dzil test --release )
+#          done
       - name: Run tests
+        shell: perl {0}
         run: |
-          cd src/perl
-          export PERL5LIB="$PERL5LIB:$PWD/prefvote/lib"
-          for subdir in prefvote stv schulze rankedpairs; do echo "=== test $subdir"; ( cd $subdir; dzil test --release ) done
+          use feature qw(say);
+          use POSIX qw(getcwd);
+          chdir "src/perl";
+          my $topdir = getcwd();
+          $ENV{PERL5LIB} .= "$topdir/prefvote/lib";
+          for my $subdir ( qw(prefvote stv schulze rankedpairs) ) {
+            say "=== test $subdir";
+            chdir "$topdir/$subdir";
+            system("dzil", "test", "--release");
+          }
