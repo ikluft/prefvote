@@ -44,20 +44,20 @@ jobs:
           use POSIX qw(getcwd);
           chdir "src/perl";
           my $topdir = getcwd();
+          my $success = 1;
           for my $subdir ( qw(prefvote stv schulze rankedpairs) ) {
             say "=== deps $subdir";
             chdir "$topdir/$subdir";
-            my @deps;
-            push @deps, (qx(dzil authordeps --missing));
-            push @deps, grep( !/^PrefVote/, qx(dzil listdeps --missing));
+            my @deps = qx(dzil authordeps --missing);
+            push @deps, grep(!/^PrefVote/, qx(dzil listdeps --missing));
             open(my $out_fh, "|-", "cpanm --notest")
               or die "failed to open cpanm pipe: $!";
             print $out_fh, @deps;
             close $out_fh
               or die "failed to close cpanm pipe: $!";
-            $success &&= (($? >> 8) == 0)
+            $success = $success and (($? >> 8) == 0);
           }
-          exit $success
+          exit ($success ? 0 : 1);
       - name: Show Errors on Windows
         if: ${{ failure() && startsWith( matrix.runner, 'windows-')}}
         run: |
@@ -85,6 +85,6 @@ jobs:
             say "=== test $subdir";
             chdir "$topdir/$subdir";
             my $retcode = system("dzil", "test", "--release");
-            $success &&= (($retcode >> 8) == 0)
+            $success = $success and (($retcode >> 8) == 0);
           }
-          exit $success
+          exit ($success ? 0 : 1);
