@@ -48,14 +48,13 @@ jobs:
           for my $subdir ( qw(prefvote stv schulze rankedpairs) ) {
             say "=== deps $subdir";
             chdir "$topdir/$subdir";
-            my @deps = qx(dzil authordeps --missing);
-            push @deps, grep(!/^PrefVote/, qx(dzil listdeps --missing));
-            open(my $out_fh, "|-", "cpanm --notest")
-              or die "failed to open cpanm pipe: $!";
-            print $out_fh, @deps;
-            close $out_fh
-              or die "failed to close cpanm pipe: $!";
-            $success = $success and (($? >> 8) == 0);
+            my @deps,
+            for $dep ( qx(dzil authordeps --missing), grep(!/^PrefVote/, qx(dzil listdeps --missing)) {
+              chomp $dep;
+              push @deps, $dep;
+            }
+            my $retcode = system( "cpanm", "--notest", @deps );
+            $success = $success and (($retcode >> 8) == 0);
           }
           exit ($success ? 0 : 1);
       - name: Show Errors on Windows
@@ -84,7 +83,7 @@ jobs:
           for my $subdir ( qw(prefvote stv schulze rankedpairs) ) {
             say "=== test $subdir";
             chdir "$topdir/$subdir";
-            my $retcode = system("dzil", "test", "--release");
+            my $retcode = system( "dzil", "test", "--release" );
             $success = $success and (($retcode >> 8) == 0);
           }
           exit ($success ? 0 : 1);
