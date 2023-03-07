@@ -42,19 +42,25 @@ jobs:
         run: |
           use feature qw(say);
           use POSIX qw(getcwd);
+          sub do_cpanm {
+            my @args = @_;
+            my @deps;
+            for my $dep (@args) {
+              chomp $dep;
+              push @deps, $dep;
+            }
+            say ">>> install: ".join(" ", @deps);
+            my $retcode = system( "cpanm", "--notest", @deps );
+            return (($retcode >> 8) == 0);
+          }
           chdir "src/perl";
           my $topdir = getcwd();
           my $success = 1;
           for my $subdir ( qw(prefvote stv schulze rankedpairs) ) {
             say "=== deps $subdir";
             chdir "$topdir/$subdir";
-            my @deps;
-            for my $dep ( qx(dzil authordeps --missing), grep(!/^PrefVote/, qx(dzil listdeps --missing))) {
-              chomp $dep;
-              push @deps, $dep;
-            }
-            my $retcode = system( "cpanm", "--notest", @deps );
-            $success = $success and (($retcode >> 8) == 0);
+            $success = $success and do_cpanm(qx(dzil authordeps --missing))
+              and do_cpanm(grep(!/^PrefVote/, qx(dzil listdeps --missing)));
           }
           exit ($success ? 0 : 1);
       - name: Show Errors on Windows
