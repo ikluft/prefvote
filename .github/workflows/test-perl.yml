@@ -73,7 +73,7 @@ jobs:
           use POSIX qw(getcwd);
           chdir "src/perl";
           my $topdir = getcwd();
-          $ENV{PERL5LIB} .= "$topdir/prefvote/lib";
+          $ENV{PERL5LIB} .= ":$topdir/prefvote/lib";
           for my $subdir ( qw(prefvote stv schulze rankedpairs) ) {
             say "=== test $subdir";
             chdir "$topdir/$subdir";
