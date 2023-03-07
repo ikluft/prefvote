@@ -49,7 +49,9 @@ jobs:
               chomp $dep;
               push @deps, $dep;
             }
-            say ">>> install: ".join(" ", @deps);
+            if (scalar @deps) {
+              say ">>> install: ".join(" ", @deps);
+            }
             my $retcode = system( "cpanm", "--notest", @deps );
             return (($retcode >> 8) == 0);
           }
@@ -59,8 +61,8 @@ jobs:
           for my $subdir ( qw(prefvote stv schulze rankedpairs) ) {
             say "=== deps $subdir";
             chdir "$topdir/$subdir";
-            $success = $success and do_cpanm(qx(dzil authordeps --missing))
-              and do_cpanm(grep(!/^PrefVote/, qx(dzil listdeps --missing)));
+            if (not do_cpanm(qx(dzil authordeps --missing))) {$success=0; next}
+            if (not do_cpanm(grep(!/^PrefVote/, qx(dzil listdeps --missing)))) {$success=0}
           }
           exit ($success ? 0 : 1);
       - name: Show Errors on Windows
@@ -89,7 +91,7 @@ jobs:
           for my $subdir ( qw(prefvote stv schulze rankedpairs) ) {
             say "=== test $subdir";
             chdir "$topdir/$subdir";
-            my $retcode = system( "dzil", "test", "--release" );
-            $success = $success and (($retcode >> 8) == 0);
+            if (system(qw(dzil install)) != 0) {$success=0; next}
+            if (system(qw(dzil test --release")) != 0) {$success=0}
           }
           exit ($success ? 0 : 1);
