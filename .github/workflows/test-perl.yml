@@ -59,9 +59,10 @@ jobs:
           my $topdir = getcwd();
           my $success = 1;
           for my $subdir ( qw(prefvote stv schulze rankedpairs) ) {
-            say "=== deps $subdir";
             chdir "$topdir/$subdir";
+            say "=== authordeps $subdir";
             if (not do_cpanm(qx(dzil authordeps --missing))) {$success=0; next}
+            say "=== listdeps $subdir";
             if (not do_cpanm(grep(!/^PrefVote/, qx(dzil listdeps --missing)))) {$success=0}
           }
           exit ($success ? 0 : 1);
@@ -89,9 +90,14 @@ jobs:
           $ENV{PERL5LIB} .= ":$topdir/prefvote/lib";
           my $success = 1;
           for my $subdir ( qw(prefvote stv schulze rankedpairs) ) {
-            say "=== test $subdir";
             chdir "$topdir/$subdir";
-            if (system(qw(dzil install)) != 0) {$success=0; next}
+            say "=== test $subdir";
             if (system(qw(dzil test --release")) != 0) {$success=0}
+            if ($subdir eq "prefvote") {
+              say "=== install $subdir";
+              if (system(qw(dzil install)) != 0) {
+                die "PrefVote install failed - can't continue testing submodules"
+              }
+            }
           }
           exit ($success ? 0 : 1);
