@@ -38,9 +38,26 @@ jobs:
           cpanm --notest Dist::Zilla Test::Pod Pod::Markdown
           dzil --version
       - name: Install Modules
+        shell: perl {0}
         run: |
-          cd src/perl
-          for subdir in prefvote stv schulze rankedpairs; do echo "=== deps $subdir"; ( cd $subdir; dzil authordeps --missing | cpanm --notest; dzil listdeps --missing | grep -v PrefVote | cpanm --notest ) done
+          use feature qw(say);
+          use POSIX qw(getcwd);
+          chdir "src/perl";
+          my $topdir = getcwd();
+          for my $subdir ( qw(prefvote stv schulze rankedpairs) ) {
+            say "=== deps $subdir";
+            chdir "$topdir/$subdir";
+            my @deps;
+            push @deps, (qx(dzil authordeps --missing));
+            push @deps, grep( !/^PrefVote/, qx(dzil listdeps --missing));
+            open(my $out_fh, "|-", "cpanm --notest")
+              or die "failed to open cpanm pipe: $!";
+            print $out_fh, @deps;
+            close $out_fh
+              or die "failed to close cpanm pipe: $!";
+            $success &&= (($? >> 8) == 0)
+          }
+          exit $success
       - name: Show Errors on Windows
         if: ${{ failure() && startsWith( matrix.runner, 'windows-')}}
         run: |
@@ -55,17 +72,6 @@ jobs:
         if: ${{ failure() && startsWith( matrix.runner, 'macos-')}}
         run: |
            cat  /Users/runner/.cpanm/work/*/build.log
-#      - name: Run tests (Linux/MacOS)
-#        if: ${{ ! startsWith( matrix.runner, 'windows-')}}
-#        shell: bash
-#        run: |
-#          cd src/perl
-#          export PERL5LIB="$PERL5LIB:$PWD/prefvote/lib"
-#          for subdir in prefvote stv schulze rankedpairs
-#          do
-#            echo "=== test $subdir"
-#            ( cd $subdir; dzil test --release )
-#          done
       - name: Run tests
         shell: perl {0}
         run: |
@@ -74,8 +80,11 @@ jobs:
           chdir "src/perl";
           my $topdir = getcwd();
           $ENV{PERL5LIB} .= ":$topdir/prefvote/lib";
+          my $success = 1;
           for my $subdir ( qw(prefvote stv schulze rankedpairs) ) {
             say "=== test $subdir";
             chdir "$topdir/$subdir";
-            system("dzil", "test", "--release");
+            my $retcode = system("dzil", "test", "--release");
+            $success &&= (($retcode >> 8) == 0)
           }
+          exit $success
