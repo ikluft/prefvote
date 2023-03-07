@@ -49,7 +49,7 @@ jobs:
             say "=== deps $subdir";
             chdir "$topdir/$subdir";
             my @deps;
-            for $dep ( qx(dzil authordeps --missing), grep(!/^PrefVote/, qx(dzil listdeps --missing)) {
+            for my $dep ( qx(dzil authordeps --missing), grep(!/^PrefVote/, qx(dzil listdeps --missing))) {
               chomp $dep;
               push @deps, $dep;
             }
