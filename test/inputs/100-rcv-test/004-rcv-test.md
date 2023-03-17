@@ -17,7 +17,7 @@ title: Test Vote 004 (250 ballots)
 <tbody>
 <tr>
 <td>FACTIOUS</td>
-<td>2.56250 (533/208)</td>
+<td>3.30800 (827/250)</td>
 <td>1</td>
 <td>1 / 1</td>
 <td>1 / 1</td>
@@ -26,7 +26,7 @@ title: Test Vote 004 (250 ballots)
 </tr>
 <tr>
 <td>EVIL</td>
-<td>2.56784 (511/199)</td>
+<td>3.47200 (868/250)</td>
 <td>2</td>
 <td>2 / 2</td>
 <td>2 / 2</td>
@@ -35,7 +35,7 @@ title: Test Vote 004 (250 ballots)
 </tr>
 <tr>
 <td>CHAOTIC</td>
-<td>3.25532 (612/188)</td>
+<td>4.18400 (1046/250)</td>
 <td>3</td>
 <td>3 / 3</td>
 <td>3 / 3</td>
@@ -43,18 +43,9 @@ title: Test Vote 004 (250 ballots)
 <td>3 (3)</td>
 </tr>
 <tr>
-<td>DYSFUNCTIONAL</td>
-<td>3.30460 (575/174)</td>
-<td>4</td>
-<td>6 / 6</td>
-<td>4 / 4</td>
-<td>4 / 4</td>
-<td>4 (2)</td>
-</tr>
-<tr>
 <td>ABNORMAL</td>
-<td>3.38378 (626/185)</td>
-<td>5</td>
+<td>4.32400 (1081/250)</td>
+<td>4</td>
 <td>4 / 4</td>
 <td>5 / 5</td>
 <td>5 / 5</td>
@@ -62,12 +53,21 @@ title: Test Vote 004 (250 ballots)
 </tr>
 <tr>
 <td>BORING</td>
-<td>3.43407 (625/182)</td>
-<td>6</td>
+<td>4.40400 (1101/250)</td>
+<td>5</td>
 <td>5 / 5</td>
 <td>6 / 6</td>
 <td>6 / 6</td>
 <td>6 (0)</td>
+</tr>
+<tr>
+<td>DYSFUNCTIONAL</td>
+<td>4.42800 (1107/250)</td>
+<td>6</td>
+<td>6 / 6</td>
+<td>4 / 4</td>
+<td>4 / 4</td>
+<td>4 (2)</td>
 </tr>
 </tbody>
 </table>
@@ -79,8 +79,8 @@ title: Test Vote 004 (250 ballots)
 <blockquote>
 <div id="prefvote">
 <h2>Results: Test Vote 004</h2>
-<p>1 seat available &VerticalBar; 250 ballots</p>
-<table>
+<p>1 seat available ● 250 ballots processed</p>
+<table border=1>
 <thead>
 <tr>
 <th>Abbreviation</th>
@@ -105,24 +105,24 @@ title: Test Vote 004 (250 ballots)
 <td>3/placed</td>
 </tr>
 <tr>
-<td>DYSFUNCTIONAL</td>
-<td>dysfunctional incompetent</td>
-<td>4/placed</td>
-</tr>
-<tr>
 <td>ABNORMAL</td>
 <td>abnormal and antisocial</td>
-<td>5/placed</td>
+<td>4/placed</td>
 </tr>
 <tr>
 <td>BORING</td>
 <td>boring as anything</td>
+<td>5/placed</td>
+</tr>
+<tr>
+<td>DYSFUNCTIONAL</td>
+<td>dysfunctional incompetent</td>
 <td>6/placed</td>
 </tr>
 </tbody>
 </table>
 <h3>Average ballot ranking positions</h3>
-<table>
+<table border=1>
 <thead>
 <tr>
 <th>Candidate</th>
@@ -132,27 +132,27 @@ title: Test Vote 004 (250 ballots)
 <tbody>
 <tr>
 <td>FACTIOUS</td>
-<td>2.5625</td>
+<td>3.308</td>
 </tr>
 <tr>
 <td>EVIL</td>
-<td>2.56784</td>
+<td>3.472</td>
 </tr>
 <tr>
 <td>CHAOTIC</td>
-<td>3.25532</td>
-</tr>
-<tr>
-<td>DYSFUNCTIONAL</td>
-<td>3.3046</td>
+<td>4.184</td>
 </tr>
 <tr>
 <td>ABNORMAL</td>
-<td>3.38378</td>
+<td>4.324</td>
 </tr>
 <tr>
 <td>BORING</td>
-<td>3.43407</td>
+<td>4.404</td>
+</tr>
+<tr>
+<td>DYSFUNCTIONAL</td>
+<td>4.428</td>
 </tr>
 </tbody>
 </table>
@@ -164,8 +164,8 @@ title: Test Vote 004 (250 ballots)
 <blockquote>
 <div id="prefvote">
 <h2>Results: Test Vote 004</h2>
-<p>1 seat available &VerticalBar; 250 ballots</p>
-<table>
+<p>1 seat available ● 250 ballots processed</p>
+<table border=1>
 <thead>
 <tr>
 <th>Abbreviation</th>
@@ -206,7 +206,7 @@ title: Test Vote 004 (250 ballots)
 </tr>
 </tbody>
 </table>
-<table>
+<table border=1>
 <thead>
 <tr>
 <th>Round #</th>
@@ -290,8 +290,8 @@ title: Test Vote 004 (250 ballots)
 <blockquote>
 <div id="prefvote">
 <h2>Results: Test Vote 004</h2>
-<p>1 seat available &VerticalBar; 250 ballots</p>
-<table>
+<p>1 seat available ● 250 ballots processed</p>
+<table border=1>
 <thead>
 <tr>
 <th>Abbreviation</th>
@@ -333,7 +333,7 @@ title: Test Vote 004 (250 ballots)
 </tbody>
 </table>
 <h3>Margin-of-victory matrix</h3>
-<table>
+<table border=1>
 <thead>
 <tr>
 <th></th>
@@ -410,8 +410,8 @@ title: Test Vote 004 (250 ballots)
 <blockquote>
 <div id="prefvote">
 <h2>Results: Test Vote 004</h2>
-<p>1 seat available &VerticalBar; 250 ballots</p>
-<table>
+<p>1 seat available ● 250 ballots processed</p>
+<table border=1>
 <thead>
 <tr>
 <th>Abbreviation</th>
@@ -453,7 +453,7 @@ title: Test Vote 004 (250 ballots)
 </tbody>
 </table>
 <h3>Margin-of-victory matrix</h3>
-<table>
+<table border=1>
 <thead>
 <tr>
 <th></th>

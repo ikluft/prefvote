@@ -269,21 +269,33 @@ sub save_ranking
 
     # increment tallies for numeric places of each choice
     my $choices_num = $self->choices_count();
+    my %item_seen;
     for ( my $i = 0 ; $i < scalar @ballot ; $i++ ) {
         my $choice = $ballot[$i];
 
         # make sure place record exists for this choice
         foreach my $item ( $choice->elements() ) {
+            $item_seen{$item} = 1; # mark the choice/item as seen
             if ( not exists $self->{choice_rank}{$item} ) {
 
                 # init array of position tallies to zero
-                $self->{choice_rank}{$item} = [ (0) x $choices_num ];
+                $self->{choice_rank}{$item} = [ (0) x ($choices_num+1) ];
             }
 
             # increment count for this choice in its ballot position
             $self->{choice_rank}{$item}[$i]++;
         }
     }
+
+    # each omitted choice/item gets marked as one place after last choice
+    foreach my $check_choice ( $self->get_choices()) {
+        next if exists $item_seen{$check_choice};
+        if (not exists $self->{choice_rank}{$check_choice}[$choices_num]) {
+            $self->{choice_rank}{$check_choice}[$choices_num] = 0;
+        }
+        $self->{choice_rank}{$check_choice}[$choices_num]++;
+    }
+
     return;
 }
 
@@ -309,7 +321,8 @@ sub average_ranking
         # compute average place (array index + 1) for the choice/candidate
         my $total_votes = 0;
         my $total_place = 0.0;
-        for ( my $i = 0 ; $i < scalar @{ $self->{choice_rank}{$choice} } ; $i++ ) {
+        for ( my $i = 0 ; $i <= scalar @{ $self->{choice_rank}{$choice} } ; $i++ ) {
+            exists $self->{choice_rank}{$choice}[$i] or next;
             $total_votes += $self->{choice_rank}{$choice}[$i];
             $total_place += ( $i + 1 ) * $self->{choice_rank}{$choice}[$i];
         }

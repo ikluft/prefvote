@@ -114,12 +114,12 @@ params:
 ---
 Core:
   average_choice_rank:
-    ABNORMAL: 3.1791044776
-    BORING: 3.3768115942
-    CHAOTIC: 3.3787878788
-    DYSFUNCTIONAL: 3.552238806
-    EVIL: 2.6
-    FACTIOUS: 2.037037037
+    ABNORMAL: 4.44
+    BORING: 4.5
+    CHAOTIC: 4.61
+    DYSFUNCTIONAL: 4.69
+    EVIL: 3.7
+    FACTIOUS: 2.98
   ballots:
     0:
       hex_id: 0
@@ -844,12 +844,12 @@ Core:
         - [ABNORMAL]
       quantity: 1
   choice_rank:
-    ABNORMAL: [15, 8, 14, 13, 14, 3]
-    BORING: [7, 20, 12, 10, 10, 10]
-    CHAOTIC: [13, 8, 7, 21, 13, 4]
-    DYSFUNCTIONAL: [12, 4, 17, 13, 11, 10]
-    EVIL: [16, 23, 21, 8, 4, 3]
-    FACTIOUS: [37, 21, 11, 8, 3, 1]
+    ABNORMAL: [15, 8, 14, 13, 14, 3, 33]
+    BORING: [7, 20, 12, 10, 10, 10, 31]
+    CHAOTIC: [13, 8, 7, 21, 13, 4, 34]
+    DYSFUNCTIONAL: [12, 4, 17, 13, 11, 10, 33]
+    EVIL: [16, 23, 21, 8, 4, 3, 25]
+    FACTIOUS: [37, 21, 11, 8, 3, 1, 19]
   choice_to_index:
     ABNORMAL: 0
     BORING: 1
@@ -880,16 +880,16 @@ Core:
     5: FACTIOUS
   name: Test Vote 003
   seats: 1
-  timestamp: Wed Mar 16 00:50:59 2022
+  timestamp: Thu Mar 16 18:34:35 2023
   total_ballots: 100
 RankedPairs:
   average_choice_rank:
-    ABNORMAL: 3.1791044776
-    BORING: 3.3768115942
-    CHAOTIC: 3.3787878788
-    DYSFUNCTIONAL: 3.552238806
-    EVIL: 2.6
-    FACTIOUS: 2.037037037
+    ABNORMAL: 4.44
+    BORING: 4.5
+    CHAOTIC: 4.61
+    DYSFUNCTIONAL: 4.69
+    EVIL: 3.7
+    FACTIOUS: 2.98
   ballots:
     0:
       hex_id: 0
@@ -1614,12 +1614,12 @@ RankedPairs:
         - [ABNORMAL]
       quantity: 1
   choice_rank:
-    ABNORMAL: [15, 8, 14, 13, 14, 3]
-    BORING: [7, 20, 12, 10, 10, 10]
-    CHAOTIC: [13, 8, 7, 21, 13, 4]
-    DYSFUNCTIONAL: [12, 4, 17, 13, 11, 10]
-    EVIL: [16, 23, 21, 8, 4, 3]
-    FACTIOUS: [37, 21, 11, 8, 3, 1]
+    ABNORMAL: [15, 8, 14, 13, 14, 3, 33]
+    BORING: [7, 20, 12, 10, 10, 10, 31]
+    CHAOTIC: [13, 8, 7, 21, 13, 4, 34]
+    DYSFUNCTIONAL: [12, 4, 17, 13, 11, 10, 33]
+    EVIL: [16, 23, 21, 8, 4, 3, 25]
+    FACTIOUS: [37, 21, 11, 8, 3, 1, 19]
   choice_to_index:
     ABNORMAL: 0
     BORING: 1
@@ -1681,8 +1681,8 @@ RankedPairs:
     - cand: [EVIL, BORING]
     - cand: [BORING, CHAOTIC]
     - cand: [BORING, DYSFUNCTIONAL]
-    - cand: [ABNORMAL, BORING]
     - cand: [ABNORMAL, CHAOTIC]
+    - cand: [ABNORMAL, BORING]
     - cand: [ABNORMAL, DYSFUNCTIONAL]
     - cand: [CHAOTIC, DYSFUNCTIONAL]
   name: Test Vote 003
@@ -1799,7 +1799,7 @@ RankedPairs:
         mov: 27
         preference: 55
   seats: 1
-  timestamp: Wed Mar 16 00:51:01 2022
+  timestamp: Thu Mar 16 18:34:36 2023
   total_ballots: 100
   winners:
     - [FACTIOUS]
@@ -1810,12 +1810,12 @@ RankedPairs:
     - [DYSFUNCTIONAL]
 STV:
   average_choice_rank:
-    ABNORMAL: 3.1791044776
-    BORING: 3.3768115942
-    CHAOTIC: 3.3787878788
-    DYSFUNCTIONAL: 3.552238806
-    EVIL: 2.6
-    FACTIOUS: 2.037037037
+    ABNORMAL: 4.44
+    BORING: 4.5
+    CHAOTIC: 4.61
+    DYSFUNCTIONAL: 4.69
+    EVIL: 3.7
+    FACTIOUS: 2.98
   ballots:
     0:
       hex_id: 0
@@ -2540,12 +2540,12 @@ STV:
         - [ABNORMAL]
       quantity: 1
   choice_rank:
-    ABNORMAL: [15, 8, 14, 13, 14, 3]
-    BORING: [7, 20, 12, 10, 10, 10]
-    CHAOTIC: [13, 8, 7, 21, 13, 4]
-    DYSFUNCTIONAL: [12, 4, 17, 13, 11, 10]
-    EVIL: [16, 23, 21, 8, 4, 3]
-    FACTIOUS: [37, 21, 11, 8, 3, 1]
+    ABNORMAL: [15, 8, 14, 13, 14, 3, 33]
+    BORING: [7, 20, 12, 10, 10, 10, 31]
+    CHAOTIC: [13, 8, 7, 21, 13, 4, 34]
+    DYSFUNCTIONAL: [12, 4, 17, 13, 11, 10, 33]
+    EVIL: [16, 23, 21, 8, 4, 3, 25]
+    FACTIOUS: [37, 21, 11, 8, 3, 1, 19]
   choice_to_index:
     ABNORMAL: 0
     BORING: 1
@@ -2748,7 +2748,7 @@ STV:
       tally: {}
       votes_used: 0
   seats: 1
-  timestamp: Wed Mar 16 00:51:00 2022
+  timestamp: Thu Mar 16 18:34:35 2023
   total_ballots: 100
   winners:
     - [FACTIOUS]
@@ -2756,12 +2756,12 @@ STV:
     - [CHAOTIC]
 Schulze:
   average_choice_rank:
-    ABNORMAL: 3.1791044776
-    BORING: 3.3768115942
-    CHAOTIC: 3.3787878788
-    DYSFUNCTIONAL: 3.552238806
-    EVIL: 2.6
-    FACTIOUS: 2.037037037
+    ABNORMAL: 4.44
+    BORING: 4.5
+    CHAOTIC: 4.61
+    DYSFUNCTIONAL: 4.69
+    EVIL: 3.7
+    FACTIOUS: 2.98
   ballots:
     0:
       hex_id: 0
@@ -3486,12 +3486,12 @@ Schulze:
         - [ABNORMAL]
       quantity: 1
   choice_rank:
-    ABNORMAL: [15, 8, 14, 13, 14, 3]
-    BORING: [7, 20, 12, 10, 10, 10]
-    CHAOTIC: [13, 8, 7, 21, 13, 4]
-    DYSFUNCTIONAL: [12, 4, 17, 13, 11, 10]
-    EVIL: [16, 23, 21, 8, 4, 3]
-    FACTIOUS: [37, 21, 11, 8, 3, 1]
+    ABNORMAL: [15, 8, 14, 13, 14, 3, 33]
+    BORING: [7, 20, 12, 10, 10, 10, 31]
+    CHAOTIC: [13, 8, 7, 21, 13, 4, 34]
+    DYSFUNCTIONAL: [12, 4, 17, 13, 11, 10, 33]
+    EVIL: [16, 23, 21, 8, 4, 3, 25]
+    FACTIOUS: [37, 21, 11, 8, 3, 1, 19]
   choice_to_index:
     ABNORMAL: 0
     BORING: 1
@@ -3914,7 +3914,7 @@ Schulze:
       pair: {}
       win_flag: {}
   seats: 1
-  timestamp: Wed Mar 16 00:51:00 2022
+  timestamp: Thu Mar 16 18:34:36 2023
   total_ballots: 100
   winners:
     - [FACTIOUS]
