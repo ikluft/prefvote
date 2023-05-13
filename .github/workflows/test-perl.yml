@@ -36,7 +36,7 @@ jobs:
         run: |
           cpanm -v
           cpanm --dev --notest ExtUtils::MakeMaker
-          cpanm --notest Dist::Zilla Test::Pod Pod::Markdown
+          cpanm --notest Dist::Zilla Test::Pod Pod::Markdown Test::Vars
           dzil --version
       - name: Install Modules
         shell: perl {0}
