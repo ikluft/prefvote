@@ -475,8 +475,18 @@ __END__
 =head1 SYNOPSIS
 
   use PrefVote::RankedPairs;
-  %vote_params = ( "name" => "value", ... );
-  $vote = new PrefVote::RankedPairs \%vote_params;
+
+    # count votes from a properly-formatted YAML file
+    my $vote_obj = PrefVote::RankedPairs::yaml2vote($progname);
+    $vote_obj->count();
+
+    # get results in YAML
+    print YAML::XS::Dump($vote_obj->result_yaml());
+
+    # get results for your own handling
+    my $results = $vote_obj->results();
+    ... process $results contents ...
+
 
 =head1 DESCRIPTION
 
