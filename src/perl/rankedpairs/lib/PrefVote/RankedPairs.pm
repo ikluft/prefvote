@@ -490,6 +490,24 @@ __END__
 
 =head1 DESCRIPTION
 
+I<PrefVote::RankedPairs> implements the Ranked Pairs preference voting algorithm for the I<PrefVote>
+system.
+The Ranked Pairs method was created in 1987 by Nicolaus Tideman.
+Eash voter's ballot ranks available candidates in order of the voter's preference.
+This method compares each pair of candidates by the numbers ofvoter preference,
+and ranks the candidate pairs in order of strongest wins.
+The algorithm builds a graph structure of the wins starting with the strongest,
+locking in each win that does not create a cycle in the graph.
+
+The effect of Ranked Pairs is a Condorcet-compliant voting result in which any candidate who beats
+all other candidates in pairwise comparisons will be the winner.
+The graph algorithm also has limited tie-breaking capability beyond the pure Condorcet definition.
+
+All of the I<PrefVote> algorithms have an additional layer of tie-breaking from the Average Choice
+Rank (ACR) data. Though an average ballot position is a rating which would not alone be approprtiate
+for elections, when a tie occurs, all other things are equal and so the ACR becomes a useful
+indicator of the intent of the voters in that scenario.
+
 =head1 ATTRIBUTES
 
 =over 1
