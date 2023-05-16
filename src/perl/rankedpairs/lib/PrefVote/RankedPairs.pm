@@ -510,19 +510,50 @@ indicator of the intent of the voters in that scenario.
 
 =head1 ATTRIBUTES
 
+These attributes are in addition to L<those inherited from PrefVote::Core|PrefVote::Core/ATTRIBUTES>.
+
 =over 1
 
 =item winners
 
+the list of winners of the voting in order from first to last.
+The format is a list of sets of strings.
+
+=over 1
+
+=item list of places
+
+list of each place in the results from first to last
+
+=item set of candidates
+
+a set of the candidates which tie for that place, or only one if there is no tie
+
+=item candidate identifier string
+
+a string with the identifier for the candidate in this position in the result
+
+=back
+
 =item pair
+
+internal hash used for counting candidate pairs in the Ranked Pairs result, and particularly for computing
+how much candidates win or lose against others.
 
 =item majority
 
+internal list used to track ordering of majorities, winning paired contests among candidates
+
 =item graph
+
+internal graph structure for computing Ranked Pairs results from pair comparisons and the list of majorities.
+Candidate pair comparisons are only added to the result if they would not create a loop/conflict in the graph.
 
 =back
 
 =head1 METHODS
+
+These methods are in addition to L<those inherited from PrefVote::Core|PrefVote::Core/METHODS>.
 
 =over 1
 
