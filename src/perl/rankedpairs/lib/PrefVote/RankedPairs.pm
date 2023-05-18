@@ -559,9 +559,25 @@ These methods are in addition to L<those inherited from PrefVote::Core|PrefVote:
 
 =item make_pair_node 
 
+This should not be called by external code.
+
+This method is called by add_preference, set_mov and set_lock to initialize a pair node for a
+specific pair of candidates if it didn't already exist.
+The parameters are the ids of the two candidates of the pair in order of counting preferences
+of the first over the second.
+A separate pair node counts preferences in the opposite direction.
+
 =item add_preference
 
+This method records a counted candidate-pair preference.
+The parameters are the ids of the two candidates for the pair, and the quantity of ballots by which to increment it.
+The quantity is a function of how many ballots contained a specific permutation of candidates.
+
 =item get_preference
+
+This method returns the vote count for a specific candidate pair, indicating how many ballots had a preference for
+the first candidate over the second.
+If called before counting is complete, this yields the in-progress tally for that candidate pair.
 
 =item set_mov
 
