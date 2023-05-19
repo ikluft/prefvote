@@ -581,13 +581,28 @@ If called before counting is complete, this yields the in-progress tally for tha
 
 =item set_mov
 
+This should not be called by external code.
+
+This sets the margin of victory for a candidate pair.
+The parameters are the ids of the two candidates for the pair, and the margin of victory of votes counted.
+This counts both wins, adding votes for the first candidate over the second, and losses,
+subtracting votes for the second candidate over the first.
+So the corresponding pair reversing the order of the two candidates must be the negative of the same value.
+
 =item get_mov
 
+This reads the margin of victory for a candidate pair.
+The parameters are the ids of the two candidates for the pair.
+
 =item set_lock
+
+This should not be called by external code.
 
 =item get_lock
 
 =item graph_add_link
+
+This should not be called by external code.
 
 =item cand_total_wins
 
