@@ -598,13 +598,30 @@ The parameters are the ids of the two candidates for the pair.
 
 This should not be called by external code.
 
+The sets the lock status for a candidate pair in the direction of the first over the second.
+The parameters are the ids of the two candidates for the pair.
+This lock means the first candidate won over the second in pairwise comparisons.
+Once a win is locked for the first candidate over the second,
+this must not also be called to set a lock in the opposite direction,
+stating a win for the second candidate over the first.
+
 =item get_lock
+
+Returns 1 if the candidate pair is locked, 0 if not.
+The parameters are the ids of the two candidates for the pair.
 
 =item graph_add_link
 
 This should not be called by external code.
 
+This sets a directed link in the Ranked Pairs algorithm graph.
+It's how Ranked Pairs computes winning candidate order.
+The parameters are the ids of the two candidates for the pair.
+
 =item cand_total_wins
+
+This returns the count of total wins for a candidate over other candidates.
+The parameter is the id of the candidate.
 
 =item cand_total_mov
 
