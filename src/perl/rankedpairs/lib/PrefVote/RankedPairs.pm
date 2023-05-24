@@ -625,7 +625,18 @@ The parameter is the id of the candidate.
 
 =item cand_total_mov
 
+This returns a candidate's total of their margins of victory.
+The parameter is the id of the candidate.
+
 =item tally_preferences
+
+This should not be called by external code.
+
+This tallies the ballots which were already stored by PrefVote::Core::submit_ballot().
+This is where each entry in a ranked preference order is counted as a preference over all
+following lower-ranked candidates.
+Omitted candidates are counted as equals but less preferred than all other candidates for that ballot.
+This calls I<add_preference()> to register preferences from ballots into the candidate pair matrix.
 
 =item sort_pairs
 
