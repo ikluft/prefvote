@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # PODNAME: vote-count
-# command line interface to run PrefVote::STV processing YAML input for testing and simple usage example
+# command line interface to run PrefVote processing input for testing and simple usage example
 # derived from Vote::STV by Ian Kluft
 # Copyright (c) 1998-2022 by Ian Kluft
 # Open Source license: Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
@@ -11,7 +11,6 @@ use utf8;
 use feature qw(say);
 use autodie;
 use Carp qw(confess);;
-use YAML::XS; # RPM: perl-YAML-LibYAML, DEB: libyaml-libyaml-perl
 use PrefVote;
 use PrefVote::Core;
 use Getopt::Long;
@@ -45,7 +44,8 @@ sub main
         "method:s" => \$method, "config=s" => \%config);
     if (not @ARGV) {
         say STDERR "usage: $0 [--debug] [--test] [--format=output-format] [--method=votingmethod] [--config key=value] "
-            ."yaml_file";
+            ."input_file";
+        say STDERR "input_file may be either *.yaml or *.cvotes";
         exit 0;
     }
 
@@ -76,7 +76,7 @@ sub main
         say STDERR Dumper($vote_obj);
     }
 
-    # check for test, YAML or default modes
+    # check for test, formatted-output or default modes
     if ($test_mode) {
         # test mode - run black-box tests
         my $testspec = $vote_obj->testspec();
@@ -92,9 +92,10 @@ sub main
             PrefVote::Core::TestUtil::do_tests(@tests);
         }
     } elsif (defined $out_format) {
+        # formatted-output mode
         $vote_obj->format_output($out_format);
     } else {
-        # print result
+        # print result in simple default format
         my $results = $vote_obj->results();
         say "Winning order";
         print_result_list($results->{winners});
@@ -133,9 +134,12 @@ vote-count
 =head1 USAGE
 
   vote-count [--test] [--format=output-type] [--method=voting-method]
-    [--config key=name] [--debug] vote-data.yaml
+    [--config key=name] [--debug] vote-data-file
 
-The voting data file provided on the command line is read as YAML containing two or three "YAML documents",
+The voting data file provided on the command line is read as either a YAML file if named *.yaml,
+or a Condorcet Election Format if named *.cvotes .
+
+YAML input files contain two or three "YAML documents",
 actually sections within the same file.
 The first YAML document is the definition of a survey or election including a title and the options or candidates.
 The second YAML document contains the survey responses or ballots - these must have been gathered from whichever
@@ -149,8 +153,12 @@ By design, all of PrefVote's voting methods are multi-winner methods which may b
 All of PrefVote's voting methods use Average Choice Rank (ACR), the average ballot position of a choice or candidate,
 as a tie-breaker if quantitative vote counts are equal.
 
-For the format of the YAML input file, see the documentation for the voting method selected from among
+For the format of a YAML (*.yaml) input file, see the documentation for the voting method selected from among
 L<PrefVote::Core>, L<PrefVote::STV>, L<PrefVote::Schulze> or L<PrefVote::RankedPairs>.
+
+For the format of a Condorcet Election Format (*.cvotes) input file, see the definition at
+L<https://github.com/CondorcetVote/CondorcetElectionFormat> .
+(Implementation of .cvotes input processing is not complete and does not yet work.)
 
 =head1 OPTIONS
 
@@ -159,7 +167,15 @@ L<PrefVote::Core>, L<PrefVote::STV>, L<PrefVote::Schulze> or L<PrefVote::RankedP
 =item --test
 
 This is a boolean flag which selects black-box testing mode.
-The input YAML data must contain a section with expected test results from a previous verified run.
+
+In test mode, if the input file is a YAML file (*.yaml),
+it must contain a YAML document section with expected test results from a previous verified run.
+
+In test mode, if the input file is a Condorcet Election Format file (*.cvotes),
+then a separate YAML file (*.yaml with the same base name) must also be present
+with expected test results from a previous verified run.
+(The .cvotes file format is intended to be interchangeable among different vote-counting software.
+So the PrefVote-specific test data remains in a YAML file alongside it.)
 
 --test is mutually exclusive with --format. If neither is selected it defaults to printing simple results.
 
