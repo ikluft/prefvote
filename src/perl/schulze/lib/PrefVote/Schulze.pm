@@ -149,7 +149,7 @@ __END__
     use PrefVote::Schulze;
 
     # count votes from a properly-formatted YAML file
-    my $vote_obj = PrefVote::Schulze::yaml2vote($progname);
+    my $vote_obj = PrefVote::Schulze::file2vote($progname);
     $vote_obj->count();
 
     # get results in YAML

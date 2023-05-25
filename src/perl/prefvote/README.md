@@ -5,7 +5,7 @@
     use PrefVote::Core;
 
     # count votes from a properly-formatted YAML file
-    my $vote_obj = PrefVote::Core::yaml2vote($progname);
+    my $vote_obj = PrefVote::Core::file2vote($progname);
     $vote_obj->count();
 
     # get results in YAML
@@ -176,7 +176,7 @@ It only makes sense for tie-breaking, where becomes meaningful if everything els
 
 - ingest\_ballots
 
-    is called by yaml2vote() after it instantiates an object of _PrefVote::Core_ or a derivative class.
+    is called by file2vote() after it instantiates an object of _PrefVote::Core_ or a derivative class.
     This reads the 2nd YAML document in the input, which contains a list of ballots to be counted.
 
 - count()
@@ -304,7 +304,7 @@ It only makes sense for tie-breaking, where becomes meaningful if everything els
     Currently supported voting methods are Core (testing only), STV, Schulze and RankedPairs.
     New voting methods can be implemented by adding a new subclass of [PrefVote::Core](https://metacpan.org/pod/PrefVote%3A%3ACore).
 
-- yaml2vote({key => value, ...}, filepath)
+- file2vote({key => value, ...}, filepath)
 
     reads a YAML input file and constructs an object of _PrefVote::Core_
     or the appropriate subclass to handle the selected voting method.

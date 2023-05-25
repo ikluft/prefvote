@@ -440,7 +440,7 @@ __END__
   use PrefVote::STV;
 
     # count votes from a properly-formatted YAML file
-    my $vote_obj = PrefVote::STV::yaml2vote($progname);
+    my $vote_obj = PrefVote::STV::file2vote($progname);
     $vote_obj->count();
 
     # get results in YAML

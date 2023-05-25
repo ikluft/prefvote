@@ -60,7 +60,7 @@ sub main
     if (defined $method) {
         @opts = ({method => $method});
     }
-    my $vote_obj = PrefVote::Core::yaml2vote(@opts, $ARGV[0]);
+    my $vote_obj = PrefVote::Core::file2vote(@opts, $ARGV[0]);
     if ($debug) {
         # set debugging in PrefVote hierarchy
         $vote_obj->debug(1);

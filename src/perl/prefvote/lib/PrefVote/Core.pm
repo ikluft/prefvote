@@ -579,10 +579,10 @@ sub determine_method
     return $method;
 }
 
-# convert YAML input to PrefVote::Core structure and ballots
+# convert YAML (*.yaml) or CEF (*.cvotes) input to PrefVote::Core structure and ballots
 # if first parameter is a hash reference, use it as options
 # filepath scalar parameter points to YAML input file
-sub yaml2vote
+sub file2vote
 {
     my @args = @_;
     my %opts;
@@ -651,6 +651,11 @@ sub yaml2vote
     ingest_ballots( $vote_obj, $yaml_ballots );
 
     return $vote_obj;
+}
+
+# yaml2vote() aliases to file2vote() for backward compatibility with its original name
+BEGIN {
+    *yaml2vote = \&file2vote;
 }
 
 # save per-candidate final results in choice_to_result map
@@ -813,7 +818,7 @@ __END__
     use PrefVote::Core;
 
     # count votes from a properly-formatted YAML file
-    my $vote_obj = PrefVote::Core::yaml2vote($progname);
+    my $vote_obj = PrefVote::Core::file2vote($progname);
     $vote_obj->count();
 
     # get results in YAML
@@ -996,7 +1001,7 @@ Errors which result in exceptions are as follows:
 
 =item ingest_ballots
 
-is called by yaml2vote() after it instantiates an object of I<PrefVote::Core> or a derivative class.
+is called by file2vote() after it instantiates an object of I<PrefVote::Core> or a derivative class.
 This reads the 2nd YAML document in the input, which contains a list of ballots to be counted.
 
 =item count()
@@ -1132,7 +1137,7 @@ in order to select which one to use.
 Currently supported voting methods are Core (testing only), STV, Schulze and RankedPairs.
 New voting methods can be implemented by adding a new subclass of L<PrefVote::Core>.
 
-=item yaml2vote({key => value, ...}, filepath)
+=item file2vote({key => value, ...}, filepath)
 
 reads a YAML input file and constructs an object of I<PrefVote::Core>
 or the appropriate subclass to handle the selected voting method.

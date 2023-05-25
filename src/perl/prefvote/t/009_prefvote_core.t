@@ -191,10 +191,10 @@ sub yaml_tests
 
     # load YAML file (10 tests)
     my $vote_obj;
-    lives_ok( sub{ $vote_obj = PrefVote::Core::yaml2vote($yaml_path); }, "process YAML file");
-    ok(defined $vote_obj, "yaml2vote() returned a defined value");
-    ok(ref $vote_obj, "yaml2vote() returned a reference");
-    isa_ok($vote_obj, "PrefVote::Core", "yaml2vote() returned correct object");
+    lives_ok( sub{ $vote_obj = PrefVote::Core::file2vote($yaml_path); }, "process YAML file");
+    ok(defined $vote_obj, "file2vote() returned a defined value");
+    ok(ref $vote_obj, "file2vote() returned a reference");
+    isa_ok($vote_obj, "PrefVote::Core", "file2vote() returned correct object");
     is(PrefVote::Core->get_choices(), keys %{$vote_obj->{choices}}, "class->get_choices() test - YAML");
     is($vote_obj->get_choices(), keys %{$vote_obj->{choices}}, "obj->get_choices() test - YAML");
     is($vote_obj->name(), $yaml_name, "attribute check: name");

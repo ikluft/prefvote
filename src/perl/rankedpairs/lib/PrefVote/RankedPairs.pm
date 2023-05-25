@@ -477,7 +477,7 @@ __END__
   use PrefVote::RankedPairs;
 
     # count votes from a properly-formatted YAML file
-    my $vote_obj = PrefVote::RankedPairs::yaml2vote($progname);
+    my $vote_obj = PrefVote::RankedPairs::file2vote($progname);
     $vote_obj->count();
 
     # get results in YAML
