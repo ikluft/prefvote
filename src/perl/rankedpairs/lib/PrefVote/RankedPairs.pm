@@ -640,9 +640,32 @@ This calls I<add_preference()> to register preferences from ballots into the can
 
 =item sort_pairs
 
+This should not be called by external code.
+
+This generates a list of all possible pairs of candidates as L<PrefVote::RankedPairs::Majority>
+objects, computing a margin of victory for each pair.
+Then it sorts the list of pairs from greatest to least margin of victory.
+
 =item depth_first_search
 
+This should not be called by external code.
+
+This is called by is_conflict().
+It performs a depth-first search of the Ranked Pairs graph from a specific node,
+looking for another candidate (the other candidate in a pair)
+to find out if there's a path between them.
+
 =item is_conflict
+
+This checks the Ranked Pairs graph to determine if a given candidate pair conflicts with prior pairs,
+those with higher margins of victory.
+It returns true if there is a conflict, false otherwise.
+
+This is used to determine whether a candidate pair can be locked in the order.
+A pair with the first candidate winning over the second will be processed first and get locked.
+Later when the same pair in the opposite order is encountered, it will be considered in conflict with
+the earlier pair, and will not be locked.
+Also ties will not be locked in either direction.
 
 =item lock_pairs
 
