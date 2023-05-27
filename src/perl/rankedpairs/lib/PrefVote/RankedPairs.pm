@@ -631,6 +631,7 @@ The parameter is the id of the candidate.
 =item tally_preferences
 
 This should not be called by external code.
+This is called by the count() method.
 
 This tallies the ballots which were already stored by PrefVote::Core::submit_ballot().
 This is where each entry in a ranked preference order is counted as a preference over all
@@ -641,6 +642,7 @@ This calls I<add_preference()> to register preferences from ballots into the can
 =item sort_pairs
 
 This should not be called by external code.
+This is called by the count() method.
 
 This generates a list of all possible pairs of candidates as L<PrefVote::RankedPairs::Majority>
 objects, computing a margin of victory for each pair.
@@ -669,11 +671,32 @@ Also ties will not be locked in either direction.
 
 =item lock_pairs
 
+This should not be called by external code.
+This is called by the count() method.
+
+This loops through the candidate pairs and locks pairs which do not conflict with earlier pairs.
+This is a key step of the Ranked Pairs alogorithm.
+It takes no parameters, using the previously assembled list of L<PrefVote::RankedPairs::Majority>
+objects representing all the candidate pairs.
+
 =item cmp_choice
+
+This is a comparison function for sorting Ranked Pairs vote results.
+The parameters are the candidate identifiers for two candidates to be compared.
+Like the <=> operator, it returns -1 for less-than, 0 for equality and 1 for greater-than.
 
 =item graph_to_order
 
+This should not be called by external code.
+This is called by the count() method.
+
+This populates the winners list based on the contents of the Ranked Pairs graph.
+
 =item count
+
+This counts votes using the Ranked Pairs method.
+The count() method of L<PrefVote::Core> is overridden by I<PrefVote::RankedPairs> in order to implement
+the Ranked Pairs voting algorithm.
 
 =back
 
