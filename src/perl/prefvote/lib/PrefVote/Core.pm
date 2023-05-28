@@ -184,7 +184,7 @@ has
     ),
 
     # blackbox testing checklist structure
-    # this is filled from the extra data from YAML input file, used for testing all PrefVote language implementations
+    # this is filled from the extra data from the input file, used for testing all PrefVote language implementations
     has testspec => (
     is       => 'ro',
     isa      => InstanceOf ["PrefVote::Core::TestSpec"],
@@ -460,20 +460,20 @@ sub submit_ballot
     return $hex_id;    # returns index key, whose absence can be used to detect if an exception was thrown
 }
 
-# read YAML input
-sub read_yaml
+# read vote file input from YAML or Condorcet Election Format
+sub read_vote_file
 {
     my $filepath = shift;
 
-    # read YAML
+    # read input file
     ( -e $filepath ) or PrefVote::Core::Exception->throw( description => "$filepath not found" );
     ( -f $filepath )
         or PrefVote::Core::Exception->throw( description => "$filepath not a regular file" );
-    my @yaml_docs = eval { YAML::XS::LoadFile($filepath) };
+    my @input_docs = eval { YAML::XS::LoadFile($filepath) };
     if ($@) {
         PrefVote::Core::Exception->throw( description => "$0: error reading $filepath: $@" );
     }
-    return @yaml_docs;
+    return @input_docs;
 }
 
 # input ballots to a PrefVote::Core-subclass voting method
@@ -481,7 +481,7 @@ sub ingest_ballots
 {
     my ( $vote_obj, $ballots ) = @_;
 
-    # ingest ballots from 2nd YAML document
+    # ingest ballots from input data
     my $submitted = 0;
     my $accepted  = 0;
     foreach my $ballot (@$ballots) {
@@ -543,7 +543,7 @@ sub determine_method
     }
 
     # translate a voting method string into a voting-method class within this hierarchy
-    # instantiate the voting object from 1st YAML document
+    # instantiate the voting object from 1st input structure
     my $method_list     = $vote_def->{method};
     my @methods_allowed = split( /\s+/x, $method_list );
     my $method;
@@ -591,34 +591,34 @@ sub file2vote
         %opts = %$opts_ref;
     }
     my $filepath  = $args[0];
-    my @yaml_docs = read_yaml($filepath);
+    my @input_docs = read_vote_file($filepath);
 
-    # save the first YAML document as the definition of the vote for entry into a PrefVote::Core structure
-    my $yaml_vote_def = shift @yaml_docs;
-    if ( ref $yaml_vote_def ne "HASH" ) {
+    # save the definition of the vote for entry into a PrefVote::Core structure
+    my $vote_def = shift @input_docs;
+    if ( ref $vote_def ne "HASH" ) {
         PrefVote::Core::Exception->throw(
-            description => "$0: misformatted YAML input: 1st document must be in " . "map/hash format" );
+            description => "$0: misformatted input data: 1st document must be in map/hash format" );
     }
     foreach my $key (qw(method params)) {
-        if ( not exists $yaml_vote_def->{$key} ) {
-            PrefVote::Core::Exception->throw( description => "$0: misformatted YAML input: "
+        if ( not exists $vote_def->{$key} ) {
+            PrefVote::Core::Exception->throw( description => "$0: misformatted input data: "
                     . "'$key' parameter missing from top level of vote definition" );
         }
     }
 
-    # save the second YAML document as the list of ballots
-    my $yaml_ballots = shift @yaml_docs;
-    if ( ref $yaml_ballots ne "ARRAY" ) {
+    # save the list of ballots
+    my $ballots = shift @input_docs;
+    if ( ref $ballots ne "ARRAY" ) {
         PrefVote::Core::Exception->throw(
             description => "$0: misformatted YAML input: 2nd document " . "must be in list/array format" );
     }
 
     # save any additional YAML documents in extra, available for testing
-    my $extra_data = [@yaml_docs];
+    my $extra_data = [@input_docs];
 
     # translate a voting method string into a voting-method class within this hierarchy
     # instantiate the voting object from 1st YAML document
-    my $method = determine_method( \%opts, $yaml_vote_def );
+    my $method = determine_method( \%opts, $vote_def );
     my $class  = "PrefVote::$method";
     ## no critic (BuiltinFunctions::ProhibitStringyEval)
     if ( not eval "require $class" ) {
@@ -629,7 +629,7 @@ sub file2vote
         PrefVote::Core::Exception->throw(
             description => "class $class in vote defintion is not a subclass of " . __PACKAGE__ );
     }
-    my $params = $yaml_vote_def->{params};
+    my $params = $vote_def->{params};
     if ( scalar @$extra_data ) {
 
         # use extra YAML documents as TestSpec for blackbox testing checklist
@@ -648,7 +648,7 @@ sub file2vote
     }
 
     # ingest ballots from 2nd YAML document
-    ingest_ballots( $vote_obj, $yaml_ballots );
+    ingest_ballots( $vote_obj, $ballots );
 
     return $vote_obj;
 }
@@ -1112,10 +1112,11 @@ The L<vote-count> script performs that task when given the I<--test> command-lin
 returns true if the method string passed as a parameter matches any of the supported voting methods.
 The matching is not case-sensitive.
 
-=item read_yaml(filepath)
+=item read_vote_file(filepath)
 
-uses the I<filepath> parameter as a string with the filename of a YAML file to read and parse.
-It returns a list of the parsed YAML document structures found in that file.
+uses the I<filepath> parameter as a string with the filename of an input file to read and parse.
+The input file can be YAML with a .yaml or .yml suffix, or Condorcet Election Format with a .cvotes suffix.
+It returns a list of the parsed input document's data structures.
 
 This function throws exceptions if the filepath names a file which doesn't exist or is not a regular file.
 It also throws an exception if the content of that file can't be parsed by L<YAML::XS>.
