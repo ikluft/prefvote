@@ -202,8 +202,8 @@ sub cand_total_mov
 }
 
 # return a ballot item as a list, whether it was a single scalar or a tie-group set
-# This code was borrowed from Schulze, which allows ties on input. Ranked Pairs should never receive ties from Core.
-# To allow for experimentation, this code was preserved here anyway.
+# This code was borrowed from Schulze, which allows ties on input. The Ranked Pairs definition does not allow
+# input ties. PrefVote can be configured to allow it for consistency across Condorcet methods.
 sub item2list
 {
     my $item = shift;
@@ -705,6 +705,12 @@ the Ranked Pairs voting algorithm.
 =over 1
 
 =item item2list
+
+This returns a ballot item as a list, whether it was a single scalar or a tie-group set.
+The Ranked Pairs definition does not allow input ties.
+PrefVote can be configured to allow it for consistency across Condorcet methods.
+
+The parameter is an item from a L<PrefVote::Core::Ballot> object.
 
 =back
 
