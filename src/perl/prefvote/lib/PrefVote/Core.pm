@@ -464,16 +464,37 @@ sub submit_ballot
 sub read_vote_file
 {
     my $filepath = shift;
+    my %input_doc;
 
     # read input file
     ( -e $filepath ) or PrefVote::Core::Exception->throw( description => "$filepath not found" );
     ( -f $filepath )
         or PrefVote::Core::Exception->throw( description => "$filepath not a regular file" );
-    my @input_docs = eval { YAML::XS::LoadFile($filepath) };
-    if ($@) {
-        PrefVote::Core::Exception->throw( description => "$0: error reading $filepath: $@" );
+    if ( substr( fc $filepath, -5, 5 ) eq ".yaml" or substr( fc $filepath, -4, 4 ) eq ".yml" ) {
+        # parse YAML
+        my @yaml_docs = eval { YAML::XS::LoadFile($filepath) };
+        if ($@) {
+            PrefVote::Core::Exception->throw( description => "$0: error reading $filepath: $@" );
+        }
+        if (scalar @yaml_docs < 2) {
+            PrefVote::Core::Exception->throw( description => "$0: error reading $filepath: not enough YAML sections" );
+        }
+
+        # save 1st YAML document as vote definition
+        $input_doc{vote_def} = shift @yaml_docs;
+
+        # save 2nd YAML document as ballot list
+        $input_doc{ballots} = shift @yaml_docs;
+
+        # save any additional YAML documents as test data
+        $input_doc{test_data} = [ @yaml_docs ]; # will be empty if no test data
+    } elsif ( substr( fc $filepath, -6, 6 ) eq ".cvotes" ) {
+        # parse Condorcet Election Format
+        PrefVote::Core::Exception->throw( description => "$0: Condorcet Election Format not yet implemented" );
+    } else {
+        PrefVote::Core::Exception->throw( description => "$0: unrecognized vote file type" );
     }
-    return @input_docs;
+    return %input_doc;
 }
 
 # input ballots to a PrefVote::Core-subclass voting method
@@ -591,34 +612,29 @@ sub file2vote
         %opts = %$opts_ref;
     }
     my $filepath  = $args[0];
-    my @input_docs = read_vote_file($filepath);
+    my %input_doc = read_vote_file($filepath);
 
-    # save the definition of the vote for entry into a PrefVote::Core structure
-    my $vote_def = shift @input_docs;
-    if ( ref $vote_def ne "HASH" ) {
+    # check the definition of the vote in preparation for entry into a PrefVote::Core structure
+    if ( ref $input_doc{vote_def} ne "HASH" ) {
         PrefVote::Core::Exception->throw(
             description => "$0: misformatted input data: 1st document must be in map/hash format" );
     }
     foreach my $key (qw(method params)) {
-        if ( not exists $vote_def->{$key} ) {
+        if ( not exists $input_doc{vote_def}{$key} ) {
             PrefVote::Core::Exception->throw( description => "$0: misformatted input data: "
                     . "'$key' parameter missing from top level of vote definition" );
         }
     }
 
-    # save the list of ballots
-    my $ballots = shift @input_docs;
-    if ( ref $ballots ne "ARRAY" ) {
+    # check the list of ballots
+    if ( ref $input_doc{ballots} ne "ARRAY" ) {
         PrefVote::Core::Exception->throw(
             description => "$0: misformatted YAML input: 2nd document " . "must be in list/array format" );
     }
 
-    # save any additional YAML documents in extra, available for testing
-    my $extra_data = [@input_docs];
-
     # translate a voting method string into a voting-method class within this hierarchy
     # instantiate the voting object from 1st YAML document
-    my $method = determine_method( \%opts, $vote_def );
+    my $method = determine_method( \%opts, $input_doc{vote_def} );
     my $class  = "PrefVote::$method";
     ## no critic (BuiltinFunctions::ProhibitStringyEval)
     if ( not eval "require $class" ) {
@@ -629,11 +645,11 @@ sub file2vote
         PrefVote::Core::Exception->throw(
             description => "class $class in vote defintion is not a subclass of " . __PACKAGE__ );
     }
-    my $params = $vote_def->{params};
-    if ( scalar @$extra_data ) {
+    my $params = $input_doc{vote_def}{params};
+    if ( scalar @{$input_doc{test_data}} ) {
 
         # use extra YAML documents as TestSpec for blackbox testing checklist
-        my $testdoc = shift @$extra_data;
+        my $testdoc = shift @{$input_doc{test_data}};
         if ( ref $testdoc eq "HASH" and exists $testdoc->{$method} ) {
             my $testspec = $testdoc->{$method};
             $params->{testspec} = PrefVote::Core::TestSpec->new( checklist => $testspec );
@@ -648,7 +664,7 @@ sub file2vote
     }
 
     # ingest ballots from 2nd YAML document
-    ingest_ballots( $vote_obj, $ballots );
+    ingest_ballots( $vote_obj, $input_doc{ballots} );
 
     return $vote_obj;
 }
