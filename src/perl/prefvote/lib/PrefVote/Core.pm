@@ -20,6 +20,7 @@ use DateTime;
 use Readonly;
 use Set::Tiny qw(set);
 use Scalar::Util 'reftype';
+use File::Basename;
 use YAML::XS;
 use PrefVote::Core::Ballot;
 use PrefVote::Core::Exception;
@@ -466,11 +467,16 @@ sub read_vote_file
     my $filepath = shift;
     my %input_doc;
 
-    # read input file
+    # verify input file exists
     ( -e $filepath ) or PrefVote::Core::Exception->throw( description => "$filepath not found" );
     ( -f $filepath )
         or PrefVote::Core::Exception->throw( description => "$filepath not a regular file" );
-    if ( substr( fc $filepath, -5, 5 ) eq ".yaml" or substr( fc $filepath, -4, 4 ) eq ".yml" ) {
+
+    # process file name
+    my($basename, $dirs, $suffix) = fileparse($filepath, ".yaml", ".yml", ".cvotes");
+
+    # handle YAML or CEF files
+    if ( $suffix eq ".yaml" or $suffix eq ".yml" ) {
         # parse YAML
         my @yaml_docs = eval { YAML::XS::LoadFile($filepath) };
         if ($@) {
@@ -488,12 +494,27 @@ sub read_vote_file
 
         # save any additional YAML documents as test data
         $input_doc{test_data} = [ @yaml_docs ]; # will be empty if no test data
-    } elsif ( substr( fc $filepath, -6, 6 ) eq ".cvotes" ) {
+    } elsif ( $suffix eq ".cvotes" ) {
         # parse Condorcet Election Format
         PrefVote::Core::Exception->throw( description => "$0: Condorcet Election Format not yet implemented" );
     } else {
         PrefVote::Core::Exception->throw( description => "$0: unrecognized vote file type" );
     }
+
+    # if not already provided in primary file, read test data from *-test.yaml alongside primary input file
+    if (( not exists $input_doc{test_data}) or scalar @{$input_doc{test_data}} == 0 ) {
+        for my $test_suffix ( qw(yml yaml) ) {
+            my $test_path = $dirs.$basename."-test.".$test_suffix;
+            if ( -f $test_path ) {
+                $input_doc{test_data} = eval { YAML::XS::LoadFile($test_path) };
+                if ($@) {
+                    PrefVote::Core::Exception->throw( description => "$0: error reading test data in $test_path: $@" );
+                }
+                last;
+            }
+        }
+    }
+
     return %input_doc;
 }
 
