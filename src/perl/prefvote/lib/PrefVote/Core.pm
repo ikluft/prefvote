@@ -461,6 +461,47 @@ sub submit_ballot
     return $hex_id;    # returns index key, whose absence can be used to detect if an exception was thrown
 }
 
+# parse Condorcet Election Formed (defined at https://github.com/CondorcetVote/CondorcetElectionFormat )
+# $filepath parameter should already be checked for existence before calling
+sub parse_cef
+{
+    my $filepath = shift;
+    my (%input_doc, %params);
+    #my @ballots;
+
+    # read file and process lines
+    ## no critic (RequireBriefOpen)
+    open(my $fh, "<", $filepath)
+        or PrefVote::Core::Exception->throw( description => "couldn't open $filepath: $!");
+    while (my $line = <$fh>) {
+        chomp $line;
+
+        # election definition parameters
+        if ( $line =~ /^ \s* # \/ \s* ([\w ]+?) \s* : \s* (.*?) \s* $/x ) {
+            my ($param_name, $param_value) = ($1, $2);
+            if (exists $params{$param_name}) {
+                PrefVote::Core::Exception->throw( description => "parse_cef($filepath): can't redefine $param_name" );
+            }
+            $params{$param_name} = $param_value;
+            next;
+        }
+
+        # comments
+        if ( $line =~ /^ \s* # /x ) {
+            next;
+        }
+
+        # ballots
+        # TODO
+    }
+    close $fh
+        or PrefVote::Core::Exception->throw( description => "couldn't close $filepath: $!");
+    ## critic (RequireBriefOpen)
+
+    # TODO translate CEF data to PrefVote vote definition
+    return %input_doc;
+}
+
 # read vote file input from YAML or Condorcet Election Format
 sub read_vote_file
 {
