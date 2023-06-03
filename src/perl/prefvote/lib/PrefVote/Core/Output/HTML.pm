@@ -17,7 +17,7 @@ use utf8;
 use feature qw(say);
 use autodie;
 use HTML::Escape qw(escape_html);
-use base qw(PrefVote);
+use parent qw(PrefVote);
 
 # HTML filters (escape and whitespace)
 sub htmlify

@@ -16,7 +16,7 @@ package PrefVote::Core::Output::Text;
 use utf8;
 use feature qw(say);
 use autodie;
-use base qw(PrefVote);
+use parent qw(PrefVote);
 use Term::ANSIColor;
 use IO::Interactive qw(is_interactive);
 use Text::Table::Tiny 1.02 qw/ generate_table /;

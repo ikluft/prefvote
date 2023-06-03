@@ -15,7 +15,7 @@ package PrefVote::Core::Output::RawCapture;
 
 use utf8;
 use autodie;
-use base qw(PrefVote);
+use parent qw(PrefVote);
 
 # output capture and access for testing
 my @output;

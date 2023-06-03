@@ -16,7 +16,7 @@ package PrefVote::Core::Output::Markdown;
 use utf8;
 use feature qw(say);
 use autodie;
-use base qw(PrefVote);
+use parent qw(PrefVote);
 
 # generate Markdown table from an array
 sub generate_md_table

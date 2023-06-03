@@ -16,7 +16,7 @@ use utf8;
 use autodie;
 use Data::Dumper;
 use Test::More;
-use base "PrefVote";
+use parent "PrefVote";
 
 # run a single test
 sub do_test

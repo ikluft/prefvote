@@ -16,7 +16,7 @@ package PrefVote::STV::Output;
 use utf8;
 use feature qw(say);
 use autodie;
-use base qw(PrefVote);
+use parent qw(PrefVote);
 use Data::Dumper;
 use PrefVote::Core::Output;
 use PrefVote::Core::Float qw(float_external);

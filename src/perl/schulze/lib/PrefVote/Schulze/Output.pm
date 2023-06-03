@@ -15,7 +15,7 @@ package PrefVote::Schulze::Output;
 
 use utf8;
 use autodie;
-use base qw(PrefVote);
+use parent qw(PrefVote);
 use Readonly;
 use PrefVote::Core::Output;
 use PrefVote::Core::Float qw(float_external);

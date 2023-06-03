@@ -65,7 +65,7 @@ __END__
 
 In standard Perl5:
 
-    use base "PrefVote";
+    use parent "PrefVote";
     #...
     PrefVote->debug($debug_flag);
     #...

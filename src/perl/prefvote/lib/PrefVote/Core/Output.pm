@@ -16,7 +16,7 @@ package PrefVote::Core::Output;
 use utf8;
 use feature qw(say fc);
 use autodie;
-use base qw(PrefVote);
+use parent qw(PrefVote);
 use Carp qw(croak confess);
 use Config;
 use English;
