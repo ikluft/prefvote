@@ -164,23 +164,77 @@ __END__
 
 =head1 ATTRIBUTES
 
+These attributes are in addition to L<those inherited from PrefVote::Core|PrefVote::Core/ATTRIBUTES>.
+
 =over 1
 
 =item winners
 
-=item rounds
+=item pair
+
+=item majority
+
+=item graph
 
 =back 
 
 =head1 METHODS
 
+These methods are in addition to L<those inherited from PrefVote::Core|PrefVote::Core/METHODS>.
+
 =over 1
 
-=item new_round()
+=item make_pair_node()
+
+=item add_preference()
+
+=item get_preference()
+
+=item set_mov()
+
+=item get_mov()
+
+=item set_lock()
+
+=item get_lock()
+
+=item graph_add_link()
+
+=item cand_total_wins()
+
+=item cand_total_mov()
+
+=item tally_preferences()
+
+=item sort_pairs()
+
+=item depth_first_search()
+
+=item is_conflict()
+
+=item lock_pairs()
+
+=item graph_to_order()
 
 =item count()
 
 =back 
+
+=head1 FUNCTIONS
+
+=over 1
+
+=item item2list
+
+This returns a ballot item as a list, whether it was a single scalar or a tie-group set.
+The Ranked Pairs definition does not allow input ties.
+PrefVote can be configured to allow it for consistency across Condorcet methods.
+
+The parameter is an item from a L<PrefVote::Core::Ballot> object.
+
+=item cmp_choice
+
+=back
 
 =head1 SEE ALSO
 
