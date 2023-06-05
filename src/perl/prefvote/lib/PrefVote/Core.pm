@@ -19,7 +19,7 @@ use autodie;
 use DateTime;
 use Readonly;
 use Set::Tiny qw(set);
-use Scalar::Util qw(reftype looks_like_number);
+use Scalar::Util qw(reftype);
 use File::Basename;
 use YAML::XS;
 use PrefVote::Core::Ballot;
@@ -403,12 +403,20 @@ sub submit_ballot
     my $weight = 1;
     if (ref $ballot[0] eq "HASH") {
         my $params = shift @ballot;
-        if (exists $params->{quantity} and looks_like_number($params->{quantity})) {
-            $quantity = int($params->{quantity})
+        if (exists $params->{quantity}) {
+            if ( $params->{quantity} !~ /^\d+$/x ) {
+                PrefVote::Core::Exception->throw( description => "ballot quantity " .
+                    $params->{quantity} ." is not an integer" );
+            }
+            $quantity = $params->{quantity};
         }
-        # TODO: check parameters if weights are allowed
-        if (exists $params->{weight} and looks_like_number($params->{weight})) {
-            $quantity = int($params->{weight})
+        # TODO: check parameters if weights are allowed in this election
+        if (exists $params->{weight}) {
+            if ( $params->{weight} !~ /^\d+$/x ) {
+                PrefVote::Core::Exception->throw( description => "ballot weight " .
+                    $params->{weight} ." is not an integer" );
+            }
+            $weight = $params->{weight};
         }
     }
     foreach my $item (@ballot) {
