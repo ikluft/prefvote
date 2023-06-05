@@ -461,7 +461,7 @@ sub submit_ballot
     return $hex_id;    # returns index key, whose absence can be used to detect if an exception was thrown
 }
 
-# parse Condorcet Election Formed (defined at https://github.com/CondorcetVote/CondorcetElectionFormat )
+# parse Condorcet Election Format (defined at https://github.com/CondorcetVote/CondorcetElectionFormat )
 # $filepath parameter should already be checked for existence before calling
 sub parse_cef
 {
