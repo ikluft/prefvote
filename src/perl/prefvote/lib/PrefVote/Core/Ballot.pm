@@ -206,7 +206,8 @@ sub items_count
 sub increment
 {
     my $self = shift;
-    $self->{quantity}++;
+    my $in_quantity = shift // 1; # default to incrementing by one
+    $self->{quantity} += $in_quantity;
     return;
 }
 

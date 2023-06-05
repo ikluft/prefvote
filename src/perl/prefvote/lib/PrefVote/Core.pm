@@ -19,7 +19,7 @@ use autodie;
 use DateTime;
 use Readonly;
 use Set::Tiny qw(set);
-use Scalar::Util 'reftype';
+use Scalar::Util qw(reftype looks_like_number);
 use File::Basename;
 use YAML::XS;
 use PrefVote::Core::Ballot;
@@ -399,6 +399,18 @@ sub submit_ballot
 
     # filter out invalid items from ballot
     my @filtered_ballot;
+    my $quantity = 1;
+    my $weight = 1;
+    if (ref $ballot[0] eq "HASH") {
+        my $params = shift @ballot;
+        if (exists $params->{quantity} and looks_like_number($params->{quantity})) {
+            $quantity = int($params->{quantity})
+        }
+        # TODO: check parameters if weights are allowed
+        if (exists $params->{weight} and looks_like_number($params->{weight})) {
+            $quantity = int($params->{weight})
+        }
+    }
     foreach my $item (@ballot) {
 
         # check for ballot-input ties
@@ -446,18 +458,18 @@ sub submit_ballot
     if ( $self->ballots_exists($hex_id) ) {
         $action = "increment";
         $ballot = $self->ballots_get($hex_id);
-        $ballot->increment();
+        $ballot->increment($quantity * $weight);
     } else {
         $action = "new";
         $ballot = PrefVote::Core::Ballot->new(
             items    => \@filtered_ballot,
             hex_id   => $hex_id,
-            quantity => 1
+            quantity => $quantity * $weight
         );
         $self->ballots_set( $hex_id, $ballot );
     }
     $self->debug_print( "accepting $action: ", $ballot->as_string() );
-    $self->{total_ballots}++;
+    $self->{total_ballots} += $quantity * $weight;
     return $hex_id;    # returns index key, whose absence can be used to detect if an exception was thrown
 }
 
