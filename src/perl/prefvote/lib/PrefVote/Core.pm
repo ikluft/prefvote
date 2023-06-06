@@ -66,7 +66,7 @@ has name => (
     required => 1,
 );
 
-# optional boolean flag parameters for this election/vote
+# boolean flag parameters for this election/vote (optional, set only at initialization time)
 has flags => (
     is       => 'ro',
     isa      => Map [ NonEmptySimpleStr, Bool ],
