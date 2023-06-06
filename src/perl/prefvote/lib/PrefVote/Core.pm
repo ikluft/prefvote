@@ -37,7 +37,7 @@ Readonly::Array my @voting_methods => qw(Core STV Schulze RankedPairs);
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Standard qw(Str Int Enum ArrayRef HashRef Map Tuple InstanceOf Any);
+use Types::Standard qw(Str Int Bool Enum ArrayRef HashRef Map Tuple InstanceOf Any);
 use Types::Common::Numeric qw(PositiveInt PositiveOrZeroInt);
 use Types::Common::String qw(NonEmptySimpleStr);
 use PrefVote::Core::Float qw(fp_equal fp_cmp float_internal PVPositiveOrZeroNum);
@@ -47,6 +47,7 @@ with 'MooX::Singleton';
 # blackbox testing structure
 Readonly::Hash my %blackbox_spec => (
     name             => [qw(string)],
+    flags            => [qw(hash bool)],
     choice_to_index  => [qw(hash string)],
     index_to_choice  => [qw(hash string)],
     choice_to_result => [qw(hash list string)],              # list of strings is all we can do for a tuple
@@ -63,6 +64,12 @@ has name => (
     is       => 'ro',
     isa      => Str,
     required => 1,
+);
+
+# optional boolean flag parameters for this election/vote
+has flags => (
+    is       => 'ro',
+    isa      => Map [ NonEmptySimpleStr, Bool ],
 );
 
 # bidirectional hashes for converting between index strings and choice identifier strings
