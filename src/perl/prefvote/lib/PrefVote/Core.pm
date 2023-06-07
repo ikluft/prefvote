@@ -513,8 +513,11 @@ sub parse_cef
             next;
         }
 
-        # comments
-        if ( $line =~ /^ \s* # /x ) {
+        # remove comments from the end of each line, up to the whole line
+        $line =~ s/\s* # .*//x );
+
+        # skip empty lines, which may or may not have formerly been comments
+        if ( $line =~ /^ \s* $/x ) {
             next;
         }
 
