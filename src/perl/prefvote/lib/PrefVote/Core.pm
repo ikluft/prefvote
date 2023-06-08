@@ -529,6 +529,12 @@ sub parse_cef
             @tags = split /\s* , \s*/x, $tag_str;
             substr $line, 0, length($tag_str), ""; # remove tags from beginning of line
         }
+        if ( $line =~ /\s* \* \s* (\d+) \s* $/x ) {
+            # keep quantifier and remove from the ballot line
+            my $quantifier_str = $1;
+            $quantifier = $quantifier_str;
+            substr $line, -length($quantifier_str), length($quantifier_str), ""; # remove quantifer from end of line
+        }
 
         # TODO
     }
