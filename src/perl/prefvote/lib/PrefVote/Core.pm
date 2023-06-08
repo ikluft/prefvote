@@ -522,6 +522,14 @@ sub parse_cef
         }
 
         # ballots
+        my (@tags, $quantifier, $weight);
+        if ( $line =~ /^ \s* ( .*? ) \s* \|\|/x ) {
+            # keep tags and remove from the ballot line
+            my $tag_str = $1;
+            @tags = split /\s* , \s*/x, $tag_str;
+            substr $line, 0, length($tag_str), ""; # remove tags from beginning of line
+        }
+
         # TODO
     }
     close $fh
