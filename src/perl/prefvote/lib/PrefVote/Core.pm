@@ -533,7 +533,13 @@ sub parse_cef
             # keep quantifier and remove from the ballot line
             my $quantifier_str = $1;
             $quantifier = $quantifier_str;
-            substr $line, -length($quantifier_str), length($quantifier_str), ""; # remove quantifer from end of line
+            substr $line, -length($quantifier_str), length($quantifier_str), ""; # remove quantifier from end of line
+        }
+        if ( $line =~ /\s* \^ \s* (\d+) \s* $/x ) {
+            # keep weight and remove from the ballot line
+            my $weight_str = $1;
+            $weight = $weight_str;
+            substr $line, -length($weight_str), length($weight_str), ""; # remove weight from end of line
         }
 
         # TODO
