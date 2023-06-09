@@ -522,23 +522,23 @@ sub parse_cef
         }
 
         # ballots
-        my (@tags, $quantifier, $weight);
+        my %line_params;
         if ( $line =~ /^ \s* ( .*? ) \s* \|\|/x ) {
             # keep tags and remove from the ballot line
             my $tag_str = $1;
-            @tags = split /\s* , \s*/x, $tag_str;
+            $line_params{tags} = split /\s* , \s*/x, $tag_str;
             substr $line, 0, length($tag_str), ""; # remove tags from beginning of line
         }
         if ( $line =~ /\s* \* \s* (\d+) \s* $/x ) {
             # keep quantifier and remove from the ballot line
             my $quantifier_str = $1;
-            $quantifier = $quantifier_str;
+            $line_params{quantifier} = $quantifier_str;
             substr $line, -length($quantifier_str), length($quantifier_str), ""; # remove quantifier from end of line
         }
         if ( $line =~ /\s* \^ \s* (\d+) \s* $/x ) {
             # keep weight and remove from the ballot line
             my $weight_str = $1;
-            $weight = $weight_str;
+            $line_params{weight} = $weight_str;
             substr $line, -length($weight_str), length($weight_str), ""; # remove weight from end of line
         }
 
