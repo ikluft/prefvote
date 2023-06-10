@@ -494,7 +494,7 @@ sub parse_cef
 {
     my $filepath = shift;
     my (%input_doc, %params);
-    #my @ballots;
+    my @ballots;
 
     # read file and process lines
     ## no critic (RequireBriefOpen)
@@ -506,6 +506,10 @@ sub parse_cef
         # election definition parameters
         if ( $line =~ /^ \s* # \/ \s* ([\w ]+?) \s* : \s* (.*?) \s* $/x ) {
             my ($param_name, $param_value) = ($1, $2);
+            if (scalar @ballots > 0) {
+                PrefVote::Core::Exception->throw(
+                    description => "parse_cef($filepath): can't define $param_name after first ballot line" );
+            }
             if (exists $params{$param_name}) {
                 PrefVote::Core::Exception->throw( description => "parse_cef($filepath): can't redefine $param_name" );
             }
@@ -521,7 +525,7 @@ sub parse_cef
             next;
         }
 
-        # ballots
+        # process ballot line
         my %line_params;
         if ( $line =~ /^ \s* ( .*? ) \s* \|\|/x ) {
             # keep tags and remove from the ballot line
@@ -540,6 +544,11 @@ sub parse_cef
             my $weight_str = $1;
             $line_params{weight} = $weight_str;
             substr $line, -length($weight_str), length($weight_str), ""; # remove weight from end of line
+        }
+        if ( $line =~ qr(^ \s* /EMPTY_RANKING/ \s* $ )x ) {
+            # save the empty ranking as-is initially
+            # fill it in on second pass in case candidate names were not specified and are collected from ballots
+            push @ballots, [ '/EMPTY_RANKING/' ];
         }
 
         # TODO
