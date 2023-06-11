@@ -549,10 +549,18 @@ sub parse_cef
             # save the empty ranking as-is initially
             # fill it in on second pass in case candidate names were not specified and are collected from ballots
             push @ballots, [ '/EMPTY_RANKING/' ];
+            next;
         }
 
-        # TODO
+        # parse candidate preference order
+        my @pref_order = fetch_prefs($line, \%line_params, \%params);
+        push @ballots, \@pref_order;
     }
+
+    # 2nd pass: enumerate candidates and handle empty rankings
+    # TODO
+
+    # clean up
     close $fh
         or PrefVote::Core::Exception->throw( description => "couldn't close $filepath: $!");
     ## critic (RequireBriefOpen)
