@@ -557,13 +557,13 @@ sub parse_cef
         push @ballots, \@pref_order;
     }
 
-    # 2nd pass: enumerate candidates and handle empty rankings
-    # TODO
-
     # clean up
     close $fh
         or PrefVote::Core::Exception->throw( description => "couldn't close $filepath: $!");
     ## critic (RequireBriefOpen)
+
+    # 2nd pass: enumerate candidates and handle empty rankings
+    handle_empty_rankings( \@ballots, \%params );
 
     # TODO translate CEF data to PrefVote vote definition
     return %input_doc;
