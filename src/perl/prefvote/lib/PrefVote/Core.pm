@@ -565,7 +565,12 @@ sub parse_cef
     # 2nd pass: enumerate candidates and handle empty rankings
     handle_empty_rankings( \@ballots, \%params );
 
-    # TODO translate CEF data to PrefVote vote definition
+    # save CEF data to PrefVote vote definition & ballot docs
+    $input_doc{vote_def} = {};
+    if ( exists $params{'Number of Seats'}) {
+        $input_doc{vote_def}{seats} = int($params{'Number of Seats'});
+    }
+    $input_doc{ballots} = \@ballots;
     return %input_doc;
 }
 
@@ -604,7 +609,7 @@ sub read_vote_file
         $input_doc{test_data} = [ @yaml_docs ]; # will be empty if no test data
     } elsif ( $suffix eq ".cvotes" ) {
         # parse Condorcet Election Format
-        PrefVote::Core::Exception->throw( description => "$0: Condorcet Election Format not yet implemented" );
+        %input_doc = parse_cef( $filepath );
     } else {
         PrefVote::Core::Exception->throw( description => "$0: unrecognized vote file type" );
     }
