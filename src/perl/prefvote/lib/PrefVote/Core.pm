@@ -18,7 +18,7 @@ use feature qw(fc);
 use autodie;
 use DateTime;
 use Readonly;
-use Set::Tiny qw(set);
+use Set::Tiny    qw(set);
 use Scalar::Util qw(reftype);
 use File::Basename;
 use YAML::XS;
@@ -37,10 +37,10 @@ Readonly::Array my @voting_methods => qw(Core STV Schulze RankedPairs);
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Standard qw(Str Int Bool Enum ArrayRef HashRef Map Tuple InstanceOf Any);
+use Types::Standard        qw(Str Int Bool Enum ArrayRef HashRef Map Tuple InstanceOf Any);
 use Types::Common::Numeric qw(PositiveInt PositiveOrZeroInt);
-use Types::Common::String qw(NonEmptySimpleStr);
-use PrefVote::Core::Float qw(fp_equal fp_cmp float_internal PVPositiveOrZeroNum);
+use Types::Common::String  qw(NonEmptySimpleStr);
+use PrefVote::Core::Float  qw(fp_equal fp_cmp float_internal PVPositiveOrZeroNum);
 extends 'PrefVote';
 with 'MooX::Singleton';
 
@@ -68,8 +68,8 @@ has name => (
 
 # boolean flag parameters for this election/vote (optional, set only at initialization time)
 has flags => (
-    is       => 'ro',
-    isa      => Map [ NonEmptySimpleStr, Bool ],
+    is  => 'ro',
+    isa => Map [ NonEmptySimpleStr, Bool ],
 );
 
 # bidirectional hashes for converting between index strings and choice identifier strings
@@ -283,11 +283,11 @@ sub save_ranking
 
         # make sure place record exists for this choice
         foreach my $item ( $choice->elements() ) {
-            $item_seen{$item} = 1; # mark the choice/item as seen
+            $item_seen{$item} = 1;    # mark the choice/item as seen
             if ( not exists $self->{choice_rank}{$item} ) {
 
                 # init array of position tallies to zero
-                $self->{choice_rank}{$item} = [ (0) x ($choices_num+1) ];
+                $self->{choice_rank}{$item} = [ (0) x ( $choices_num + 1 ) ];
             }
 
             # increment count for this choice in its ballot position
@@ -296,9 +296,9 @@ sub save_ranking
     }
 
     # each omitted choice/item gets marked as one place after last choice
-    foreach my $check_choice ( $self->get_choices()) {
+    foreach my $check_choice ( $self->get_choices() ) {
         next if exists $item_seen{$check_choice};
-        if (not exists $self->{choice_rank}{$check_choice}[$choices_num]) {
+        if ( not exists $self->{choice_rank}{$check_choice}[$choices_num] ) {
             $self->{choice_rank}{$check_choice}[$choices_num] = 0;
         }
         $self->{choice_rank}{$check_choice}[$choices_num]++;
@@ -407,21 +407,22 @@ sub submit_ballot
     # filter out invalid items from ballot
     my @filtered_ballot;
     my $quantity = 1;
-    my $weight = 1;
-    if (ref $ballot[0] eq "HASH") {
+    my $weight   = 1;
+    if ( ref $ballot[0] eq "HASH" ) {
         my $params = shift @ballot;
-        if (exists $params->{quantity}) {
+        if ( exists $params->{quantity} ) {
             if ( $params->{quantity} !~ /^\d+$/x ) {
-                PrefVote::Core::Exception->throw( description => "ballot quantity " .
-                    $params->{quantity} ." is not an integer" );
+                PrefVote::Core::Exception->throw(
+                    description => "ballot quantity " . $params->{quantity} . " is not an integer" );
             }
             $quantity = $params->{quantity};
         }
+
         # TODO: check parameters if weights are allowed in this election
-        if (exists $params->{weight}) {
+        if ( exists $params->{weight} ) {
             if ( $params->{weight} !~ /^\d+$/x ) {
-                PrefVote::Core::Exception->throw( description => "ballot weight " .
-                    $params->{weight} ." is not an integer" );
+                PrefVote::Core::Exception->throw(
+                    description => "ballot weight " . $params->{weight} . " is not an integer" );
             }
             $weight = $params->{weight};
         }
@@ -473,7 +474,7 @@ sub submit_ballot
     if ( $self->ballots_exists($hex_id) ) {
         $action = "increment";
         $ballot = $self->ballots_get($hex_id);
-        $ballot->increment($quantity * $weight);
+        $ballot->increment( $quantity * $weight );
     } else {
         $action = "new";
         $ballot = PrefVote::Core::Ballot->new(
@@ -493,24 +494,24 @@ sub submit_ballot
 sub parse_cef
 {
     my $filepath = shift;
-    my (%input_doc, %params);
+    my ( %input_doc, %params );
     my @ballots;
 
     # read file and process lines
     ## no critic (RequireBriefOpen)
-    open(my $fh, "<", $filepath)
-        or PrefVote::Core::Exception->throw( description => "couldn't open $filepath: $!");
-    while (my $line = <$fh>) {
+    open( my $fh, "<", $filepath )
+        or PrefVote::Core::Exception->throw( description => "couldn't open $filepath: $!" );
+    while ( my $line = <$fh> ) {
         chomp $line;
 
         # election definition parameters
         if ( $line =~ /^ \s* # \/ \s* ([\w ]+?) \s* : \s* (.*?) \s* $/x ) {
-            my ($param_name, $param_value) = ($1, $2);
-            if (scalar @ballots > 0) {
+            my ( $param_name, $param_value ) = ( $1, $2 );
+            if ( scalar @ballots > 0 ) {
                 PrefVote::Core::Exception->throw(
                     description => "parse_cef($filepath): can't define $param_name after first ballot line" );
             }
-            if (exists $params{$param_name}) {
+            if ( exists $params{$param_name} ) {
                 PrefVote::Core::Exception->throw( description => "parse_cef($filepath): can't redefine $param_name" );
             }
             $params{$param_name} = $param_value;
@@ -528,38 +529,42 @@ sub parse_cef
         # process ballot line
         my %line_params;
         if ( $line =~ /^ \s* ( .*? ) \s* \|\|/x ) {
+
             # keep tags and remove from the ballot line
             my $tag_str = $1;
             $line_params{tags} = split /\s* , \s*/x, $tag_str;
-            substr $line, 0, length($tag_str), ""; # remove tags from beginning of line
+            substr $line, 0, length($tag_str), "";    # remove tags from beginning of line
         }
         if ( $line =~ /\s* \* \s* (\d+) \s* $/x ) {
+
             # keep quantifier and remove from the ballot line
             my $quantifier_str = $1;
             $line_params{quantifier} = $quantifier_str;
-            substr $line, -length($quantifier_str), length($quantifier_str), ""; # remove quantifier from end of line
+            substr $line, -length($quantifier_str), length($quantifier_str), "";    # remove quantifier from end of line
         }
         if ( $line =~ /\s* \^ \s* (\d+) \s* $/x ) {
+
             # keep weight and remove from the ballot line
             my $weight_str = $1;
             $line_params{weight} = $weight_str;
-            substr $line, -length($weight_str), length($weight_str), ""; # remove weight from end of line
+            substr $line, -length($weight_str), length($weight_str), "";            # remove weight from end of line
         }
         if ( $line =~ qr(^ \s* /EMPTY_RANKING/ \s* $ )x ) {
+
             # save the empty ranking as-is initially
             # fill it in on second pass in case candidate names were not specified and are collected from ballots
-            push @ballots, [ '/EMPTY_RANKING/' ];
+            push @ballots, ['/EMPTY_RANKING/'];
             next;
         }
 
         # parse candidate preference order
-        my @pref_order = fetch_prefs($line, \%line_params, \%params);
+        my @pref_order = fetch_prefs( $line, \%line_params, \%params );
         push @ballots, \@pref_order;
     }
 
     # clean up
     close $fh
-        or PrefVote::Core::Exception->throw( description => "couldn't close $filepath: $!");
+        or PrefVote::Core::Exception->throw( description => "couldn't close $filepath: $!" );
     ## critic (RequireBriefOpen)
 
     # 2nd pass: enumerate candidates and handle empty rankings
@@ -567,8 +572,8 @@ sub parse_cef
 
     # save CEF data to PrefVote vote definition & ballot docs
     $input_doc{vote_def} = {};
-    if ( exists $params{'Number of Seats'}) {
-        $input_doc{vote_def}{seats} = int($params{'Number of Seats'});
+    if ( exists $params{'Number of Seats'} ) {
+        $input_doc{vote_def}{seats} = int( $params{'Number of Seats'} );
     }
     $input_doc{ballots} = \@ballots;
     return %input_doc;
@@ -586,16 +591,17 @@ sub read_vote_file
         or PrefVote::Core::Exception->throw( description => "$filepath not a regular file" );
 
     # process file name
-    my($basename, $dirs, $suffix) = fileparse($filepath, ".yaml", ".yml", ".cvotes");
+    my ( $basename, $dirs, $suffix ) = fileparse( $filepath, ".yaml", ".yml", ".cvotes" );
 
     # handle YAML or CEF files
     if ( $suffix eq ".yaml" or $suffix eq ".yml" ) {
+
         # parse YAML
         my @yaml_docs = eval { YAML::XS::LoadFile($filepath) };
         if ($@) {
             PrefVote::Core::Exception->throw( description => "$0: error reading $filepath: $@" );
         }
-        if (scalar @yaml_docs < 2) {
+        if ( scalar @yaml_docs < 2 ) {
             PrefVote::Core::Exception->throw( description => "$0: error reading $filepath: not enough YAML sections" );
         }
 
@@ -606,18 +612,19 @@ sub read_vote_file
         $input_doc{ballots} = shift @yaml_docs;
 
         # save any additional YAML documents as test data
-        $input_doc{test_data} = [ @yaml_docs ]; # will be empty if no test data
+        $input_doc{test_data} = [@yaml_docs];    # will be empty if no test data
     } elsif ( $suffix eq ".cvotes" ) {
+
         # parse Condorcet Election Format
-        %input_doc = parse_cef( $filepath );
+        %input_doc = parse_cef($filepath);
     } else {
         PrefVote::Core::Exception->throw( description => "$0: unrecognized vote file type" );
     }
 
     # if not already provided in primary file, read test data from *-test.yaml alongside primary input file
-    if (( not exists $input_doc{test_data}) or scalar @{$input_doc{test_data}} == 0 ) {
-        for my $test_suffix ( qw(yml yaml) ) {
-            my $test_path = $dirs.$basename."-test.".$test_suffix;
+    if ( ( not exists $input_doc{test_data} ) or scalar @{ $input_doc{test_data} } == 0 ) {
+        for my $test_suffix (qw(yml yaml)) {
+            my $test_path = $dirs . $basename . "-test." . $test_suffix;
             if ( -f $test_path ) {
                 $input_doc{test_data} = eval { YAML::XS::LoadFile($test_path) };
                 if ($@) {
@@ -780,10 +787,10 @@ sub file2vote
             description => "class $class in vote defintion is not a subclass of " . __PACKAGE__ );
     }
     my $params = $input_doc{vote_def}{params};
-    if ( scalar @{$input_doc{test_data}} ) {
+    if ( scalar @{ $input_doc{test_data} } ) {
 
         # use extra YAML documents as TestSpec for blackbox testing checklist
-        my $testdoc = shift @{$input_doc{test_data}};
+        my $testdoc = shift @{ $input_doc{test_data} };
         if ( ref $testdoc eq "HASH" and exists $testdoc->{$method} ) {
             my $testspec = $testdoc->{$method};
             $params->{testspec} = PrefVote::Core::TestSpec->new( checklist => $testspec );
