@@ -20,8 +20,6 @@ use DateTime;
 use Readonly;
 use Set::Tiny    qw(set);
 use Scalar::Util qw(reftype);
-use File::Basename;
-use YAML::XS;
 use PrefVote::Core::Ballot;
 use PrefVote::Core::Exception;
 use PrefVote::Core::MethodMismatchException;
@@ -41,6 +39,7 @@ use Types::Standard        qw(Str Int Bool Enum ArrayRef HashRef Map Tuple Insta
 use Types::Common::Numeric qw(PositiveInt PositiveOrZeroInt);
 use Types::Common::String  qw(NonEmptySimpleStr);
 use PrefVote::Core::Float  qw(fp_equal fp_cmp float_internal PVPositiveOrZeroNum);
+use PrefVote::Core::Input;
 extends 'PrefVote';
 with 'MooX::Singleton';
 
@@ -489,164 +488,15 @@ sub submit_ballot
     return $hex_id;    # returns index key, whose absence can be used to detect if an exception was thrown
 }
 
-# parse Condorcet Election Format (defined at https://github.com/CondorcetVote/CondorcetElectionFormat )
-# $filepath parameter should already be checked for existence before calling
-sub parse_cef
-{
-    my $filepath = shift;
-    my ( %input_doc, %params );
-    my @ballots;
-
-    # read file and process lines
-    ## no critic (RequireBriefOpen)
-    open( my $fh, "<", $filepath )
-        or PrefVote::Core::Exception->throw( description => "couldn't open $filepath: $!" );
-    while ( my $line = <$fh> ) {
-        chomp $line;
-
-        # election definition parameters
-        if ( $line =~ /^ \s* # \/ \s* ([\w ]+?) \s* : \s* (.*?) \s* $/x ) {
-            my ( $param_name, $param_value ) = ( $1, $2 );
-            if ( scalar @ballots > 0 ) {
-                PrefVote::Core::Exception->throw(
-                    description => "parse_cef($filepath): can't define $param_name after first ballot line" );
-            }
-            if ( exists $params{$param_name} ) {
-                PrefVote::Core::Exception->throw( description => "parse_cef($filepath): can't redefine $param_name" );
-            }
-            $params{$param_name} = $param_value;
-            next;
-        }
-
-        # remove comments from the end of each line, up to the whole line
-        $line =~ s/\s* # .*//x;
-
-        # skip empty lines, which may or may not have formerly been comments
-        if ( $line =~ /^ \s* $/x ) {
-            next;
-        }
-
-        # process ballot line
-        my %line_params;
-        if ( $line =~ /^ \s* ( .*? ) \s* \|\|/x ) {
-
-            # keep tags and remove from the ballot line
-            my $tag_str = $1;
-            $line_params{tags} = split /\s* , \s*/x, $tag_str;
-            substr $line, 0, length($tag_str), "";    # remove tags from beginning of line
-        }
-        if ( $line =~ /\s* \* \s* (\d+) \s* $/x ) {
-
-            # keep quantifier and remove from the ballot line
-            my $quantifier_str = $1;
-            $line_params{quantifier} = $quantifier_str;
-            substr $line, -length($quantifier_str), length($quantifier_str), "";    # remove quantifier from end of line
-        }
-        if ( $line =~ /\s* \^ \s* (\d+) \s* $/x ) {
-
-            # keep weight and remove from the ballot line
-            my $weight_str = $1;
-            $line_params{weight} = $weight_str;
-            substr $line, -length($weight_str), length($weight_str), "";            # remove weight from end of line
-        }
-        if ( $line =~ qr(^ \s* /EMPTY_RANKING/ \s* $ )x ) {
-
-            # save the empty ranking as-is initially
-            # fill it in on second pass in case candidate names were not specified and are collected from ballots
-            push @ballots, ['/EMPTY_RANKING/'];
-            next;
-        }
-
-        # parse candidate preference order
-        my @pref_order = fetch_prefs( $line, \%line_params, \%params );
-        push @ballots, \@pref_order;
-    }
-
-    # clean up
-    close $fh
-        or PrefVote::Core::Exception->throw( description => "couldn't close $filepath: $!" );
-    ## critic (RequireBriefOpen)
-
-    # 2nd pass: enumerate candidates and handle empty rankings
-    handle_empty_rankings( \@ballots, \%params );
-
-    # save CEF data to PrefVote vote definition & ballot docs
-    $input_doc{vote_def} = {};
-    if ( exists $params{'Number of Seats'} ) {
-        $input_doc{vote_def}{seats} = int( $params{'Number of Seats'} );
-    }
-    $input_doc{ballots} = \@ballots;
-    return %input_doc;
-}
-
-# read vote file input from YAML or Condorcet Election Format
-sub read_vote_file
-{
-    my $filepath = shift;
-    my %input_doc;
-
-    # verify input file exists
-    ( -e $filepath ) or PrefVote::Core::Exception->throw( description => "$filepath not found" );
-    ( -f $filepath )
-        or PrefVote::Core::Exception->throw( description => "$filepath not a regular file" );
-
-    # process file name
-    my ( $basename, $dirs, $suffix ) = fileparse( $filepath, ".yaml", ".yml", ".cvotes" );
-
-    # handle YAML or CEF files
-    if ( $suffix eq ".yaml" or $suffix eq ".yml" ) {
-
-        # parse YAML
-        my @yaml_docs = eval { YAML::XS::LoadFile($filepath) };
-        if ($@) {
-            PrefVote::Core::Exception->throw( description => "$0: error reading $filepath: $@" );
-        }
-        if ( scalar @yaml_docs < 2 ) {
-            PrefVote::Core::Exception->throw( description => "$0: error reading $filepath: not enough YAML sections" );
-        }
-
-        # save 1st YAML document as vote definition
-        $input_doc{vote_def} = shift @yaml_docs;
-
-        # save 2nd YAML document as ballot list
-        $input_doc{ballots} = shift @yaml_docs;
-
-        # save any additional YAML documents as test data
-        $input_doc{test_data} = [@yaml_docs];    # will be empty if no test data
-    } elsif ( $suffix eq ".cvotes" ) {
-
-        # parse Condorcet Election Format
-        %input_doc = parse_cef($filepath);
-    } else {
-        PrefVote::Core::Exception->throw( description => "$0: unrecognized vote file type" );
-    }
-
-    # if not already provided in primary file, read test data from *-test.yaml alongside primary input file
-    if ( ( not exists $input_doc{test_data} ) or scalar @{ $input_doc{test_data} } == 0 ) {
-        for my $test_suffix (qw(yml yaml)) {
-            my $test_path = $dirs . $basename . "-test." . $test_suffix;
-            if ( -f $test_path ) {
-                $input_doc{test_data} = eval { YAML::XS::LoadFile($test_path) };
-                if ($@) {
-                    PrefVote::Core::Exception->throw( description => "$0: error reading test data in $test_path: $@" );
-                }
-                last;
-            }
-        }
-    }
-
-    return %input_doc;
-}
-
 # input ballots to a PrefVote::Core-subclass voting method
 sub ingest_ballots
 {
-    my ( $vote_obj, $ballots ) = @_;
+    my ( $vote_obj, $input_doc ) = @_;
 
     # ingest ballots from input data
     my $submitted = 0;
     my $accepted  = 0;
-    foreach my $ballot (@$ballots) {
+    foreach my $ballot ($input_doc->ballot_all()) {
         $submitted++;
         if ( eval { $vote_obj->submit_ballot(@$ballot) } ) {
             $accepted++;
@@ -753,29 +603,24 @@ sub file2vote
         %opts = %$opts_ref;
     }
     my $filepath  = $args[0];
-    my %input_doc = read_vote_file($filepath);
+    my $input_doc = PrefVote::Core::Input->new(filepath => $filepath);
 
     # check the definition of the vote in preparation for entry into a PrefVote::Core structure
-    if ( ref $input_doc{vote_def} ne "HASH" ) {
+    if ( not $input_doc->isa("PrefVote::Core::Input")) {
         PrefVote::Core::Exception->throw(
-            description => "$0: misformatted input data: 1st document must be in map/hash format" );
+            description => "$0: misformatted input: must be a PrefVote::Core::Input object" );
     }
+    my $vote_def = $input_doc->vote_def();
     foreach my $key (qw(method params)) {
-        if ( not exists $input_doc{vote_def}{$key} ) {
+        if ( not exists $vote_def->{$key} ) {
             PrefVote::Core::Exception->throw( description => "$0: misformatted input data: "
                     . "'$key' parameter missing from top level of vote definition" );
         }
     }
 
-    # check the list of ballots
-    if ( ref $input_doc{ballots} ne "ARRAY" ) {
-        PrefVote::Core::Exception->throw(
-            description => "$0: misformatted YAML input: 2nd document " . "must be in list/array format" );
-    }
-
     # translate a voting method string into a voting-method class within this hierarchy
     # instantiate the voting object from 1st YAML document
-    my $method = determine_method( \%opts, $input_doc{vote_def} );
+    my $method = determine_method( \%opts, $vote_def );
     my $class  = "PrefVote::$method";
     ## no critic (BuiltinFunctions::ProhibitStringyEval)
     if ( not eval "require $class" ) {
@@ -786,11 +631,11 @@ sub file2vote
         PrefVote::Core::Exception->throw(
             description => "class $class in vote defintion is not a subclass of " . __PACKAGE__ );
     }
-    my $params = $input_doc{vote_def}{params};
-    if ( scalar @{ $input_doc{test_data} } ) {
+    my $params = $vote_def->{params};
+    if ( scalar @{ $input_doc->test_data() } ) {
 
         # use extra YAML documents as TestSpec for blackbox testing checklist
-        my $testdoc = shift @{ $input_doc{test_data} };
+        my $testdoc = shift @{ $input_doc->test_data() };
         if ( ref $testdoc eq "HASH" and exists $testdoc->{$method} ) {
             my $testspec = $testdoc->{$method};
             $params->{testspec} = PrefVote::Core::TestSpec->new( checklist => $testspec );
@@ -805,7 +650,7 @@ sub file2vote
     }
 
     # ingest ballots from 2nd YAML document
-    ingest_ballots( $vote_obj, $input_doc{ballots} );
+    ingest_ballots( $vote_obj, $input_doc );
 
     return $vote_obj;
 }
@@ -1159,7 +1004,7 @@ Errors which result in exceptions are as follows:
 =item ingest_ballots
 
 is called by file2vote() after it instantiates an object of I<PrefVote::Core> or a derivative class.
-This reads the 2nd YAML document in the input, which contains a list of ballots to be counted.
+This reads the ballots from the PrefVote::Core::Input object, parsed from an input file.
 
 =item count()
 

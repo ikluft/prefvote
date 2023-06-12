@@ -20,7 +20,6 @@ use utf8;
 use autodie;
 use Readonly;
 use Set::Tiny qw(set);
-use PrefVote::Core;
 use PrefVote::Core::Result;
 
 # class definitions
