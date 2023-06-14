@@ -87,6 +87,25 @@ sub BUILD
 # parser functions
 #
 
+# parse candidate preference order
+sub cef_fetch_prefs
+{
+    #my ( $self, $line, $line_params ) = @_;
+    my @pref_order;
+    #TODO
+
+    return @pref_order;
+}
+
+# 2nd pass: enumerate candidates and handle empty rankings
+sub cef_second_pass
+{
+    my $self = shift;
+    #TODO
+
+    return;
+}
+
 # parse Condorcet Election Format (defined at https://github.com/CondorcetVote/CondorcetElectionFormat )
 # $filepath parameter should already be checked for existence before calling
 sub parse_cef
@@ -166,7 +185,7 @@ sub parse_cef
     ## critic (RequireBriefOpen)
 
     # 2nd pass: enumerate candidates and handle empty rankings
-    $self->handle_empty_rankings();
+    $self->cef_second_pass();
 
     # save CEF data to PrefVote vote definition & ballot docs
     if ( exists $params{'Number of Seats'} ) {
