@@ -90,8 +90,31 @@ sub BUILD
 # parse candidate preference order
 sub cef_fetch_prefs
 {
+    my ( $self, $line ) = @_;
     #my ( $self, $line, $line_params ) = @_;
     my @pref_order;
+
+    # filter out invalid empty ballot (use /EMPTY_RANKING/ for explicit empty ballot)
+    if ( $line =~ /^ \s* $/x ) {
+        return;
+    }
+
+    # parse candidate preference order from string
+    while (length($line) > 0) {
+        # handle line with no > or =
+        if ( $line !~ /[>=]/x ) {
+            if ( $line =~ /^ \s* ( [\w\s]+? ) \s *$/x) {
+                push @pref_order, $1;
+                last;
+            } else {
+                return; # parse error - drop ballot
+            }
+        }
+
+        # handle line with > or =
+        # TODO
+    }
+
     #TODO
 
     return @pref_order;
