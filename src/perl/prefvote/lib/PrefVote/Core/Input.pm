@@ -102,8 +102,9 @@ sub cef_fetch_prefs
     while (length($line) > 0) {
         # handle line with no > or =
         if ( $line !~ /[>=]/x ) {
-            if ( $line =~ qr(^ \s* ( [\w\s]+? ) \s* $)x ) {
-                push @pref_order, $1;
+            if ( $line =~ qr(^ \s* ( \w+ ) \s* $)x ) {
+                push @pref_order, [ $1 ];
+                $line = "";
                 last;
             } else {
                 return; # parse error - drop ballot
@@ -111,7 +112,7 @@ sub cef_fetch_prefs
         }
 
         # handle line with > or =
-        if ( $line =~ qr(^ ( ( \s* [\w\s]+? \s* = )* [\w\s]+? \s* ) )x ) {
+        if ( $line =~ qr(^ ( ( \s* \w+ \s* = )* \s* \w+ \s* ) )x ) {
             my $match = $1;
             substr $line, 0, length $match, ""; # remove matched segment from line
             $match =~ s/^ \s* //x; # remove leading whitespace
@@ -126,7 +127,7 @@ sub cef_fetch_prefs
     }
 
     # prepend line paremeters
-    if ( ref $line_params eq "HASH" and scalar keys %$line_params ) {
+    if ( ref $line_params eq "HASH" and scalar keys %$line_params > 0 ) {
         unshift @pref_order, $line_params;
     }
     return @pref_order;
