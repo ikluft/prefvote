@@ -90,8 +90,7 @@ sub BUILD
 # parse candidate preference order
 sub cef_fetch_prefs
 {
-    my ( $self, $line ) = @_;
-    #my ( $self, $line, $line_params ) = @_;
+    my ( $self, $line, $line_params ) = @_;
     my @pref_order;
 
     # filter out invalid empty ballot (use /EMPTY_RANKING/ for explicit empty ballot)
@@ -112,7 +111,7 @@ sub cef_fetch_prefs
         }
 
         # handle line with > or =
-        if ( $line =~ qr(^ ( ( \s* [\w\s]+? \s* = )+ [\w\s]+? \s* ) )x ) {
+        if ( $line =~ qr(^ ( ( \s* [\w\s]+? \s* = )* [\w\s]+? \s* ) )x ) {
             my $match = $1;
             substr $line, 0, length $match, ""; # remove matched segment from line
             $match =~ s/^ \s* //x; # remove leading whitespace
@@ -120,11 +119,16 @@ sub cef_fetch_prefs
             my @cand = split qr( \s* = \s* )x, $match;
             push @pref_order, [ @cand ];
         }
-        # TODO
+        if ( $line =~ qr(^ ( \s* [>] \s* ) )x ) {
+            my $match = $1;
+            substr $line, 0, length $match, ""; # remove matched segment from line
+        }
     }
 
-    #TODO
-
+    # prepend line paremeters
+    if ( ref $line_params eq "HASH" and scalar keys %$line_params ) {
+        unshift @pref_order, $line_params;
+    }
     return @pref_order;
 }
 
