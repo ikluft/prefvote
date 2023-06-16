@@ -86,18 +86,16 @@ is(scalar @choice_test_af, 6, "choices=6 for A-F test");
 my $choices_ref = PrefVote::Core::Ballot::get_choices();
 is(ref $choices_ref, "HASH", "get_choices as scalar returns hashref");
 foreach my $test (@ballot_tests) {
-    {
-        my @summary;
-        foreach my $item (@{$test->{ballot}}) {
-            push @summary, summary_name($choices_ref, $item);
-        }
-        my $summary_str = join "-", @summary;
-
-        my $ballot_obj = PrefVote::Core::Ballot->new(items => array2ballot($test->{ballot}), quantity => 1, hex_id => $test->{hex});
-        is_deeply($ballot_obj->items(), array2ballot($test->{ballot}), "ballot $summary_str contents test");
-        is($ballot_obj->items_count(), $test->{total}, "ballot $summary_str has test->{total} valid items");
-        is($ballot_obj->quantity(), 1, "ballot $summary_str starts with quantity=1");
-        $ballot_obj->increment();
-        is($ballot_obj->quantity(), 2, "ballot $summary_str increments to quantity=2");
+    my @summary;
+    foreach my $item (@{$test->{ballot}}) {
+        push @summary, summary_name($choices_ref, $item);
     }
+    my $summary_str = join "-", @summary;
+
+    my $ballot_obj = PrefVote::Core::Ballot->new(items => array2ballot($test->{ballot}), quantity => 1, hex_id => $test->{hex});
+    is_deeply($ballot_obj->items(), array2ballot($test->{ballot}), "ballot $summary_str contents test");
+    is($ballot_obj->items_count(), $test->{total}, "ballot $summary_str has test->{total} valid items");
+    is($ballot_obj->quantity(), 1, "ballot $summary_str starts with quantity=1");
+    $ballot_obj->increment();
+    is($ballot_obj->quantity(), 2, "ballot $summary_str increments to quantity=2");
 }
