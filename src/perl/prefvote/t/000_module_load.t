@@ -13,6 +13,7 @@ my @classes = qw(
         PrefVote::Core::Exception
         PrefVote::Core::Float
         PrefVote::Core::InternalDataException
+        PrefVote::Core::Input
         PrefVote::Core::MethodMismatchException
         PrefVote::Core::Output
         PrefVote::Core::Output::HTML
