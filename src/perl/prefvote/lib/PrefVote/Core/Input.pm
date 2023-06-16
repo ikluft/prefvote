@@ -103,7 +103,7 @@ sub cef_fetch_prefs
     while (length($line) > 0) {
         # handle line with no > or =
         if ( $line !~ /[>=]/x ) {
-            if ( $line =~ /^ \s* ( [\w\s]+? ) \s *$/x) {
+            if ( $line =~ qr(^ \s* ( [\w\s]+? ) \s* $)x ) {
                 push @pref_order, $1;
                 last;
             } else {
@@ -112,6 +112,14 @@ sub cef_fetch_prefs
         }
 
         # handle line with > or =
+        if ( $line =~ qr(^ ( ( \s* [\w\s]+? \s* = )+ [\w\s]+? \s* ) )x ) {
+            my $match = $1;
+            substr $line, 0, length $match, ""; # remove matched segment from line
+            $match =~ s/^ \s* //x; # remove leading whitespace
+            $match =~ s/ \s* $//x; # remove trailing whitespace
+            my @cand = split qr( \s* = \s* )x, $match;
+            push @pref_order, [ @cand ];
+        }
         # TODO
     }
 
