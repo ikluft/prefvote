@@ -25,6 +25,7 @@ use Data::Dumper;
 use Readonly;
 use YAML::XS;
 use IPC::Run qw(run);
+use PrefVote::Core;
 use PrefVote::Core::Exception;
 use PrefVote::Core::Float qw(float_external);
 
