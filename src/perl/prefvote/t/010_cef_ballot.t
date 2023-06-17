@@ -36,7 +36,7 @@ Readonly::Array my @cef_ballot_tests => (
         expect => [['Candidate_C']],
     },
     {
-        name => 'C from CEF spec example',
+        name => 'B > C from CEF spec example',
         line => "Candidate_B > Candidate_C",
         line_params => {},
         expect => [['Candidate_B'], ['Candidate_C']],
