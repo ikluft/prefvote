@@ -224,14 +224,6 @@ These methods are in addition to L<those inherited from PrefVote::Core|PrefVote:
 
 =over 1
 
-=item item2list
-
-This returns a ballot item as a list, whether it was a single scalar or a tie-group set.
-The Ranked Pairs definition does not allow input ties.
-PrefVote can be configured to allow it for consistency across Condorcet methods.
-
-The parameter is an item from a L<PrefVote::Core::Ballot> object.
-
 =item cmp_choice
 
 =back
