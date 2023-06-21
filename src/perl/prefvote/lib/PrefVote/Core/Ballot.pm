@@ -47,6 +47,7 @@ my $ballot_input_ties_flag = 0;
 Readonly::Hash my %blackbox_spec => (
     items    => [qw(list set string)],
     quantity => [qw(int)],
+    weight   => [qw(int)],
     hex_id   => [qw(string)],
 );
 PrefVote::Core::TestSpec->register_blackbox_spec( __PACKAGE__, spec => \%blackbox_spec );
@@ -78,6 +79,13 @@ has quantity => (
     is       => 'rw',
     isa      => PositiveInt,
     required => 1,
+);
+
+# weight is a multiplier for the number of times this combination of items has occurred
+has weight => (
+    is       => 'rw',
+    isa      => PositiveInt,
+    default  => 1,
 );
 
 # hexadecimal identifier string used to cross-check hash lookups from PrefVote::Core
