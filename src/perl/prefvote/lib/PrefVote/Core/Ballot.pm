@@ -22,10 +22,10 @@ use PrefVote::Core::TestSpec;
 # class definitions
 use Moo;
 use MooX::TypeTiny;
-use Types::Standard qw(ArrayRef);
+use Types::Standard        qw(ArrayRef);
 use Types::Common::Numeric qw(PositiveInt);
-use Types::Common::String qw(NonEmptySimpleStr);
-use PrefVote::Core::Set qw(Set);
+use Types::Common::String  qw(NonEmptySimpleStr);
+use PrefVote::Core::Set    qw(Set);
 extends 'PrefVote';
 
 #
@@ -83,9 +83,9 @@ has quantity => (
 
 # weight is a multiplier for the number of times this combination of items has occurred
 has weight => (
-    is       => 'rw',
-    isa      => PositiveInt,
-    default  => 1,
+    is      => 'rw',
+    isa     => PositiveInt,
+    default => 1,
 );
 
 # hexadecimal identifier string used to cross-check hash lookups from PrefVote::Core
@@ -213,8 +213,8 @@ sub items_count
 # increment the quantity on this ballot record
 sub increment
 {
-    my $self = shift;
-    my $in_quantity = shift // 1; # default to incrementing by one
+    my $self        = shift;
+    my $in_quantity = shift // 1;    # default to incrementing by one
     $self->{quantity} += $in_quantity;
     return;
 }

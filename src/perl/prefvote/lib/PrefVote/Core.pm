@@ -496,7 +496,7 @@ sub ingest_ballots
     # ingest ballots from input data
     my $submitted = 0;
     my $accepted  = 0;
-    foreach my $ballot ($input_doc->ballot_all()) {
+    foreach my $ballot ( $input_doc->ballot_all() ) {
         $submitted++;
         if ( eval { $vote_obj->submit_ballot(@$ballot) } ) {
             $accepted++;
@@ -603,10 +603,10 @@ sub file2vote
         %opts = %$opts_ref;
     }
     my $filepath  = $args[0];
-    my $input_doc = PrefVote::Core::Input->new(filepath => $filepath);
+    my $input_doc = PrefVote::Core::Input->new( filepath => $filepath );
 
     # check the definition of the vote in preparation for entry into a PrefVote::Core structure
-    if ( not $input_doc->isa("PrefVote::Core::Input")) {
+    if ( not $input_doc->isa("PrefVote::Core::Input") ) {
         PrefVote::Core::Exception->throw(
             description => "$0: misformatted input: must be a PrefVote::Core::Input object" );
     }

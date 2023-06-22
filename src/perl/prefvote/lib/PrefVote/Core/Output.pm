@@ -17,7 +17,7 @@ use utf8;
 use feature qw(say fc);
 use autodie;
 use parent qw(PrefVote);
-use Carp qw(croak confess);
+use Carp   qw(croak confess);
 use Config;
 use English;
 use Getopt::Long;

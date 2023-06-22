@@ -18,7 +18,7 @@ use feature qw(say);
 use autodie;
 use Readonly;
 use Math::Round qw(nearest);
-use Exporter qw(import);
+use Exporter    qw(import);
 our @EXPORT_OK = qw(fp_equal fp_cmp float_limit float_external float_internal PVNum PVPositiveOrZeroNum);
 
 # class definitions
@@ -69,8 +69,8 @@ sub float_external { return float_limit( shift, $fp_external_precision ); }
 sub float_internal { return float_limit( shift, $fp_internal_precision ); }
 
 # PVNum type for Type::Tiny ecosystem - PrefVote floating point number limited to 10-digit internal precision
-declare "PVNum", as "Num",   message { Num->validate() or "$_ is not a number" };
-coerce "PVNum",  from "Num", via { float_internal($_) };
+declare "PVNum", as "Num", message { Num->validate() or "$_ is not a number" };
+coerce "PVNum", from "Num", via { float_internal($_) };
 declare "PVPositiveOrZeroNum", as "PVNum",
     where { $_ >= 0 },
     message { "Must be a number greater than or equal to zero" };

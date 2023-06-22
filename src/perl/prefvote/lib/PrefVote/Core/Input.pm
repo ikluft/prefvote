@@ -38,8 +38,8 @@ has filepath => (
 
 # vote definition
 has vote_def => (
-    is      => 'rw',
-    isa => HashRef [ NonEmptySimpleStr | HashRef ],
+    is          => 'rw',
+    isa         => HashRef [ NonEmptySimpleStr | HashRef ],
     handles_via => 'Hash',
     handles     => {
         vote_def_exists => 'exists',
@@ -51,10 +51,10 @@ has vote_def => (
 
 # ballot list
 has ballots => (
-    is      => 'rw',
-    isa     => ArrayRef [ ArrayRef [ NonEmptySimpleStr ]],
+    is          => 'rw',
+    isa         => ArrayRef [ ArrayRef [NonEmptySimpleStr] ],
     handles_via => 'Array',
-    handles => {
+    handles     => {
         ballot_all   => 'all',
         ballot_count => 'count',
         ballot_empty => 'is_empty',
@@ -99,30 +99,31 @@ sub cef_fetch_prefs
     }
 
     # parse candidate preference order from string
-    while (length($line) > 0) {
+    while ( length($line) > 0 ) {
+
         # handle line with no > or =
         if ( $line !~ /[>=]/x ) {
             if ( $line =~ qr(^ \s* ( \w+ ) \s* $)x ) {
-                push @pref_order, [ $1 ];
+                push @pref_order, [$1];
                 $line = "";
                 last;
             } else {
-                return; # parse error - drop ballot
+                return;    # parse error - drop ballot
             }
         }
 
         # handle line with > or =
         if ( $line =~ qr(^ ( ( \s* \w+ \s* = )* \s* \w+ \s* ) )x ) {
             my $match = $1;
-            substr $line, 0, length $match, ""; # remove matched segment from line
-            $match =~ s/^ \s* //x; # remove leading whitespace
-            $match =~ s/ \s* $//x; # remove trailing whitespace
+            substr $line, 0, length $match, "";    # remove matched segment from line
+            $match =~ s/^ \s* //x;                 # remove leading whitespace
+            $match =~ s/ \s* $//x;                 # remove trailing whitespace
             my @cand = split qr( \s* = \s* )x, $match;
-            push @pref_order, [ @cand ];
+            push @pref_order, [@cand];
         }
         if ( $line =~ qr(^ ( \s* [>] \s* ) )x ) {
             my $match = $1;
-            substr $line, 0, length $match, ""; # remove matched segment from line
+            substr $line, 0, length $match, "";    # remove matched segment from line
         }
     }
 
@@ -137,6 +138,7 @@ sub cef_fetch_prefs
 sub cef_second_pass
 {
     my $self = shift;
+
     #TODO
 
     return;

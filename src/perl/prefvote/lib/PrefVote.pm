@@ -19,7 +19,7 @@ use Moo;
 use MooX::TypeTiny;
 use PrefVote::Config;
 use PrefVote::Debug;
-use PrefVote::Exception;      # pre-load in case exception is thrown
+use PrefVote::Exception;    # pre-load in case exception is thrown
 
 # cache a class-scoped reference to the config & debug instances
 my $config_ref = PrefVote::Config->instance();

@@ -21,9 +21,9 @@ use Type::Library -base, -declare => qw(Set);
 use Types::Standard qw(Undef Value ArrayRef assert_Value);
 use Types::TypeTiny ();
 use Type::Tiny::Class;
-use Type::Utils qw(assert);
+use Type::Utils    qw(assert);
 use Type::Coercion ();
-use Set::Tiny qw(set);
+use Set::Tiny      qw(set);
 
 # define Set type to use Set::Tiny under the umbrella of Type::Tiny & Type::Library
 my $set_type = Type::Tiny::Class->new(

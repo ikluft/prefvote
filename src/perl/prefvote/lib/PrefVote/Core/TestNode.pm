@@ -23,7 +23,7 @@ use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
 use Set::Tiny;
-use Types::Standard qw(Any Value Str Ref ScalarRef ArrayRef InstanceOf Maybe is_Int);
+use Types::Standard        qw(Any Value Str Ref ScalarRef ArrayRef InstanceOf Maybe is_Int);
 use Types::Common::Numeric qw(PositiveOrZeroInt);
 extends 'PrefVote';
 use PrefVote::Core::Float qw(fp_equal);

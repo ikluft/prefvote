@@ -24,10 +24,10 @@ use Readonly;
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Standard qw(Enum);
-use Types::Common::String qw(NonEmptySimpleStr);
+use Types::Standard        qw(Enum);
+use Types::Common::String  qw(NonEmptySimpleStr);
 use Types::Common::Numeric qw(PositiveOrZeroNum);
-use PrefVote::Core::Set qw(Set);
+use PrefVote::Core::Set    qw(Set);
 use PrefVote::Core::TestSpec;
 extends 'PrefVote';
 
