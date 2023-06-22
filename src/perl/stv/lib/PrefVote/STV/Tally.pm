@@ -24,7 +24,7 @@ use PrefVote::Core::TestSpec;
 # class definitions
 use Moo;
 use MooX::TypeTiny;
-use Types::Standard qw(Bool Str ArrayRef);
+use Types::Standard        qw(Bool Str ArrayRef);
 use Types::Common::Numeric qw(PositiveInt);
 extends 'PrefVote';
 use PrefVote::Core::Float qw(float_internal PVPositiveOrZeroNum);

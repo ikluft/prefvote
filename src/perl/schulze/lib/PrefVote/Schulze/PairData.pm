@@ -22,10 +22,10 @@ use Set::Tiny qw(set);
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Standard qw(Bool Int Str ArrayRef HashRef InstanceOf);
+use Types::Standard        qw(Bool Int Str ArrayRef HashRef InstanceOf);
 use Types::Common::Numeric qw(PositiveOrZeroInt);
-use Types::Common::String qw(NonEmptySimpleStr);
-use PrefVote::Core::Set qw(Set);
+use Types::Common::String  qw(NonEmptySimpleStr);
+use PrefVote::Core::Set    qw(Set);
 use PrefVote::Core::TestSpec;
 extends 'PrefVote';
 
@@ -38,7 +38,8 @@ Readonly::Hash my %blackbox_spec => (
     forbidden    => [qw(set string)],
     path_history => [qw(array array string)],
 );
-PrefVote::Core::TestSpec->register_blackbox_spec( __PACKAGE__,
+PrefVote::Core::TestSpec->register_blackbox_spec(
+    __PACKAGE__,
     spec   => \%blackbox_spec,
     parent => 'PrefVote'
 );

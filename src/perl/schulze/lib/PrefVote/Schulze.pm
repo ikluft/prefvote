@@ -24,7 +24,7 @@ use PrefVote::Schulze::Round;
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Standard qw(Str ArrayRef HashRef InstanceOf);
+use Types::Standard     qw(Str ArrayRef HashRef InstanceOf);
 use PrefVote::Core::Set qw(Set);
 use PrefVote::Core::TestSpec;
 extends 'PrefVote::Core';
@@ -34,7 +34,8 @@ Readonly::Hash my %blackbox_spec => (
     winners => [qw(list set string)],
     rounds  => [qw(list PrefVote::Schulze::Round)],
 );
-PrefVote::Core::TestSpec->register_blackbox_spec( __PACKAGE__,
+PrefVote::Core::TestSpec->register_blackbox_spec(
+    __PACKAGE__,
     spec   => \%blackbox_spec,
     parent => 'PrefVote::Core'
 );

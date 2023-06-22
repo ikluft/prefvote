@@ -21,7 +21,7 @@ use Set::Tiny qw(set);
 # class definitions
 use Moo;
 use MooX::TypeTiny;
-use Types::Standard qw(Bool Int);
+use Types::Standard        qw(Bool Int);
 use Types::Common::Numeric qw(PositiveOrZeroInt IntRange);
 use PrefVote::Core::TestSpec;
 extends 'PrefVote';

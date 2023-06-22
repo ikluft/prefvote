@@ -27,7 +27,7 @@ use PrefVote::STV::Tally;
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Standard qw(ArrayRef HashRef InstanceOf Map);
+use Types::Standard       qw(ArrayRef HashRef InstanceOf Map);
 use Types::Common::String qw(NonEmptySimpleStr);
 extends 'PrefVote::Core::Round';
 use PrefVote::Core::Float qw(float_internal PVPositiveOrZeroNum);
@@ -38,7 +38,8 @@ Readonly::Hash my %blackbox_spec => (
     quota      => [qw(fp)],
     tally      => [qw(hash PrefVote::STV::Tally)],
 );
-PrefVote::Core::TestSpec->register_blackbox_spec( __PACKAGE__,
+PrefVote::Core::TestSpec->register_blackbox_spec(
+    __PACKAGE__,
     spec   => \%blackbox_spec,
     parent => 'PrefVote::Core::Round'
 );

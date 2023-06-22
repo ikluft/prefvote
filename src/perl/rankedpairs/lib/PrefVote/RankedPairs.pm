@@ -24,11 +24,11 @@ use PrefVote::RankedPairs::Majority;
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Standard qw(Str ArrayRef HashRef InstanceOf);
+use Types::Standard        qw(Str ArrayRef HashRef InstanceOf);
 use Types::Common::Numeric qw(PositiveOrZeroInt);
-use Types::Common::String qw(NonEmptySimpleStr);
-use PrefVote::Core::Float qw(fp_equal fp_cmp);
-use PrefVote::Core::Set qw(Set);
+use Types::Common::String  qw(NonEmptySimpleStr);
+use PrefVote::Core::Float  qw(fp_equal fp_cmp);
+use PrefVote::Core::Set    qw(Set);
 use PrefVote::Core::TestSpec;
 extends 'PrefVote::Core';
 
@@ -39,7 +39,8 @@ Readonly::Hash my %blackbox_spec => (
     majority => [qw(list PrefVote::RankedPairs::Majority)],
     graph    => [qw(hash hash string)],
 );
-PrefVote::Core::TestSpec->register_blackbox_spec( __PACKAGE__,
+PrefVote::Core::TestSpec->register_blackbox_spec(
+    __PACKAGE__,
     spec   => \%blackbox_spec,
     parent => 'PrefVote::Core'
 );

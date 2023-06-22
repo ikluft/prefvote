@@ -36,7 +36,8 @@ Readonly::Hash my %blackbox_spec => (
     pair     => [qw(hash hash PrefVote::Schulze::PairData)],
     win_flag => [qw(hash bool)],
 );
-PrefVote::Core::TestSpec->register_blackbox_spec( __PACKAGE__,
+PrefVote::Core::TestSpec->register_blackbox_spec(
+    __PACKAGE__,
     spec   => \%blackbox_spec,
     parent => 'PrefVote::Core::Round'
 );
