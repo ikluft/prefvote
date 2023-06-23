@@ -16,7 +16,6 @@ use utf8;
 use autodie;
 use Data::Dumper;
 use Readonly;
-use Set::Tiny qw(set);
 
 # class definitions
 use Moo;
@@ -24,20 +23,17 @@ use MooX::TypeTiny;
 use Types::Standard        qw(Bool Int);
 use Types::Common::Numeric qw(PositiveOrZeroInt IntRange);
 use PrefVote::Core::TestSpec;
-extends 'PrefVote';
+extends 'PrefVote::Core::PairData';
 
 # blackbox testing structure
 Readonly::Hash my %blackbox_spec => (
-    preference => [qw(int)],
     mov        => [qw(int)],
     lock       => [qw(int)],
 );
-
-# preference: total votes showing preference of candidate i over j
-# optional - should return 0 if nonexistent
-has preference => (
-    is  => 'rw',
-    isa => PositiveOrZeroInt,
+PrefVote::Core::TestSpec->register_blackbox_spec(
+    __PACKAGE__,
+    spec   => \%blackbox_spec,
+    parent => 'PrefVote::Core::PairData'
 );
 
 # margin of victory (0 for tie)
@@ -51,18 +47,6 @@ has lock => (
     is  => 'rw',
     isa => Bool,
 );
-
-# add to pair node's preference total
-sub add_preference
-{
-    my $self     = shift;
-    my $quantity = shift;
-
-    # add to total
-    my $total = $quantity + ( $self->preference() // 0 );
-    $self->preference($total);
-    return $total;
-}
 
 # read accessor for margin of victory (mov)
 # if non-existent, return zero without creating the attribute
@@ -114,7 +98,7 @@ my $locked = $pairdata_ref->get_lock();
 ⛔ This is for PrefVote internal use only.
 
 A PrefVote::RankedPairs:PairData object contains data pertaining to a pair of candidates.
-Outside the scope of this object, L<PrefVote::RankedPairs> has a sparse table (two-level hash) of the
+Outside the scope of this class, L<PrefVote::RankedPairs> has a sparse table (two-level hash) of the
 candidates being compared: candidate 1 (represented by the outer hash) and candidate 2 (inner hash).
 An instance of this object is contained within each entry of that table.
 
@@ -126,6 +110,8 @@ With a parameter it sets the value.
 =over 1
 
 =item preference
+
+This is inherited from PrefVote::Core::PairData.
 
 Integer tally of the votes cast which favor Candidate 1 over Candidate 2.
 It does not contain votes the opposite direction, Candidate 2 over Candidate 1.
@@ -156,6 +142,8 @@ and does not conflict with candidate pairs with larger margins of victory.
 
 =item add_preference(n)
 
+This is inherited from PrefVote::Core::PairData.
+
 This method adds n votes to the tally in the preference attribute, first initializing it to zero if it didn't exist.
 
 =item get_mov()
@@ -179,7 +167,7 @@ By using this method, the flag should only exist if set to true, and is not set 
 
 =head1 SEE ALSO
 
-L<PrefVote::RankedPairs>
+L<PrefVote::RankedPairs>, L<PrefVote::Core::PairData>
 
 L<https://github.com/ikluft/prefvote>
 

@@ -27,11 +27,10 @@ use Types::Common::Numeric qw(PositiveOrZeroInt);
 use Types::Common::String  qw(NonEmptySimpleStr);
 use PrefVote::Core::Set    qw(Set);
 use PrefVote::Core::TestSpec;
-extends 'PrefVote';
+extends 'PrefVote::Core::PairData';
 
 # blackbox testing structure
 Readonly::Hash my %blackbox_spec => (
-    preference   => [qw(int)],
     predecessor  => [qw(string)],
     strength     => [qw(int)],
     win_order    => [qw(bool)],
@@ -41,14 +40,7 @@ Readonly::Hash my %blackbox_spec => (
 PrefVote::Core::TestSpec->register_blackbox_spec(
     __PACKAGE__,
     spec   => \%blackbox_spec,
-    parent => 'PrefVote'
-);
-
-# preference: total votes showing preference of candidate i over j
-# optional - should return 0 if nonexistent
-has preference => (
-    is  => 'rw',
-    isa => PositiveOrZeroInt,
+    parent => 'PrefVote::Core::PairData'
 );
 
 # predecessor: link in building strongest paths
@@ -92,18 +84,6 @@ has path_history => (
     },
 );
 
-# add to pair node's preference total
-sub add_preference
-{
-    my $self     = shift;
-    my $quantity = shift;
-
-    # add to total
-    my $total = $quantity + ( $self->preference() // 0 );
-    $self->preference($total);
-    return $total;
-}
-
 1;
 
 __END__
@@ -121,11 +101,10 @@ __END__
 
 =head1 DESCRIPTION
 
-
 ⛔ This is for PrefVote internal use only.
 
 A PrefVote::Schulze:PairData object contains data pertaining to a pair of candidates.
-Outside the scope of this object, L<PrefVote::Schulze> has a sparse table (two-level hash) of the
+Outside the scope of this class, L<PrefVote::Schulze> has a sparse table (two-level hash) of the
 candidates being compared: candidate 1 (represented by the outer hash) and candidate 2 (inner hash).
 An instance of this object is contained within each entry of that table.
 
@@ -137,6 +116,8 @@ With a parameter it sets the value.
 =over 1
 
 =item preference
+
+This is inherited from PrefVote::Core::PairData.
 
 Integer tally of the votes cast which favor Candidate 1 over Candidate 2.
 It does not contain votes the opposite direction, Candidate 2 over Candidate 1.
@@ -151,13 +132,15 @@ for Candidate 2 against Candidate 1, the opposite order of this cell.
 
 =item add_preference(n)
 
+This is inherited from PrefVote::Core::PairData.
+
 This method adds n votes to the tally in the preference attribute, first initializing it to zero if it didn't exist.
 
 =back
 
 =head1 SEE ALSO
 
-L<PrefVote::Schulze>
+L<PrefVote::Schulze>, L<PrefVote::Core::PairData>
 
 L<https://github.com/ikluft/prefvote>
 
