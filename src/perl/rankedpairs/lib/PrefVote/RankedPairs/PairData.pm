@@ -1,6 +1,6 @@
 # PrefVote::RankedPairs::PairData
 # ABSTRACT: internal candidate-pair data for Ranked Pairs method
-# Copyright (c) 2022 by Ian Kluft
+# Copyright (c) 2022-2023 by Ian Kluft
 # Open Source license: Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
 
 # pragmas to silence some warnings from Perl::Critic
