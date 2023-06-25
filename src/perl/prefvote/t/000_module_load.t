@@ -8,25 +8,27 @@ use Test::More;
 my @classes = qw(
         PrefVote
         PrefVote::Config
-        PrefVote::Debug
+        PrefVote::Core
         PrefVote::Core::Ballot
         PrefVote::Core::Exception
         PrefVote::Core::Float
-        PrefVote::Core::InternalDataException
         PrefVote::Core::Input
+        PrefVote::Core::InternalDataException
         PrefVote::Core::MethodMismatchException
         PrefVote::Core::Output
         PrefVote::Core::Output::HTML
         PrefVote::Core::Output::Markdown
         PrefVote::Core::Output::RawCapture
         PrefVote::Core::Output::Text
+        PrefVote::Core::PairData
+        PrefVote::Core::PairMatrix
         PrefVote::Core::Result
         PrefVote::Core::Round
         PrefVote::Core::Set
-        PrefVote::Core::TestSpec
         PrefVote::Core::TestNode
+        PrefVote::Core::TestSpec
         PrefVote::Core::TestUtil
-        PrefVote::Core
+        PrefVote::Debug
         PrefVote::Exception
         );
 plan tests => scalar @classes;
