@@ -16,16 +16,14 @@ use utf8;
 use autodie;
 use Data::Dumper;
 use Readonly;
-use Set::Tiny qw(set);
 use PrefVote::Core::PairData;
 
 # class definitions
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Standard        qw(Str ArrayRef HashRef InstanceOf);
+use Types::Standard        qw(Str HashRef InstanceOf);
 use Types::Common::String  qw(NonEmptySimpleStr);
-use PrefVote::Core::Set qw(Set);
 use PrefVote::Core::TestSpec;
 extends 'PrefVote::Core';
 
