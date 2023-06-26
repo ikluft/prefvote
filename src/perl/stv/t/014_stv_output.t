@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 # 014_stv_output.t - tests for PrefVote::STV::Output
-use Modern::Perl qw(2013); # require 5.16.0 or later
+use strict;
+use warnings;
 use autodie;
 use open ":std", ":encoding(UTF-8)";
 use Test::More tests => 93;

@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 # 012_stv_round.t - tests for PrefVote::STV::Round
-use Modern::Perl qw(2013); # require 5.16.0 or later
+use strict;
+use warnings;
 use autodie;
 use Test::More tests => 54;
 use Test::Exception;

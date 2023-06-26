@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 # 010_stv_tally.t - tests for PrefVote::STV::Tally
-use Modern::Perl qw(2013); # require 5.16.0 or later
+use strict;
+use warnings;
 use autodie;
 use Test::More tests => 23;
 use Readonly;
