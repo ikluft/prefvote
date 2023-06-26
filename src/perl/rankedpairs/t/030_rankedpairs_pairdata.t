@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 # 030_rankedpairs_pairdata.t - tests for PrefVote::RankedPairs::PairData
-use Modern::Perl qw(2013); # require 5.16.0 or later
+use strict;
+use warnings;
 use autodie;
 use Test::More tests => 25;
 use Test::Exception;

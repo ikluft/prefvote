@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 # 032_rankedpairs_output.t - tests for PrefVote::RankedPairs::Output
-use Modern::Perl qw(2013); # require 5.16.0 or later
+use strict;
+use warnings;
 use autodie;
 use open ":std", ":encoding(UTF-8)";
 use Test::More tests => 104;
