@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# 010_cef_ballot.t - tests for Condorcet Election Format ballot parsing in PrefVote::Core::Input
+# 020_cef_ballot.t - tests for Condorcet Election Format ballot parsing in PrefVote::Core::Input
 use strict;
 use warnings;
 use autodie;
