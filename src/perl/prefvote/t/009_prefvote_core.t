@@ -1,7 +1,8 @@
 #!/usr/bin/perl
 # 009_prefvote_core.t - tests for PrefVote::Core
 
-use Modern::Perl qw(2013); # require 5.16.0 or later
+use strict;
+use warnings;
 use autodie;
 use Test::More tests => 86;
 use Test::Exception;

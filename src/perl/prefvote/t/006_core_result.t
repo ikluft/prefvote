@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 # 011_stv_result.t - tests for PrefVote::Core::Result
-use Modern::Perl qw(2013); # require 5.16.0 or later
+use strict;
+use warnings;
 use autodie;
 use Test::More tests => 10;
 use Test::Exception;

@@ -1,7 +1,8 @@
 #!/usr/bin/perl
 # 001_config.t - tests for low-level PrefVote::Config configuration data store
 
-use Modern::Perl qw(2013); # require 5.16.0 or later
+use strict;
+use warnings;
 use utf8;
 use autodie;
 use open ':std', ':encoding(utf8)';

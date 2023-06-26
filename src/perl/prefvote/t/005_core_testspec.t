@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 # 005_core_testspec.t - tests for PrefVote::Core::TestSpec
-use Modern::Perl qw(2013); # require 5.16.0 or later
+use strict;
+use warnings;
 
 ## no critic (Modules::ProhibitMultiplePackages)
 package PrefVote::Core::TestSpec::UnitTest;

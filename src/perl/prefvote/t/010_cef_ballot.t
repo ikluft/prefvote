@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 # 010_cef_ballot.t - tests for Condorcet Election Format ballot parsing in PrefVote::Core::Input
-use Modern::Perl qw(2013); # require 5.16.0 or later
+use strict;
+use warnings;
 use autodie;
 use Carp qw(croak);
 use Test::More;
