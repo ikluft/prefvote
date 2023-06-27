@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use autodie;
 use Carp qw(croak);
-use Test::More tests => 28;
+use Test::More tests => 32;
 use Readonly;
 use Set::Tiny qw(set);
 use PrefVote::Core::Ballot;
@@ -69,7 +69,7 @@ sub summary_name
 my @choice_test_empty = PrefVote::Core::Ballot::get_choices();
 is(scalar @choice_test_empty, 0, "choices begin empty");
 
-# instantiation tests (6 tests)
+# instantiation tests (9 tests)
 PrefVote::Core::Ballot::set_choices(qw(FOO BAR));
 my @choice_test_foobar = PrefVote::Core::Ballot::get_choices();
 is(scalar @choice_test_foobar, 2, "choices=2 for foo/bar test");
@@ -79,8 +79,13 @@ ok(defined $test_obj, "new(...) returned a defined value");
 ok(ref $test_obj, "new(...) returned a reference");
 isa_ok($test_obj, "PrefVote::Core::Ballot", "new(...) returned correct object");
 is_deeply($test_obj->items(), array2ballot(\@foobar_choices), "choices saved correctly");
+is($test_obj->quantity(), 1, "quantity=1 as initialized");
+is($test_obj->hex_id(), '10', "hex_id=10 as initialized");
+is($test_obj->weight(), 1, "weight=1 by default");
+$test_obj->increment();
+is($test_obj->quantity(), 2, "test ballot increments to quantity=2");
 
-# tests with fictitious A-F candidates (10 tests)
+# tests with fictitious A-F candidates (22 tests)
 PrefVote::Core::Ballot::set_choices(@choices_af);
 my @choice_test_af = PrefVote::Core::Ballot::get_choices();
 is(scalar @choice_test_af, 6, "choices=6 for A-F test");
@@ -93,10 +98,11 @@ foreach my $test (@ballot_tests) {
     }
     my $summary_str = join "-", @summary;
 
-    my $ballot_obj = PrefVote::Core::Ballot->new(items => array2ballot($test->{ballot}), quantity => 1, hex_id => $test->{hex});
+    my $ballot_obj = PrefVote::Core::Ballot->new(items => array2ballot($test->{ballot}),
+        quantity => $test->{total}, hex_id => $test->{hex});
     is_deeply($ballot_obj->items(), array2ballot($test->{ballot}), "ballot $summary_str contents test");
     is($ballot_obj->items_count(), $test->{total}, "ballot $summary_str has test->{total} valid items");
-    is($ballot_obj->quantity(), 1, "ballot $summary_str starts with quantity=1");
+    is($ballot_obj->quantity(), $test->{total}, "ballot $summary_str starts with quantity=".$test->{total});
     $ballot_obj->increment();
-    is($ballot_obj->quantity(), 2, "ballot $summary_str increments to quantity=2");
+    is($ballot_obj->quantity(), $test->{total}+1, "ballot $summary_str increments to quantity=".($test->{total}+1));
 }
