@@ -44,6 +44,7 @@ PrefVote::Core::TestSpec->register_blackbox_spec(
     spec   => \%blackbox_spec,
     parent => 'PrefVote::Core'
 );
+__PACKAGE__->ballot_input_ties_policy(1);    # set flag for Core: this class allows input ballots to set A/B ties
 
 # list of names of winners in order by place, ties shown by an ArrayRef to the tied candidates
 has winners => (
@@ -475,7 +476,7 @@ __END__
 
 =head1 SYNOPSIS
 
-  use PrefVote::RankedPairs;
+    use PrefVote::RankedPairs;
 
     # count votes from a properly-formatted YAML file
     my $vote_obj = PrefVote::RankedPairs::file2vote($progname);
