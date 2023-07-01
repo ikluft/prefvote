@@ -429,7 +429,7 @@ sub submit_ballot
     foreach my $item (@ballot) {
 
         # check for ballot-input ties
-        if ( index( $item, "/" ) == -1 ) {
+        if ( index( $item, "/" ) == -1 and index( $item, "=" ) == -1 ) {
 
             # just a single item - save it if it's valid
             if ( $self->choice_exists($item) ) {
@@ -443,7 +443,7 @@ sub submit_ballot
             PrefVote::Core::Exception->throw( description => "ballot-input ties not allowed in " . ( ref $self ) );
         }
         my @set_items;
-        foreach my $set_item ( split( "/", $item ) ) {
+        foreach my $set_item ( split( qr([/=])x, $item ) ) {
             if ( $self->choice_exists($set_item) ) {
                 push @set_items, $set_item;
             }
