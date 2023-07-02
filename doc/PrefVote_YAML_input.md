@@ -16,8 +16,30 @@ The first YAML document/section contains a definition of the vote - the voting a
 At the top level are two items. Both are required.
 
 * "method" names the voting algorithm, which may be Core, STV, Schulze or RankedPairs. Note that Core is for testing purposes only, and must never be used for processing actual people's votes because it only contains the average choice rank (ACR) which is only an average, not a quantitative measure. It is code which serves as a tie-breaker for all the other voting methods. But all voting must follow the principle that the candidate with the most votes wins.
+Example: "method: RankedPairs"
 * "params" contains a YAML structure which will be passed to the voting algorithm
 
 The params structure contains the following items.
+
+* "name" is the title of the vote topic as it should be displayed on results. It should be the same title as was displayed on ballots when votes were collected. This is a required parameter.
+* "seats" is the number of seats up for election. The default number is 1. A future planned feature is to allow zero seats to mean the overall ranking order is the result. Until then, set the number of seats to the number of available choices to achieve a similar result.
+* "choices" is a hash/map structure defining the choices or candidates. The map key is a short/abbreviated string for the choice. The map value is the full display name of the choice.
+
+An example from a test vote shows a vote called "Test Vote" with 1 available seat and 6 choices, which for testing purposes start with the letters A through F.
+
+<pre>
+  ---
+  method: RankedPairs
+  params:
+    name: Test Vote
+    seats: 1
+    choices:
+      ABNORMAL: abnormal and antisocial
+      BORING: boring as anything
+      CHAOTIC: chaotic unpredictable
+      DYSFUNCTIONAL: dysfunctional incompetent
+      EVIL: evil villain
+      FACTIOUS: factious/divisive
+</pre>
 
 (more detail in progress)
