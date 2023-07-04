@@ -40,6 +40,25 @@ An example from a test vote shows a vote called "Test Vote" with 1 available sea
       DYSFUNCTIONAL: dysfunctional incompetent
       EVIL: evil villain
       FACTIOUS: factious/divisive
+  ---
+  [...second YAML document section contains ballots...]
+</pre>
+
+## Ballot section
+
+The second YAML document contains a list of ballots.
+Each ballot item in the list is an array containing the choices in order from highest to lowest preference.
+
+Example:
+<pre>
+  - [BORING, EVIL, FACTIOUS, ABNORMAL, CHAOTIC]
+</pre>
+
+If input ties are allowed by the voting method and the vote configuration, ties may be 
+
+Example:
+<pre>
+  - [BORING, [EVIL, FACTIOUS], ABNORMAL, CHAOTIC]
 </pre>
 
 (more detail in progress)
