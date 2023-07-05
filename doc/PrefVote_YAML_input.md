@@ -25,7 +25,7 @@ The params structure contains the following items.
 * "seats" is the number of seats up for election. The default number is 1. A future planned feature is to allow zero seats to mean the overall ranking order is the desired result. The use case for zero seats is for ranking polls. Until then, set the number of seats to the number of available choices to achieve a similar result.
 * "choices" is a hash/map structure defining the choices or candidates. The map key is a short/abbreviated string for the choice. The map value is the full display name of the choice. This is a required parameter.
 
-An example from a test vote shows a vote called "Test Vote" with 1 available seat and 6 choices, which for testing purposes start with the letters A through F.
+An example from a test vote shows a vote called "Test Vote" with 1 available seat and 6 choices, which for testing purposes start with the letters A through F and have whimsical names.
 
 <pre>
   ---
@@ -49,14 +49,15 @@ An example from a test vote shows a vote called "Test Vote" with 1 available sea
 The second YAML document contains a list of ballots.
 Each ballot item in the list is an array containing the choices in order from highest to lowest preference.
 
-Example:
+Example: ordering for 5 of the available 6 choices.
 <pre>
   - [BORING, EVIL, FACTIOUS, ABNORMAL, CHAOTIC]
 </pre>
 
-If input ties are allowed by the voting method and the vote configuration, ties may be 
+If input ties/equality are allowed by the voting method and the vote configuration, they may be indicated by a
+list within the list at the proper placement for the tied/equal items.
 
-Example:
+Example: two items tied for 2nd place
 <pre>
   - [BORING, [EVIL, FACTIOUS], ABNORMAL, CHAOTIC]
 </pre>
