@@ -4,7 +4,7 @@
 use strict;
 use warnings;
 use autodie;
-use Test::More tests => 86;
+use Test::More tests => 107;
 use Test::Exception;
 use File::Basename;
 use Readonly;
@@ -32,10 +32,16 @@ Readonly::Array my @ballot_tests => (
     {ballot => [qw(CTHULU)], exception => "PrefVote::Core::Exception"},
     {ballot => [qw(EVIL FACTIOUS DYSFUNCTIONAL/CHAOTIC ABNORMAL BORING)],
         exception => "PrefVote::Core::Exception"}, # this fails because allow_ties isn't set and it has a tie input
+    {ballot => [qw(EVIL FACTIOUS DYSFUNCTIONAL=CHAOTIC ABNORMAL BORING)],
+        exception => "PrefVote::Core::Exception"}, # this fails because allow_ties isn't set and it has a tie input
     {ballot => [qw(EVIL FACTIOUS DYSFUNCTIONAL/CHAOTIC ABNORMAL BORING)],
         allow_ties => 1, total => 6, hex => '45[23]01'},
     {ballot => [qw(EVIL/FACTIOUS DYSFUNCTIONAL/CHAOTIC ABNORMAL/BORING)],
         allow_ties => 1 ,total => 6, hex => '[45][23][01]'},
+    {ballot => [qw(EVIL BORING DYSFUNCTIONAL=CHAOTIC ABNORMAL FACTIOUS)],
+        allow_ties => 1, total => 6, hex => '41[23]05'},
+    {ballot => [qw(EVIL=BORING DYSFUNCTIONAL=CHAOTIC ABNORMAL=FACTIOUS)],
+        allow_ties => 1 ,total => 6, hex => '[14][23][05]'},
 );
 Readonly::Scalar my $input_dir => "t/test-inputs/".basename($0, ".t");
 Readonly::Scalar my $yaml_file => "test.yaml";
@@ -83,8 +89,8 @@ sub array2ballot
     my $array_ref = shift;
     my @ballot;
     foreach my $item (@$array_ref) {
-        if (index($item, "/") != -1) {
-            push @ballot, set(split( "/", $item));
+        if (index($item, "/") != -1 or index($item, "=") != -1) {
+            push @ballot, set(split( qr([/=])x, $item));
         } else {
             push @ballot, set($item);
         }
@@ -100,9 +106,9 @@ sub summary_name
     my @summary;
 
     # abbreviate candidate names where possible within group-tie or singular ballot-item
-    if (index($item, "/") != -1) {
+    if (index($item, "/") != -1 or index($item, "=") != -1) {
         # group-tie entry
-        foreach my $subitem (sort split "/", $item) {
+        foreach my $subitem (sort split qr([/=])x, $item) {
             if (exists $choices_ref->{$subitem}) {
                 # abbreviate known candidate
                 push @summary, substr $subitem, 0, 1;
@@ -134,7 +140,7 @@ sub ballot_tests
     # verify empty ballot box at start (1 test)
     is($vote_obj->total_ballots(), 0, "obj->total_ballots() = 0 initially");
 
-    # run through array of ballot input tests (22 tests)
+    # run through array of ballot input tests (43 tests)
     foreach my $test (@ballot_tests) {
         # allow ballot input ties for testing
         PrefVote::Core->ballot_input_ties_policy($test->{allow_ties} // 0);
@@ -174,7 +180,7 @@ sub ballot_tests
     }
 
     # count ballots (1 test)
-    is($vote_obj->total_ballots(), 8, "obj->total_ballots() = 8");
+    is($vote_obj->total_ballots(), 12, "obj->total_ballots() = 12");
     return;
 }
 
