@@ -62,4 +62,15 @@ Example: two items tied for 2nd place
   - [BORING, [EVIL, FACTIOUS], ABNORMAL, CHAOTIC]
 </pre>
 
+## Test data section
+
+An optional third YAML document may contain data for use in testing.
+This section may also be placed in a file in the same directory
+with the same basename and a "-test.yaml" suffix.
+The internal document option was the original method of
+including expected test results with the YAML test vote data.
+The external file option was added to allow the same capability alongside
+Condorcet Election Format (CEF) files,
+which do not have a method to include test results in the file.
+
 (more detail in progress)
