@@ -22,14 +22,14 @@ use PrefVote::Core::PairData;
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Standard        qw(Str HashRef InstanceOf);
-use Types::Common::String  qw(NonEmptySimpleStr);
+use Types::Standard       qw(Str HashRef InstanceOf);
+use Types::Common::String qw(NonEmptySimpleStr);
 use PrefVote::Core::TestSpec;
 extends 'PrefVote::Core';
 
 # blackbox testing structure
 Readonly::Hash my %blackbox_spec => (
-    pair     => [qw(hash hash PrefVote::RankedPairs::PairData)],
+    pair      => [qw(hash hash PrefVote::RankedPairs::PairData)],
     pairclass => [qw(string)],
 );
 PrefVote::Core::TestSpec->register_blackbox_spec(
@@ -63,7 +63,7 @@ sub make_pair_node
         $self->{pair}{$cand_i} = {};
     }
     if ( not exists $self->{pair}{$cand_i}{$cand_j} ) {
-        $self->{pair}{$cand_i}{$cand_j} = ($self->pairclass())->new();
+        $self->{pair}{$cand_i}{$cand_j} = ( $self->pairclass() )->new();
     }
     return;
 }

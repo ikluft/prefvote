@@ -26,9 +26,7 @@ use PrefVote::Core::TestSpec;
 extends 'PrefVote';
 
 # blackbox testing structure
-Readonly::Hash my %blackbox_spec => (
-    preference => [qw(int)],
-);
+Readonly::Hash my %blackbox_spec => ( preference => [qw(int)], );
 
 # preference: total votes showing preference of candidate i over j
 # optional - should return 0 if nonexistent
