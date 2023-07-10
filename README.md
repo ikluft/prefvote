@@ -18,6 +18,10 @@ Next was [Ranked Pairs](https://en.wikipedia.org/wiki/Ranked_pairs). It was desi
 
 After the reference implementation in Perl, next up for language implementations will be [Rust](https://www.rust-lang.org/).
 
+## Input file format
+
+PrefVote provides code to read YAML input files. There is [documentation for the data format](doc/PrefVote_YAML_input.md). Also, as a library any data can be submitted directly.
+
 ## Tie-breaking modifications to algorithms
 
 PrefVote modifies all the algorithms in one way. It adds a tie-breaking factor using the average ballot-position ranking of a choice/candidate. It started as experimentation with intuition that the average ranking of a choice was indicative of the will of the voters. Though it wouldn't be acceptable as a primary factor because averages don't have quantitative data. Test runs show that it approximates Condorcet results fairly well and converges with Condorcet by around 100 random ballots. It didn't even need to be that close to Condorcet to convey meaning about voter's preferences. So this tie-breaking method restores ballot-position ordering information which Condorcet lacks.
