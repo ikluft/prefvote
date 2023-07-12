@@ -73,4 +73,9 @@ The external file option was added to allow the same capability alongside
 Condorcet Election Format (CEF) files,
 which do not have a method to include test results in the file.
 
+The test document/section YAML has a top-level hash where the keys are a voting method name,
+such as Core, STV, Schulze and RankedPairs.
+Within those entries are data trees which must match the internal data structures of the
+voting method, and will not be documented here.
+
 (more detail in progress)
