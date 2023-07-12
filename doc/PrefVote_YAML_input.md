@@ -76,6 +76,8 @@ which do not have a method to include test results in the file.
 The test document/section YAML has a top-level hash where the keys are a voting method name,
 such as Core, STV, Schulze and RankedPairs.
 Within those entries are data trees which must match the internal data structures of the
-voting method, and will not be documented here.
+voting method, and as internal data will not be documented here.
+Each item of data is considered a separate test which the run data must match to pass.
+Also as test cases, each list and hash must have the correct number of members.
 
 (more detail in progress)
