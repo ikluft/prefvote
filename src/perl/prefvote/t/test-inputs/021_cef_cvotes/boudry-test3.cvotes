@@ -1,0 +1,4 @@
+# imported from https://github.com/julien-boudry/Condorcet/Tests/src/Tools/Converters/CondorcetElectionFormatData/
+#/Candidates:A;B;C
+
+C>B>A * 700

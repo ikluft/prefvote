@@ -1,0 +1,6 @@
+# imported from https://github.com/julien-boudry/Condorcet/Tests/src/Tools/Converters/CondorcetElectionFormatData/
+#/Candidates:A;B;C
+#/Implicit Ranking: true
+#/Weight Allowed: false
+
+A>B ^2
