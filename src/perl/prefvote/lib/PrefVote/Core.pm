@@ -136,7 +136,7 @@ has choices => (
 # number of seats/selections to be filled by poll/vote
 has seats => (
     is      => 'ro',
-    isa     => PositiveInt,
+    isa     => PositiveOrZeroInt,
     default => sub { return 1 },
 );
 
@@ -680,15 +680,21 @@ sub save_c2r
             # candidates in this list are tied if there's more than one
             my @group = $winners[$win_l1]->members();
             my $disposition;
-            if ( $place + scalar @group <= $seats ) {
-                $disposition = "selected";
-            } elsif ( $place < $seats and $place + scalar @group > $seats ) {
-                $disposition = "tied";
-            } else {
-                $disposition = "placed";
+            if ( $seats > 0 ) {
+                if ( $place + scalar @group <= $seats ) {
+                    $disposition = "selected";
+                } elsif ( $place < $seats and $place + scalar @group > $seats ) {
+                    $disposition = "tied";
+                } else {
+                    $disposition = "placed";
+                }
             }
             foreach my $cand_key (@group) {
-                $self->c2r_set( $cand_key, [ $place + 1, $disposition ] );
+                if ( defined $disposition ) {
+                    $self->c2r_set( $cand_key, [ $place + 1, $disposition ] );
+                } else {
+                    $self->c2r_set( $cand_key, [ $place + 1 ] );
+                }
             }
             $place += scalar @group;
         }
