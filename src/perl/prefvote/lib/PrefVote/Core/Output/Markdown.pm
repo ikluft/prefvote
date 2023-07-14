@@ -48,7 +48,11 @@ sub do_header
     my $title         = "Results: " . $result_data->{name};
     say $title;
     say "-" x length $title;
-    say "$seats seat" . ( $seats > 1 ? "s" : "" ) . " available " . "\N{VERTICAL LINE} $total_ballots ballots";
+    if ( $seats == 0 ) {
+        say "ranking order \N{VERTICAL LINE} $total_ballots ballots";
+    } else {
+        say "$seats seat" . ( $seats > 1 ? "s" : "" ) . " available " . "\N{VERTICAL LINE} $total_ballots ballots";
+    }
     say "";
     return;
 }

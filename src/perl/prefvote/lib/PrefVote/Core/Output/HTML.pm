@@ -73,13 +73,21 @@ sub do_header
     my $title         = "Results: " . $result_data->{name};
     say "<div id=\"prefvote\">";
     say "<h2>" . htmlify($title) . "</h2>";
-    say "<p>"
-        . htmlify($seats) . " seat"
-        . ( $seats > 1 ? "s" : "" )
-        . " available "
-        . "\N{BLACK CIRCLE} "
-        . htmlify($total_ballots)
-        . " ballots processed</p>";
+    if ( $seats == 0 ) {
+        say "<p>"
+            . "ranking order "
+            . "\N{BLACK CIRCLE} "
+            . htmlify($total_ballots)
+            . " ballots processed</p>";
+    } else {
+        say "<p>"
+            . htmlify($seats) . " seat"
+            . ( $seats != 1 ? "s" : "" )
+            . " available "
+            . "\N{BLACK CIRCLE} "
+            . htmlify($total_ballots)
+            . " ballots processed</p>";
+    }
     return;
 }
 
