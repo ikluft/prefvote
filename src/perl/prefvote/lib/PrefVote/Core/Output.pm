@@ -14,6 +14,7 @@ use warnings;
 package PrefVote::Core::Output;
 
 use utf8;
+use charnames qw(:loose);
 use feature qw(say fc);
 use autodie;
 use parent qw(PrefVote);

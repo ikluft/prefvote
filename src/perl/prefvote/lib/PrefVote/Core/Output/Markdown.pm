@@ -14,6 +14,7 @@ use warnings;
 package PrefVote::Core::Output::Markdown;
 
 use utf8;
+use charnames qw(:loose);
 use feature qw(say);
 use autodie;
 use parent qw(PrefVote);

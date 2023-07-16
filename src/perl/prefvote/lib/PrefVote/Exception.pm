@@ -14,6 +14,7 @@ use warnings;
 package PrefVote::Exception;
 
 use utf8;
+use charnames qw(:loose);
 use feature qw(say);
 use overload ( '""' => 'stringify' );
 use Moo;

@@ -17,6 +17,7 @@ use warnings;
 package PrefVote::Core::Round;
 
 use utf8;
+use charnames qw(:loose);
 use autodie;
 use Readonly;
 use Set::Tiny qw(set);

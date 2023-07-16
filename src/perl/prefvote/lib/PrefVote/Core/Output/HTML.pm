@@ -14,6 +14,7 @@ use warnings;
 package PrefVote::Core::Output::HTML;
 
 use utf8;
+use charnames qw(:loose);
 use feature qw(say);
 use autodie;
 use HTML::Escape qw(escape_html);
