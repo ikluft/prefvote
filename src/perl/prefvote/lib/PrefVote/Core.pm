@@ -103,7 +103,7 @@ has index_to_choice => (
 # Eliminated candidates still have place numbers depending on the order or strength of elimination.
 has choice_to_result => (
     is          => 'rw',
-    isa         => Map [ NonEmptySimpleStr, Tuple [ Int, Enum [qw(selected tied placed eliminated)] ] ],
+    isa         => Map [ NonEmptySimpleStr, Tuple [ Int, Enum [qw(selected tied placed eliminated ranked)] ] ],
     handles_via => 'Hash',
     handles     => {
         c2r_exists => 'exists',
@@ -688,6 +688,8 @@ sub save_c2r
                 } else {
                     $disposition = "placed";
                 }
+            } else {
+                $disposition = "ranked";
             }
             foreach my $cand_key (@group) {
                 if ( defined $disposition ) {
@@ -891,6 +893,9 @@ for the choice/candidate
 
 integer number of seats to be filled by this vote.
 If not provided the default is 1.
+
+If seats is set to zero, it means the entire ranking order is the desired result.
+No specific number of seats is used in that case.
 
 =item ballots
 
