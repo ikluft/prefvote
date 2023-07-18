@@ -134,12 +134,35 @@ sub cef_fetch_prefs
     return @pref_order;
 }
 
+# collect candidate list from ballots
+sub enumerate_candidates
+{
+    my $self = shift;
+    #my $params_ref = shift;
+    my %candidates_seen;
+
+    # TODO
+
+    return keys %candidates_seen;
+}
+
 # 2nd pass: enumerate candidates and handle empty rankings
 sub cef_second_pass
 {
     my $self = shift;
+    my $params_ref = shift;
 
-    #TODO
+    # if a candidate list wasn't provided then collect them from ballots
+    my @candidates;
+    if ( exists $params_ref->{candidates}) {
+        $params_ref->{candidates} =~ s/^ \s+//x;  # remove whitespace at start of line
+        $params_ref->{candidates} =~ s/\s+ $//x;  # remove whitespace at end of line
+        @candidates = split /\s* ; \s*/x, $params_ref->{candidates};
+    } else {
+        @candidates = $self->enumerate_candidates($params_ref);
+    }
+
+    # TODO
 
     return;
 }
@@ -161,7 +184,7 @@ sub parse_cef
 
         # election definition parameters
         if ( $line =~ /^ \s* # \/ \s* ([\w ]+?) \s* : \s* (.*?) \s* $/x ) {
-            my ( $param_name, $param_value ) = ( $1, $2 );
+            my ( $param_name, $param_value ) = ( fc $1, $2 );
             if ( not $self->ballot_empty() ) {
                 PrefVote::Core::Exception->throw(
                     description => "parse_cef($filepath): can't define $param_name after first ballot line" );
@@ -223,11 +246,11 @@ sub parse_cef
     ## critic (RequireBriefOpen)
 
     # 2nd pass: enumerate candidates and handle empty rankings
-    $self->cef_second_pass();
+    $self->cef_second_pass(\%params);
 
     # save CEF data to PrefVote vote definition & ballot docs
-    if ( exists $params{'Number of Seats'} ) {
-        $self->{vote_def}{seats} = int( $params{'Number of Seats'} );
+    if ( exists $params{'number of seats'} ) {
+        $self->{vote_def}{seats} = int( $params{'number of seats'} );
     }
     return;
 }
