@@ -134,14 +134,27 @@ sub cef_fetch_prefs
     return @pref_order;
 }
 
-# collect candidate list from ballots
+# collect candidate list from ballots when no candidate list is provided
+# note: this is not necessarily a good practice because erroneous candidates on ballots usually should be discarded
 sub enumerate_candidates
 {
     my $self = shift;
     #my $params_ref = shift;
     my %candidates_seen;
 
-    # TODO
+    # find all the unique candidates from the ballots
+    foreach my $ballot ( $self->ballots_all()) {
+        foreach my $item ( @$ballot ) {
+            my $item_no_ws = $item;
+            $item_no_ws =~ s/^ \s+ //x;
+            $item_no_ws =~ s/\s+ $//x;
+            foreach my $subitem ( split qr(\s* [/=] \s*)x, $item_no_ws ) {
+                if ( not exists $candidates_seen{$subitem}) {
+                    $candidates_seen{$subitem} = 1;
+                }
+            }
+        }
+    }
 
     return keys %candidates_seen;
 }
