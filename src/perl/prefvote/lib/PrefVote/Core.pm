@@ -29,6 +29,13 @@ use PrefVote::Core::TestSpec;
 # use Core only for testing because the base class doesn't actually have voting-method code
 Readonly::Array my @voting_methods => qw(Core STV Schulze RankedPairs);
 
+# supported flags in a vote definition and their default values
+# the existence of a key here allows its existence in flags hash
+Readonly::Hash my %vote_def_flags => (
+    implicit_ranking => 1,
+    weight_allowed => 0,
+);
+
 #
 # class definitions
 #
