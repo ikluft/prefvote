@@ -16,8 +16,20 @@ use utf8;
 use feature qw(say fc);
 use autodie;
 use Carp qw(croak confess);
+use Readonly;
 use File::Basename;
 use YAML::XS;
+
+#
+# constants
+#
+
+# map CEF keys to PrefVote::Core flag names
+# initally these are conversion from capitalized words to snake-case string, but flexible for expansion
+Readonly::Hash my %cef2flags => (
+    'Implicit Ranking' => 'implicit_ranking',
+    'Weight Allowed' => 'weight_allowed',
+);
 
 #
 # class definition via Moo
