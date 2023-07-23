@@ -69,8 +69,10 @@ has ballots => (
     handles     => {
         ballot_all   => 'all',
         ballot_count => 'count',
+        ballot_get   => 'get',
         ballot_empty => 'is_empty',
         ballot_push  => 'push',
+        ballot_set   => 'set',
     },
 );
 
@@ -185,6 +187,15 @@ sub cef_second_pass
         @candidates = split /\s* ; \s*/x, $params_ref->{candidates};
     } else {
         @candidates = $self->enumerate_candidates($params_ref);
+    }
+
+    # scan ballots for explicit /EMPTY_RANKING/ marker
+    my $ballot_count = $self->ballots_count();
+    for ( my $ballot_index = 0; $ballot_index < $ballot_count; $ballot_index++ ) {
+        my $ballot = $self->ballot_get( $ballot_index );
+        if (( scalar @$ballot ) == 1 and $ballot->[0] =~ qr(^ \s* \/EMPTY_RANKING\/ \s* $)x ) {
+            $self->ballot_set( $ballot_index, []);
+        }
     }
 
     # TODO
