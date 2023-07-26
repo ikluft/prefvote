@@ -189,6 +189,14 @@ sub cef_second_pass
         @candidates = $self->enumerate_candidates($params_ref);
     }
 
+    # convert CEF candidate list to PrefVote choices hash
+    # note: CEF doesn't provide a separate abbreviation and full string - use candidate name for both
+    my %choices;
+    foreach my $candidate_name ( @candidates ) {
+        $choices{$candidate_name} = $candidate_name;
+    }
+    $self->vote_def_set( 'choices', \%choices );
+
     # scan ballots for explicit /EMPTY_RANKING/ marker
     my $ballot_count = $self->ballots_count();
     for ( my $ballot_index = 0; $ballot_index < $ballot_count; $ballot_index++ ) {
