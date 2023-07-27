@@ -33,7 +33,7 @@ Readonly::Array my @voting_methods => qw(Core STV Schulze RankedPairs);
 # the existence of a key here allows its existence in flags hash
 Readonly::Hash my %vote_def_flags => (
     implicit_ranking => 1,
-    weight_allowed => 0,
+    weight_allowed   => 0,
 );
 
 #

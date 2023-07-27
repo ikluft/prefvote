@@ -28,7 +28,7 @@ use YAML::XS;
 # initally these are conversion from capitalized words to snake-case string, but flexible for expansion
 Readonly::Hash my %cef2flags => (
     'Implicit Ranking' => 'implicit_ranking',
-    'Weight Allowed' => 'weight_allowed',
+    'Weight Allowed'   => 'weight_allowed',
 );
 
 #
@@ -153,17 +153,18 @@ sub cef_fetch_prefs
 sub enumerate_candidates
 {
     my $self = shift;
+
     #my $params_ref = shift;
     my %candidates_seen;
 
     # find all the unique candidates from the ballots
-    foreach my $ballot ( $self->ballots_all()) {
-        foreach my $item ( @$ballot ) {
+    foreach my $ballot ( $self->ballots_all() ) {
+        foreach my $item (@$ballot) {
             my $item_no_ws = $item;
             $item_no_ws =~ s/^ \s+ //x;
             $item_no_ws =~ s/\s+ $//x;
             foreach my $subitem ( split qr(\s* [/=] \s*)x, $item_no_ws ) {
-                if ( not exists $candidates_seen{$subitem}) {
+                if ( not exists $candidates_seen{$subitem} ) {
                     $candidates_seen{$subitem} = 1;
                 }
             }
@@ -176,14 +177,14 @@ sub enumerate_candidates
 # 2nd pass: enumerate candidates and handle empty rankings
 sub cef_second_pass
 {
-    my $self = shift;
+    my $self       = shift;
     my $params_ref = shift;
 
     # if a candidate list wasn't provided then collect them from ballots
     my @candidates;
-    if ( exists $params_ref->{candidates}) {
-        $params_ref->{candidates} =~ s/^ \s+//x;  # remove whitespace at start of line
-        $params_ref->{candidates} =~ s/\s+ $//x;  # remove whitespace at end of line
+    if ( exists $params_ref->{candidates} ) {
+        $params_ref->{candidates} =~ s/^ \s+//x;    # remove whitespace at start of line
+        $params_ref->{candidates} =~ s/\s+ $//x;    # remove whitespace at end of line
         @candidates = split /\s* ; \s*/x, $params_ref->{candidates};
     } else {
         @candidates = $self->enumerate_candidates($params_ref);
@@ -192,17 +193,17 @@ sub cef_second_pass
     # convert CEF candidate list to PrefVote choices hash
     # note: CEF doesn't provide a separate abbreviation and full string - use candidate name for both
     my %choices;
-    foreach my $candidate_name ( @candidates ) {
+    foreach my $candidate_name (@candidates) {
         $choices{$candidate_name} = $candidate_name;
     }
     $self->vote_def_set( 'choices', \%choices );
 
     # scan ballots for explicit /EMPTY_RANKING/ marker
     my $ballot_count = $self->ballots_count();
-    for ( my $ballot_index = 0; $ballot_index < $ballot_count; $ballot_index++ ) {
-        my $ballot = $self->ballot_get( $ballot_index );
-        if (( scalar @$ballot ) == 1 and $ballot->[0] =~ qr(^ \s* \/EMPTY_RANKING\/ \s* $)x ) {
-            $self->ballot_set( $ballot_index, []);
+    for ( my $ballot_index = 0 ; $ballot_index < $ballot_count ; $ballot_index++ ) {
+        my $ballot = $self->ballot_get($ballot_index);
+        if ( ( scalar @$ballot ) == 1 and $ballot->[0] =~ qr(^ \s* \/EMPTY_RANKING\/ \s* $)x ) {
+            $self->ballot_set( $ballot_index, [] );
         }
     }
 
@@ -288,15 +289,15 @@ sub parse_cef
     ## critic (RequireBriefOpen)
 
     # 2nd pass: enumerate candidates and handle empty rankings
-    $self->cef_second_pass(\%params);
+    $self->cef_second_pass( \%params );
 
     # save CEF data to PrefVote vote definition & ballot docs
     if ( exists $params{'number of seats'} ) {
-        $self->vote_def_set( 'seats', int( $params{'number of seats'} ));
+        $self->vote_def_set( 'seats', int( $params{'number of seats'} ) );
     }
     foreach my $cef_key ( keys %cef2flags ) {
-        if ( exists $params{$cef_key}) {
-            $self->vote_def_set( $cef_key, $params{$cef_key});
+        if ( exists $params{$cef_key} ) {
+            $self->vote_def_set( $cef_key, $params{$cef_key} );
         }
     }
     return;
