@@ -206,8 +206,6 @@ sub cef_second_pass
         }
     }
 
-    # TODO
-
     return;
 }
 
@@ -294,7 +292,12 @@ sub parse_cef
 
     # save CEF data to PrefVote vote definition & ballot docs
     if ( exists $params{'number of seats'} ) {
-        $self->{vote_def}{seats} = int( $params{'number of seats'} );
+        $self->vote_def_set( 'seats', int( $params{'number of seats'} ));
+    }
+    foreach my $cef_key ( keys %cef2flags ) {
+        if ( exists $params{$cef_key}) {
+            $self->vote_def_set( $cef_key, $params{$cef_key});
+        }
     }
     return;
 }
