@@ -76,6 +76,13 @@ has name => (
 has flags => (
     is  => 'ro',
     isa => Map [ NonEmptySimpleStr, Bool ],
+    handles_via => 'Hash',
+    handles     => {
+        flag        => 'accessor',
+        flag_exists => 'exists',
+        flag_get    => 'get',
+        flag_set    => 'set',
+    },
 );
 
 # bidirectional hashes for converting between index strings and choice identifier strings
@@ -276,6 +283,15 @@ sub supported_method
     return;
 }
 
+# read accessor for vote definition flags
+sub get_flag
+{
+    my ( $self, $flag_name ) = @_;
+    return 0 if not $self->flag_exists( $flag_name );
+    return 0 if not $self->flag( $flag_name );
+    return 1;
+}
+
 # tally ballot positions of choices/candidates
 sub save_ranking
 {
@@ -424,8 +440,12 @@ sub submit_ballot
             $quantity = $params->{quantity};
         }
 
-        # TODO: check parameters if weights are allowed in this election
+        # check parameters if weights are allowed in this election
         if ( exists $params->{weight} ) {
+            if ( not $self->get_flag( 'weight_allowed' )) {
+                PrefVote::Core::Exception->throw(
+                    description => "ballot weight specified in a vote where weights are not allowed" );
+            }
             if ( $params->{weight} !~ /^\d+$/x ) {
                 PrefVote::Core::Exception->throw(
                     description => "ballot weight " . $params->{weight} . " is not an integer" );
