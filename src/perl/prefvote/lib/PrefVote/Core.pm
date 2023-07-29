@@ -328,12 +328,14 @@ sub save_ranking
     }
 
     # each omitted choice/item gets marked as one place after last choice
-    foreach my $check_choice ( $self->get_choices() ) {
-        next if exists $item_seen{$check_choice};
-        if ( not exists $self->{choice_rank}{$check_choice}[$choices_num] ) {
-            $self->{choice_rank}{$check_choice}[$choices_num] = 0;
+    if ( $self->get_flag('implicit_ranking') ) {
+        foreach my $check_choice ( $self->get_choices() ) {
+            next if exists $item_seen{$check_choice};
+            if ( not exists $self->{choice_rank}{$check_choice}[$choices_num] ) {
+                $self->{choice_rank}{$check_choice}[$choices_num] = 0;
+            }
+            $self->{choice_rank}{$check_choice}[$choices_num]++;
         }
-        $self->{choice_rank}{$check_choice}[$choices_num]++;
     }
 
     return;
