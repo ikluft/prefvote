@@ -74,8 +74,8 @@ has name => (
 
 # boolean flag parameters for this election/vote (optional, set only at initialization time)
 has flags => (
-    is  => 'ro',
-    isa => Map [ NonEmptySimpleStr, Bool ],
+    is          => 'ro',
+    isa         => Map [ NonEmptySimpleStr, Bool ],
     handles_via => 'Hash',
     handles     => {
         flag        => 'accessor',
@@ -287,9 +287,19 @@ sub supported_method
 sub get_flag
 {
     my ( $self, $flag_name ) = @_;
-    return 0 if not $self->flag_exists( $flag_name );
-    return 0 if not $self->flag( $flag_name );
-    return 1;
+
+    # valid flag names are contained in keys of %vote_def_flags
+    if ( not exists $vote_def_flags{$flag_name} ) {
+        PrefVote::Core::Exception->throw( description => "get_flag: unrecognized flag name '$flag_name'" );
+    }
+
+    # return default value if flag not explicitly set
+    if ( not $self->flag_exists($flag_name) ) {
+        return $vote_def_flags{$flag_name};
+    }
+
+    # return flag value
+    return $self->flag($flag_name) ? 1 : 0;
 }
 
 # tally ballot positions of choices/candidates
@@ -442,7 +452,7 @@ sub submit_ballot
 
         # check parameters if weights are allowed in this election
         if ( exists $params->{weight} ) {
-            if ( not $self->get_flag( 'weight_allowed' )) {
+            if ( not $self->get_flag('weight_allowed') ) {
                 PrefVote::Core::Exception->throw(
                     description => "ballot weight specified in a vote where weights are not allowed" );
             }
