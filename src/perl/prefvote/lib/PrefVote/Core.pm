@@ -76,6 +76,7 @@ has name => (
 has flags => (
     is          => 'ro',
     isa         => Map [ NonEmptySimpleStr, Bool ],
+    default     => sub { return {} },
     handles_via => 'Hash',
     handles     => {
         flag        => 'accessor',
