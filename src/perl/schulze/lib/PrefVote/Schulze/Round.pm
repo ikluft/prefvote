@@ -243,11 +243,13 @@ sub tally_preferences
 
         # all choices omitted from the ballot (unranked) count as less-preferred than all on the ballot
         # no comparison is made between unranked choices - the voter didn't provide data on that
-        my @included = keys %seen_on_ballot;
-        my @omitted  = grep { not exists $seen_on_ballot{$_} } @choices;
-        foreach my $in (@included) {
-            foreach my $out (@omitted) {
-                $self->add_preference( $in, $out, $ballot->{quantity} );
+        if ( $self->get_flag('implicit_ranking') ) {
+            my @included = keys %seen_on_ballot;
+            my @omitted  = grep { not exists $seen_on_ballot{$_} } @choices;
+            foreach my $in (@included) {
+                foreach my $out (@omitted) {
+                    $self->add_preference( $in, $out, $ballot->{quantity} );
+                }
             }
         }
     }
