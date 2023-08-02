@@ -158,7 +158,7 @@ sub enumerate_candidates
     my %candidates_seen;
 
     # find all the unique candidates from the ballots
-    foreach my $ballot ( $self->ballots_all() ) {
+    foreach my $ballot ( $self->ballot_all() ) {
         foreach my $item (@$ballot) {
             my $item_no_ws = $item;
             $item_no_ws =~ s/^ \s+ //x;
@@ -199,7 +199,7 @@ sub cef_second_pass
     $self->vote_def_set( 'choices', \%choices );
 
     # scan ballots for explicit /EMPTY_RANKING/ marker
-    my $ballot_count = $self->ballots_count();
+    my $ballot_count = $self->ballot_count();
     for ( my $ballot_index = 0 ; $ballot_index < $ballot_count ; $ballot_index++ ) {
         my $ballot = $self->ballot_get($ballot_index);
         if ( ( scalar @$ballot ) == 1 and $ballot->[0] =~ qr(^ \s* \/EMPTY_RANKING\/ \s* $)x ) {
