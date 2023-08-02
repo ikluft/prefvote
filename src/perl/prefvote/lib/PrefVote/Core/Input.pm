@@ -24,6 +24,10 @@ use YAML::XS;
 # constants
 #
 
+# default voting method for CEF
+# PrefVote requires a method. But CEF doesn't require one. Use this to resolve the conflict.
+Readonly::Scalar my $cef_default_method => "RankedPairs";
+
 # map CEF keys to PrefVote::Core flag names
 # initally these are conversion from capitalized words to snake-case string, but flexible for expansion
 Readonly::Hash my %cef2flags => (
@@ -52,13 +56,6 @@ has filepath => (
 has vote_def => (
     is          => 'rw',
     isa         => HashRef [ NonEmptySimpleStr | HashRef ],
-    handles_via => 'Hash',
-    handles     => {
-        vote_def_exists => 'exists',
-        vote_def_get    => 'get',
-        vote_def_keys   => 'keys',
-        vote_def_set    => 'set',
-    },
 );
 
 # ballot list
@@ -196,7 +193,7 @@ sub cef_second_pass
     foreach my $candidate_name (@candidates) {
         $choices{$candidate_name} = $candidate_name;
     }
-    $self->vote_def_set( 'choices', \%choices );
+    $self->{vote_def}{params}{choices} = \%choices;
 
     # scan ballots for explicit /EMPTY_RANKING/ marker
     my $ballot_count = $self->ballot_count();
@@ -219,9 +216,10 @@ sub parse_cef
     my %params;
     $self->debug_print( "parse_cef($filepath)" );
 
-    # initialize empty vote parameters and ballot list
-    $self->vote_def( {} );
+    # initialize empty vote parameters, ballot list & test data
+    $self->vote_def( { method => $cef_default_method, params => {}} );
     $self->ballots( [] );
+    $self->test_data( [] );
 
     # read file and process lines
     ## no critic (RequireBriefOpen)
@@ -303,15 +301,30 @@ sub parse_cef
     # 2nd pass: enumerate candidates and handle empty rankings
     $self->cef_second_pass( \%params );
 
+    #
     # save CEF data to PrefVote vote definition & ballot docs
+    #
+
+    # save number of seats
     if ( exists $params{'number of seats'} ) {
-        $self->vote_def_set( 'seats', int( $params{'number of seats'} ) );
+        $self->{vote_def}{params}{seats} = int( $params{'number of seats'} );
     }
-    foreach my $cef_key ( keys %cef2flags ) {
-        if ( exists $params{$cef_key} ) {
-            $self->vote_def_set( $cef_key, $params{$cef_key} );
+
+    # save voting method, overwrite default value
+    foreach my $vmethod_key ( 'Voting Methods', 'Voting Method' ) {
+        if ( exists $params{$vmethod_key} ) {
+            $self->{vote_def}{method} = $params{$vmethod_key};
+            last;
         }
     }
+
+    # save flags
+    foreach my $cef_key ( keys %cef2flags ) {
+        if ( exists $params{$cef_key} ) {
+            $self->{vote_def}{params}{$cef_key} = $params{$cef_key};
+        }
+    }
+
     return;
 }
 
