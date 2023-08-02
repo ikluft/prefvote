@@ -217,6 +217,11 @@ sub parse_cef
     my $self     = shift;
     my $filepath = $self->filepath();
     my %params;
+    $self->debug_print( "parse_cef($filepath)" );
+
+    # initialize empty vote parameters and ballot list
+    $self->vote_def( {} );
+    $self->ballots( [] );
 
     # read file and process lines
     ## no critic (RequireBriefOpen)
@@ -224,9 +229,11 @@ sub parse_cef
         or PrefVote::Core::Exception->throw( description => "couldn't open $filepath: $!" );
     while ( my $line = <$fh> ) {
         chomp $line;
+        $self->debug_print( "parse_cef: line=$line" );
 
         # election definition parameters
-        if ( $line =~ /^ \s* # \/ \s* ([\w ]+?) \s* : \s* (.*?) \s* $/x ) {
+        if ( $line =~ qr(^ \s* \#/ \s* ([\w\s]+?) \s* : \s* (.*?) \s* $)x ) {
+            $self->debug_print( "CEF definition line: $1 - $2" );
             my ( $param_name, $param_value ) = ( fc $1, $2 );
             if ( not $self->ballot_empty() ) {
                 PrefVote::Core::Exception->throw(
@@ -240,7 +247,7 @@ sub parse_cef
         }
 
         # remove comments from the end of each line, up to the whole line
-        $line =~ s/\s* # .*//x;
+        $line =~ s/\s* \# .*//x;
 
         # skip empty lines, which may or may not have formerly been comments
         if ( $line =~ /^ \s* $/x ) {
@@ -254,6 +261,7 @@ sub parse_cef
             # keep tags and remove from the ballot line
             my $tag_str = $1;
             $line_params{tags} = split /\s* , \s*/x, $tag_str;
+            $self->debug_print( "parse_cef: tags=".$line_params{tags} );
             substr $line, 0, length($tag_str), "";    # remove tags from beginning of line
         }
         if ( $line =~ /\s* \* \s* (\d+) \s* $/x ) {
@@ -261,6 +269,7 @@ sub parse_cef
             # keep quantifier and remove from the ballot line
             my $quantifier_str = $1;
             $line_params{quantifier} = $quantifier_str;
+            $self->debug_print( "parse_cef: quantifier=".$line_params{quantifier} );
             substr $line, -length($quantifier_str), length($quantifier_str), "";    # remove quantifier from end of line
         }
         if ( $line =~ /\s* \^ \s* (\d+) \s* $/x ) {
@@ -268,6 +277,7 @@ sub parse_cef
             # keep weight and remove from the ballot line
             my $weight_str = $1;
             $line_params{weight} = $weight_str;
+            $self->debug_print( "parse_cef: weight=".$line_params{weight} );
             substr $line, -length($weight_str), length($weight_str), "";            # remove weight from end of line
         }
         if ( $line =~ qr(^ \s* /EMPTY_RANKING/ \s* $ )x ) {
@@ -275,12 +285,14 @@ sub parse_cef
             # save the empty ranking as-is initially
             # fill it in on second pass in case candidate names were not specified and are collected from ballots
             $self->ballot_push( ['/EMPTY_RANKING/'] );
+            $self->debug_print( "parse_cef: got /EMPTY_RANKING/" );
             next;
         }
 
         # parse candidate preference order
         my @pref_order = $self->cef_fetch_prefs( $line, \%line_params );
         $self->ballot_push( \@pref_order );
+        $self->debug_print( "parse_cef: pref_order=".join( ",", @pref_order ));
     }
 
     # clean up
