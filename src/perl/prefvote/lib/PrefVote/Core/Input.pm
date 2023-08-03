@@ -24,6 +24,10 @@ use YAML::XS;
 # constants
 #
 
+# default vote title for CEF
+# The format doesn't officially provide a way to set a title. PrefVote unofficially recognizes "Title" parameter
+Readonly::Scalar my $cef_default_title => "Condorcet Election";
+
 # default voting method for CEF
 # PrefVote requires a method. But CEF doesn't require one. Use this to resolve the conflict.
 Readonly::Scalar my $cef_default_method => "RankedPairs";
@@ -304,6 +308,9 @@ sub parse_cef
     #
     # save CEF data to PrefVote vote definition & ballot docs
     #
+
+    # save title
+    $self->{vote_def}{params}{name} = $params{'title'} // $cef_default_title;
 
     # save number of seats
     if ( exists $params{'number of seats'} ) {
