@@ -24,8 +24,7 @@ use overload
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Standard       qw(ArrayRef);
-use Types::Common::String qw(NonEmptySimpleStr);
+use Types::Common qw(ArrayRef NonEmptySimpleStr);
 use PrefVote::Core::TestSpec;
 extends 'PrefVote';
 
