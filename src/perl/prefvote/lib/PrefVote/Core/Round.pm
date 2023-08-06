@@ -27,9 +27,7 @@ use PrefVote::Core::Result;
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Standard        qw(ArrayRef HashRef InstanceOf Map);
-use Types::Common::Numeric qw(PositiveInt);
-use Types::Common::String  qw(NonEmptySimpleStr);
+use Types::Common qw(ArrayRef HashRef InstanceOf Map PositiveInt NonEmptySimpleStr);
 extends 'PrefVote';
 
 # constants

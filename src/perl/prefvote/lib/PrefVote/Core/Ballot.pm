@@ -22,9 +22,7 @@ use PrefVote::Core::TestSpec;
 # class definitions
 use Moo;
 use MooX::TypeTiny;
-use Types::Standard        qw(ArrayRef);
-use Types::Common::Numeric qw(PositiveInt);
-use Types::Common::String  qw(NonEmptySimpleStr);
+use Types::Common qw(ArrayRef PositiveInt NonEmptySimpleStr);
 use PrefVote::Core::Set    qw(Set);
 extends 'PrefVote';
 

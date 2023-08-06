@@ -18,8 +18,7 @@ use autodie;
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Standard       qw(Defined HashRef);
-use Types::Common::String qw(SimpleStr);
+use Types::Common qw(Defined HashRef SimpleStr);
 with 'MooX::Singleton';
 use Getopt::Long;
 

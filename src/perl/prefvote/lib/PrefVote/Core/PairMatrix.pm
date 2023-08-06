@@ -22,8 +22,7 @@ use PrefVote::Core::PairData;
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Standard       qw(Str HashRef InstanceOf);
-use Types::Common::String qw(NonEmptySimpleStr);
+use Types::Common qw(Str HashRef InstanceOf NonEmptySimpleStr);
 use PrefVote::Core::TestSpec;
 extends 'PrefVote::Core';
 

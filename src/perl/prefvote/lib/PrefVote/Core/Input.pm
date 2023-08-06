@@ -51,8 +51,7 @@ Readonly::Hash my %op_names => (
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Standard       qw(Str Int ArrayRef HashRef Map);
-use Types::Common::String qw(NonEmptySimpleStr);
+use Types::Common qw(Str Int ArrayRef HashRef Map NonEmptySimpleStr);
 extends 'PrefVote';
 
 # input file path

@@ -15,7 +15,7 @@ package PrefVote::Core::InternalDataException;
 
 use utf8;
 use Moo;
-use Types::Standard qw(Str);
+use Types::Common qw(Str);
 extends 'PrefVote::Core::Exception';
 has attribute => ( is => 'ro', isa => Str );
 

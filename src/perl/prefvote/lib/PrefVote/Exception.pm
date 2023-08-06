@@ -18,7 +18,7 @@ use charnames qw(:loose);
 use feature qw(say);
 use overload ( '""' => 'stringify' );
 use Moo;
-use Types::Standard qw(Str);
+use Types::Common qw(Str);
 with 'Throwable';
 has classname   => ( is => 'ro', isa => Str );
 has description => ( is => 'ro', isa => Str );

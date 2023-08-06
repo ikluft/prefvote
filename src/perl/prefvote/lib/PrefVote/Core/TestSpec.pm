@@ -22,7 +22,7 @@ use PrefVote::Core::TestNode;
 # class defintions
 use Moo;
 use MooX::TypeTiny;
-use Types::Standard qw(HashRef InstanceOf);
+use Types::Common qw(HashRef InstanceOf);
 extends 'PrefVote';
 
 # per-class registry of blackbox test specs

@@ -15,7 +15,7 @@ package PrefVote::Core::Exception;
 
 use utf8;
 use Moo;
-use Types::Standard qw(Str);
+use Types::Common qw(Str);
 extends 'PrefVote::Exception';
 has classname => ( is => 'ro', isa => Str, default => "PrefVote::Core" );
 

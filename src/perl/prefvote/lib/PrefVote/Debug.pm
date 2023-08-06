@@ -15,7 +15,7 @@ package PrefVote::Debug;
 
 use utf8;
 use Moo;
-use Types::Standard qw(Bool);
+use Types::Common qw(Bool);
 with 'MooX::Singleton';
 
 has debug => (

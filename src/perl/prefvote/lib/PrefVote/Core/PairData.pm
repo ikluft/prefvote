@@ -20,8 +20,7 @@ use Readonly;
 # class definitions
 use Moo;
 use MooX::TypeTiny;
-use Types::Standard        qw(Bool Int);
-use Types::Common::Numeric qw(PositiveOrZeroInt IntRange);
+use Types::Common qw(Bool Int PositiveOrZeroInt IntRange);
 use PrefVote::Core::TestSpec;
 extends 'PrefVote';
 

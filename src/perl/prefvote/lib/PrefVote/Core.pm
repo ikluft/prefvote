@@ -42,9 +42,8 @@ Readonly::Hash my %vote_def_flags => (
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Standard        qw(Str Int Bool Enum ArrayRef HashRef Map Tuple InstanceOf Any);
-use Types::Common::Numeric qw(PositiveInt PositiveOrZeroInt);
-use Types::Common::String  qw(NonEmptySimpleStr);
+use Types::Common qw(Str Int Bool Enum ArrayRef HashRef Map Tuple InstanceOf Any PositiveInt PositiveOrZeroInt
+        NonEmptySimpleStr);
 use PrefVote::Core::Float  qw(fp_equal fp_cmp float_internal PVPositiveOrZeroNum);
 use PrefVote::Core::Input;
 extends 'PrefVote';

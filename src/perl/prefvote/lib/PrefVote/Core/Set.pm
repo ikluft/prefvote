@@ -18,7 +18,7 @@ use autodie;
 use Data::Dumper;
 use Scalar::Util qw(reftype);
 use Type::Library -base, -declare => qw(Set);
-use Types::Standard qw(Undef Value ArrayRef assert_Value);
+use Types::Common qw(Undef Value ArrayRef assert_Value);
 use Types::TypeTiny ();
 use Type::Tiny::Class;
 use Type::Utils    qw(assert);
