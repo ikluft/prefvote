@@ -258,13 +258,15 @@ sub parse_cef
 
         # process ballot line
         my %line_params;
-        if ( $line =~ /^ \s* ( .*? ) \s* \|\|/x ) {
-
+        my $tag_index = index $line, '||';
+        if ( $tag_index != -1 ) {
             # keep tags and remove from the ballot line
-            my $tag_str = $1;
+            my $tag_str = substr $line, 0, $tag_index;
+            $tag_str =~ s/^ \s+ //x;
+            $tag_str =~ s/\s+ $//x;
             $line_params{tags} = split /\s* , \s*/x, $tag_str;
             $self->debug_print( "parse_cef: tags=".$line_params{tags} );
-            substr $line, 0, length($tag_str), "";    # remove tags from beginning of line
+            substr $line, 0, $tag_index + 2, "";    # remove tags from beginning of line
         }
         if ( $line =~ /\s* \* \s* (\d+) \s* $/x ) {
 
