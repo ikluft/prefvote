@@ -39,6 +39,12 @@ Readonly::Hash my %cef2flags => (
     'Weight Allowed'   => 'weight_allowed',
 );
 
+# names for ballot operators
+Readonly::Hash my %op_names => (
+    '*' => 'quantifier',
+    '^' => 'weight',
+);
+
 #
 # class definition via Moo
 #
@@ -256,7 +262,11 @@ sub parse_cef
             next;
         }
 
+        #
         # process ballot line
+        #
+
+        # parse tags, remove from beginning of line
         my %line_params;
         my $tag_index = index $line, '||';
         if ( $tag_index != -1 ) {
@@ -268,22 +278,26 @@ sub parse_cef
             $self->debug_print( "parse_cef: tags=".$line_params{tags} );
             substr $line, 0, $tag_index + 2, "";    # remove tags from beginning of line
         }
-        if ( $line =~ /\s* \* \s* (\d+) \s* $/x ) {
 
-            # keep quantifier and remove from the ballot line
-            my $quantifier_str = $1;
-            $line_params{quantifier} = $quantifier_str;
-            $self->debug_print( "parse_cef: quantifier=".$line_params{quantifier} );
-            substr $line, -length($quantifier_str), length($quantifier_str), "";    # remove quantifier from end of line
+        # parse quantifier and weight, remove from end of line
+        while ( $line =~ /(\s* ([*^]) \s* (\d+) \s* )$/x ) {
+            # keep quantity and remove substring from the ballot line
+            my $match = $1;
+            my $op = $2;
+            my $quantity = $3;
+            if (not exists $op_names{$op}) {
+                PrefVote::Core::Exception->throw( description => "should not happen: unrecognized operator $op" );
+            }
+            my $op_name = $op_names{$op};
+            if (exists $line_params{$op_name}) {
+                PrefVote::Core::Exception->throw( description => "error: $op_name specified more than once" );
+            }
+            $line_params{$op_name} = $quantity;
+            $self->debug_print( "parse_cef: $op_name=".$line_params{$op_name} );
+            substr $line, -length($match), length($match), ""; # remove matching substring from end of line
         }
-        if ( $line =~ /\s* \^ \s* (\d+) \s* $/x ) {
 
-            # keep weight and remove from the ballot line
-            my $weight_str = $1;
-            $line_params{weight} = $weight_str;
-            $self->debug_print( "parse_cef: weight=".$line_params{weight} );
-            substr $line, -length($weight_str), length($weight_str), "";            # remove weight from end of line
-        }
+        # process empty ranking
         if ( $line =~ qr(^ \s* /EMPTY_RANKING/ \s* $ )x ) {
 
             # save the empty ranking as-is initially
