@@ -27,7 +27,7 @@ use PrefVote::STV::Tally;
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Standard       qw(Str ArrayRef HashRef InstanceOf);
+use Types::Common qw(Str ArrayRef HashRef InstanceOf);
 use PrefVote::Core::Float qw(fp_equal fp_cmp);
 use PrefVote::Core::Set   qw(Set);
 extends 'PrefVote::Core';

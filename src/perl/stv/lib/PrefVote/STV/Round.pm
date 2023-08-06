@@ -27,8 +27,7 @@ use PrefVote::STV::Tally;
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Standard       qw(ArrayRef HashRef InstanceOf Map);
-use Types::Common::String qw(NonEmptySimpleStr);
+use Types::Common qw(ArrayRef HashRef InstanceOf Map NonEmptySimpleStr);
 extends 'PrefVote::Core::Round';
 use PrefVote::Core::Float qw(float_internal PVPositiveOrZeroNum);
 
