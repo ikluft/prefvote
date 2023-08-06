@@ -16,7 +16,7 @@ use PrefVote::Core;
 use Getopt::Long;
 use Data::Dumper;
 
-# print results list (winners or eliminated) with potential ties
+# print results list (ranked, winners or eliminated) with potential ties
 sub print_result_list
 {
     my $result_list = shift;
@@ -97,10 +97,19 @@ sub main
     } else {
         # print result in simple default format
         my $results = $vote_obj->results();
-        say "Winning order";
-        print_result_list($results->{winners});
-        say "Elimination order";
-        print_result_list($results->{eliminated});
+        if ( exists $results->{ranked}) {
+            say "Ranked order";
+            print_result_list($results->{ranked});
+        } else {
+            if ( exists $results->{winners}) {
+                say "Winning order";
+                print_result_list($results->{winners});
+            }
+            if ( exists $results->{eliminated}) {
+                say "Elimination order";
+                print_result_list($results->{eliminated});
+            }
+        }
     }
     return 1;
 }

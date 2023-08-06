@@ -41,7 +41,7 @@ PrefVote::Core::TestSpec->register_blackbox_spec(
 );
 __PACKAGE__->ballot_input_ties_policy(1);    # set flag for Core: this class allows input ballots to set A/B ties
 
-# list of names of winners in order by place, ties shown by an ArrayRef to the tied candidates
+# list of names of winners in order by place, ties shown by a set of the tied candidates
 has winners => (
     is          => 'rw',
     isa         => ArrayRef [ Set [Str] ],
@@ -136,6 +136,13 @@ sub count
     $self->save_c2r( winners => $self->winners() );
 
     return;
+}
+
+# return short result list
+sub results
+{
+    my $self = shift;
+    return { ranked => $self->{winners} };
 }
 
 1;

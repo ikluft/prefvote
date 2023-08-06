@@ -577,6 +577,14 @@ sub count
     return;
 }
 
+# subclasses must override this to return short result list
+sub results
+{
+    PrefVote::Core::Exception->throw(
+        description => "no short result: PrefVote::Core alone not approved for voting. Use a voting method subclass."
+    );
+}
+
 # determine voting method to use
 # this may throw exceptions for method mismatch
 sub determine_method
