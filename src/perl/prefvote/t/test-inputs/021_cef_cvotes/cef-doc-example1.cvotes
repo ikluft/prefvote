@@ -1,0 +1,12 @@
+# My beautiful election
+#/Candidates: Candidate A;Candidate B;Candidate C
+#/Implicit Ranking: true
+#/Weight allowed: true
+
+# Here the votes datas:
+Candidate A > Candidate B > Candidate C * 42
+julien@condorcet.vote , signature:55073db57b0a859911 || Candidate A > Candidate B > Candidate C # Same as above, so there will be 43 votes with this ranking. And tags are registered by the software if able.
+Candidate C > Candidate A = Candidate B ^7 * 8 # 8 votes with a weight of 7.
+Candidate B = Candidate A > Candidate C
+Candidate C # Interpreted as Candidate C > Candidate A = Candidate B, because implicit ranking is true (which is also default, but it's better to say it)
+Candidate B > Candidate C # Interpreted as Candidate B > Candidate C

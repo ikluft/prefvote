@@ -1,0 +1,10 @@
+# My beautiful election
+#/Candidates: Candidate A ; Candidate B ; Candidate C
+#/Implicit Ranking: false
+#/Weight allowed: false
+
+# Here are the votes data:
+Candidate A > Candidate B > Candidate C ^7 *2 # Vote weight is disabled, so ^7 is ignored. Two votes with a weight of 1.
+Candidate C>Candidate B # Vote is untouched. When compute pairwise, Candidate C win again Candidate B, no one beats the candidate or achieves a draw.
+/EMPTY_RANKING/ * 2 # Two blanks (NOTA) votes.
+Candidate B # Vote is valid but does not have any effect on most election methods, especially Condorcet methods.
