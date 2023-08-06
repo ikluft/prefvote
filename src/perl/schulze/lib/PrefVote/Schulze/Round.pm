@@ -27,7 +27,7 @@ use PrefVote::Schulze::PairData;
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Standard qw(Bool ArrayRef HashRef InstanceOf Map);
+use Types::Common qw(Bool ArrayRef HashRef InstanceOf Map);
 extends 'PrefVote::Core::Round';
 use PrefVote::Core::Float qw(fp_equal fp_cmp float_internal PVPositiveOrZeroNum);
 

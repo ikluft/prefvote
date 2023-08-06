@@ -24,7 +24,7 @@ use PrefVote::Schulze::Round;
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Standard     qw(Str ArrayRef HashRef InstanceOf);
+use Types::Common qw(Str ArrayRef HashRef InstanceOf);
 use PrefVote::Core::Set qw(Set);
 use PrefVote::Core::TestSpec;
 extends 'PrefVote::Core';
