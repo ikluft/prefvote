@@ -24,8 +24,8 @@ use Readonly;
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Common qw(Enum NonEmptySimpleStr PositiveOrZeroNum);
-use PrefVote::Core::Set    qw(Set);
+use Types::Common       qw(Enum NonEmptySimpleStr PositiveOrZeroNum);
+use PrefVote::Core::Set qw(Set);
 use PrefVote::Core::TestSpec;
 extends 'PrefVote';
 

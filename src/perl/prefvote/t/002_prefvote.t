@@ -24,16 +24,17 @@ sub test_debug
 
     # set debugging on or off for test
     my $retval = $prefvote_obj->debug($debug_flag);
-    is($retval, $debug_flag, "return value matches parameter ($debug_flag)");
-    is($prefvote_obj->debug(), $debug_flag, "debug mode is $debug_flag");
+    is( $retval,                $debug_flag, "return value matches parameter ($debug_flag)" );
+    is( $prefvote_obj->debug(), $debug_flag, "debug mode is $debug_flag" );
     $capture->start();
     $prefvote_obj->debug_print("testing");
     $capture->stop();
     my @lines = $capture->read();
+
     if ($debug_flag) {
-        ok((scalar @lines) >= 1, "got STDERR output when debug is on");
+        ok( ( scalar @lines ) >= 1, "got STDERR output when debug is on" );
     } else {
-        ok((scalar @lines) == 0, "no STDERR output when debug is off");
+        ok( ( scalar @lines ) == 0, "no STDERR output when debug is off" );
     }
 }
 
@@ -41,13 +42,14 @@ sub test_debug
 # We're not bothering to make separate startup-time tests for the default.
 # Just don't set PREFVOTE_DEBUG when you don't want it. This test adapts if it's set.
 my $debug_env_set = exists $ENV{PREFVOTE_DEBUG};
-my $debug_default = ($ENV{PREFVOTE_DEBUG} // 0) ? 1 : 0;
-is($prefvote_obj->debug(), $debug_default, "debug defaults to $debug_default with PREFVOTE_DEBUG ".
-    ($debug_env_set ? "set" : "unset"));
+my $debug_default = ( $ENV{PREFVOTE_DEBUG} // 0 ) ? 1 : 0;
+is( $prefvote_obj->debug(),
+    $debug_default, "debug defaults to $debug_default with PREFVOTE_DEBUG " . ( $debug_env_set ? "set" : "unset" ) );
 
 # test debug off and on
 test_debug(0);
 test_debug(1);
 
 # test throwing PrefVote::Exception
-throws_ok { PrefVote::Exception->throw({description => "test"})} "PrefVote::Exception", "throw PrefVote::Exception";
+throws_ok { PrefVote::Exception->throw( { description => "test" } ) } "PrefVote::Exception",
+    "throw PrefVote::Exception";

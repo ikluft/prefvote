@@ -63,8 +63,8 @@ has filepath => (
 
 # vote definition
 has vote_def => (
-    is          => 'rw',
-    isa         => HashRef [ NonEmptySimpleStr | HashRef ],
+    is  => 'rw',
+    isa => HashRef [ NonEmptySimpleStr | HashRef ],
 );
 
 # ballot list
@@ -223,10 +223,10 @@ sub parse_cef
     my $self     = shift;
     my $filepath = $self->filepath();
     my %params;
-    $self->debug_print( "parse_cef($filepath)" );
+    $self->debug_print("parse_cef($filepath)");
 
     # initialize empty vote parameters, ballot list & test data
-    $self->vote_def( { method => $cef_default_method, params => {}} );
+    $self->vote_def( { method => $cef_default_method, params => {} } );
     $self->ballots( [] );
     $self->test_data( [] );
 
@@ -236,11 +236,11 @@ sub parse_cef
         or PrefVote::Core::Exception->throw( description => "couldn't open $filepath: $!" );
     while ( my $line = <$fh> ) {
         chomp $line;
-        $self->debug_print( "parse_cef: line=$line" );
+        $self->debug_print("parse_cef: line=$line");
 
         # election definition parameters
         if ( $line =~ qr(^ \s* \#/ \s* ([\w\s]+?) \s* : \s* (.*?) \s* $)x ) {
-            $self->debug_print( "CEF definition line: $1 - $2" );
+            $self->debug_print("CEF definition line: $1 - $2");
             my ( $param_name, $param_value ) = ( fc $1, $2 );
             if ( not $self->ballot_empty() ) {
                 PrefVote::Core::Exception->throw(
@@ -269,31 +269,33 @@ sub parse_cef
         my %line_params;
         my $tag_index = index $line, '||';
         if ( $tag_index != -1 ) {
+
             # keep tags and remove from the ballot line
             my $tag_str = substr $line, 0, $tag_index;
             $tag_str =~ s/^ \s+ //x;
             $tag_str =~ s/\s+ $//x;
             $line_params{tags} = split /\s* , \s*/x, $tag_str;
-            $self->debug_print( "parse_cef: tags=".$line_params{tags} );
+            $self->debug_print( "parse_cef: tags=" . $line_params{tags} );
             substr $line, 0, $tag_index + 2, "";    # remove tags from beginning of line
         }
 
         # parse quantifier and weight, remove from end of line
         while ( $line =~ /(\s* ([*^]) \s* (\d+) \s* )$/x ) {
+
             # keep quantity and remove substring from the ballot line
-            my $match = $1;
-            my $op = $2;
+            my $match    = $1;
+            my $op       = $2;
             my $quantity = $3;
-            if (not exists $op_names{$op}) {
+            if ( not exists $op_names{$op} ) {
                 PrefVote::Core::Exception->throw( description => "should not happen: unrecognized operator $op" );
             }
             my $op_name = $op_names{$op};
-            if (exists $line_params{$op_name}) {
+            if ( exists $line_params{$op_name} ) {
                 PrefVote::Core::Exception->throw( description => "error: $op_name specified more than once" );
             }
             $line_params{$op_name} = $quantity;
-            $self->debug_print( "parse_cef: $op_name=".$line_params{$op_name} );
-            substr $line, -length($match), length($match), ""; # remove matching substring from end of line
+            $self->debug_print( "parse_cef: $op_name=" . $line_params{$op_name} );
+            substr $line, -length($match), length($match), "";    # remove matching substring from end of line
         }
 
         # process empty ranking
@@ -302,14 +304,14 @@ sub parse_cef
             # save the empty ranking as-is initially
             # fill it in on second pass in case candidate names were not specified and are collected from ballots
             $self->ballot_push( ['/EMPTY_RANKING/'] );
-            $self->debug_print( "parse_cef: got /EMPTY_RANKING/" );
+            $self->debug_print("parse_cef: got /EMPTY_RANKING/");
             next;
         }
 
         # parse candidate preference order
         my @pref_order = $self->cef_fetch_prefs( $line, \%line_params );
         $self->ballot_push( \@pref_order );
-        $self->debug_print( "parse_cef: pref_order=".join( ",", @pref_order ));
+        $self->debug_print( "parse_cef: pref_order=" . join( ",", @pref_order ) );
     }
 
     # clean up

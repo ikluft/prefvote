@@ -15,7 +15,7 @@ package PrefVote::Core::Output::Text;
 
 use utf8;
 use charnames qw(:loose);
-use feature qw(say);
+use feature   qw(say);
 use autodie;
 use parent qw(PrefVote);
 use Term::ANSIColor;

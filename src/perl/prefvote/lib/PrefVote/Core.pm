@@ -43,8 +43,8 @@ use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
 use Types::Common qw(Str Int Bool Enum ArrayRef HashRef Map Tuple InstanceOf Any PositiveInt PositiveOrZeroInt
-        NonEmptySimpleStr);
-use PrefVote::Core::Float  qw(fp_equal fp_cmp float_internal PVPositiveOrZeroNum);
+    NonEmptySimpleStr);
+use PrefVote::Core::Float qw(fp_equal fp_cmp float_internal PVPositiveOrZeroNum);
 use PrefVote::Core::Input;
 extends 'PrefVote';
 with 'MooX::Singleton';
@@ -580,8 +580,7 @@ sub count
 sub results
 {
     PrefVote::Core::Exception->throw(
-        description => "no short result: PrefVote::Core alone not approved for voting. Use a voting method subclass."
-    );
+        description => "no short result: PrefVote::Core alone not approved for voting. Use a voting method subclass." );
 }
 
 # determine voting method to use

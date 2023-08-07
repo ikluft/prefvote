@@ -15,7 +15,7 @@ package PrefVote::Exception;
 
 use utf8;
 use charnames qw(:loose);
-use feature qw(say);
+use feature   qw(say);
 use overload ( '""' => 'stringify' );
 use Moo;
 use Types::Common qw(Str);

@@ -23,7 +23,7 @@ our @EXPORT_OK = qw(fp_equal fp_cmp float_limit float_external float_internal PV
 
 # class definitions
 use Type::Library -base, -declare => qw(PVNum PVPositiveOrZeroNum);
-use Types::Common qw(Num);
+use Types::Common   qw(Num);
 use Types::TypeTiny ();
 use Type::Tiny;
 use Type::Utils -all;

@@ -22,8 +22,8 @@ use PrefVote::Core::TestSpec;
 # class definitions
 use Moo;
 use MooX::TypeTiny;
-use Types::Common qw(ArrayRef PositiveInt NonEmptySimpleStr);
-use PrefVote::Core::Set    qw(Set);
+use Types::Common       qw(ArrayRef PositiveInt NonEmptySimpleStr);
+use PrefVote::Core::Set qw(Set);
 extends 'PrefVote';
 
 #

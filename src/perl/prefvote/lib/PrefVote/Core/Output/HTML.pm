@@ -15,7 +15,7 @@ package PrefVote::Core::Output::HTML;
 
 use utf8;
 use charnames qw(:loose);
-use feature qw(say);
+use feature   qw(say);
 use autodie;
 use HTML::Escape qw(escape_html);
 use parent       qw(PrefVote);
@@ -75,11 +75,7 @@ sub do_header
     say "<div id=\"prefvote\">";
     say "<h2>" . htmlify($title) . "</h2>";
     if ( $seats == 0 ) {
-        say "<p>"
-            . "ranking order "
-            . "\N{BLACK CIRCLE} "
-            . htmlify($total_ballots)
-            . " ballots processed</p>";
+        say "<p>" . "ranking order " . "\N{BLACK CIRCLE} " . htmlify($total_ballots) . " ballots processed</p>";
     } else {
         say "<p>"
             . htmlify($seats) . " seat"
