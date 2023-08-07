@@ -22,8 +22,8 @@ use Set::Tiny qw(set);
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Common qw(Bool Int Str ArrayRef HashRef InstanceOf PositiveOrZeroInt NonEmptySimpleStr);
-use PrefVote::Core::Set    qw(Set);
+use Types::Common       qw(Bool Int Str ArrayRef HashRef InstanceOf PositiveOrZeroInt NonEmptySimpleStr);
+use PrefVote::Core::Set qw(Set);
 use PrefVote::Core::TestSpec;
 extends 'PrefVote::Core::PairData';
 
