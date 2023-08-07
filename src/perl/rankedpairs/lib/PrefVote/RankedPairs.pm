@@ -24,9 +24,9 @@ use PrefVote::RankedPairs::Majority;
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Common qw(Str ArrayRef HashRef InstanceOf PositiveOrZeroInt NonEmptySimpleStr);
-use PrefVote::Core::Float  qw(fp_equal fp_cmp);
-use PrefVote::Core::Set    qw(Set);
+use Types::Common         qw(Str ArrayRef HashRef InstanceOf PositiveOrZeroInt NonEmptySimpleStr);
+use PrefVote::Core::Float qw(fp_equal fp_cmp);
+use PrefVote::Core::Set   qw(Set);
 use PrefVote::Core::TestSpec;
 extends 'PrefVote::Core';
 

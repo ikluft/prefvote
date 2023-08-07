@@ -26,8 +26,8 @@ extends 'PrefVote::Core::PairData';
 
 # blackbox testing structure
 Readonly::Hash my %blackbox_spec => (
-    mov        => [qw(int)],
-    lock       => [qw(int)],
+    mov  => [qw(int)],
+    lock => [qw(int)],
 );
 PrefVote::Core::TestSpec->register_blackbox_spec(
     __PACKAGE__,

@@ -10,21 +10,21 @@ use Readonly;
 use Data::Dumper;
 use PrefVote::RankedPairs;
 use PrefVote::RankedPairs::Output;
-use PrefVote::Core::Output::RawCapture; # mock-output class for testing
+use PrefVote::Core::Output::RawCapture;    # mock-output class for testing
 
 # constants for test fixtures
 
 # PrefVote::RankedPairs instantiation parameters
 Readonly::Hash my %core_params => (
-    name => "Test Vote",
-    seats => 1,
+    name    => "Test Vote",
+    seats   => 1,
     choices => {
-        ABNORMAL => "abnormal and antisocial",
-        BORING => "boring as anything",
-        CHAOTIC => "chaotic unpredictable",
+        ABNORMAL      => "abnormal and antisocial",
+        BORING        => "boring as anything",
+        CHAOTIC       => "chaotic unpredictable",
         DYSFUNCTIONAL => "dysfunctional incompetent",
-        EVIL => "evil villain",
-        FACTIOUS => "factious/divisive candidate",
+        EVIL          => "evil villain",
+        FACTIOUS      => "factious/divisive candidate",
     },
 );
 
@@ -694,116 +694,80 @@ RankedPairs:
 # expected results from PrefVote::Core::Output::RawCapture
 Readonly::Array my @result_expected => (
     {
-    'seats' => 1,
-    'name' => 'Test Vote',
-    'total_ballots' => 50,
+        'seats'         => 1,
+        'name'          => 'Test Vote',
+        'total_ballots' => 50,
     },
     {
-    'rows' => [
-                [
-                  'Abbreviation',
-                  'Name/description',
-                  'Result'
-                ],
-                [
-                  'EVIL',
-                  'evil villain',
-                  '1/selected'
-                ],
-                [
-                  'FACTIOUS',
-                  'factious/divisive',
-                  '2/placed'
-                ],
-                [
-                  'CHAOTIC',
-                  'chaotic unpredictable',
-                  '3/placed'
-                ],
-                [
-                  'BORING',
-                  'boring as anything',
-                  '4/placed'
-                ],
-                [
-                  'ABNORMAL',
-                  'abnormal and antisocial',
-                  '5/placed'
-                ],
-                [
-                  'DYSFUNCTIONAL',
-                  'dysfunctional incompetent',
-                  '6/placed'
-                ]
-              ]
+        'rows' => [
+            [ 'Abbreviation',  'Name/description',          'Result' ],
+            [ 'EVIL',          'evil villain',              '1/selected' ],
+            [ 'FACTIOUS',      'factious/divisive',         '2/placed' ],
+            [ 'CHAOTIC',       'chaotic unpredictable',     '3/placed' ],
+            [ 'BORING',        'boring as anything',        '4/placed' ],
+            [ 'ABNORMAL',      'abnormal and antisocial',   '5/placed' ],
+            [ 'DYSFUNCTIONAL', 'dysfunctional incompetent', '6/placed' ]
+        ]
     },
     {
-    'rows' => [
-                [
-                  '',
-                  'EVIL',
-                  'FACTIOUS',
-                  'CHAOTIC',
-                  'BORING',
-                  'ABNORMAL',
-                  'DYSFUNCTIONAL'
-                ],
-                [
-                  'EVIL',
-                  "\x{1f6c7}",
-                  "1 \x{2705}\x{1f512}",
-                  "12 \x{2705}\x{1f512}",
-                  "7 \x{2705}\x{1f512}",
-                  "17 \x{2705}\x{1f512}",
-                  "14 \x{2705}\x{1f512}"
-                ],
-                [
-                  'FACTIOUS',
-                  "-1 \x{274c}",
-                  "\x{1f6c7}",
-                  "12 \x{2705}\x{1f512}",
-                  "10 \x{2705}\x{1f512}",
-                  "13 \x{2705}\x{1f512}",
-                  "11 \x{2705}\x{1f512}"
-                ],
-                [
-                  'CHAOTIC',
-                  "-12 \x{274c}",
-                  "-12 \x{274c}",
-                  "\x{1f6c7}",
-                  "2 \x{2705}\x{1f512}",
-                  "2 \x{2705}\x{1f512}",
-                  "15 \x{2705}\x{1f512}"
-                ],
-                [
-                  'BORING',
-                  "-7 \x{274c}",
-                  "-10 \x{274c}",
-                  "-2 \x{274c}",
-                  "\x{1f6c7}",
-                  "0 \x{1f535}",
-                  "6 \x{2705}\x{1f512}"
-                ],
-                [
-                  'ABNORMAL',
-                  "-17 \x{274c}",
-                  "-13 \x{274c}",
-                  "-2 \x{274c}",
-                  "0 \x{1f535}",
-                  "\x{1f6c7}",
-                  "1 \x{2705}\x{1f512}"
-                ],
-                [
-                  'DYSFUNCTIONAL',
-                  "-14 \x{274c}",
-                  "-11 \x{274c}",
-                  "-15 \x{274c}",
-                  "-6 \x{274c}",
-                  "-1 \x{274c}",
-                  "\x{1f6c7}"
-                ]
-              ],
-    'title' => 'Margin-of-victory matrix'
+        'rows' => [
+            [ '', 'EVIL', 'FACTIOUS', 'CHAOTIC', 'BORING', 'ABNORMAL', 'DYSFUNCTIONAL' ],
+            [
+                'EVIL',
+                "\x{1f6c7}",
+                "1 \x{2705}\x{1f512}",
+                "12 \x{2705}\x{1f512}",
+                "7 \x{2705}\x{1f512}",
+                "17 \x{2705}\x{1f512}",
+                "14 \x{2705}\x{1f512}"
+            ],
+            [
+                'FACTIOUS',
+                "-1 \x{274c}",
+                "\x{1f6c7}",
+                "12 \x{2705}\x{1f512}",
+                "10 \x{2705}\x{1f512}",
+                "13 \x{2705}\x{1f512}",
+                "11 \x{2705}\x{1f512}"
+            ],
+            [
+                'CHAOTIC',
+                "-12 \x{274c}",
+                "-12 \x{274c}",
+                "\x{1f6c7}",
+                "2 \x{2705}\x{1f512}",
+                "2 \x{2705}\x{1f512}",
+                "15 \x{2705}\x{1f512}"
+            ],
+            [
+                'BORING',
+                "-7 \x{274c}",
+                "-10 \x{274c}",
+                "-2 \x{274c}",
+                "\x{1f6c7}",
+                "0 \x{1f535}",
+                "6 \x{2705}\x{1f512}"
+            ],
+            [
+                'ABNORMAL',
+                "-17 \x{274c}",
+                "-13 \x{274c}",
+                "-2 \x{274c}",
+                "0 \x{1f535}",
+                "\x{1f6c7}",
+                "1 \x{2705}\x{1f512}"
+            ],
+            [
+                'DYSFUNCTIONAL',
+                "-14 \x{274c}",
+                "-11 \x{274c}",
+                "-15 \x{274c}",
+                "-6 \x{274c}",
+                "-1 \x{274c}",
+                "\x{1f6c7}"
+            ]
+        ],
+        'title' => 'Margin-of-victory matrix'
     },
 );
 
@@ -811,60 +775,76 @@ Readonly::Array my @result_expected => (
 {
     local @ARGV = ();
     my $vote_obj;
-    lives_ok(sub {$vote_obj = PrefVote::RankedPairs->instance(%core_params)}, "1: instantiate PrefVote::RankedPairs");
+    lives_ok( sub { $vote_obj = PrefVote::RankedPairs->instance(%core_params) },
+        "1: instantiate PrefVote::RankedPairs" );
     PrefVote::Core::Output::set_mock_stdin("");
-    dies_ok(sub {PrefVote::Core::Output::main() }, "dies as expected on empty command line");
+    dies_ok( sub { PrefVote::Core::Output::main() }, "dies as expected on empty command line" );
 }
 
 # test fail-as-expected on empty stdin (2 tests)
 {
     local @ARGV = qw(--format=RawCapture --method=rankedpairs);
     my $vote_obj;
-    lives_ok(sub {$vote_obj = PrefVote::RankedPairs->instance(%core_params)}, "2: instantiate PrefVote::RankedPairs");
+    lives_ok( sub { $vote_obj = PrefVote::RankedPairs->instance(%core_params) },
+        "2: instantiate PrefVote::RankedPairs" );
     PrefVote::Core::Output::set_mock_stdin("");
-    dies_ok(sub {PrefVote::Core::Output::main() }, "dies as expected on empty stdin");
+    dies_ok( sub { PrefVote::Core::Output::main() }, "dies as expected on empty stdin" );
 }
 
 # test with mock-stdin data (100 tests)
 {
     local @ARGV = qw(--format=RawCapture --method=rankedpairs);
     my $vote_obj;
-    lives_ok(sub {$vote_obj = PrefVote::RankedPairs->instance(%core_params)}, "2: instantiate PrefVote::RankedPairs");
+    lives_ok( sub { $vote_obj = PrefVote::RankedPairs->instance(%core_params) },
+        "2: instantiate PrefVote::RankedPairs" );
     PrefVote::Core::Output::set_mock_stdin($mock_input);
-    lives_ok(sub {PrefVote::Core::Output::main() }, "main processes YAML result");
+    lives_ok( sub { PrefVote::Core::Output::main() }, "main processes YAML result" );
     my $output = PrefVote::Core::Output::RawCapture::get_output();
+
     # expected result entry 0
-    is(scalar keys %{$output->[0]}, scalar keys %{$result_expected[0]},
-        "output record 0: ".(scalar keys %{$result_expected[0]})." items");
-    foreach my $key (keys %{$result_expected[0]}) {
-        is($output->[0]{$key}, $result_expected[0]{$key}, "output record 0: $key=".$result_expected[0]{$key});
+    is(
+        scalar keys %{ $output->[0] },
+        scalar keys %{ $result_expected[0] },
+        "output record 0: " . ( scalar keys %{ $result_expected[0] } ) . " items"
+    );
+    foreach my $key ( keys %{ $result_expected[0] } ) {
+        is( $output->[0]{$key}, $result_expected[0]{$key}, "output record 0: $key=" . $result_expected[0]{$key} );
     }
+
     # tables in expected result entry 1 & 2
-    foreach my $num (1..2) {
-        is(scalar keys %{$output->[$num]}, scalar keys %{$result_expected[$num]},
-            "output record $num: ".(scalar keys %{$result_expected[$num]})." item");
-        isa_ok($output->[$num]{rows}, "ARRAY", "output record $num: rows is an array ref");
+    foreach my $num ( 1 .. 2 ) {
+        is(
+            scalar keys %{ $output->[$num] },
+            scalar keys %{ $result_expected[$num] },
+            "output record $num: " . ( scalar keys %{ $result_expected[$num] } ) . " item"
+        );
+        isa_ok( $output->[$num]{rows}, "ARRAY", "output record $num: rows is an array ref" );
         foreach my $attr (qw(title subtitle)) {
-            if (exists $result_expected[$num]{$attr}) {
-                is($output->[$num]{$attr}, $result_expected[$num]{$attr},
-                    "output record $num: $attr = ".$result_expected[$num]{$attr});
+            if ( exists $result_expected[$num]{$attr} ) {
+                is(
+                    $output->[$num]{$attr},
+                    $result_expected[$num]{$attr},
+                    "output record $num: $attr = " . $result_expected[$num]{$attr}
+                );
             } else {
-                ok((not exists $output->[$num]{$attr}), "output record $num: $attr should not exist");
+                ok( ( not exists $output->[$num]{$attr} ), "output record $num: $attr should not exist" );
             }
         }
-        my $row_count = scalar @{$result_expected[$num]{rows}};
-        is(scalar @{$output->[$num]{rows}}, $row_count, "output record $num: $row_count rows");
-        for (my $res_row=0; $res_row < $row_count; $res_row++) {
-            my $col_count = scalar @{$result_expected[$num]{rows}[$res_row]};
-            is (scalar @{$output->[$num]{rows}[$res_row]}, $col_count,
-                "output record $num row $res_row: $col_count columns");
-            for (my $res_col=0; $res_col < $col_count; $res_col++) {
-                is($output->[$num]{rows}[$res_row][$res_col], $result_expected[$num]{rows}[$res_row][$res_col],
-                    "output record $num row $res_row col $res_col: '"
-                        .$result_expected[$num]{rows}[$res_row][$res_col]."'");
+        my $row_count = scalar @{ $result_expected[$num]{rows} };
+        is( scalar @{ $output->[$num]{rows} }, $row_count, "output record $num: $row_count rows" );
+        for ( my $res_row = 0 ; $res_row < $row_count ; $res_row++ ) {
+            my $col_count = scalar @{ $result_expected[$num]{rows}[$res_row] };
+            is( scalar @{ $output->[$num]{rows}[$res_row] },
+                $col_count, "output record $num row $res_row: $col_count columns" );
+            for ( my $res_col = 0 ; $res_col < $col_count ; $res_col++ ) {
+                is( $output->[$num]{rows}[$res_row][$res_col], $result_expected[$num]{rows}[$res_row][$res_col],
+                          "output record $num row $res_row col $res_col: '"
+                        . $result_expected[$num]{rows}[$res_row][$res_col]
+                        . "'" );
             }
         }
     }
+
     #PrefVote::RankedPairs::Output->debug_print("output = ".Dumper($output));
 }
 
