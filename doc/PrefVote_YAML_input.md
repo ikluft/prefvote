@@ -1,6 +1,8 @@
 # PrefVote YAML Input File Specification
 
-PrefVote's primary vote input file format uses YAML.
+PrefVote's primary vote input file format uses YAML to structure input data about a vote,
+including metadata about the voting topic and ballots containing the votes.
+
 The file is separated by two or more YAML "documents", or separate file sections.
 Each document in the YAML file is separated by a "---" line.
 If there are more than two, then additional document sections are for testing purposes.
@@ -24,6 +26,8 @@ The params structure contains the following items.
 * "name" is the title of the vote topic as it should be displayed on results. It should be the same title as was displayed on ballots when votes were collected. This is a required parameter.
 * "seats" is the number of seats up for election. The default number is 1. A future planned feature is to allow zero seats to mean the overall ranking order is the desired result. The use case for zero seats is for ranking polls. Until then, set the number of seats to the number of available choices to achieve a similar result.
 * "choices" is a hash/map structure defining the choices or candidates. The map key is a short/abbreviated string for the choice. The map value is the full display name of the choice. This is a required parameter.
+* "implicit_ranking" is an optional boolean flag which defaults to true.  If set, it instructs PrefVote to set omitted candidates on each ballot to be added, tied for last place. This was added to correspond to a flag in the Condorcet Election Format (CEF).
+* "weight_allowed" is an optional boolean flag which defaults to false. If set, PrefVote allows ballots to contain weighting multipliers which increase the number of times that ballot is counted compared to others. This was added to correspond to a flag in the Condorcet Election Format (CEF).
 
 An example from a test vote shows a vote called "Test Vote" with 1 available seat and 6 choices, which for testing purposes start with the letters A through F and have whimsical names.
 
