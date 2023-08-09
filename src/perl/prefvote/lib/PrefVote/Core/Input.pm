@@ -115,6 +115,7 @@ sub cef_fetch_prefs
 
     # filter out invalid empty ballot (use /EMPTY_RANKING/ for explicit empty ballot)
     if ( $line =~ /^ \s* $/x ) {
+        $self->debug_print("parse_cef: drop empty ballot");
         return;
     }
 
@@ -124,26 +125,34 @@ sub cef_fetch_prefs
         # handle line with no > or =
         if ( $line !~ /[>=]/x ) {
             if ( $line =~ qr(^ \s* ( \w+ ) \s* $)x ) {
+                $self->debug_print("parse_cef: record ballot for $1");
                 push @pref_order, [$1];
                 $line = "";
                 last;
             } else {
+                $self->debug_print("parse_cef: drop non-empty misformatted ballot");
                 return;    # parse error - drop ballot
             }
         }
 
         # handle line with > or =
         if ( $line =~ qr(^ ( ( \s* \w+ \s* = )* \s* \w+ \s* ) )x ) {
+            # '=' operator markss equality
             my $match = $1;
             substr $line, 0, length $match, "";    # remove matched segment from line
             $match =~ s/^ \s* //x;                 # remove leading whitespace
             $match =~ s/ \s* $//x;                 # remove trailing whitespace
             my @cand = split qr( \s* = \s* )x, $match;
             push @pref_order, [@cand];
+            $self->debug_print("parse_cef: record ballot for: ".(join "=", @cand));
         }
         if ( $line =~ qr(^ ( \s* [>] \s* ) )x ) {
+            # '>' operator marks preference
             my $match = $1;
             substr $line, 0, length $match, "";    # remove matched segment from line
+            $match =~ s/^ \s* //x;                 # remove leading whitespace
+            $match =~ s/ \s* $//x;                 # remove trailing whitespace
+            # TODO
         }
     }
 
