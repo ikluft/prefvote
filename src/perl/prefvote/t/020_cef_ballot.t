@@ -6,7 +6,7 @@ use autodie;
 use Carp qw(croak);
 use Test::More;
 use Readonly;
-use PrefVote::Core::Input;
+use PrefVote::Core::Input::CEF;
 
 #use Data::Dumper;
 #use feature qw(say);
@@ -48,7 +48,7 @@ Readonly::Array my @cef_ballot_tests => (
 # tests of CEF parser
 plan tests => scalar @cef_ballot_tests;
 
-my $fake_pv_c_i = bless {}, "PrefVote::Core::Input";
+my $fake_pv_c_i = bless {}, "PrefVote::Core::Input::CEF";
 foreach my $test (@cef_ballot_tests) {
     my @pref_order = $fake_pv_c_i->cef_fetch_prefs( $test->{line}, $test->{line_params} );
 
