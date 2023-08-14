@@ -45,6 +45,19 @@ Readonly::Hash my %op_names => (
     '^' => 'weight',
 );
 
+# CEF token regular expressions
+Readonly::Hash my %CEF_TOKENS => (
+    EMPTY_RANKING => qr(/EMPTY_RANKING/)x,
+    TAGDELIM => qr([|][|])x,
+    ',' => qr([,])x,
+    '^' => qr([\^])x,
+    '*' => qr([*])x,
+    '=' => qr([=])x,
+    '>' => qr([>])x,
+    INT => qr(\d+)x,
+    WORD => qr(\w+)x,
+);
+
 #
 # class definition via Moo
 #
@@ -137,7 +150,7 @@ sub cef_fetch_prefs
 
         # handle line with > or =
         if ( $line =~ qr(^ ( ( \s* \w+ \s* = )* \s* \w+ \s* ) )x ) {
-            # '=' operator markss equality
+            # '=' operator marks equality
             my $match = $1;
             substr $line, 0, length $match, "";    # remove matched segment from line
             $match =~ s/^ \s* //x;                 # remove leading whitespace
