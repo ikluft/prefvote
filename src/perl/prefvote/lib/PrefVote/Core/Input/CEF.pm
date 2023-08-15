@@ -19,6 +19,11 @@ use Carp qw(carp croak confess);
 use Readonly;
 
 #
+# PrefVote::Core::Input::CEF parses Condorcet Election Format. CEF is defined at
+# https://github.com/CondorcetVote/CondorcetElectionFormat
+#
+
+#
 # constants
 #
 
@@ -46,7 +51,7 @@ Readonly::Hash my %op_names => (
     '^' => 'weight',
 );
 
-# CEF token regular expressions
+# regular expressions for CEF token scanner
 Readonly::Hash my %CEF_TOKENS => (
     EMPTY_RANKING => qr(/EMPTY_RANKING/)x,
     TAGDELIM => qr([|][|])x,
@@ -59,10 +64,311 @@ Readonly::Hash my %CEF_TOKENS => (
     WORD => qr(\w+)x,
 );
 
+# CEF parser states
+# computed by Parse::Yapp, processed directly to minimize CPAN dependencies
+#
+# Grammar update process: run Parse::Yapp manually and copy yystates data here.
+Readonly::Array my @CEF_STATES => (
+	{#State 0
+		ACTIONS => {
+			'EMPTY_RANKING' => 8,
+			'WORD' => 11,
+			'INT' => 4
+		},
+		GOTOS => {
+			'equal_list' => 10,
+			'candidate' => 5,
+			'words' => 6,
+			'word' => 7,
+			'line' => 12,
+			'choice_list' => 1,
+			'tags' => 2,
+			'ranking' => 9,
+			'tag' => 3
+		}
+	},
+	{#State 1
+		ACTIONS => {
+			">" => 15,
+			"*" => 17,
+			"^" => 14
+		},
+		DEFAULT => -13,
+		GOTOS => {
+			'weight' => 18,
+			'quantifier' => 13,
+			'multipliers' => 16
+		}
+	},
+	{#State 2
+		ACTIONS => {
+			'TAGDELIM' => 20,
+			"," => 19
+		}
+	},
+	{#State 3
+		DEFAULT => -4
+	},
+	{#State 4
+		DEFAULT => -23
+	},
+	{#State 5
+		DEFAULT => -11
+	},
+	{#State 6
+		ACTIONS => {
+			"," => -5,
+			'TAGDELIM' => -5,
+			'INT' => 4,
+			'WORD' => 11
+		},
+		DEFAULT => -12,
+		GOTOS => {
+			'word' => 21
+		}
+	},
+	{#State 7
+		DEFAULT => -21
+	},
+	{#State 8
+		DEFAULT => -7
+	},
+	{#State 9
+		DEFAULT => -2
+	},
+	{#State 10
+		ACTIONS => {
+			"=" => 22
+		},
+		DEFAULT => -9
+	},
+	{#State 11
+		DEFAULT => -22
+	},
+	{#State 12
+		ACTIONS => {
+			'' => 23
+		}
+	},
+	{#State 13
+		ACTIONS => {
+			"*" => 17
+		},
+		DEFAULT => -16,
+		GOTOS => {
+			'weight' => 24
+		}
+	},
+	{#State 14
+		ACTIONS => {
+			'INT' => 25
+		}
+	},
+	{#State 15
+		ACTIONS => {
+			'INT' => 4,
+			'WORD' => 11
+		},
+		GOTOS => {
+			'candidate' => 5,
+			'equal_list' => 27,
+			'word' => 7,
+			'words' => 26
+		}
+	},
+	{#State 16
+		DEFAULT => -6
+	},
+	{#State 17
+		ACTIONS => {
+			'INT' => 28
+		}
+	},
+	{#State 18
+		ACTIONS => {
+			"^" => 14
+		},
+		DEFAULT => -17,
+		GOTOS => {
+			'quantifier' => 29
+		}
+	},
+	{#State 19
+		ACTIONS => {
+			'WORD' => 11,
+			'INT' => 4
+		},
+		GOTOS => {
+			'tag' => 30,
+			'word' => 7,
+			'words' => 31
+		}
+	},
+	{#State 20
+		ACTIONS => {
+			'WORD' => 11,
+			'INT' => 4,
+			'EMPTY_RANKING' => 8
+		},
+		GOTOS => {
+			'candidate' => 5,
+			'equal_list' => 10,
+			'word' => 7,
+			'words' => 26,
+			'choice_list' => 1,
+			'ranking' => 32
+		}
+	},
+	{#State 21
+		DEFAULT => -20
+	},
+	{#State 22
+		ACTIONS => {
+			'INT' => 4,
+			'WORD' => 11
+		},
+		GOTOS => {
+			'words' => 26,
+			'word' => 7,
+			'candidate' => 33
+		}
+	},
+	{#State 23
+		DEFAULT => 0
+	},
+	{#State 24
+		DEFAULT => -14
+	},
+	{#State 25
+		DEFAULT => -18
+	},
+	{#State 26
+		ACTIONS => {
+			'INT' => 4,
+			'WORD' => 11
+		},
+		DEFAULT => -12,
+		GOTOS => {
+			'word' => 21
+		}
+	},
+	{#State 27
+		ACTIONS => {
+			"=" => 22
+		},
+		DEFAULT => -8
+	},
+	{#State 28
+		DEFAULT => -19
+	},
+	{#State 29
+		DEFAULT => -15
+	},
+	{#State 30
+		DEFAULT => -3
+	},
+	{#State 31
+		ACTIONS => {
+			'INT' => 4,
+			'WORD' => 11
+		},
+		DEFAULT => -5,
+		GOTOS => {
+			'word' => 21
+		}
+	},
+	{#State 32
+		DEFAULT => -1
+	},
+	{#State 33
+		DEFAULT => -10
+	}
+);
+
+# CEF parser rules
+# computed by Parse::Yapp, processed directly to minimize CPAN dependencies
+#
+# Grammar update process: run Parse::Yapp manually and copy yyrules data here.
+Readonly::Array my @CEF_RULES => (
+	[#Rule 0
+		 '$start', 2, undef
+	],
+	[#Rule 1
+		 'line', 3, undef
+	],
+	[#Rule 2
+		 'line', 1, undef
+	],
+	[#Rule 3
+		 'tags', 3, undef
+	],
+	[#Rule 4
+		 'tags', 1, undef
+	],
+	[#Rule 5
+		 'tag', 1, undef
+	],
+	[#Rule 6
+		 'ranking', 2, undef
+	],
+	[#Rule 7
+		 'ranking', 1, undef
+	],
+	[#Rule 8
+		 'choice_list', 3, undef
+	],
+	[#Rule 9
+		 'choice_list', 1, undef
+	],
+	[#Rule 10
+		 'equal_list', 3, undef
+	],
+	[#Rule 11
+		 'equal_list', 1, undef
+	],
+	[#Rule 12
+		 'candidate', 1, undef
+	],
+	[#Rule 13
+		 'multipliers', 0, undef
+	],
+	[#Rule 14
+		 'multipliers', 2, undef
+	],
+	[#Rule 15
+		 'multipliers', 2, undef
+	],
+	[#Rule 16
+		 'multipliers', 1, undef
+	],
+	[#Rule 17
+		 'multipliers', 1, undef
+	],
+	[#Rule 18
+		 'quantifier', 2, undef
+	],
+	[#Rule 19
+		 'weight', 2, undef
+	],
+	[#Rule 20
+		 'words', 2, undef
+	],
+	[#Rule 21
+		 'words', 1, undef
+	],
+	[#Rule 22
+		 'word', 1, undef
+	],
+	[#Rule 23
+		 'word', 1, undef
+	]
+);
+
 #
 # class management functions
 # In order to minimize dependencies so independent modules can parse CEF with this, we do not inherit 
-# from PrefVote or use Moo. If others express interest, this can be spun off to a separate CPAN module.
+# from PrefVote or use Moo where this functionality would have been provided.
+# If others express interest, PrefVote::Core::Input::CEF can be spun off to a separate CPAN module.
 #
 
 # instantiate a new object
@@ -392,6 +698,23 @@ sub parse
     }
 
     return;
+}
+
+# get list of data keys
+# instance method
+sub get_keys
+{
+    my $self = shift;
+    return keys %$self;
+}
+
+# read accessor for data
+# instance method
+sub get
+{
+    my ($self, $key) = @_;
+    return if not exists $self->{$key};
+    return $self->{$key};
 }
 
 # transfer data to another object
