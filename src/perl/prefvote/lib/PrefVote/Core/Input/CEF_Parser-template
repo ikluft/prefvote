@@ -15,30 +15,14 @@
 #             ANY CHANGE MADE HERE WILL BE LOST !
 ####################################################################
 
-# pragmas to silence some warnings from Perl::Critic
-## no critic (Modules::RequireExplicitPackage)
-# This solves a catch-22 where parts of Perl::Critic want both package and use-strict to be first
-use strict;
-use warnings;
-
-## no critic (Modules::ProhibitMultiplePackages)
-
 package <<$package>>;
 
+use strict;
+use warnings;
 use autodie;
 use Carp qw(croak);
 
-# disable Perl::Critic for Parse::Yapp::Driver and generated code since this module doesn't control it
-{
-    package Parse::Yapp::Driver;
-    ## no critic (Subroutines::RequireFinalReturn)
-    ## no critic (Subroutines::RequireArgUnpacking)
-    ## no critic (BuiltinFunctions::ProhibitStringyEval)
-    ## no critic (InputOutput::ProhibitBarewordFileHandles)
-    ## no critic (ErrorHandling::RequireCarping)
-    ## no critic (RegularExpressions::RequireExtendedFormatting)
 <<$driver>>
-}
 
 <<$head>>
 
