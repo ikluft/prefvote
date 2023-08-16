@@ -61,6 +61,13 @@ jobs:
           my $success = 1;
           for my $subdir ( qw(prefvote stv schulze rankedpairs) ) {
             chdir "$topdir/$subdir";
+            if ( -f "META.yml" ) {
+              say "=== meta deps $subdir";
+              use YAML::Tiny; # YAML::Tiny is a dependency of Dist::Zilla so we know it's here
+              my $myml = YAML::Tiny->read( qq(META.yml) );
+              my @deps = ( keys %{$myml->[0]{configure_requires} // {}}, keys %{$myml->[0]{build_requires} // {}});
+              if (not do_cpanm(@deps)) {$success=0; next}
+            }
             say "=== authordeps $subdir";
             if (not do_cpanm(qx(dzil authordeps --missing))) {$success=0; next}
             say "=== listdeps $subdir";
