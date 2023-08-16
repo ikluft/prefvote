@@ -1,0 +1,129 @@
+/*
+ * Condorcet Election Format (CEF) grammar
+ */
+
+%{
+    use Readonly;
+    Readonly::Hash my %CEF_TOKENS => (
+        EMPTY_RANKING => qr(/EMPTY_RANKING/)x,
+        TAGDELIM => qr([|][|])x,
+        ',' => qr([,])x,
+        '^' => qr([\^])x,
+        '*' => qr([*])x,
+        '=' => qr([=])x,
+        '>' => qr([>])x,
+        INT => qr(\d+)x,
+        WORD => qr(\w+)x,
+    );
+    sub TODO { croak "unimplemented to-do" };
+%}
+
+/* token declarations */
+%token WORD      /* word characters including embedded whitespace */
+%token INT       /* integer */
+%token TAGDELIM  /* || delimits tags from ranking */
+%token ','       /* comma delimits multiple tags */
+%token '*'       /* quantifier op */
+%token '^'       /* weight op */
+%token '='       /* equality op */
+%token '>'       /* preference op */
+%token EMPTY_RANKING  /* empty ballot ranking denoted by string /EMPTY_RANKING/ */
+
+/* grammar */
+%%
+
+line:
+    tags TAGDELIM ranking       { TODO() }
+|   ranking                     { TODO() }
+;
+
+tags:
+    tags ',' tag                { push @{$_[1]}, $_[3] }
+|   tag                         { [ $_[1] ] }
+;
+
+tag:
+    words                       { $_[1] }
+;
+
+ranking:
+    choice_list multipliers     { TODO() }
+|   EMPTY_RANKING               { TODO() }
+;
+
+choice_list:
+    choice_list '>' equal_list  { TODO() }
+|   equal_list                  { TODO() }
+;
+
+equal_list:
+    equal_list '=' candidate    { TODO() }
+|   candidate                   { TODO() }
+;
+
+candidate:
+    words                       { TODO() }
+;
+
+multipliers:
+|   quantifier weight           { TODO() }
+|   weight quantifier           { TODO() }
+|   quantifier                  { TODO() }
+|   weight                      { TODO() }
+;
+
+quantifier:
+    '^' INT                     { TODO() }
+;
+
+weight:
+    '*' INT                     { TODO() }
+;
+
+words:
+    words word                  { TODO() }
+|   word                        { TODO() }
+;
+
+word:
+    WORD                        { TODO() }
+|   INT                         { TODO() }
+;
+
+%%
+
+sub _Error {
+        exists $_[0]->YYData->{ERRMSG}
+    and do {
+        print $_[0]->YYData->{ERRMSG};
+        delete $_[0]->YYData->{ERRMSG};
+        return;
+    };
+    print "Syntax error.\n";
+    return;
+}
+
+sub _Lexer {
+    my($parser)=shift;
+
+    $parser->YYData->{INPUT}
+        or  $parser->YYData->{INPUT} = <STDIN>
+        or  return('',undef);
+
+    $parser->YYData->{INPUT}=~s/^ \s//x;
+
+    for ($parser->YYData->{INPUT}) {
+        foreach my $key (keys %CEF_TOKENS) {
+            if ( s/ ^ ( $CEF_TOKENS{$key} ) //x ) {
+                return($key, $1);
+            }
+        }
+    }
+    return;
+}
+
+sub parse {
+    my($self)=shift;
+    my $result = $self->YYParse( yylex => \&_Lexer, yyerror => \&_Error );
+    return $result;
+}
