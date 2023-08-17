@@ -15,11 +15,20 @@ use Readonly;
 use FindBin        qw($Bin $Script);
 use File::Basename qw(dirname);
 use File::Slurp    qw(read_file);
+use Getopt::Long;
 use Try::Tiny;
 
+# command-line options
+my ( %cli_flags );
+GetOptions ( \%cli_flags, "--quiet", "--debug" );
+
+
 # constants
+Readonly::Scalar my $QUIET_MODE    => (( $cli_flags{quiet} // 0 ) and 1 );
+Readonly::Scalar my $DEBUG_MODE    => (( $cli_flags{debug} // 0 ) and 1 );
 Readonly::Scalar my $TOOLS_PATH    => $Bin;
-Readonly::Scalar my $PROG_PATH     => $TOOLS_PATH . "/" . $Script;
+Readonly::Scalar my $PROG_NAME     => $Script;
+Readonly::Scalar my $PROG_PATH     => $TOOLS_PATH . "/" . $PROG_NAME;
 Readonly::Scalar my $SOURCE_ROOT   => dirname($TOOLS_PATH);
 Readonly::Scalar my $UPDATE_PATH   => $SOURCE_ROOT . "/lib/PrefVote/Core/Input/";
 Readonly::Scalar my $CLASS_PREFIX  => "PrefVote::Core::Input::";
@@ -41,7 +50,7 @@ foreach my $req_file ( keys %REQUIRED_FILES ) {
     }
 }
 if (@missing) {
-    say STDERR "missing required files - expected paths based on script location:";
+    say STDERR "$PROG_NAME: missing required files - expected paths based on script location:";
     foreach my $file (@missing) {
         say STDERR "   " . $REQUIRED_FILES{$file} . " " . $file;
     }
@@ -61,7 +70,11 @@ if ( -f $PM_OUT_PATH
 try {
     require Parse::Yapp;
 } catch {
-    croak "failed to load Parse::Yapp module: $_";
+    if ( $QUIET_MODE ) {
+        # silently skip update - for use when running on CI server and existing parser will do
+        exit 0;
+    }
+    croak "$PROG_NAME: failed to load Parse::Yapp module: $_";
 };
 
 # run Parse::Yapp to build CEF parser
