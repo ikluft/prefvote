@@ -59,9 +59,6 @@ jobs:
           chdir "src/perl";
           my $topdir = getcwd();
           my $success = 1;
-          say "=== initial deps"; # configure/build deps which dzil-authordeps doesn't reliably report
-          my @deps = qw(Parse::Yapp);
-          if (not do_cpanm(@deps)) {$success=0; next}
           for my $subdir ( qw(prefvote stv schulze rankedpairs) ) {
             chdir "$topdir/$subdir";
             say "=== authordeps $subdir";

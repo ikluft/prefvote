@@ -10,15 +10,16 @@ use utf8;
 use autodie;
 use feature qw(say);
 use v5.10.0;
-use Carp qw(croak);
-use Parse::Yapp;
+use Carp qw(carp croak);
 use Readonly;
-use FindBin        qw($Bin);
+use FindBin        qw($Bin $Script);
 use File::Basename qw(dirname);
 use File::Slurp    qw(read_file);
+use Try::Tiny;
 
 # constants
 Readonly::Scalar my $TOOLS_PATH    => $Bin;
+Readonly::Scalar my $PROG_PATH     => $TOOLS_PATH . "/" . $Script;
 Readonly::Scalar my $SOURCE_ROOT   => dirname($TOOLS_PATH);
 Readonly::Scalar my $UPDATE_PATH   => $SOURCE_ROOT . "/lib/PrefVote/Core/Input/";
 Readonly::Scalar my $CLASS_PREFIX  => "PrefVote::Core::Input::";
@@ -46,6 +47,22 @@ if (@missing) {
     }
     exit 1;
 }
+
+# check dependencies - skip if update not needed
+if ( -f $PM_OUT_PATH
+        and -M $PROG_PATH > -M $PM_OUT_PATH
+        and -M $CEF_GRAMMAR > -M $PM_OUT_PATH
+        and -M $TEMPLATE_PATH > -M $PM_OUT_PATH )
+{
+    exit 0;
+}
+
+# load Parse::Yapp or report that it's missing
+try {
+    require Parse::Yapp;
+} catch {
+    croak "failed to load Parse::Yapp module: $_";
+};
 
 # run Parse::Yapp to build CEF parser
 my $template_text = read_file($TEMPLATE_PATH);
