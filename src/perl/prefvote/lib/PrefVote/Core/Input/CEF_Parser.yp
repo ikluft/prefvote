@@ -15,7 +15,6 @@
         INT => qr(\d+)x,
         WORD => qr(\w+)x,
     );
-    sub TODO { croak "unimplemented to-do" };
 %}
 
 /* token declarations */
@@ -33,61 +32,61 @@
 %%
 
 line:
-    tags TAGDELIM ranking       { TODO() }
-|   ranking                     { TODO() }
+    tags TAGDELIM ranking       { return [ $_[2], @{$_[2]} ]; }
+|   ranking                     { return $_[1]; }
 ;
 
 tags:
-    tags ',' tag                { push @{$_[1]}, $_[3] }
-|   tag                         { [ $_[1] ] }
+    tags ',' tag                { return [ @{$_[1]}, @{$_[3]} ]; }
+|   tag                         { return [ $_[1] ]; }
 ;
 
 tag:
-    words                       { $_[1] }
+    words                       { return $_[1]; }
 ;
 
 ranking:
-    choice_list multipliers     { TODO() }
-|   EMPTY_RANKING               { TODO() }
+    choice_list multipliers     { return [ $_[2], @{$_[1]} ]; }
+|   EMPTY_RANKING               { return []; }
 ;
 
 choice_list:
-    choice_list '>' equal_list  { TODO() }
-|   equal_list                  { TODO() }
+    choice_list '>' equal_list  { return [ @{$_[1]}, @{$_[3]} ]; }
+|   equal_list                  { return [ $_[1] ]; }
 ;
 
 equal_list:
-    equal_list '=' candidate    { TODO() }
-|   candidate                   { TODO() }
+    equal_list '=' candidate    { return [ @{$_[1]}, @{$_[3]} ]; }
+|   candidate                   { return [ $_[1] ]; }
 ;
 
 candidate:
-    words                       { TODO() }
+    words                       { return $_[1]; }
 ;
 
 multipliers:
-|   quantifier weight           { TODO() }
-|   weight quantifier           { TODO() }
-|   quantifier                  { TODO() }
-|   weight                      { TODO() }
+|   quantifier weight           { return { %{$_[1]}, %{$_[2]} }; }
+|   weight quantifier           { return { %{$_[1]}, %{$_[2]} }; }
+|   quantifier                  { return $_[1]; }
+|   weight                      { return $_[1]; }
 ;
 
 quantifier:
-    '^' INT                     { TODO() }
+    '^' INT                     { return { quantifier => $_[1]}; }
 ;
 
 weight:
-    '*' INT                     { TODO() }
+    '*' INT                     { return { weight => $_[1]}; }
 ;
 
 words:
-    words word                  { TODO() }
-|   word                        { TODO() }
+    words word                  { return $_[1] . " " . $_[2]; }
+|   word                        { return "" . $_[1]; }
 ;
 
 word:
-    WORD                        { TODO() }
-|   INT                         { TODO() }
+    WORD                        { return "" . $_[1]; }
+|   INT                         { return 0 + $_[1]; }
 ;
 
 %%

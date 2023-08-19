@@ -515,7 +515,6 @@ sub _Parse {
         INT => qr(\d+)x,
         WORD => qr(\w+)x,
     );
-    sub TODO { croak "unimplemented to-do" };
 
 
 sub new {
@@ -528,217 +527,217 @@ sub new {
 [
 	{#State 0
 		ACTIONS => {
-			'INT' => 8,
-			'EMPTY_RANKING' => 10,
-			'WORD' => 5
+			'WORD' => 6,
+			'INT' => 5,
+			'EMPTY_RANKING' => 1
 		},
 		GOTOS => {
-			'equal_list' => 7,
-			'words' => 1,
-			'ranking' => 6,
-			'choice_list' => 9,
-			'tags' => 3,
-			'tag' => 11,
-			'line' => 12,
-			'word' => 4,
-			'candidate' => 2
+			'words' => 8,
+			'equal_list' => 3,
+			'choice_list' => 7,
+			'word' => 2,
+			'tags' => 12,
+			'ranking' => 11,
+			'line' => 10,
+			'tag' => 9,
+			'candidate' => 4
 		}
 	},
 	{#State 1
-		ACTIONS => {
-			'WORD' => 5,
-			"," => -5,
-			'INT' => 8,
-			'TAGDELIM' => -5
-		},
-		DEFAULT => -12,
-		GOTOS => {
-			'word' => 13
-		}
+		DEFAULT => -7
 	},
 	{#State 2
-		DEFAULT => -11
+		DEFAULT => -21
 	},
 	{#State 3
 		ACTIONS => {
-			"," => 14,
-			'TAGDELIM' => 15
-		}
-	},
-	{#State 4
-		DEFAULT => -21
-	},
-	{#State 5
-		DEFAULT => -22
-	},
-	{#State 6
-		DEFAULT => -2
-	},
-	{#State 7
-		ACTIONS => {
-			"=" => 16
+			"=" => 13
 		},
 		DEFAULT => -9
 	},
-	{#State 8
+	{#State 4
+		DEFAULT => -11
+	},
+	{#State 5
 		DEFAULT => -23
 	},
-	{#State 9
+	{#State 6
+		DEFAULT => -22
+	},
+	{#State 7
 		ACTIONS => {
-			"*" => 21,
-			"^" => 22,
-			">" => 18
+			">" => 17,
+			"*" => 18,
+			"^" => 19
 		},
 		DEFAULT => -13,
 		GOTOS => {
-			'quantifier' => 20,
-			'multipliers' => 17,
-			'weight' => 19
+			'quantifier' => 16,
+			'multipliers' => 14,
+			'weight' => 15
 		}
 	},
+	{#State 8
+		ACTIONS => {
+			'TAGDELIM' => -5,
+			"," => -5,
+			'WORD' => 6,
+			'INT' => 5
+		},
+		DEFAULT => -12,
+		GOTOS => {
+			'word' => 20
+		}
+	},
+	{#State 9
+		DEFAULT => -4
+	},
 	{#State 10
-		DEFAULT => -7
+		ACTIONS => {
+			'' => 21
+		}
 	},
 	{#State 11
-		DEFAULT => -4
+		DEFAULT => -2
 	},
 	{#State 12
 		ACTIONS => {
-			'' => 23
+			'TAGDELIM' => 22,
+			"," => 23
 		}
 	},
 	{#State 13
-		DEFAULT => -20
-	},
-	{#State 14
 		ACTIONS => {
-			'WORD' => 5,
-			'INT' => 8
+			'INT' => 5,
+			'WORD' => 6
 		},
 		GOTOS => {
-			'words' => 24,
-			'tag' => 25,
-			'word' => 4
+			'candidate' => 25,
+			'word' => 2,
+			'words' => 24
 		}
+	},
+	{#State 14
+		DEFAULT => -6
 	},
 	{#State 15
 		ACTIONS => {
-			'EMPTY_RANKING' => 10,
-			'WORD' => 5,
-			'INT' => 8
+			"^" => 19
 		},
+		DEFAULT => -17,
 		GOTOS => {
-			'words' => 27,
-			'ranking' => 26,
-			'equal_list' => 7,
-			'candidate' => 2,
-			'choice_list' => 9,
-			'word' => 4
+			'quantifier' => 26
 		}
 	},
 	{#State 16
 		ACTIONS => {
-			'WORD' => 5,
-			'INT' => 8
+			"*" => 18
 		},
+		DEFAULT => -16,
 		GOTOS => {
-			'words' => 27,
-			'candidate' => 28,
-			'word' => 4
+			'weight' => 27
 		}
 	},
 	{#State 17
-		DEFAULT => -6
+		ACTIONS => {
+			'INT' => 5,
+			'WORD' => 6
+		},
+		GOTOS => {
+			'words' => 24,
+			'equal_list' => 28,
+			'word' => 2,
+			'candidate' => 4
+		}
 	},
 	{#State 18
 		ACTIONS => {
-			'INT' => 8,
-			'WORD' => 5
-		},
-		GOTOS => {
-			'word' => 4,
-			'equal_list' => 29,
-			'candidate' => 2,
-			'words' => 27
+			'INT' => 29
 		}
 	},
 	{#State 19
 		ACTIONS => {
-			"^" => 22
-		},
-		DEFAULT => -17,
-		GOTOS => {
-			'quantifier' => 30
+			'INT' => 30
 		}
 	},
 	{#State 20
-		ACTIONS => {
-			"*" => 21
-		},
-		DEFAULT => -16,
-		GOTOS => {
-			'weight' => 31
-		}
+		DEFAULT => -20
 	},
 	{#State 21
-		ACTIONS => {
-			'INT' => 32
-		}
+		DEFAULT => 0
 	},
 	{#State 22
 		ACTIONS => {
-			'INT' => 33
+			'EMPTY_RANKING' => 1,
+			'INT' => 5,
+			'WORD' => 6
+		},
+		GOTOS => {
+			'candidate' => 4,
+			'choice_list' => 7,
+			'word' => 2,
+			'equal_list' => 3,
+			'ranking' => 31,
+			'words' => 24
 		}
 	},
 	{#State 23
-		DEFAULT => 0
+		ACTIONS => {
+			'INT' => 5,
+			'WORD' => 6
+		},
+		GOTOS => {
+			'word' => 2,
+			'tag' => 33,
+			'words' => 32
+		}
 	},
 	{#State 24
 		ACTIONS => {
-			'INT' => 8,
-			'WORD' => 5
-		},
-		DEFAULT => -5,
-		GOTOS => {
-			'word' => 13
-		}
-	},
-	{#State 25
-		DEFAULT => -3
-	},
-	{#State 26
-		DEFAULT => -1
-	},
-	{#State 27
-		ACTIONS => {
-			'WORD' => 5,
-			'INT' => 8
+			'WORD' => 6,
+			'INT' => 5
 		},
 		DEFAULT => -12,
 		GOTOS => {
-			'word' => 13
+			'word' => 20
 		}
 	},
-	{#State 28
+	{#State 25
 		DEFAULT => -10
 	},
-	{#State 29
+	{#State 26
+		DEFAULT => -15
+	},
+	{#State 27
+		DEFAULT => -14
+	},
+	{#State 28
 		ACTIONS => {
-			"=" => 16
+			"=" => 13
 		},
 		DEFAULT => -8
 	},
-	{#State 30
-		DEFAULT => -15
-	},
-	{#State 31
-		DEFAULT => -14
-	},
-	{#State 32
+	{#State 29
 		DEFAULT => -19
 	},
-	{#State 33
+	{#State 30
 		DEFAULT => -18
+	},
+	{#State 31
+		DEFAULT => -1
+	},
+	{#State 32
+		ACTIONS => {
+			'WORD' => 6,
+			'INT' => 5
+		},
+		DEFAULT => -5,
+		GOTOS => {
+			'word' => 20
+		}
+	},
+	{#State 33
+		DEFAULT => -3
 	}
 ],
                                   yyrules  =>
@@ -749,74 +748,74 @@ sub new {
 	[#Rule 1
 		 'line', 3,
 sub
-#line 36 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
-{ TODO() }
+#line 35 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+{ return [ $_[2], @{$_[2]} ]; }
 	],
 	[#Rule 2
 		 'line', 1,
 sub
-#line 37 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
-{ TODO() }
+#line 36 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+{ return $_[1]; }
 	],
 	[#Rule 3
 		 'tags', 3,
 sub
-#line 41 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
-{ push @{$_[1]}, $_[3] }
+#line 40 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+{ return [ @{$_[1]}, @{$_[3]} ]; }
 	],
 	[#Rule 4
 		 'tags', 1,
 sub
-#line 42 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
-{ [ $_[1] ] }
+#line 41 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+{ return [ $_[1] ]; }
 	],
 	[#Rule 5
 		 'tag', 1,
 sub
-#line 46 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
-{ $_[1] }
+#line 45 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+{ return $_[1]; }
 	],
 	[#Rule 6
 		 'ranking', 2,
 sub
-#line 50 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
-{ TODO() }
+#line 49 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+{ return [ $_[2], @{$_[1]} ]; }
 	],
 	[#Rule 7
 		 'ranking', 1,
 sub
-#line 51 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
-{ TODO() }
+#line 50 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+{ return []; }
 	],
 	[#Rule 8
 		 'choice_list', 3,
 sub
-#line 55 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
-{ TODO() }
+#line 54 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+{ return [ @{$_[1]}, @{$_[3]} ]; }
 	],
 	[#Rule 9
 		 'choice_list', 1,
 sub
-#line 56 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
-{ TODO() }
+#line 55 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+{ return [ $_[1] ]; }
 	],
 	[#Rule 10
 		 'equal_list', 3,
 sub
-#line 60 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
-{ TODO() }
+#line 59 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+{ return [ @{$_[1]}, @{$_[3]} ]; }
 	],
 	[#Rule 11
 		 'equal_list', 1,
 sub
-#line 61 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
-{ TODO() }
+#line 60 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+{ return [ $_[1] ]; }
 	],
 	[#Rule 12
 		 'candidate', 1,
 sub
-#line 65 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
-{ TODO() }
+#line 64 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+{ return $_[1]; }
 	],
 	[#Rule 13
 		 'multipliers', 0, undef
@@ -824,69 +823,69 @@ sub
 	[#Rule 14
 		 'multipliers', 2,
 sub
-#line 69 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
-{ TODO() }
+#line 68 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+{ return { %{$_[1]}, %{$_[2]} }; }
 	],
 	[#Rule 15
 		 'multipliers', 2,
 sub
-#line 70 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
-{ TODO() }
+#line 69 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+{ return { %{$_[1]}, %{$_[2]} }; }
 	],
 	[#Rule 16
 		 'multipliers', 1,
 sub
-#line 71 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
-{ TODO() }
+#line 70 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+{ return $_[1]; }
 	],
 	[#Rule 17
 		 'multipliers', 1,
 sub
-#line 72 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
-{ TODO() }
+#line 71 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+{ return $_[1]; }
 	],
 	[#Rule 18
 		 'quantifier', 2,
 sub
-#line 76 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
-{ TODO() }
+#line 75 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+{ return { quantifier => $_[1]}; }
 	],
 	[#Rule 19
 		 'weight', 2,
 sub
-#line 80 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
-{ TODO() }
+#line 79 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+{ return { weight => $_[1]}; }
 	],
 	[#Rule 20
 		 'words', 2,
 sub
-#line 84 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
-{ TODO() }
+#line 83 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+{ return $_[1] . " " . $_[2]; }
 	],
 	[#Rule 21
 		 'words', 1,
 sub
-#line 85 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
-{ TODO() }
+#line 84 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+{ return "" . $_[1]; }
 	],
 	[#Rule 22
 		 'word', 1,
 sub
-#line 89 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
-{ TODO() }
+#line 88 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+{ return "" . $_[1]; }
 	],
 	[#Rule 23
 		 'word', 1,
 sub
-#line 90 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
-{ TODO() }
+#line 89 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+{ return 0 + $_[1]; }
 	]
 ],
                                   @_);
     bless($self,$class);
 }
 
-#line 93 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+#line 92 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
 
 
 sub _Error {
