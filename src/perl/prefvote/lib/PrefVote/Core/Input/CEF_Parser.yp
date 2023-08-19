@@ -1,19 +1,22 @@
 /*
  * Condorcet Election Format (CEF) grammar
+ * CEF_Parser.yp is the CEF grammar used as input for Parse::Yapp to generate CEF_Parser.pm
+ * Copyright (c) 2023 by Ian Kluft
+ * Open Source license: Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
  */
 
 %{
     use Readonly;
     Readonly::Hash my %CEF_TOKENS => (
         EMPTY_RANKING => qr(/EMPTY_RANKING/)x,
-        TAGDELIM => qr([|][|])x,
-        ',' => qr([,])x,
-        '^' => qr([\^])x,
-        '*' => qr([*])x,
-        '=' => qr([=])x,
-        '>' => qr([>])x,
-        INT => qr(\d+)x,
-        WORD => qr(\w+)x,
+        TAGDELIM      => qr([|][|])x,
+        ','           => qr([,])x,
+        '^'           => qr([\^])x,
+        '*'           => qr([*])x,
+        '='           => qr([=])x,
+        '>'           => qr([>])x,
+        INT           => qr(\d+)x,
+        WORD          => qr(\w+)x,
     );
 %}
 
@@ -91,38 +94,41 @@ word:
 
 %%
 
-sub _Error {
-        exists $_[0]->YYData->{ERRMSG}
-    and do {
+sub _Error
+{
+    exists $_[0]->YYData->{ERRMSG}
+        and do {
         print $_[0]->YYData->{ERRMSG};
         delete $_[0]->YYData->{ERRMSG};
         return;
-    };
+        };
     print "Syntax error.\n";
     return;
 }
 
-sub _Lexer {
-    my($parser)=shift;
+sub _Lexer
+{
+    my ($parser) = shift;
 
     $parser->YYData->{INPUT}
-        or  $parser->YYData->{INPUT} = <STDIN>
-        or  return('',undef);
+        or $parser->YYData->{INPUT} = <STDIN>
+        or return ( '', undef );
 
-    $parser->YYData->{INPUT}=~s/^ \s//x;
+    $parser->YYData->{INPUT} =~ s/^ \s//x;
 
-    for ($parser->YYData->{INPUT}) {
-        foreach my $key (keys %CEF_TOKENS) {
-            if ( s/ ^ ( $CEF_TOKENS{$key} ) //x ) {
-                return($key, $1);
+    for ( $parser->YYData->{INPUT} ) {
+        foreach my $key ( keys %CEF_TOKENS ) {
+            if (s/ ^ ( $CEF_TOKENS{$key} ) //x) {
+                return ( $key, $1 );
             }
         }
     }
     return;
 }
 
-sub parse {
-    my($self)=shift;
+sub parse
+{
+    my ($self) = shift;
     my $result = $self->YYParse( yylex => \&_Lexer, yyerror => \&_Error );
     return $result;
 }
