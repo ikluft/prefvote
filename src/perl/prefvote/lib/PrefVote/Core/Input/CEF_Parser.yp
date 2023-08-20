@@ -128,7 +128,7 @@ sub _Lexer
 sub parse
 {
     my ($self, $input_str) = @_;
-    $parser->YYData->{INPUT} = $input_str;
+    $self->YYData->{INPUT} = $input_str;
     my $result = $self->YYParse( yylex => \&_Lexer, yyerror => \&_Error );
     return $result;
 }
