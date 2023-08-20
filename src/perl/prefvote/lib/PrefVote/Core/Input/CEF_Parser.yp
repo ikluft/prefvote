@@ -111,7 +111,6 @@ sub _Lexer
     my ($parser) = shift;
 
     $parser->YYData->{INPUT}
-        or $parser->YYData->{INPUT} = <STDIN>
         or return ( '', undef );
 
     $parser->YYData->{INPUT} =~ s/^ \s//x;
@@ -128,7 +127,8 @@ sub _Lexer
 
 sub parse
 {
-    my ($self) = shift;
+    my ($self, $input_str) = @_;
+    $parser->YYData->{INPUT} = $input_str;
     my $result = $self->YYParse( yylex => \&_Lexer, yyerror => \&_Error );
     return $result;
 }
