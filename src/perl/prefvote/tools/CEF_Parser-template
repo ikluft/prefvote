@@ -21,8 +21,8 @@ use strict;
 use warnings;
 use autodie;
 use Carp qw(croak);
-use parent qw(Parse::Yapp::Driver);
 
+@PrefVote::Core::Input::CEF_Parser::ISA = qw(Parse::Yapp::Driver);
 <<$driver>>
 
 <<$head>>

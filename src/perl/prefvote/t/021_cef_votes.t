@@ -17,15 +17,6 @@ use PrefVote::Core;
 use PrefVote::Core::Ballot;
 use PrefVote::Core::Input::CEF_Parser;
 
-# temp
-use Devel::Symdump;
-my $symtab = Devel::Symdump->rnew( qw(PrefVote::Core::Input::CEF_Parser) );
-say "functions:";
-say "  " . join( "\n  ", sort $symtab->functions());
-say;
-say "isa_tree:";
-say Devel::Symdump->isa_tree;
-
 # input directory for CEF data files
 Readonly::Scalar my $input_dir => getcwd() . "/t/test-inputs/" . basename( $0, ".t" );
 # Readonly::Array my @ranking_tests => (
