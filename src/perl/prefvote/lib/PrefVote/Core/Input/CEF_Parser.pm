@@ -21,6 +21,7 @@ use strict;
 use warnings;
 use autodie;
 use Carp qw(croak);
+use parent qw(Parse::Yapp::Driver);
 
 #Included Parse/Yapp/Driver.pm file----------------------------------------
 {
@@ -527,217 +528,217 @@ sub new {
 [
 	{#State 0
 		ACTIONS => {
-			'EMPTY_RANKING' => 2,
-			'WORD' => 5,
-			'INT' => 6
+			'WORD' => 2,
+			'INT' => 1,
+			'EMPTY_RANKING' => 3
 		},
 		GOTOS => {
-			'line' => 12,
-			'tag' => 7,
-			'tags' => 9,
-			'ranking' => 10,
-			'choice_list' => 11,
-			'equal_list' => 4,
-			'word' => 3,
-			'candidate' => 1,
-			'words' => 8
+			'tag' => 12,
+			'line' => 10,
+			'tags' => 11,
+			'word' => 9,
+			'ranking' => 7,
+			'equal_list' => 8,
+			'choice_list' => 6,
+			'candidate' => 4,
+			'words' => 5
 		}
 	},
 	{#State 1
-		DEFAULT => -11
-	},
-	{#State 2
-		DEFAULT => -7
-	},
-	{#State 3
-		DEFAULT => -21
-	},
-	{#State 4
-		ACTIONS => {
-			"=" => 13
-		},
-		DEFAULT => -9
-	},
-	{#State 5
-		DEFAULT => -22
-	},
-	{#State 6
 		DEFAULT => -23
 	},
-	{#State 7
-		DEFAULT => -4
+	{#State 2
+		DEFAULT => -22
 	},
-	{#State 8
+	{#State 3
+		DEFAULT => -7
+	},
+	{#State 4
+		DEFAULT => -11
+	},
+	{#State 5
 		ACTIONS => {
-			"," => -5,
 			'TAGDELIM' => -5,
-			'INT' => 6,
-			'WORD' => 5
+			'INT' => 1,
+			'WORD' => 2,
+			"," => -5
 		},
 		DEFAULT => -12,
 		GOTOS => {
-			'word' => 14
+			'word' => 13
 		}
 	},
-	{#State 9
+	{#State 6
 		ACTIONS => {
-			'TAGDELIM' => 15,
-			"," => 16
-		}
-	},
-	{#State 10
-		DEFAULT => -2
-	},
-	{#State 11
-		ACTIONS => {
-			">" => 21,
-			"*" => 17,
-			"^" => 18
+			"^" => 16,
+			"*" => 15,
+			">" => 18
 		},
 		DEFAULT => -13,
 		GOTOS => {
-			'quantifier' => 19,
-			'weight' => 22,
-			'multipliers' => 20
+			'multipliers' => 19,
+			'quantifier' => 14,
+			'weight' => 17
+		}
+	},
+	{#State 7
+		DEFAULT => -2
+	},
+	{#State 8
+		ACTIONS => {
+			"=" => 20
+		},
+		DEFAULT => -9
+	},
+	{#State 9
+		DEFAULT => -21
+	},
+	{#State 10
+		ACTIONS => {
+			'' => 21
+		}
+	},
+	{#State 11
+		ACTIONS => {
+			"," => 22,
+			'TAGDELIM' => 23
 		}
 	},
 	{#State 12
-		ACTIONS => {
-			'' => 23
-		}
+		DEFAULT => -4
 	},
 	{#State 13
-		ACTIONS => {
-			'INT' => 6,
-			'WORD' => 5
-		},
-		GOTOS => {
-			'candidate' => 24,
-			'words' => 25,
-			'word' => 3
-		}
+		DEFAULT => -20
 	},
 	{#State 14
-		DEFAULT => -20
+		ACTIONS => {
+			"*" => 15
+		},
+		DEFAULT => -16,
+		GOTOS => {
+			'weight' => 24
+		}
 	},
 	{#State 15
 		ACTIONS => {
-			'WORD' => 5,
-			'INT' => 6,
-			'EMPTY_RANKING' => 2
-		},
-		GOTOS => {
-			'choice_list' => 11,
-			'words' => 25,
-			'ranking' => 26,
-			'candidate' => 1,
-			'equal_list' => 4,
-			'word' => 3
+			'INT' => 25
 		}
 	},
 	{#State 16
 		ACTIONS => {
-			'WORD' => 5,
-			'INT' => 6
-		},
-		GOTOS => {
-			'words' => 27,
-			'tag' => 28,
-			'word' => 3
+			'INT' => 26
 		}
 	},
 	{#State 17
 		ACTIONS => {
-			'INT' => 29
+			"^" => 16
+		},
+		DEFAULT => -17,
+		GOTOS => {
+			'quantifier' => 27
 		}
 	},
 	{#State 18
 		ACTIONS => {
-			'INT' => 30
+			'WORD' => 2,
+			'INT' => 1
+		},
+		GOTOS => {
+			'word' => 9,
+			'equal_list' => 28,
+			'words' => 29,
+			'candidate' => 4
 		}
 	},
 	{#State 19
-		ACTIONS => {
-			"*" => 17
-		},
-		DEFAULT => -16,
-		GOTOS => {
-			'weight' => 31
-		}
-	},
-	{#State 20
 		DEFAULT => -6
 	},
-	{#State 21
+	{#State 20
 		ACTIONS => {
-			'WORD' => 5,
-			'INT' => 6
+			'WORD' => 2,
+			'INT' => 1
 		},
 		GOTOS => {
-			'word' => 3,
-			'equal_list' => 32,
-			'words' => 25,
-			'candidate' => 1
+			'word' => 9,
+			'words' => 29,
+			'candidate' => 30
 		}
+	},
+	{#State 21
+		DEFAULT => 0
 	},
 	{#State 22
 		ACTIONS => {
-			"^" => 18
+			'INT' => 1,
+			'WORD' => 2
 		},
-		DEFAULT => -17,
 		GOTOS => {
-			'quantifier' => 33
+			'word' => 9,
+			'tag' => 32,
+			'words' => 31
 		}
 	},
 	{#State 23
-		DEFAULT => 0
+		ACTIONS => {
+			'INT' => 1,
+			'WORD' => 2,
+			'EMPTY_RANKING' => 3
+		},
+		GOTOS => {
+			'word' => 9,
+			'equal_list' => 8,
+			'ranking' => 33,
+			'candidate' => 4,
+			'words' => 29,
+			'choice_list' => 6
+		}
 	},
 	{#State 24
-		DEFAULT => -10
-	},
-	{#State 25
-		ACTIONS => {
-			'INT' => 6,
-			'WORD' => 5
-		},
-		DEFAULT => -12,
-		GOTOS => {
-			'word' => 14
-		}
-	},
-	{#State 26
-		DEFAULT => -1
-	},
-	{#State 27
-		ACTIONS => {
-			'WORD' => 5,
-			'INT' => 6
-		},
-		DEFAULT => -5,
-		GOTOS => {
-			'word' => 14
-		}
-	},
-	{#State 28
-		DEFAULT => -3
-	},
-	{#State 29
-		DEFAULT => -19
-	},
-	{#State 30
-		DEFAULT => -18
-	},
-	{#State 31
 		DEFAULT => -14
 	},
-	{#State 32
+	{#State 25
+		DEFAULT => -19
+	},
+	{#State 26
+		DEFAULT => -18
+	},
+	{#State 27
+		DEFAULT => -15
+	},
+	{#State 28
 		ACTIONS => {
-			"=" => 13
+			"=" => 20
 		},
 		DEFAULT => -8
 	},
+	{#State 29
+		ACTIONS => {
+			'INT' => 1,
+			'WORD' => 2
+		},
+		DEFAULT => -12,
+		GOTOS => {
+			'word' => 13
+		}
+	},
+	{#State 30
+		DEFAULT => -10
+	},
+	{#State 31
+		ACTIONS => {
+			'INT' => 1,
+			'WORD' => 2
+		},
+		DEFAULT => -5,
+		GOTOS => {
+			'word' => 13
+		}
+	},
+	{#State 32
+		DEFAULT => -3
+	},
 	{#State 33
-		DEFAULT => -15
+		DEFAULT => -1
 	}
 ],
                                   yyrules  =>

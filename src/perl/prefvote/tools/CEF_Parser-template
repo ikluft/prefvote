@@ -21,6 +21,7 @@ use strict;
 use warnings;
 use autodie;
 use Carp qw(croak);
+use parent qw(Parse::Yapp::Driver);
 
 <<$driver>>
 
