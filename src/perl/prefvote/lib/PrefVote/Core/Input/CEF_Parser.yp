@@ -27,8 +27,8 @@
 %token ','       /* comma delimits multiple tags */
 %token '*'       /* quantifier op */
 %token '^'       /* weight op */
-%token '='       /* equality op */
 %token '>'       /* preference op */
+%token '='       /* equality op */
 %token EMPTY_RANKING  /* empty ballot ranking denoted by string /EMPTY_RANKING/ */
 
 /* grammar */
@@ -49,17 +49,17 @@ tag:
 ;
 
 ranking:
-    choice_list multipliers     { return [ $_[2], @{$_[1]} ]; }
+    choice_list multipliers     { return [ (defined $_[2]) ? ($_[2]) : (), @{$_[1]} ]; }
 |   EMPTY_RANKING               { return []; }
 ;
 
 choice_list:
-    choice_list '>' equal_list  { return [ @{$_[1]}, @{$_[3]} ]; }
+    choice_list '>' equal_list  { return [ @{$_[1]}, $_[3] ]; }
 |   equal_list                  { return [ $_[1] ]; }
 ;
 
 equal_list:
-    equal_list '=' candidate    { return [ @{$_[1]}, @{$_[3]} ]; }
+    equal_list '=' candidate    { return [ @{$_[1]}, $_[3] ]; }
 |   candidate                   { return [ $_[1] ]; }
 ;
 
