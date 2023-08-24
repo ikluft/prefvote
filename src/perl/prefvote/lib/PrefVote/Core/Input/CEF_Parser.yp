@@ -75,11 +75,11 @@ multipliers:
 ;
 
 quantifier:
-    '^' INT                     { return { quantifier => $_[1]}; }
+    '*' INT                     { return { quantifier => $_[2]}; }
 ;
 
 weight:
-    '*' INT                     { return { weight => $_[1]}; }
+    '^' INT                     { return { weight => $_[2]}; }
 ;
 
 words:

@@ -6,7 +6,7 @@ use warnings;
 use autodie;
 use feature qw(say);
 #use Test::More skip_all => "WIP TBD CYA TTFN";
-use Test::More tests => 2;
+use Test::More tests => 4;
 use Test::Exception;
 use File::Basename qw(basename);
 use Readonly;
@@ -24,6 +24,8 @@ use Data::Dumper;
 Readonly::Scalar my $input_dir => getcwd() . "/t/test-inputs/" . basename( $0, ".t" );
 Readonly::Array my @ranking_tests => (
   { in => "A = B > C = D > E = F", out => [ [ 'A', 'B' ], [ 'C', 'D' ], [ 'E', 'F' ] ] },
+  { in => "A>B ^2", out => [ { weight => 2 }, [ 'A' ], [ 'B' ] ], skip => "WIP" },
+  { in => "C>B>A * 700", out => [ { quantifier => 700 }, [ 'C' ], [ 'B' ], [ 'A' ] ], skip => "WIP" },
 );
 
 # Condorcet Election Format (CEF) file tests
@@ -32,11 +34,17 @@ isa_ok( $parser1, "PrefVote::Core::Input::CEF_Parser", "parser1");
 
 # run per-line parser tests
 foreach my $test_case ( @ranking_tests ) {
-    my $in_str = $test_case->{in};
-    my $out_struct = $test_case->{out};
-    my $result = $parser1->parse( $in_str );
-    # say STDERR "in: $in_str / result: " . Dumper( $result );
-    is_deeply( $result, $out_struct, "parser line: $in_str" );
+    SKIP: {
+        if ( exists $test_case->{skip}) {
+            skip $test_case->{skip}, 1;
+        } else {
+            my $in_str = $test_case->{in};
+            my $out_struct = $test_case->{out};
+            my $result = $parser1->parse( $in_str );
+            say STDERR "in: $in_str / result: " . Dumper( $result );
+            is_deeply( $result, $out_struct, "parser line: $in_str" );
+        }
+    }
 }
 
 1;
