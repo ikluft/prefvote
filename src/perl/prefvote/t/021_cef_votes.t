@@ -23,9 +23,18 @@ use Data::Dumper;
 # input directory for CEF data files
 Readonly::Scalar my $input_dir => getcwd() . "/t/test-inputs/" . basename( $0, ".t" );
 Readonly::Array my @ranking_tests => (
-  { in => "A = B > C = D > E = F", out => [ [ 'A', 'B' ], [ 'C', 'D' ], [ 'E', 'F' ] ] },
-  { in => "A>B ^2", out => [ { weight => 2 }, [ 'A' ], [ 'B' ] ], skip => "WIP" },
-  { in => "C>B>A * 700", out => [ { quantifier => 700 }, [ 'C' ], [ 'B' ], [ 'A' ] ], skip => "WIP" },
+  {
+      in => "A = B > C = D > E = F",
+      out => [ [ 'A', 'B' ], [ 'C', 'D' ], [ 'E', 'F' ] ]
+  },
+  {
+      in => "A>B ^2",
+      out => [ { weight => 2 }, [ 'A' ], [ 'B' ] ]
+  },
+  {
+      in => "C>B>A * 700",
+      out => [ { quantifier => 700 }, [ 'C' ], [ 'B' ], [ 'A' ] ]
+  },
 );
 
 # Condorcet Election Format (CEF) file tests
@@ -38,7 +47,7 @@ Readonly::Array my @ranking_tests => (
 foreach my $test_case ( @ranking_tests ) {
     SKIP: {
         if ( exists $test_case->{skip}) {
-            skip $test_case->{skip}, 1;
+            skip $test_case->{skip} . " ( " . $test_case->{in} . " )", 1; # update count when tests added below
         } else {
             my $parser = PrefVote::Core::Input::CEF_Parser->new();
             my $in_str = $test_case->{in};
