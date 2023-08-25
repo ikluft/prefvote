@@ -29,8 +29,10 @@ Readonly::Array my @ranking_tests => (
 );
 
 # Condorcet Election Format (CEF) file tests
-my $parser1 = PrefVote::Core::Input::CEF_Parser->new();
-isa_ok( $parser1, "PrefVote::Core::Input::CEF_Parser", "parser1");
+{
+    my $parser1 = PrefVote::Core::Input::CEF_Parser->new();
+    isa_ok( $parser1, "PrefVote::Core::Input::CEF_Parser", "parser1");
+}
 
 # run per-line parser tests
 foreach my $test_case ( @ranking_tests ) {
@@ -38,9 +40,10 @@ foreach my $test_case ( @ranking_tests ) {
         if ( exists $test_case->{skip}) {
             skip $test_case->{skip}, 1;
         } else {
+            my $parser = PrefVote::Core::Input::CEF_Parser->new();
             my $in_str = $test_case->{in};
             my $out_struct = $test_case->{out};
-            my $result = $parser1->parse( $in_str );
+            my $result = $parser->parse( $in_str );
             say STDERR "in: $in_str / result: " . Dumper( $result );
             is_deeply( $result, $out_struct, "parser line: $in_str" );
         }
