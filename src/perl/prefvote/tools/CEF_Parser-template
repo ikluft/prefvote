@@ -20,6 +20,7 @@ package <<$package>>;
 use strict;
 use warnings;
 use autodie;
+use feature qw(say);
 use Carp qw(croak);
 
 @PrefVote::Core::Input::CEF_Parser::ISA = qw(Parse::Yapp::Driver);

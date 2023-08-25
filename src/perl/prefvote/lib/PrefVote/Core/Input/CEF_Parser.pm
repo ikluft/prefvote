@@ -20,6 +20,7 @@ package PrefVote::Core::Input::CEF_Parser;
 use strict;
 use warnings;
 use autodie;
+use feature qw(say);
 use Carp qw(croak);
 
 @PrefVote::Core::Input::CEF_Parser::ISA = qw(Parse::Yapp::Driver);
@@ -505,16 +506,16 @@ sub _Parse {
 #line 8 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
 
     use Readonly;
-    Readonly::Hash my %CEF_TOKENS => (
-        EMPTY_RANKING => qr(/EMPTY_RANKING/)x,
-        TAGDELIM      => qr([|][|])x,
-        ','           => qr([,])x,
-        '^'           => qr([\^])x,
-        '*'           => qr([*])x,
-        '='           => qr([=])x,
-        '>'           => qr([>])x,
-        INT           => qr(\d+)x,
-        WORD          => qr(\w+)x,
+    Readonly::Array my @CEF_TOKENS => (
+        [ EMPTY_RANKING => qr(/EMPTY_RANKING/)x, ],
+        [ TAGDELIM      => qr([|][|])x, ],
+        [ ','           => qr([,])x, ],
+        [ '^'           => qr([\^])x, ],
+        [ '*'           => qr([*])x, ],
+        [ '='           => qr([=])x, ],
+        [ '>'           => qr([>])x, ],
+        [ INT           => qr(\d+)x, ],
+        [ WORD          => qr(\w+)x, ],
     );
 
 
@@ -528,217 +529,217 @@ sub new {
 [
 	{#State 0
 		ACTIONS => {
-			'WORD' => 12,
-			'INT' => 7,
-			'EMPTY_RANKING' => 5
+			'INT' => 9,
+			'EMPTY_RANKING' => 3,
+			'WORD' => 5
 		},
 		GOTOS => {
-			'ranking' => 8,
-			'tag' => 11,
-			'choice_list' => 10,
-			'words' => 9,
-			'line' => 4,
-			'candidate' => 3,
-			'word' => 2,
-			'tags' => 1,
-			'equal_list' => 6
+			'word' => 8,
+			'line' => 1,
+			'tag' => 6,
+			'choice_list' => 2,
+			'tags' => 7,
+			'candidate' => 12,
+			'ranking' => 11,
+			'words' => 4,
+			'equal_list' => 10
 		}
 	},
 	{#State 1
 		ACTIONS => {
-			'TAGDELIM' => 13,
-			"," => 14
+			'' => 13
 		}
 	},
 	{#State 2
-		DEFAULT => -21
-	},
-	{#State 3
-		DEFAULT => -11
-	},
-	{#State 4
 		ACTIONS => {
-			'' => 15
-		}
-	},
-	{#State 5
-		DEFAULT => -7
-	},
-	{#State 6
-		ACTIONS => {
-			"=" => 16
-		},
-		DEFAULT => -9
-	},
-	{#State 7
-		DEFAULT => -23
-	},
-	{#State 8
-		DEFAULT => -2
-	},
-	{#State 9
-		ACTIONS => {
-			'TAGDELIM' => -5,
-			"," => -5,
-			'WORD' => 12,
-			'INT' => 7
-		},
-		DEFAULT => -12,
-		GOTOS => {
-			'word' => 17
-		}
-	},
-	{#State 10
-		ACTIONS => {
-			"*" => 21,
-			">" => 18,
-			"^" => 22
+			"*" => 18,
+			">" => 15,
+			"^" => 16
 		},
 		DEFAULT => -13,
 		GOTOS => {
-			'multipliers' => 20,
-			'weight' => 19,
-			'quantifier' => 23
+			'weight' => 17,
+			'multipliers' => 14,
+			'quantifier' => 19
 		}
 	},
-	{#State 11
-		DEFAULT => -4
+	{#State 3
+		DEFAULT => -7
 	},
-	{#State 12
+	{#State 4
+		ACTIONS => {
+			'WORD' => 5,
+			"," => -5,
+			'TAGDELIM' => -5,
+			'INT' => 9
+		},
+		DEFAULT => -12,
+		GOTOS => {
+			'word' => 20
+		}
+	},
+	{#State 5
 		DEFAULT => -22
 	},
-	{#State 13
+	{#State 6
+		DEFAULT => -4
+	},
+	{#State 7
 		ACTIONS => {
-			'INT' => 7,
-			'EMPTY_RANKING' => 5,
-			'WORD' => 12
-		},
-		GOTOS => {
-			'choice_list' => 10,
-			'words' => 24,
-			'equal_list' => 6,
-			'word' => 2,
-			'ranking' => 25,
-			'candidate' => 3
+			'TAGDELIM' => 21,
+			"," => 22
 		}
+	},
+	{#State 8
+		DEFAULT => -21
+	},
+	{#State 9
+		DEFAULT => -23
+	},
+	{#State 10
+		ACTIONS => {
+			"=" => 23
+		},
+		DEFAULT => -9
+	},
+	{#State 11
+		DEFAULT => -2
+	},
+	{#State 12
+		DEFAULT => -11
+	},
+	{#State 13
+		DEFAULT => 0
 	},
 	{#State 14
-		ACTIONS => {
-			'INT' => 7,
-			'WORD' => 12
-		},
-		GOTOS => {
-			'word' => 2,
-			'tag' => 26,
-			'words' => 27
-		}
+		DEFAULT => -6
 	},
 	{#State 15
-		DEFAULT => 0
+		ACTIONS => {
+			'WORD' => 5,
+			'INT' => 9
+		},
+		GOTOS => {
+			'words' => 24,
+			'equal_list' => 25,
+			'word' => 8,
+			'candidate' => 12
+		}
 	},
 	{#State 16
 		ACTIONS => {
-			'WORD' => 12,
-			'INT' => 7
-		},
-		GOTOS => {
-			'word' => 2,
-			'candidate' => 28,
-			'words' => 24
+			'INT' => 26
 		}
 	},
 	{#State 17
-		DEFAULT => -20
+		ACTIONS => {
+			"*" => 18
+		},
+		DEFAULT => -17,
+		GOTOS => {
+			'quantifier' => 27
+		}
 	},
 	{#State 18
 		ACTIONS => {
-			'WORD' => 12,
-			'INT' => 7
-		},
-		GOTOS => {
-			'word' => 2,
-			'candidate' => 3,
-			'words' => 24,
-			'equal_list' => 29
+			'INT' => 28
 		}
 	},
 	{#State 19
 		ACTIONS => {
-			"*" => 21
+			"^" => 16
 		},
-		DEFAULT => -17,
+		DEFAULT => -16,
 		GOTOS => {
-			'quantifier' => 30
+			'weight' => 29
 		}
 	},
 	{#State 20
-		DEFAULT => -6
+		DEFAULT => -20
 	},
 	{#State 21
 		ACTIONS => {
-			'INT' => 31
+			'WORD' => 5,
+			'EMPTY_RANKING' => 3,
+			'INT' => 9
+		},
+		GOTOS => {
+			'word' => 8,
+			'candidate' => 12,
+			'ranking' => 30,
+			'words' => 24,
+			'choice_list' => 2,
+			'equal_list' => 10
 		}
 	},
 	{#State 22
 		ACTIONS => {
-			'INT' => 32
+			'INT' => 9,
+			'WORD' => 5
+		},
+		GOTOS => {
+			'tag' => 31,
+			'words' => 32,
+			'word' => 8
 		}
 	},
 	{#State 23
 		ACTIONS => {
-			"^" => 22
+			'INT' => 9,
+			'WORD' => 5
 		},
-		DEFAULT => -16,
 		GOTOS => {
-			'weight' => 33
+			'words' => 24,
+			'word' => 8,
+			'candidate' => 33
 		}
 	},
 	{#State 24
 		ACTIONS => {
-			'WORD' => 12,
-			'INT' => 7
+			'WORD' => 5,
+			'INT' => 9
 		},
 		DEFAULT => -12,
 		GOTOS => {
-			'word' => 17
+			'word' => 20
 		}
 	},
 	{#State 25
-		DEFAULT => -1
-	},
-	{#State 26
-		DEFAULT => -3
-	},
-	{#State 27
 		ACTIONS => {
-			'WORD' => 12,
-			'INT' => 7
-		},
-		DEFAULT => -5,
-		GOTOS => {
-			'word' => 17
-		}
-	},
-	{#State 28
-		DEFAULT => -10
-	},
-	{#State 29
-		ACTIONS => {
-			"=" => 16
+			"=" => 23
 		},
 		DEFAULT => -8
 	},
-	{#State 30
-		DEFAULT => -15
-	},
-	{#State 31
-		DEFAULT => -18
-	},
-	{#State 32
+	{#State 26
 		DEFAULT => -19
 	},
-	{#State 33
+	{#State 27
+		DEFAULT => -15
+	},
+	{#State 28
+		DEFAULT => -18
+	},
+	{#State 29
 		DEFAULT => -14
+	},
+	{#State 30
+		DEFAULT => -1
+	},
+	{#State 31
+		DEFAULT => -3
+	},
+	{#State 32
+		ACTIONS => {
+			'INT' => 9,
+			'WORD' => 5
+		},
+		DEFAULT => -5,
+		GOTOS => {
+			'word' => 20
+		}
+	},
+	{#State 33
+		DEFAULT => -10
 	}
 ],
                                   yyrules  =>
@@ -891,13 +892,16 @@ sub
 
 sub _Error
 {
-    exists $_[0]->YYData->{ERRMSG}
+    my( $parser ) = @_;
+    exists $parser->YYData->{ERRMSG}
         and do {
-        print $_[0]->YYData->{ERRMSG};
-        delete $_[0]->YYData->{ERRMSG};
-        return;
+            say $parser->YYData->{ERRMSG};
+            delete $parser->YYData->{ERRMSG};
+            return;
         };
-    print "Syntax error.\n";
+    say "Syntax error at position " . $parser->{USER}{CHARNO}
+        . ", found " . $parser->YYCurtok . " '" . $parser->YYCurval . "'"
+        . ", expected " . join( ' ', $parser->YYExpect );
     return;
 }
 
@@ -908,12 +912,16 @@ sub _Lexer
     $parser->YYData->{INPUT}
         or return ( '', undef );
 
-    $parser->YYData->{INPUT} =~ s/^ \s//x;
+    if( $parser->YYData->{INPUT} =~ s/^ ( \s+ )//x ) {
+        $parser->{USER}{CHARNO} += length $1;
+    }
 
     for ( $parser->YYData->{INPUT} ) {
-        foreach my $key ( keys %CEF_TOKENS ) {
-            if (s/ ^ ( $CEF_TOKENS{$key} ) //x) {
-                return ( $key, $1 );
+        foreach my $token_pair ( @CEF_TOKENS ) {
+            my ( $token_name, $token_regex ) = @$token_pair;
+            if (s/ ^ ( $token_regex ) //x) {
+                $parser->{USER}{CHARNO} += length $1;
+                return ( $token_name, $1 );
             }
         }
     }
@@ -924,6 +932,7 @@ sub parse
 {
     my ($self, $input_str) = @_;
     $self->YYData->{INPUT} = $input_str;
+    $self->{USER}{CHARNO}  = 0;
     my $result = $self->YYParse( yylex => \&_Lexer, yyerror => \&_Error );
     return $result;
 }

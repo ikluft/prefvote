@@ -7,16 +7,16 @@
 
 %{
     use Readonly;
-    Readonly::Hash my %CEF_TOKENS => (
-        EMPTY_RANKING => qr(/EMPTY_RANKING/)x,
-        TAGDELIM      => qr([|][|])x,
-        ','           => qr([,])x,
-        '^'           => qr([\^])x,
-        '*'           => qr([*])x,
-        '='           => qr([=])x,
-        '>'           => qr([>])x,
-        INT           => qr(\d+)x,
-        WORD          => qr(\w+)x,
+    Readonly::Array my @CEF_TOKENS => (
+        [ EMPTY_RANKING => qr(/EMPTY_RANKING/)x, ],
+        [ TAGDELIM      => qr([|][|])x, ],
+        [ ','           => qr([,])x, ],
+        [ '^'           => qr([\^])x, ],
+        [ '*'           => qr([*])x, ],
+        [ '='           => qr([=])x, ],
+        [ '>'           => qr([>])x, ],
+        [ INT           => qr(\d+)x, ],
+        [ WORD          => qr(\w+)x, ],
     );
 %}
 
@@ -96,13 +96,16 @@ word:
 
 sub _Error
 {
-    exists $_[0]->YYData->{ERRMSG}
+    my( $parser ) = @_;
+    exists $parser->YYData->{ERRMSG}
         and do {
-        print $_[0]->YYData->{ERRMSG};
-        delete $_[0]->YYData->{ERRMSG};
-        return;
+            say $parser->YYData->{ERRMSG};
+            delete $parser->YYData->{ERRMSG};
+            return;
         };
-    print "Syntax error.\n";
+    say "Syntax error at position " . $parser->{USER}{CHARNO}
+        . ", found " . $parser->YYCurtok . " '" . $parser->YYCurval . "'"
+        . ", expected " . join( ' ', $parser->YYExpect );
     return;
 }
 
@@ -113,12 +116,16 @@ sub _Lexer
     $parser->YYData->{INPUT}
         or return ( '', undef );
 
-    $parser->YYData->{INPUT} =~ s/^ \s//x;
+    if( $parser->YYData->{INPUT} =~ s/^ ( \s+ )//x ) {
+        $parser->{USER}{CHARNO} += length $1;
+    }
 
     for ( $parser->YYData->{INPUT} ) {
-        foreach my $key ( keys %CEF_TOKENS ) {
-            if (s/ ^ ( $CEF_TOKENS{$key} ) //x) {
-                return ( $key, $1 );
+        foreach my $token_pair ( @CEF_TOKENS ) {
+            my ( $token_name, $token_regex ) = @$token_pair;
+            if (s/ ^ ( $token_regex ) //x) {
+                $parser->{USER}{CHARNO} += length $1;
+                return ( $token_name, $1 );
             }
         }
     }
@@ -129,6 +136,7 @@ sub parse
 {
     my ($self, $input_str) = @_;
     $self->YYData->{INPUT} = $input_str;
+    $self->{USER}{CHARNO}  = 0;
     my $result = $self->YYParse( yylex => \&_Lexer, yyerror => \&_Error );
     return $result;
 }
