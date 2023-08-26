@@ -35,12 +35,21 @@
 %%
 
 line:
-    tags TAGDELIM ranking       { return [ $_[2], @{$_[2]} ]; }
+    tags TAGDELIM ranking       {
+                                    my %attr;
+                                    if ( ref $_[3][0] eq 'HASH' ) {
+                                        # include multiplier hash contents if it exists
+                                        my $subattr = shift @{$_[3]};
+                                        %attr = %$subattr;
+                                    }
+                                    $attr{tags} = [ sort @{$_[1]} ];
+                                    return [ \%attr, @{$_[3]} ];
+                                }
 |   ranking                     { return $_[1]; }
 ;
 
 tags:
-    tags ',' tag                { return [ @{$_[1]}, @{$_[3]} ]; }
+    tags ',' tag                { return [ @{$_[1]}, $_[3] ]; }
 |   tag                         { return [ $_[1] ]; }
 ;
 
@@ -50,7 +59,7 @@ tag:
 
 ranking:
     choice_list multipliers     { return [ (defined $_[2]) ? ($_[2]) : (), @{$_[1]} ]; }
-|   EMPTY_RANKING               { return []; }
+|   EMPTY_RANKING multipliers   { return [ (defined $_[2]) ? ($_[2]) : () ]; }
 ;
 
 choice_list:
@@ -68,6 +77,7 @@ candidate:
 ;
 
 multipliers:
+    /* empty */
 |   quantifier weight           { return { %{$_[1]}, %{$_[2]} }; }
 |   weight quantifier           { return { %{$_[1]}, %{$_[2]} }; }
 |   quantifier                  { return $_[1]; }
@@ -96,17 +106,15 @@ word:
 
 sub _Error
 {
-    my( $parser ) = @_;
-    exists $parser->YYData->{ERRMSG}
-        and do {
-            say $parser->YYData->{ERRMSG};
-            delete $parser->YYData->{ERRMSG};
-            return;
-        };
-    say "Syntax error at position " . $parser->{USER}{CHARNO}
-        . ", found " . $parser->YYCurtok . " '" . $parser->YYCurval . "'"
-        . ", expected " . join( ' ', $parser->YYExpect );
-    return;
+    my ( $parser ) = @_;
+    my $expect_str = ( scalar $parser->YYExpect > 0 ) ? ( join( ' ', sort $parser->YYExpect )) : "";
+    my $errmsg = ( exists $parser->YYData->{ERRMSG} )
+        ?  $parser->YYData->{ERRMSG}
+        : "Syntax error at position " . $parser->{USER}{CHARNO}
+            . (( defined $parser->YYCurtok and length $parser->YYCurtok > 0 )
+                ? ", found " . $parser->YYCurtok . " '" . $parser->YYCurval . "'" : "" )
+            . (( length $expect_str > 0 ) ? ", expected $expect_str" : "" );
+    croak $errmsg;
 }
 
 sub _Lexer
