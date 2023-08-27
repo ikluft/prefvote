@@ -69,6 +69,10 @@ Readonly::Array my @ranking_tests => (
       out => [ { tags => [ qw(tag1 tag2)], quantifier => 5, weight => 2 }, [ 'A' ], [ 'B' ] ],
   },
   {
+      in => "tag2,tag1||A>B*5^2",
+      out => [ { tags => [ qw(tag1 tag2)], quantifier => 5, weight => 2 }, [ 'A' ], [ 'B' ] ],
+  },
+  {
       in => "C>B>A * 700 * 2",
       error => qr(^Syntax error at position 13, found \* '\*'),
   },
@@ -131,6 +135,14 @@ Readonly::Array my @ranking_tests => (
   {
       in => "DYSFUNCTIONAL > FACTIOUS > ABNORMAL > CHAOTIC > EVIL > BORING",
       out => [ [ "DYSFUNCTIONAL" ], [ "FACTIOUS" ], [ "ABNORMAL" ], [ "CHAOTIC" ], [ "EVIL" ], [ "BORING" ] ],
+  },
+  {
+      in => "A >",
+      error => qr(^Syntax error at position 3, expected INT WORD),
+  },
+  {
+      in => "> A",
+      error => qr(^Syntax error at position 1, found > '>', expected EMPTY_RANKING INT WORD),
   },
 );
 
