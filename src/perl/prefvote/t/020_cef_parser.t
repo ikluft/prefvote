@@ -163,52 +163,51 @@ sub count_tests
 # declare test count
 plan tests => count_tests();
 
-# Condorcet Election Format (CEF) file tests
-{
-    # check correct class from new() method
-    my $parser1 = PrefVote::Core::Input::CEF_Parser->new();
-    isa_ok( $parser1, "PrefVote::Core::Input::CEF_Parser", "parser1");
-}
-
 # run per-line parser tests
-my $test_group = 1;
-foreach my $test_case ( @ranking_tests ) {
-    # test for errors or successful parsing
-    if ( exists $test_case->{error}) {
-        # error expected
-        SKIP: {
-            if ( exists $test_case->{skip}) {
-                # update count when tests added below
-                skip $test_group . ": " . $test_case->{skip} . " ( " . $test_case->{in} . " )", 2;
-            } else {
-                my $parser = PrefVote::Core::Input::CEF_Parser->new();
-                my $in_str = $test_case->{in};
-                my $err_regex= $test_case->{error};
-                my $result;
-                dies_ok( sub { $result = $parser->parse( $in_str ); }, "$test_group: $in_str / dies as expected");
-                my $err_result = $@;
-                $debug_mode and say STDERR "$test_group: in: $in_str / result: error $err_result";
-                like( $err_result, $err_regex, "$test_group: $in_str / expected error: $err_regex");
+{
+    my $test_group = 1;
+    my $parser = PrefVote::Core::Input::CEF_Parser->new();
+
+    # check correct class from new() method
+    isa_ok( $parser, "PrefVote::Core::Input::CEF_Parser", "parser1");
+
+    # perform tests from list
+    foreach my $test_case ( @ranking_tests ) {
+        # test for errors or successful parsing
+        if ( exists $test_case->{error}) {
+            # error expected
+            SKIP: {
+                if ( exists $test_case->{skip}) {
+                    # update count when tests added below
+                    skip $test_group . ": " . $test_case->{skip} . " ( " . $test_case->{in} . " )", 2;
+                } else {
+                    my $in_str = $test_case->{in};
+                    my $err_regex= $test_case->{error};
+                    my $result;
+                    dies_ok( sub { $result = $parser->parse( $in_str ); }, "$test_group: $in_str / dies as expected");
+                    my $err_result = $@;
+                    $debug_mode and say STDERR "$test_group: in: $in_str / result: error $err_result";
+                    like( $err_result, $err_regex, "$test_group: $in_str / expected error: $err_regex");
+                }
+            }
+        } else {
+            # successful parse expected
+            SKIP: {
+                if ( exists $test_case->{skip}) {
+                    # update count when tests added below
+                    skip $test_group . ": " . $test_case->{skip} . " ( " . $test_case->{in} . " )", 2;
+                } else {
+                    my $in_str = $test_case->{in};
+                    my $out_struct = $test_case->{out};
+                    my $result;
+                    lives_ok( sub { $result = $parser->parse( $in_str ); }, "$test_group: $in_str / parser runs");
+                    $debug_mode and say STDERR "$test_group: in: $in_str / result: " . Dumper( $result );
+                    is_deeply( $result, $out_struct, "$test_group: $in_str / data check" );
+                }
             }
         }
-    } else {
-        # successful parse expected
-        SKIP: {
-            if ( exists $test_case->{skip}) {
-                # update count when tests added below
-                skip $test_group . ": " . $test_case->{skip} . " ( " . $test_case->{in} . " )", 2;
-            } else {
-                my $parser = PrefVote::Core::Input::CEF_Parser->new();
-                my $in_str = $test_case->{in};
-                my $out_struct = $test_case->{out};
-                my $result;
-                lives_ok( sub { $result = $parser->parse( $in_str ); }, "$test_group: $in_str / parser runs");
-                $debug_mode and say STDERR "$test_group: in: $in_str / result: " . Dumper( $result );
-                is_deeply( $result, $out_struct, "$test_group: $in_str / data check" );
-            }
-        }
+        $test_group++;
     }
-    $test_group++;
 }
 
 1;
