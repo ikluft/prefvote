@@ -20,6 +20,29 @@ use Data::Dumper;
 # input directory for CEF data files
 Readonly::Scalar my $debug_mode => (( $ENV{PREFVOTE_DEBUG} // 0 ) or ( $ENV{CEF_PARSER_DEBUG} // 0 )) and 1;
 Readonly::Array my @ranking_tests => (
+    # tests from CEF spec examples
+    {
+        in => "Candidate_A > Candidate_B > Candidate_C",
+        out => [ ['Candidate_A'], ['Candidate_B'], ['Candidate_C'] ],
+    },
+    {
+        in => "Candidate_C > Candidate_A = Candidate_B",
+        out => [ ['Candidate_C'], [ 'Candidate_A', 'Candidate_B' ] ],
+    },
+    {
+        in => "Candidate_B = Candidate_A > Candidate_C",
+        out => [ [ 'Candidate_B', 'Candidate_A' ], ['Candidate_C'] ],
+    },
+    {
+        in => "Candidate_C",
+        out => [ ['Candidate_C'] ],
+    },
+    {
+        in => "Candidate_B > Candidate_C",
+        out => [ ['Candidate_B'], ['Candidate_C'] ],
+    },
+
+    # tests bassed on syntax features
   {
       in => "",
       error => qr(^Syntax error at position 0, expected EMPTY_RANKING INT WORD),
