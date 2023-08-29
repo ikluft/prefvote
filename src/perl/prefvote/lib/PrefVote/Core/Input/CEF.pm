@@ -131,63 +131,6 @@ sub debug_print
 # Condorcet Election Format (CEF) parser functions
 #
 
-# parse candidate preference order
-# instance method
-sub cef_fetch_prefs
-{
-    my ( $self, $line, $line_params ) = @_;
-    my @pref_order;
-
-    # filter out invalid empty ballot (use /EMPTY_RANKING/ for explicit empty ballot)
-    if ( $line =~ /^ \s* $/x ) {
-        $self->debug_print("cef_fetch_prefs: drop empty ballot");
-        return;
-    }
-
-    # parse candidate preference order from string
-    while ( length($line) > 0 ) {
-
-        # handle line with no > or =
-        if ( $line !~ /[>=]/x ) {
-            if ( $line =~ qr(^ \s* ( \w+ ) \s* $)x ) {
-                $self->debug_print("cef_fetch_prefs: record ballot for $1");
-                push @pref_order, [$1];
-                $line = "";
-                last;
-            } else {
-                $self->debug_print("cef_fetch_prefs: drop non-empty misformatted ballot");
-                return;    # parse error - drop ballot
-            }
-        }
-
-        # handle line with > or =
-        if ( $line =~ qr(^ ( ( \s* \w+ \s* = )* \s* \w+ \s* ) )x ) {
-            # '=' operator marks equality
-            my $match = $1;
-            substr $line, 0, length $match, "";    # remove matched segment from line
-            $match =~ s/^ \s* //x;                 # remove leading whitespace
-            $match =~ s/ \s* $//x;                 # remove trailing whitespace
-            my @cand = split qr( \s* = \s* )x, $match;
-            push @pref_order, [@cand];
-            $self->debug_print("cef_fetch_prefs: record ballot for: ".(join "=", @cand));
-        }
-        if ( $line =~ qr(^ ( \s* [>] \s* ) )x ) {
-            # '>' operator marks preference
-            my $match = $1;
-            substr $line, 0, length $match, "";    # remove matched segment from line
-            $match =~ s/^ \s* //x;                 # remove leading whitespace
-            $match =~ s/ \s* $//x;                 # remove trailing whitespace
-            # TODO
-        }
-    }
-
-    # prepend line paremeters
-    if ( ref $line_params eq "HASH" and scalar keys %$line_params > 0 ) {
-        unshift @pref_order, $line_params;
-    }
-    return @pref_order;
-}
-
 # collect candidate list from ballots when no candidate list is provided
 # note: this is not necessarily a good practice because erroneous candidates on ballots usually should be discarded
 # instance method
@@ -241,9 +184,9 @@ sub cef_second_pass
     $self->{vote_def}{params}{choices} = \%choices;
 
     # scan ballots for explicit /EMPTY_RANKING/ marker
-    my $ballot_count = $self->ballot_count();
+    my $ballot_count = scalar @{$self->{ballots}};
     for ( my $ballot_index = 0 ; $ballot_index < $ballot_count ; $ballot_index++ ) {
-        my $ballot = $self->ballot_get($ballot_index);
+        my $ballot = $self->{ballots}[$ballot_index];
         if ( ( scalar @$ballot ) == 1 and $ballot->[0] =~ qr(^ \s* \/EMPTY_RANKING\/ \s* $)x ) {
             $self->ballot_set( $ballot_index, [] );
         }
@@ -258,14 +201,17 @@ sub cef_second_pass
 sub parse
 {
     my $self     = shift;
-    my $filepath = $self->filepath();
+    my $filepath = $self->get("filepath");
     my %params;
     $self->debug_print("parse($filepath)");
 
     # initialize empty vote parameters, ballot list & test data
-    $self->vote_def( { method => $cef_default_method, params => {} } );
-    $self->ballots( [] );
-    $self->test_data( [] );
+    $self->{vote_def} = { method => $cef_default_method, params => {} };
+    $self->{ballots} = [];
+    $self->{test_data} = [];
+
+    # instantiate a parser
+    my $parser = PrefVote::Core::Input::CEF_Parser->new();
 
     # read file and process lines
     ## no critic (RequireBriefOpen)
@@ -279,7 +225,7 @@ sub parse
         if ( $line =~ qr(^ \s* \#/ \s* ([\w\s]+?) \s* : \s* (.*?) \s* $)x ) {
             $self->debug_print("CEF definition line: $1 - $2");
             my ( $param_name, $param_value ) = ( fc $1, $2 );
-            if ( not $self->ballot_empty() ) {
+            if ( scalar @{$self->{ballots}} > 0 ) {
                 croak( __PACKAGE__ . "->parse($filepath): can't define $param_name after first ballot line" );
             }
             if ( exists $params{$param_name} ) {
@@ -301,52 +247,9 @@ sub parse
         # process ballot line
         #
 
-        # parse tags, remove from beginning of line
-        my %line_params;
-        my $tag_index = index $line, '||';
-        if ( $tag_index != -1 ) {
-
-            # keep tags and remove from the ballot line
-            my $tag_str = substr $line, 0, $tag_index;
-            $tag_str =~ s/^ \s+ //x;
-            $tag_str =~ s/\s+ $//x;
-            $line_params{tags} = split /\s* , \s*/x, $tag_str;
-            $self->debug_print( "parse: tags=" . $line_params{tags} );
-            substr $line, 0, $tag_index + 2, "";    # remove tags from beginning of line
-        }
-
-        # parse quantifier and weight, remove from end of line
-        while ( $line =~ /(\s* ([*^]) \s* (\d+) \s* )$/x ) {
-
-            # keep quantity and remove substring from the ballot line
-            my $match    = $1;
-            my $op       = $2;
-            my $quantity = $3;
-            if ( not exists $op_names{$op} ) {
-                croak( __PACKAGE__ . "->parse(): should not happen: unrecognized operator $op" );
-            }
-            my $op_name = $op_names{$op};
-            if ( exists $line_params{$op_name} ) {
-                croak( __PACKAGE__ . "->parse(): error: $op_name specified more than once" );
-            }
-            $line_params{$op_name} = $quantity;
-            $self->debug_print( "parse: $op_name=" . $line_params{$op_name} );
-            substr $line, -length($match), length($match), "";    # remove matching substring from end of line
-        }
-
-        # process empty ranking
-        if ( $line =~ qr(^ \s* /EMPTY_RANKING/ \s* $ )x ) {
-
-            # save the empty ranking as-is initially
-            # fill it in on second pass in case candidate names were not specified and are collected from ballots
-            $self->ballot_push( ['/EMPTY_RANKING/'] );
-            $self->debug_print("parse: got /EMPTY_RANKING/");
-            next;
-        }
-
-        # parse candidate preference order
-        my @pref_order = $self->cef_fetch_prefs( $line, \%line_params );
-        $self->ballot_push( \@pref_order );
+        # parse candidate preference order from line
+        my @pref_order = $parser->parse( $line );
+        push @{$self->{ballots}}, \@pref_order;
         $self->debug_print( "parse: pref_order=" . join( ",", @pref_order ) );
     }
 

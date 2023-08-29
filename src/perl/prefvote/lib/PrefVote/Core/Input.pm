@@ -19,6 +19,8 @@ use Carp qw(croak);
 use Readonly;
 use File::Basename;
 use YAML::XS;
+use PrefVote::Core::Exception;
+use PrefVote::Core::Input::CEF;
 
 #
 # class definition via Moo
@@ -190,7 +192,7 @@ As called from PrefVote::Core:
     use PrefVote::Core::Input;
 
     # ...
-    my %input_doc = PrefVote::Core::Input->new($filepath);
+    my %input_doc = PrefVote::Core::Input->new(filepath => $filepath);
 
 
 =head1 DESCRIPTION
