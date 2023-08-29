@@ -4,20 +4,20 @@ use strict;
 use warnings;
 use autodie;
 use feature qw(say);
-use Carp qw(croak);
+use Carp    qw(croak);
 use Test::More skip_all => "WIP";
 use Test::Exception;
 use Readonly;
 use File::Basename qw(basename);
-use Cwd qw(getcwd);
+use Cwd            qw(getcwd);
 use YAML::XS;
 use Data::Dumper;
 use PrefVote::Core::Input;
 
 # constants for test fixtures
-Readonly::Scalar my $input_dir => getcwd() . "/t/test-inputs/" . basename( $0, ".t" );
+Readonly::Scalar my $input_dir           => getcwd() . "/t/test-inputs/" . basename( $0, ".t" );
 Readonly::Scalar my $tests_per_good_file => 1;
-Readonly::Scalar my $tests_per_bad_file => 1;
+Readonly::Scalar my $tests_per_bad_file  => 1;
 
 # run tests per CEF test file
 sub cef_file_tests
@@ -26,7 +26,7 @@ sub cef_file_tests
     my $flags    = shift;
 
     # use file basename as test name
-    my $test_name = basename( $filepath );
+    my $test_name = basename($filepath);
 
     # check flags: if neither good or bad are set, default to good
     if ( not exists $flags->{bad} and not exists $flags->{good} ) {
@@ -37,10 +37,10 @@ sub cef_file_tests
     # run tests
     my %input_doc;
     if ( $flags->{good} // 0 ) {
-        lives_ok( sub { %input_doc = PrefVote::Core::Input->new(filepath => $filepath); },
+        lives_ok( sub { %input_doc = PrefVote::Core::Input->new( filepath => $filepath ); },
             "$test_name good as expected" );
     } else {
-        dies_ok( sub { %input_doc = PrefVote::Core::Input->new(filepath => $filepath); },
+        dies_ok( sub { %input_doc = PrefVote::Core::Input->new( filepath => $filepath ); },
             "$test_name bad as expected" );
     }
 }
