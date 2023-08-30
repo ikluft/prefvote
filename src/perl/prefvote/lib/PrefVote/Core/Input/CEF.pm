@@ -90,7 +90,8 @@ sub init
     }
     
     # initialize parameters
-    foreach my $key ( keys %args ) {
+    $self->{_in_keys} = [ keys %args ];
+    foreach my $key ( @{$self->{_in_keys}} ) {
         $self->{$key} = $args{$key};
     }
 
@@ -314,10 +315,22 @@ sub xfer
 {
     my ($self, $recipient) = @_;
     my @skipped;
+
+    # hashify list of input parameter keys so we know not to warn since they usually exist in destination
+    my %in_keys = grep { return ($_ => 1) } @{$self->{_in_keys}};
+    
+    # transfer object fields to destination, except internal-only or those already existing in desetination
     foreach my $key (keys %$self) {
+        if (substr($key, 0, 1) eq "_") {
+            # skip transfer for internal-only data prefixed with underscore "_"
+            next;
+        }
         if (exists $recipient->{$key}) {
-            # do not overwrite data in the recipient object - warn about it
-            push @skipped, $key
+            # only warn about a field conflict if it wasn't in the input paramerters
+            if (not exists $in_keys{$key}) {
+                # do not overwrite data in the recipient object - warn about it
+                push @skipped, $key;
+            }
         } else {
             # copy item
             $recipient->{$key} = $self->{$key};

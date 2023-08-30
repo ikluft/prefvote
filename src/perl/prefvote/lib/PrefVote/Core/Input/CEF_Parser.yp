@@ -31,6 +31,9 @@
 %token '='       /* equality op */
 %token EMPTY_RANKING  /* empty ballot ranking denoted by string /EMPTY_RANKING/ */
 
+# start token
+%start line
+
 /* grammar */
 %%
 

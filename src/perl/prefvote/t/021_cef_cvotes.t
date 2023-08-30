@@ -5,7 +5,8 @@ use warnings;
 use autodie;
 use feature qw(say);
 use Carp    qw(croak);
-use Test::More skip_all => "WIP";
+use Test::More;
+#use Test::More skip_all => "WIP";
 use Test::Exception;
 use Readonly;
 use File::Basename qw(basename);
@@ -35,12 +36,12 @@ sub cef_file_tests
     my $flag_str = join " ", sort keys %$flags;
 
     # run tests
-    my %input_doc;
+    my $input_doc;
     if ( $flags->{good} // 0 ) {
-        lives_ok( sub { %input_doc = PrefVote::Core::Input->new( filepath => $filepath ); },
+        lives_ok( sub { $input_doc = PrefVote::Core::Input->new( filepath => $filepath ); },
             "$test_name good as expected" );
     } else {
-        dies_ok( sub { %input_doc = PrefVote::Core::Input->new( filepath => $filepath ); },
+        dies_ok( sub { $input_doc = PrefVote::Core::Input->new( filepath => $filepath ); },
             "$test_name bad as expected" );
     }
 }
@@ -50,7 +51,7 @@ if ( !-d $input_dir ) {
     BAIL_OUT("can't find test inputs directory: expected $input_dir");
 }
 opendir( my $dh, $input_dir ) or BAIL_OUT("can't open $input_dir directory");
-my @files = sort grep { /^[^.]/ and -f "$input_dir/$_" } readdir($dh);
+my @files = sort grep { /^[^.].*\.cvotes/ and -f "$input_dir/$_" } readdir($dh);
 closedir $dh;
 
 # load test metadata
