@@ -515,7 +515,7 @@ sub _Parse {
         [ '='           => qr([=])x, ],
         [ '>'           => qr([>])x, ],
         [ INT           => qr(\d+)x, ],
-        [ WORD          => qr(\w+)x, ],
+        [ WORD          => qr([\w!$%&+-.:;@]+)x, ],
     );
 
 
@@ -529,118 +529,106 @@ sub new {
 [
 	{#State 0
 		ACTIONS => {
-			'INT' => 1,
-			'EMPTY_RANKING' => 7,
-			'WORD' => 11
+			'WORD' => 5,
+			'INT' => 3,
+			'EMPTY_RANKING' => 12
 		},
 		GOTOS => {
-			'line' => 8,
-			'equal_list' => 6,
-			'word' => 5,
-			'tag' => 12,
+			'candidate' => 1,
+			'line' => 2,
+			'word' => 6,
+			'words' => 7,
+			'tag' => 8,
+			'tags' => 9,
+			'equal_list' => 4,
 			'choice_list' => 10,
-			'candidate' => 9,
-			'ranking' => 3,
-			'words' => 4,
-			'tags' => 2
+			'ranking' => 11
 		}
 	},
 	{#State 1
-		DEFAULT => -23
+		DEFAULT => -11
 	},
 	{#State 2
 		ACTIONS => {
-			"," => 14,
-			'TAGDELIM' => 13
+			'' => 13
 		}
 	},
 	{#State 3
-		DEFAULT => -2
+		DEFAULT => -23
 	},
 	{#State 4
 		ACTIONS => {
-			'WORD' => 11,
-			"," => -5,
+			"=" => 14
+		},
+		DEFAULT => -9
+	},
+	{#State 5
+		DEFAULT => -22
+	},
+	{#State 6
+		DEFAULT => -21
+	},
+	{#State 7
+		ACTIONS => {
+			'INT' => 3,
+			'WORD' => 5,
 			'TAGDELIM' => -5,
-			'INT' => 1
+			"," => -5
 		},
 		DEFAULT => -12,
 		GOTOS => {
 			'word' => 15
 		}
 	},
-	{#State 5
-		DEFAULT => -21
-	},
-	{#State 6
-		ACTIONS => {
-			"=" => 16
-		},
-		DEFAULT => -9
-	},
-	{#State 7
-		ACTIONS => {
-			"*" => 17,
-			"^" => 20
-		},
-		DEFAULT => -13,
-		GOTOS => {
-			'multipliers' => 21,
-			'quantifier' => 18,
-			'weight' => 19
-		}
-	},
 	{#State 8
-		ACTIONS => {
-			'' => 22
-		}
+		DEFAULT => -4
 	},
 	{#State 9
-		DEFAULT => -11
+		ACTIONS => {
+			'TAGDELIM' => 17,
+			"," => 16
+		}
 	},
 	{#State 10
 		ACTIONS => {
-			">" => 23,
-			"*" => 17,
-			"^" => 20
+			"*" => 18,
+			"^" => 21,
+			">" => 19
 		},
 		DEFAULT => -13,
 		GOTOS => {
-			'weight' => 19,
-			'multipliers' => 24,
-			'quantifier' => 18
+			'multipliers' => 22,
+			'weight' => 20,
+			'quantifier' => 23
 		}
 	},
 	{#State 11
-		DEFAULT => -22
+		DEFAULT => -2
 	},
 	{#State 12
-		DEFAULT => -4
+		ACTIONS => {
+			"*" => 18,
+			"^" => 21
+		},
+		DEFAULT => -13,
+		GOTOS => {
+			'multipliers' => 24,
+			'weight' => 20,
+			'quantifier' => 23
+		}
 	},
 	{#State 13
-		ACTIONS => {
-			'INT' => 1,
-			'WORD' => 11,
-			'EMPTY_RANKING' => 7
-		},
-		GOTOS => {
-			'word' => 5,
-			'ranking' => 26,
-			'words' => 25,
-			'choice_list' => 10,
-			'candidate' => 9,
-			'equal_list' => 6
-		}
+		DEFAULT => 0
 	},
 	{#State 14
 		ACTIONS => {
-			'INT' => 1,
-			'WORD' => 11
+			'WORD' => 5,
+			'INT' => 3
 		},
 		GOTOS => {
-			'word' => 5,
-			'words' => 27,
-			'tag' => 28
+			'candidate' => 25,
+			'words' => 26,
+			'word' => 6
 		}
 	},
 	{#State 15
@@ -648,81 +636,93 @@ sub new {
 	},
 	{#State 16
 		ACTIONS => {
-			'WORD' => 11,
-			'INT' => 1
+			'WORD' => 5,
+			'INT' => 3
 		},
 		GOTOS => {
-			'word' => 5,
-			'words' => 25,
-			'candidate' => 29
+			'words' => 27,
+			'word' => 6,
+			'tag' => 28
 		}
 	},
 	{#State 17
 		ACTIONS => {
-			'INT' => 30
+			'WORD' => 5,
+			'INT' => 3,
+			'EMPTY_RANKING' => 12
+		},
+		GOTOS => {
+			'candidate' => 1,
+			'word' => 6,
+			'words' => 26,
+			'equal_list' => 4,
+			'choice_list' => 10,
+			'ranking' => 29
 		}
 	},
 	{#State 18
 		ACTIONS => {
-			"^" => 20
-		},
-		DEFAULT => -16,
-		GOTOS => {
-			'weight' => 31
+			'INT' => 30
 		}
 	},
 	{#State 19
 		ACTIONS => {
-			"*" => 17
+			'WORD' => 5,
+			'INT' => 3
+		},
+		GOTOS => {
+			'candidate' => 1,
+			'equal_list' => 31,
+			'words' => 26,
+			'word' => 6
+		}
+	},
+	{#State 20
+		ACTIONS => {
+			"*" => 18
 		},
 		DEFAULT => -17,
 		GOTOS => {
 			'quantifier' => 32
 		}
 	},
-	{#State 20
+	{#State 21
 		ACTIONS => {
 			'INT' => 33
 		}
 	},
-	{#State 21
-		DEFAULT => -7
-	},
 	{#State 22
-		DEFAULT => 0
+		DEFAULT => -6
 	},
 	{#State 23
 		ACTIONS => {
-			'INT' => 1,
-			'WORD' => 11
+			"^" => 21
 		},
+		DEFAULT => -16,
 		GOTOS => {
-			'word' => 5,
-			'candidate' => 9,
-			'words' => 25,
-			'equal_list' => 34
+			'weight' => 34
 		}
 	},
 	{#State 24
-		DEFAULT => -6
+		DEFAULT => -7
 	},
 	{#State 25
+		DEFAULT => -10
+	},
+	{#State 26
 		ACTIONS => {
-			'INT' => 1,
-			'WORD' => 11
+			'INT' => 3,
+			'WORD' => 5
 		},
 		DEFAULT => -12,
 		GOTOS => {
 			'word' => 15
 		}
 	},
-	{#State 26
-		DEFAULT => -1
-	},
 	{#State 27
 		ACTIONS => {
-			'WORD' => 11,
-			'INT' => 1
+			'WORD' => 5,
+			'INT' => 3
 		},
 		DEFAULT => -5,
 		GOTOS => {
@@ -733,13 +733,16 @@ sub new {
 		DEFAULT => -3
 	},
 	{#State 29
-		DEFAULT => -10
+		DEFAULT => -1
 	},
 	{#State 30
 		DEFAULT => -18
 	},
 	{#State 31
-		DEFAULT => -14
+		ACTIONS => {
+			"=" => 14
+		},
+		DEFAULT => -8
 	},
 	{#State 32
 		DEFAULT => -15
@@ -748,10 +751,7 @@ sub new {
 		DEFAULT => -19
 	},
 	{#State 34
-		ACTIONS => {
-			"=" => 16
-		},
-		DEFAULT => -8
+		DEFAULT => -14
 	}
 ],
                                   yyrules  =>
@@ -928,23 +928,42 @@ sub _Lexer
 {
     my ($parser) = shift;
 
+    # check if any input is available, otherwise signal end of input
     $parser->YYData->{INPUT}
         or return ( '', undef );
 
+    # remove leading whitespace before next token
     if( $parser->YYData->{INPUT} =~ s/^ ( \s+ )//x ) {
         $parser->{USER}{CHARNO} += length $1;
     }
 
-    for ( $parser->YYData->{INPUT} ) {
-        foreach my $token_pair ( @CEF_TOKENS ) {
-            my ( $token_name, $token_regex ) = @$token_pair;
-            if (s/ ^ ( $token_regex ) //x) {
-                $parser->{USER}{CHARNO} += length $1;
-                return ( $token_name, $1 );
+    # find first token from matching list
+    foreach my $token_pair ( @CEF_TOKENS ) {
+        my ( $token_name, $token_regex ) = @$token_pair;
+        if ( $parser->YYData->{INPUT} =~ s/ ^ ( $token_regex ) //x ) {
+            my $match = $1;
+
+            # a comment ends processing of the line
+            if ($parser->YYData->{INPUT} =~ /^#/ ) {
+                return ( '', undef );
             }
+
+            # check special case where a WORD begins with numerics, should return WORD instead of INT
+            if ( $token_name eq "INT" and ($parser->YYData->{INPUT} =~ /^\w/ )) {
+                $parser->YYData->{INPUT} =~ s/ ^ ( \w+ ) //x;
+                my $match2 = $1;
+                $token_name = "WORD";
+                $match .= $match2;
+            }
+
+            # return token name and match string
+            $parser->{USER}{CHARNO} += length $match;
+            return ( $token_name, $match );
         }
     }
-    return ('', undef);
+
+    # no recognized token found
+    $parser->YYError;
 }
 
 sub parse

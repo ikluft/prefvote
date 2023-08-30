@@ -16,6 +16,7 @@ use Data::Dumper;
 use PrefVote::Core::Input;
 
 # constants for test fixtures
+Readonly::Scalar my $debug_mode          => ( ( $ENV{PREFVOTE_DEBUG} // 0 ) or ( $ENV{CEF_PARSER_DEBUG} // 0 ) ) and 1;
 Readonly::Scalar my $input_dir           => getcwd() . "/t/test-inputs/" . basename( $0, ".t" );
 Readonly::Scalar my $tests_per_good_file => 1;
 Readonly::Scalar my $tests_per_bad_file  => 1;
@@ -25,6 +26,7 @@ sub cef_file_tests
 {
     my $filepath = shift;
     my $flags    = shift;
+    $debug_mode and say STDERR "debug: cef_file_tests($filepath)";
 
     # use file basename as test name
     my $test_name = basename($filepath);

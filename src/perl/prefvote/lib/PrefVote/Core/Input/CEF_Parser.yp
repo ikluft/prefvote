@@ -16,7 +16,7 @@
         [ '='           => qr([=])x, ],
         [ '>'           => qr([>])x, ],
         [ INT           => qr(\d+)x, ],
-        [ WORD          => qr(\w+)x, ],
+        [ WORD          => qr([\w!$%&+-.:;@]+)x, ],
     );
 %}
 
@@ -124,23 +124,42 @@ sub _Lexer
 {
     my ($parser) = shift;
 
+    # check if any input is available, otherwise signal end of input
     $parser->YYData->{INPUT}
         or return ( '', undef );
 
+    # remove leading whitespace before next token
     if( $parser->YYData->{INPUT} =~ s/^ ( \s+ )//x ) {
         $parser->{USER}{CHARNO} += length $1;
     }
 
-    for ( $parser->YYData->{INPUT} ) {
-        foreach my $token_pair ( @CEF_TOKENS ) {
-            my ( $token_name, $token_regex ) = @$token_pair;
-            if (s/ ^ ( $token_regex ) //x) {
-                $parser->{USER}{CHARNO} += length $1;
-                return ( $token_name, $1 );
+    # find first token from matching list
+    foreach my $token_pair ( @CEF_TOKENS ) {
+        my ( $token_name, $token_regex ) = @$token_pair;
+        if ( $parser->YYData->{INPUT} =~ s/ ^ ( $token_regex ) //x ) {
+            my $match = $1;
+
+            # a comment ends processing of the line
+            if ($parser->YYData->{INPUT} =~ /^#/ ) {
+                return ( '', undef );
             }
+
+            # check special case where a WORD begins with numerics, should return WORD instead of INT
+            if ( $token_name eq "INT" and ($parser->YYData->{INPUT} =~ /^\w/ )) {
+                $parser->YYData->{INPUT} =~ s/ ^ ( \w+ ) //x;
+                my $match2 = $1;
+                $token_name = "WORD";
+                $match .= $match2;
+            }
+
+            # return token name and match string
+            $parser->{USER}{CHARNO} += length $match;
+            return ( $token_name, $match );
         }
     }
-    return ('', undef);
+
+    # no recognized token found
+    $parser->YYError;
 }
 
 sub parse

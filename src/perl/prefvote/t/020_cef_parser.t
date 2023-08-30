@@ -53,6 +53,10 @@ Readonly::Array my @ranking_tests => (
         out => [ ['975'] ],
     },
     {
+        in  => "975string",
+        out => [ ['975string'] ],
+    },
+    {
         in  => "foo",
         out => [ ['foo'] ],
     },
