@@ -140,7 +140,7 @@ sub _Lexer
             }
         }
     }
-    return;
+    return ('', undef);
 }
 
 sub parse

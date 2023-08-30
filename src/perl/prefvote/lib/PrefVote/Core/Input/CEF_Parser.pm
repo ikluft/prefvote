@@ -529,227 +529,227 @@ sub new {
 [
 	{#State 0
 		ACTIONS => {
-			'INT' => 8,
-			'WORD' => 1,
-			'EMPTY_RANKING' => 5
+			'INT' => 1,
+			'EMPTY_RANKING' => 7,
+			'WORD' => 11
 		},
 		GOTOS => {
-			'tags' => 6,
-			'choice_list' => 11,
-			'line' => 10,
-			'words' => 12,
-			'ranking' => 2,
-			'word' => 7,
-			'tag' => 9,
-			'candidate' => 4,
-			'equal_list' => 3
+			'line' => 8,
+			'equal_list' => 6,
+			'word' => 5,
+			'tag' => 12,
+			'choice_list' => 10,
+			'candidate' => 9,
+			'ranking' => 3,
+			'words' => 4,
+			'tags' => 2
 		}
 	},
 	{#State 1
-		DEFAULT => -22
-	},
-	{#State 2
-		DEFAULT => -2
-	},
-	{#State 3
-		ACTIONS => {
-			"=" => 13
-		},
-		DEFAULT => -9
-	},
-	{#State 4
-		DEFAULT => -11
-	},
-	{#State 5
-		ACTIONS => {
-			"*" => 18,
-			"^" => 17
-		},
-		DEFAULT => -13,
-		GOTOS => {
-			'weight' => 15,
-			'quantifier' => 14,
-			'multipliers' => 16
-		}
-	},
-	{#State 6
-		ACTIONS => {
-			'TAGDELIM' => 20,
-			"," => 19
-		}
-	},
-	{#State 7
-		DEFAULT => -21
-	},
-	{#State 8
 		DEFAULT => -23
 	},
-	{#State 9
-		DEFAULT => -4
-	},
-	{#State 10
+	{#State 2
 		ACTIONS => {
-			'' => 21
+			"," => 14,
+			'TAGDELIM' => 13
 		}
 	},
-	{#State 11
-		ACTIONS => {
-			">" => 23,
-			"^" => 17,
-			"*" => 18
-		},
-		DEFAULT => -13,
-		GOTOS => {
-			'multipliers' => 22,
-			'weight' => 15,
-			'quantifier' => 14
-		}
+	{#State 3
+		DEFAULT => -2
 	},
-	{#State 12
+	{#State 4
 		ACTIONS => {
+			'WORD' => 11,
 			"," => -5,
-			'INT' => 8,
 			'TAGDELIM' => -5,
-			'WORD' => 1
+			'INT' => 1
 		},
 		DEFAULT => -12,
 		GOTOS => {
-			'word' => 24
+			'word' => 15
 		}
+	},
+	{#State 5
+		DEFAULT => -21
+	},
+	{#State 6
+		ACTIONS => {
+			"=" => 16
+		},
+		DEFAULT => -9
+	},
+	{#State 7
+		ACTIONS => {
+			"*" => 17,
+			"^" => 20
+		},
+		DEFAULT => -13,
+		GOTOS => {
+			'multipliers' => 21,
+			'quantifier' => 18,
+			'weight' => 19
+		}
+	},
+	{#State 8
+		ACTIONS => {
+			'' => 22
+		}
+	},
+	{#State 9
+		DEFAULT => -11
+	},
+	{#State 10
+		ACTIONS => {
+			">" => 23,
+			"*" => 17,
+			"^" => 20
+		},
+		DEFAULT => -13,
+		GOTOS => {
+			'weight' => 19,
+			'multipliers' => 24,
+			'quantifier' => 18
+		}
+	},
+	{#State 11
+		DEFAULT => -22
+	},
+	{#State 12
+		DEFAULT => -4
 	},
 	{#State 13
 		ACTIONS => {
-			'INT' => 8,
-			'WORD' => 1
+			'INT' => 1,
+			'WORD' => 11,
+			'EMPTY_RANKING' => 7
 		},
 		GOTOS => {
+			'word' => 5,
+			'ranking' => 26,
 			'words' => 25,
-			'candidate' => 26,
-			'word' => 7
+			'choice_list' => 10,
+			'candidate' => 9,
+			'equal_list' => 6
 		}
 	},
 	{#State 14
 		ACTIONS => {
-			"^" => 17
+			'INT' => 1,
+			'WORD' => 11
 		},
-		DEFAULT => -16,
 		GOTOS => {
-			'weight' => 27
+			'word' => 5,
+			'words' => 27,
+			'tag' => 28
 		}
 	},
 	{#State 15
-		ACTIONS => {
-			"*" => 18
-		},
-		DEFAULT => -17,
-		GOTOS => {
-			'quantifier' => 28
-		}
+		DEFAULT => -20
 	},
 	{#State 16
-		DEFAULT => -7
-	},
-	{#State 17
 		ACTIONS => {
-			'INT' => 29
+			'WORD' => 11,
+			'INT' => 1
+		},
+		GOTOS => {
+			'word' => 5,
+			'words' => 25,
+			'candidate' => 29
 		}
 	},
-	{#State 18
+	{#State 17
 		ACTIONS => {
 			'INT' => 30
 		}
 	},
+	{#State 18
+		ACTIONS => {
+			"^" => 20
+		},
+		DEFAULT => -16,
+		GOTOS => {
+			'weight' => 31
+		}
+	},
 	{#State 19
 		ACTIONS => {
-			'INT' => 8,
-			'WORD' => 1
+			"*" => 17
 		},
+		DEFAULT => -17,
 		GOTOS => {
-			'words' => 32,
-			'tag' => 31,
-			'word' => 7
+			'quantifier' => 32
 		}
 	},
 	{#State 20
 		ACTIONS => {
-			'WORD' => 1,
-			'EMPTY_RANKING' => 5,
-			'INT' => 8
-		},
-		GOTOS => {
-			'word' => 7,
-			'choice_list' => 11,
-			'ranking' => 33,
-			'equal_list' => 3,
-			'candidate' => 4,
-			'words' => 25
+			'INT' => 33
 		}
 	},
 	{#State 21
-		DEFAULT => 0
+		DEFAULT => -7
 	},
 	{#State 22
-		DEFAULT => -6
+		DEFAULT => 0
 	},
 	{#State 23
 		ACTIONS => {
-			'INT' => 8,
-			'WORD' => 1
+			'INT' => 1,
+			'WORD' => 11
 		},
 		GOTOS => {
-			'word' => 7,
-			'equal_list' => 34,
-			'candidate' => 4,
-			'words' => 25
+			'word' => 5,
+			'candidate' => 9,
+			'words' => 25,
+			'equal_list' => 34
 		}
 	},
 	{#State 24
-		DEFAULT => -20
+		DEFAULT => -6
 	},
 	{#State 25
 		ACTIONS => {
-			'WORD' => 1,
-			'INT' => 8
+			'INT' => 1,
+			'WORD' => 11
 		},
 		DEFAULT => -12,
 		GOTOS => {
-			'word' => 24
+			'word' => 15
 		}
 	},
 	{#State 26
-		DEFAULT => -10
+		DEFAULT => -1
 	},
 	{#State 27
-		DEFAULT => -14
+		ACTIONS => {
+			'WORD' => 11,
+			'INT' => 1
+		},
+		DEFAULT => -5,
+		GOTOS => {
+			'word' => 15
+		}
 	},
 	{#State 28
-		DEFAULT => -15
+		DEFAULT => -3
 	},
 	{#State 29
-		DEFAULT => -19
+		DEFAULT => -10
 	},
 	{#State 30
 		DEFAULT => -18
 	},
 	{#State 31
-		DEFAULT => -3
+		DEFAULT => -14
 	},
 	{#State 32
-		ACTIONS => {
-			'INT' => 8,
-			'WORD' => 1
-		},
-		DEFAULT => -5,
-		GOTOS => {
-			'word' => 24
-		}
+		DEFAULT => -15
 	},
 	{#State 33
-		DEFAULT => -1
+		DEFAULT => -19
 	},
 	{#State 34
 		ACTIONS => {
-			"=" => 13
+			"=" => 16
 		},
 		DEFAULT => -8
 	}
@@ -944,7 +944,7 @@ sub _Lexer
             }
         }
     }
-    return;
+    return ('', undef);
 }
 
 sub parse
