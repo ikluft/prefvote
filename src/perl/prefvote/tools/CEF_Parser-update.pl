@@ -3,7 +3,9 @@
 # Copyright (c) 2023 by Ian Kluft
 # Open Source license: Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
 #
-# Run this to update the generated parser code after modifications to the CEF grammar.
+# This updates the generated parser code after modifications to the CEF grammar.  Use the CEF_Parser-update.sh
+# wrapper script to run this. It sets environment variables so Perl will use the same hash keys each time and
+# generate consistent diffs on the generated code.
 use strict;
 use warnings;
 use utf8;
