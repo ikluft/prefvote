@@ -249,7 +249,7 @@ sub parse
         #
 
         # parse candidate preference order from line
-        my @pref_order = $parser->parse( $line );
+        my @pref_order = $parser->parse( $line, $self->{vote_def} );
         push @{$self->{ballots}}, \@pref_order;
         $self->debug_print( "parse: pref_order=" . join( ",", @pref_order ) );
     }

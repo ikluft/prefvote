@@ -92,7 +92,12 @@ quantifier:
 ;
 
 weight:
-    '^' INT                     { return { weight => $_[2]}; }
+    '^' INT                     {
+                                    if ( not ( $_[0]->YYData->{VOTEDEF}{weight_allowed} // 0 )) {
+                                        $_[0]->YYError;
+                                    }
+                                    return { weight => $_[2]};
+                                }
 ;
 
 words:
@@ -133,6 +138,11 @@ sub _Lexer
         $parser->{USER}{CHARNO} += length $1;
     }
 
+    # check for end of input after whitespace
+    if ( length $parser->YYData->{INPUT} == 0 ) {
+        return ( '', undef );
+    }
+
     # find first token from matching list
     foreach my $token_pair ( @CEF_TOKENS ) {
         my ( $token_name, $token_regex ) = @$token_pair;
@@ -164,8 +174,9 @@ sub _Lexer
 
 sub parse
 {
-    my ($self, $input_str) = @_;
+    my ($self, $input_str, $vote_def) = @_;
     $self->YYData->{INPUT} = $input_str;
+    $self->YYData->{VOTEDEF} = $vote_def;
     $self->{USER}{CHARNO}  = 0;
     my $result = $self->YYParse( yylex => \&_Lexer, yyerror => \&_Error );
     return $result;
