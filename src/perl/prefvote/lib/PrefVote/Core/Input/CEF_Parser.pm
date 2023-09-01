@@ -877,30 +877,36 @@ sub
 		 'weight', 2,
 sub
 #line 95 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
-{ return { weight => $_[2]}; }
+{
+                                    if ( not ( $_[0]->YYData->{VOTEDEF}{weight_allowed} // 0 )) {
+                                        $_[0]->YYData->{ERRMSG} = "weight not permitted without weight_allowed flag";
+                                        $_[0]->YYError;
+                                    }
+                                    return { weight => $_[2]};
+                                }
 	],
 	[#Rule 20
 		 'words', 2,
 sub
-#line 99 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+#line 105 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
 { return $_[1] . " " . $_[2]; }
 	],
 	[#Rule 21
 		 'words', 1,
 sub
-#line 100 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+#line 106 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
 { return "" . $_[1]; }
 	],
 	[#Rule 22
 		 'word', 1,
 sub
-#line 104 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+#line 110 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
 { return "" . $_[1]; }
 	],
 	[#Rule 23
 		 'word', 1,
 sub
-#line 105 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+#line 111 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
 { return 0 + $_[1]; }
 	]
 ],
@@ -908,16 +914,17 @@ sub
     bless($self,$class);
 }
 
-#line 108 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+#line 114 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
 
 
 sub _Error
 {
     my ( $parser ) = @_;
     my $expect_str = ( scalar $parser->YYExpect > 0 ) ? ( join( ' ', sort $parser->YYExpect )) : "";
-    my $errmsg = ( exists $parser->YYData->{ERRMSG} )
+    my $errmsg = (( exists $parser->YYData->{ERRMSG} )
         ?  $parser->YYData->{ERRMSG}
-        : "Syntax error at position " . $parser->{USER}{CHARNO}
+        : "Syntax error" )
+        . " at position " . $parser->YYData->{CHARNO}
             . (( defined $parser->YYCurtok and length $parser->YYCurtok > 0 )
                 ? ", found " . $parser->YYCurtok . " '" . $parser->YYCurval . "'" : "" )
             . (( length $expect_str > 0 ) ? ", expected $expect_str" : "" );
@@ -934,7 +941,12 @@ sub _Lexer
 
     # remove leading whitespace before next token
     if( $parser->YYData->{INPUT} =~ s/^ ( \s+ )//x ) {
-        $parser->{USER}{CHARNO} += length $1;
+        $parser->YYData->{CHARNO} += length $1;
+    }
+
+    # check for end of input after whitespace
+    if ( length $parser->YYData->{INPUT} == 0 ) {
+        return ( '', undef );
     }
 
     # find first token from matching list
@@ -957,7 +969,7 @@ sub _Lexer
             }
 
             # return token name and match string
-            $parser->{USER}{CHARNO} += length $match;
+            $parser->YYData->{CHARNO} += length $match;
             return ( $token_name, $match );
         }
     }
@@ -968,9 +980,17 @@ sub _Lexer
 
 sub parse
 {
-    my ($self, $input_str) = @_;
+    my ($self, $input_str, $vote_def) = @_;
+
+    # clear data for new parse run
+    foreach my $key ( keys %{$self->YYData}) {
+        delete $self->YYData->{$key};
+    }
+
+    # set YYData and user info
     $self->YYData->{INPUT} = $input_str;
-    $self->{USER}{CHARNO}  = 0;
+    $self->YYData->{VOTEDEF} = $vote_def;
+    $self->YYData->{CHARNO}  = 0;
     my $result = $self->YYParse( yylex => \&_Lexer, yyerror => \&_Error );
     return $result;
 }

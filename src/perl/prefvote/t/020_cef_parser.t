@@ -74,6 +74,11 @@ Readonly::Array my @ranking_tests => (
     },
     {
         in  => "A>B ^2",
+        error => qr(^weight not permitted without weight_allowed flag),
+    },
+    {
+        vote_def => { weight_allowed => 1 },
+        in  => "A>B ^2",
         out => [ { weight => 2 }, ['A'], ['B'] ],
     },
     {
@@ -82,21 +87,46 @@ Readonly::Array my @ranking_tests => (
     },
     {
         in  => "A>B * 5 ^2",
+        error => qr(^weight not permitted without weight_allowed flag),
+    },
+    {
+        vote_def => { weight_allowed => 1 },
+        in  => "A>B * 5 ^2",
         out => [ { quantifier => 5, weight => 2 }, ['A'], ['B'] ],
     },
     {
+        in  => "A>B ^2 *5",
+        error => qr(^weight not permitted without weight_allowed flag),
+    },
+    {
+        vote_def => { weight_allowed => 1 },
         in  => "A>B ^2 *5",
         out => [ { quantifier => 5, weight => 2 }, ['A'], ['B'] ],
     },
     {
         in  => "tag1 || A>B ^2 *5",
+        error => qr(^weight not permitted without weight_allowed flag),
+    },
+    {
+        vote_def => { weight_allowed => 1 },
+        in  => "tag1 || A>B ^2 *5",
         out => [ { tags => [qw(tag1)], quantifier => 5, weight => 2 }, ['A'], ['B'] ],
     },
     {
         in  => "tag1, tag2 || A>B ^2 *5",
+        error => qr(^weight not permitted without weight_allowed flag),
+    },
+    {
+        vote_def => { weight_allowed => 1 },
+        in  => "tag1, tag2 || A>B ^2 *5",
         out => [ { tags => [qw(tag1 tag2)], quantifier => 5, weight => 2 }, ['A'], ['B'] ],
     },
     {
+        in  => "tag2,tag1||A>B*5^2",
+        error => qr(^weight not permitted without weight_allowed flag),
+    },
+    {
+        vote_def => { weight_allowed => 1 },
         in  => "tag2,tag1||A>B*5^2",
         out => [ { tags => [qw(tag1 tag2)], quantifier => 5, weight => 2 }, ['A'], ['B'] ],
     },
@@ -106,13 +136,28 @@ Readonly::Array my @ranking_tests => (
     },
     {
         in    => "C>B>A ^ 7 ^ 2",
+        error => qr(^weight not permitted without weight_allowed flag),
+    },
+    {
+        vote_def => { weight_allowed => 1 },
+        in    => "C>B>A ^ 7 ^ 2",
         error => qr(^Syntax error at position 11, found \^ '\^'),
     },
     {
         in    => "tag1, tag2 || C>B>A ^ 7 ^ 2",
+        error => qr(^weight not permitted without weight_allowed flag),
+    },
+    {
+        vote_def => { weight_allowed => 1 },
+        in    => "tag1, tag2 || C>B>A ^ 7 ^ 2",
         error => qr(^Syntax error at position 25, found \^ '\^'),
     },
     {
+        in    => "tag1, , tag2 || C>B>A ^ 7 ^ 2",
+        error => qr(^Syntax error at position 7, found , ',', expected INT WORD),
+    },
+    {
+        vote_def => { weight_allowed => 1 },
         in    => "tag1, , tag2 || C>B>A ^ 7 ^ 2",
         error => qr(^Syntax error at position 7, found , ',', expected INT WORD),
     },
@@ -126,9 +171,19 @@ Readonly::Array my @ranking_tests => (
     },
     {
         in  => "/EMPTY_RANKING/ * 350 ^ 2",
+        error => qr(^weight not permitted without weight_allowed flag),
+    },
+    {
+        vote_def => { weight_allowed => 1 },
+        in  => "/EMPTY_RANKING/ * 350 ^ 2",
         out => [ { quantifier => 350, weight => 2 } ],
     },
     {
+        in  => "/EMPTY_RANKING/^2*350",
+        error => qr(^weight not permitted without weight_allowed flag),
+    },
+    {
+        vote_def => { weight_allowed => 1 },
         in  => "/EMPTY_RANKING/^2*350",
         out => [ { quantifier => 350, weight => 2 } ],
     },
@@ -137,6 +192,11 @@ Readonly::Array my @ranking_tests => (
         error => qr(^Syntax error at position 23, found \* '\*'),
     },
     {
+        in    => "/EMPTY_RANKING/^7^2",
+        error => qr(^weight not permitted without weight_allowed flag),
+    },
+    {
+        vote_def => { weight_allowed => 1 },
         in    => "/EMPTY_RANKING/^7^2",
         error => qr(^Syntax error at position 18, found \^ '\^'),
     },
@@ -188,6 +248,31 @@ sub count_tests
     return $total_tests;
 }
 
+# convert vote definition structure into a string
+# recursive function to return a string for a vote definition structure or a portion within one
+sub votedef2str
+{
+    my $vote_def = shift;
+
+    # if we got a scalar, treat it as a leaf node and return it
+    if ( not ref $vote_def ) {
+        return $vote_def;
+    }
+
+    # handle array
+    if ( ref $vote_def eq "ARRAY" ) {
+        return '[' . join(", ", map( votedef2str($_), @$vote_def)) . ']';
+    }
+
+    # handle hash
+    if ( ref $vote_def eq "HASH" ) {
+        return '{' . join(", ", map($_ . "=>" . votedef2str($vote_def->{$_}), sort keys %$vote_def)) . '}';
+    }
+
+    # otherwise stringify it
+    return "" . $vote_def;
+}
+
 # declare test count
 plan tests => count_tests();
 
@@ -202,6 +287,12 @@ plan tests => count_tests();
     # perform tests from list
     foreach my $test_case (@ranking_tests) {
 
+        # stringify vote_def for test name
+        my $def_suffix = "";
+        if ( exists $test_case->{vote_def}) {
+            $def_suffix = " / " . votedef2str($test_case->{vote_def});
+        }
+
         # test for errors or successful parsing
         if ( exists $test_case->{error} ) {
 
@@ -214,11 +305,13 @@ plan tests => count_tests();
                 } else {
                     my $in_str    = $test_case->{in};
                     my $err_regex = $test_case->{error};
+                    my $vote_def  = $test_case->{vote_def} // {};
                     my $result;
-                    dies_ok( sub { $result = $parser->parse($in_str); }, "$test_group: $in_str / dies as expected" );
+                    dies_ok( sub { $result = $parser->parse($in_str, $vote_def); },
+                        "$test_group: $in_str$def_suffix / dies as expected" );
                     my $err_result = $@;
-                    $debug_mode and say STDERR "$test_group: in: $in_str / result: error $err_result";
-                    like( $err_result, $err_regex, "$test_group: $in_str / expected error: $err_regex" );
+                    $debug_mode and say STDERR "$test_group: in: $in_str$def_suffix / result: error $err_result";
+                    like( $err_result, $err_regex, "$test_group: $in_str$def_suffix / expected error: $err_regex" );
                 }
             }
         } else {
@@ -232,10 +325,12 @@ plan tests => count_tests();
                 } else {
                     my $in_str     = $test_case->{in};
                     my $out_struct = $test_case->{out};
+                    my $vote_def   = $test_case->{vote_def} // {};
                     my $result;
-                    lives_ok( sub { $result = $parser->parse($in_str); }, "$test_group: $in_str / parser runs" );
-                    $debug_mode and say STDERR "$test_group: in: $in_str / result: " . Dumper($result);
-                    is_deeply( $result, $out_struct, "$test_group: $in_str / data check" );
+                    lives_ok( sub { $result = $parser->parse($in_str, $vote_def); },
+                        "$test_group: $in_str$def_suffix / parser runs" );
+                    $debug_mode and say STDERR "$test_group: in: $in_str$def_suffix / result: " . Dumper($result);
+                    is_deeply( $result, $out_struct, "$test_group: $in_str$def_suffix / data check" );
                 }
             }
         }
