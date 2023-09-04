@@ -1,1 +1,11 @@
 ---
+boudry-test1.cvotes:
+  error: "^weight not permitted without weight_allowed flag"
+boudry-test2.cvotes:
+  error: "^weight not permitted without weight_allowed flag"
+cef-doc-example1.cvotes:
+  error: "^weight not permitted without weight_allowed flag"
+cef-doc-example2.cvotes:
+  error: "^weight not permitted without weight_allowed flag"
+cef-doc-invalid3.cvotes:
+  error: "^Syntax error at position 12, expected EMPTY_RANKING INT WORD"

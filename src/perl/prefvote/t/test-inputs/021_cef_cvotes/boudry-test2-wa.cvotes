@@ -1,0 +1,8 @@
+# imported from https://github.com/julien-boudry/Condorcet/Tests/src/Tools/Converters/CondorcetElectionFormatData/
+#/Candidates:A;B;C
+#/Implicit Ranking: false
+#/Weight Allowed: true
+#Number of Seats: 42
+
+B>A ^2
+B>C
