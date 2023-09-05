@@ -77,7 +77,7 @@ Readonly::Array my @ranking_tests => (
         error => qr(^weight not permitted without weight_allowed flag),
     },
     {
-        vote_def => { weight_allowed => 1 },
+        vote_def => { params => { weight_allowed => 1 }},
         in  => "A>B ^2",
         out => [ { weight => 2 }, ['A'], ['B'] ],
     },
@@ -90,7 +90,7 @@ Readonly::Array my @ranking_tests => (
         error => qr(^weight not permitted without weight_allowed flag),
     },
     {
-        vote_def => { weight_allowed => 1 },
+        vote_def => { params => { weight_allowed => 1 }},
         in  => "A>B * 5 ^2",
         out => [ { quantifier => 5, weight => 2 }, ['A'], ['B'] ],
     },
@@ -99,7 +99,7 @@ Readonly::Array my @ranking_tests => (
         error => qr(^weight not permitted without weight_allowed flag),
     },
     {
-        vote_def => { weight_allowed => 1 },
+        vote_def => { params => { weight_allowed => 1 }},
         in  => "A>B ^2 *5",
         out => [ { quantifier => 5, weight => 2 }, ['A'], ['B'] ],
     },
@@ -108,7 +108,7 @@ Readonly::Array my @ranking_tests => (
         error => qr(^weight not permitted without weight_allowed flag),
     },
     {
-        vote_def => { weight_allowed => 1 },
+        vote_def => { params => { weight_allowed => 1 }},
         in  => "tag1 || A>B ^2 *5",
         out => [ { tags => [qw(tag1)], quantifier => 5, weight => 2 }, ['A'], ['B'] ],
     },
@@ -117,7 +117,7 @@ Readonly::Array my @ranking_tests => (
         error => qr(^weight not permitted without weight_allowed flag),
     },
     {
-        vote_def => { weight_allowed => 1 },
+        vote_def => { params => { weight_allowed => 1 }},
         in  => "tag1, tag2 || A>B ^2 *5",
         out => [ { tags => [qw(tag1 tag2)], quantifier => 5, weight => 2 }, ['A'], ['B'] ],
     },
@@ -126,7 +126,7 @@ Readonly::Array my @ranking_tests => (
         error => qr(^weight not permitted without weight_allowed flag),
     },
     {
-        vote_def => { weight_allowed => 1 },
+        vote_def => { params => { weight_allowed => 1 }},
         in  => "tag2,tag1||A>B*5^2",
         out => [ { tags => [qw(tag1 tag2)], quantifier => 5, weight => 2 }, ['A'], ['B'] ],
     },
@@ -139,7 +139,7 @@ Readonly::Array my @ranking_tests => (
         error => qr(^weight not permitted without weight_allowed flag),
     },
     {
-        vote_def => { weight_allowed => 1 },
+        vote_def => { params => { weight_allowed => 1 }},
         in    => "C>B>A ^ 7 ^ 2",
         error => qr(^Syntax error at position 11, found \^ '\^'),
     },
@@ -148,7 +148,7 @@ Readonly::Array my @ranking_tests => (
         error => qr(^weight not permitted without weight_allowed flag),
     },
     {
-        vote_def => { weight_allowed => 1 },
+        vote_def => { params => { weight_allowed => 1 }},
         in    => "tag1, tag2 || C>B>A ^ 7 ^ 2",
         error => qr(^Syntax error at position 25, found \^ '\^'),
     },
@@ -157,7 +157,7 @@ Readonly::Array my @ranking_tests => (
         error => qr(^Syntax error at position 7, found , ',', expected INT WORD),
     },
     {
-        vote_def => { weight_allowed => 1 },
+        vote_def => { params => { weight_allowed => 1 }},
         in    => "tag1, , tag2 || C>B>A ^ 7 ^ 2",
         error => qr(^Syntax error at position 7, found , ',', expected INT WORD),
     },
@@ -174,7 +174,7 @@ Readonly::Array my @ranking_tests => (
         error => qr(^weight not permitted without weight_allowed flag),
     },
     {
-        vote_def => { weight_allowed => 1 },
+        vote_def => { params => { weight_allowed => 1 }},
         in  => "/EMPTY_RANKING/ * 350 ^ 2",
         out => [ { quantifier => 350, weight => 2 } ],
     },
@@ -183,7 +183,7 @@ Readonly::Array my @ranking_tests => (
         error => qr(^weight not permitted without weight_allowed flag),
     },
     {
-        vote_def => { weight_allowed => 1 },
+        vote_def => { params => { weight_allowed => 1 }},
         in  => "/EMPTY_RANKING/^2*350",
         out => [ { quantifier => 350, weight => 2 } ],
     },
@@ -196,7 +196,7 @@ Readonly::Array my @ranking_tests => (
         error => qr(^weight not permitted without weight_allowed flag),
     },
     {
-        vote_def => { weight_allowed => 1 },
+        vote_def => { params => { weight_allowed => 1 }},
         in    => "/EMPTY_RANKING/^7^2",
         error => qr(^Syntax error at position 18, found \^ '\^'),
     },
@@ -261,12 +261,12 @@ sub votedef2str
 
     # handle array
     if ( ref $vote_def eq "ARRAY" ) {
-        return '[' . join(", ", map( votedef2str($_), @$vote_def)) . ']';
+        return '[' . join(",", map( votedef2str($_), @$vote_def)) . ']';
     }
 
     # handle hash
     if ( ref $vote_def eq "HASH" ) {
-        return '{' . join(", ", map($_ . "=>" . votedef2str($vote_def->{$_}), sort keys %$vote_def)) . '}';
+        return '{' . join(",", map($_ . "=>" . votedef2str($vote_def->{$_}), sort keys %$vote_def)) . '}';
     }
 
     # otherwise stringify it

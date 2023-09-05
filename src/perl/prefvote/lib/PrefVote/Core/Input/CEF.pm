@@ -28,6 +28,9 @@ use PrefVote::Core::Input::CEF_Parser;
 # constants
 #
 
+# debug mode from environment variable
+Readonly::Scalar my $debug_mode => ( ( $ENV{PREFVOTE_DEBUG} // 0 ) or ( $ENV{CEF_PARSER_DEBUG} // 0 ) ) and 1;
+
 # default vote title for CEF
 # The format doesn't officially provide a way to set a title. PrefVote unofficially recognizes "Title" parameter
 Readonly::Scalar my $cef_default_title => "Condorcet Election";
@@ -39,11 +42,19 @@ Readonly::Scalar my $cef_default_method => "RankedPairs";
 # required parameters for new objects
 Readonly::Array my @required_params => ( qw(filepath) );
 
+# map CEF parameter names to PrefVote::Core parameter names
+Readonly::Hash my %cef2pv => (
+    'title' => 'name',
+    'number of seats' => 'seats',
+    'voting method' => 'method',
+    'voting methods' => 'method',
+);
+
 # map CEF keys to PrefVote::Core flag names
 # initally these are conversion from capitalized words to snake-case string, but flexible for expansion
 Readonly::Hash my %cef2flags => (
-    'Implicit Ranking' => 'implicit_ranking',
-    'Weight Allowed'   => 'weight_allowed',
+    'implicit ranking' => 'implicit_ranking',
+    'weight allowed'   => 'weight_allowed',
 );
 
 # names for ballot operators
@@ -122,7 +133,7 @@ sub debug_print
     }
 
     # print only if object has debug flag and it is set
-    if ( exists $self->{debug} and $self->{debug}) {
+    if ( $debug_mode or ( exists $self->{debug} and $self->{debug})) {
         say STDERR $class . ": " . join( " ", @args );
     }
     return;
@@ -139,7 +150,6 @@ sub enumerate_candidates
 {
     my $self = shift;
 
-    #my $params_ref = shift;
     my %candidates_seen;
 
     # find all the unique candidates from the ballots
@@ -164,16 +174,15 @@ sub enumerate_candidates
 sub cef_second_pass
 {
     my $self       = shift;
-    my $params_ref = shift;
 
     # if a candidate list wasn't provided then collect them from ballots
     my @candidates;
-    if ( exists $params_ref->{candidates} ) {
-        $params_ref->{candidates} =~ s/^ \s+//x;    # remove whitespace at start of line
-        $params_ref->{candidates} =~ s/\s+ $//x;    # remove whitespace at end of line
-        @candidates = split /\s* ; \s*/x, $params_ref->{candidates};
+    if ( exists $self->{_cef_param}{candidates} ) {
+        $self->{_cef_param}{candidates} =~ s/^ \s+//x;    # remove whitespace at start of line
+        $self->{_cef_param}{candidates} =~ s/\s+ $//x;    # remove whitespace at end of line
+        @candidates = split /\s* ; \s*/x, $self->{_cef_param}{candidates};
     } else {
-        @candidates = $self->enumerate_candidates($params_ref);
+        @candidates = $self->enumerate_candidates();
     }
 
     # convert CEF candidate list to PrefVote choices hash
@@ -196,6 +205,48 @@ sub cef_second_pass
     return;
 }
 
+# save a CEF parameter
+# save as PrefVote vote_def data
+# mark the CEF param original name as seen to catch duplicates
+sub set_cef_param
+{
+    my ( $self, $cef_param_name, $value ) = @_;
+
+    # record CEF parameters already seen
+    if ( not exists $self->{_cef_param}) {
+        $self->{_cef_param} = {};
+    }
+    if ( $self->{_cef_param}{$cef_param_name} // 0 ) {
+        croak( __PACKAGE__ . ": can't redefine $cef_param_name" );
+    }
+    $self->{_cef_param}{$cef_param_name} = 1;
+
+    # save parameter under PrefVote name
+    if ( exists $cef2pv{$cef_param_name}) {
+        $self->{vote_def}{$cef2pv{$cef_param_name}} = $value;
+    } elsif ( exists $cef2flags{$cef_param_name}) {
+        $self->{vote_def}{params}{$cef2flags{$cef_param_name}} = $value;
+    } else {
+        #carp( __PACKAGE__ . ":unrecognized CEF parameter $cef_param_name" );
+    }
+    return;
+}
+
+# read a CEF parameter
+sub get_cef_param
+{
+    my ( $self, $cef_param_name ) = @_;
+    return if not exists $self->{_cef_param}{$cef_param_name};
+    return $self->{_cef_param}{$cef_param_name};
+}
+
+# check if a CEF parameter was already set
+sub seen_cef_param
+{
+    my ( $self, $cef_param_name ) = @_;
+    return exists $self->{_cef_param}{$cef_param_name};
+}
+
 # parse Condorcet Election Format (defined at https://github.com/CondorcetVote/CondorcetElectionFormat )
 # $filepath parameter should already be checked for existence before calling
 # instance method
@@ -203,7 +254,6 @@ sub parse
 {
     my $self     = shift;
     my $filepath = $self->get("filepath");
-    my %params;
     $self->debug_print("parse($filepath)");
 
     # initialize empty vote parameters, ballot list & test data
@@ -229,10 +279,10 @@ sub parse
             if ( scalar @{$self->{ballots}} > 0 ) {
                 croak( __PACKAGE__ . "->parse($filepath): can't define $param_name after first ballot line" );
             }
-            if ( exists $params{$param_name} ) {
+            if ( $self->seen_cef_param( $param_name )) {
                 croak( __PACKAGE__ . "->parse($filepath): can't redefine $param_name" );
             }
-            $params{$param_name} = $param_value;
+            $self->set_cef_param( $param_name, $param_value );
             next;
         }
 
@@ -260,33 +310,15 @@ sub parse
     ## critic (RequireBriefOpen)
 
     # 2nd pass: enumerate candidates and handle empty rankings
-    $self->cef_second_pass( \%params );
+    $self->cef_second_pass();
 
     #
     # save CEF data to PrefVote vote definition & ballot docs
     #
 
-    # save title
-    $self->{vote_def}{params}{name} = $params{'title'} // $cef_default_title;
-
-    # save number of seats
-    if ( exists $params{'number of seats'} ) {
-        $self->{vote_def}{params}{seats} = int( $params{'number of seats'} );
-    }
-
-    # save voting method, overwrite default value
-    foreach my $vmethod_key ( 'Voting Methods', 'Voting Method' ) {
-        if ( exists $params{$vmethod_key} ) {
-            $self->{vote_def}{method} = $params{$vmethod_key};
-            last;
-        }
-    }
-
-    # save flags
-    foreach my $cef_key ( keys %cef2flags ) {
-        if ( exists $params{$cef_key} ) {
-            $self->{vote_def}{params}{$cef_key} = $params{$cef_key};
-        }
+    # use default title if not set
+    if ( not exists $self->{vote_def}{params}{name}) {
+        $self->{vote_def}{params}{name} = $cef_default_title;
     }
 
     return;

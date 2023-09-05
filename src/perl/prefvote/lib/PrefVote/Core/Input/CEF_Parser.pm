@@ -878,7 +878,7 @@ sub
 sub
 #line 95 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
 {
-                                    if ( not ( $_[0]->YYData->{VOTEDEF}{weight_allowed} // 0 )) {
+                                    if ( not ( $_[0]->YYData->{VOTE_DEF}{params}{weight_allowed} // 0 )) {
                                         $_[0]->YYData->{ERRMSG} = "weight not permitted without weight_allowed flag";
                                         $_[0]->YYError;
                                     }
@@ -989,7 +989,7 @@ sub parse
 
     # set YYData and user info
     $self->YYData->{INPUT} = $input_str;
-    $self->YYData->{VOTEDEF} = $vote_def;
+    $self->YYData->{VOTE_DEF} = $vote_def;
     $self->YYData->{CHARNO}  = 0;
     my $result = $self->YYParse( yylex => \&_Lexer, yyerror => \&_Error );
     return $result;
