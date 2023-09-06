@@ -139,6 +139,31 @@ sub debug_print
     return;
 }
 
+# for testing/debugging: convert vote definition structure into a string
+# recursive function to return a string for a vote definition structure or a portion within one
+sub _votedef2str
+{
+    my $vote_def = shift;
+
+    # if we got a scalar, treat it as a leaf node and return it
+    if ( not ref $vote_def ) {
+        return $vote_def;
+    }
+
+    # handle array
+    if ( ref $vote_def eq "ARRAY" ) {
+        return '[' . join(",", map( _votedef2str($_), @$vote_def)) . ']';
+    }
+
+    # handle hash
+    if ( ref $vote_def eq "HASH" ) {
+        return '{' . join(",", map($_ . "=>" . _votedef2str($vote_def->{$_}), sort keys %$vote_def)) . '}';
+    }
+
+    # otherwise stringify it
+    return "" . $vote_def;
+}
+
 #
 # Condorcet Election Format (CEF) parser functions
 #
@@ -301,7 +326,7 @@ sub parse
         # parse candidate preference order from line
         my @pref_order = $parser->parse( $line, $self->{vote_def} );
         push @{$self->{ballots}}, \@pref_order;
-        $self->debug_print( "parse: pref_order=" . join( ",", @pref_order ) );
+        $self->debug_print( "parse: pref_order=" . _votedef2str( @pref_order ) );
     }
 
     # clean up
