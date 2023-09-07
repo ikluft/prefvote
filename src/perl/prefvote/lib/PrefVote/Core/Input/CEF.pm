@@ -216,6 +216,9 @@ sub cef_second_pass
     foreach my $candidate_name (@candidates) {
         $choices{$candidate_name} = $candidate_name;
     }
+    if ( not exists $self->{vote_def}{params}) {
+        $self->{vote_def}{params} = {};
+    }
     $self->{vote_def}{params}{choices} = \%choices;
 
     # scan ballots for explicit /EMPTY_RANKING/ marker
@@ -250,6 +253,9 @@ sub set_cef_param
     if ( exists $cef2pv{$cef_param_name}) {
         $self->{vote_def}{$cef2pv{$cef_param_name}} = $value;
     } elsif ( exists $cef2flags{$cef_param_name}) {
+        if ( not exists $self->{vote_def}{params}) {
+            $self->{vote_def}{params} = {};
+        }
         $self->{vote_def}{params}{$cef2flags{$cef_param_name}} = $value;
     } else {
         #carp( __PACKAGE__ . ":unrecognized CEF parameter $cef_param_name" );
@@ -343,6 +349,9 @@ sub parse
 
     # use default title if not set
     if ( not exists $self->{vote_def}{params}{name}) {
+        if ( not exists $self->{vote_def}{params}) {
+            $self->{vote_def}{params} = {};
+        }
         $self->{vote_def}{params}{name} = $cef_default_title;
     }
 
