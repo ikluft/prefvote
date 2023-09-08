@@ -1,7 +1,6 @@
 # My beautiful election
 #/Candidates: Candidate A;Candidate B;Candidate C
 #/Implicit Ranking: true
-#/Weight allowed: true
 
 # Here the votes datas:
 Candidate A > Candidate B > Candidate C * 42

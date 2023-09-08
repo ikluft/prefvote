@@ -164,6 +164,19 @@ sub _votedef2str
     return "" . $vote_def;
 }
 
+# convert string to boolean flag
+sub _str2bool
+{
+    my $str_in = shift;
+    if ( $str_in eq "1" or $str_in eq "true" or $str_in eq "yes") {
+        return 1;
+    }
+    if ( $str_in eq "0" or $str_in eq "false" or $str_in eq "no") {
+        return 0;
+    }
+    croak "_str2bool: unrecognized boolean value '$str_in'";
+}
+
 #
 # Condorcet Election Format (CEF) parser functions
 #
@@ -256,7 +269,7 @@ sub set_cef_param
         if ( not exists $self->{vote_def}{params}) {
             $self->{vote_def}{params} = {};
         }
-        $self->{vote_def}{params}{$cef2flags{$cef_param_name}} = $value;
+        $self->{vote_def}{params}{$cef2flags{$cef_param_name}} = _str2bool( $value );
     } else {
         #carp( __PACKAGE__ . ":unrecognized CEF parameter $cef_param_name" );
     }
