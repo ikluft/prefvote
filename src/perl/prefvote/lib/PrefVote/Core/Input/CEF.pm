@@ -152,12 +152,12 @@ sub _votedef2str
 
     # handle array
     if ( ref $vote_def eq "ARRAY" ) {
-        return '[' . join(",", map( _votedef2str($_), @$vote_def)) . ']';
+        return '[' . join(",", map { _votedef2str($_)} @$vote_def ) . ']';
     }
 
     # handle hash
     if ( ref $vote_def eq "HASH" ) {
-        return '{' . join(",", map($_ . "=>" . _votedef2str($vote_def->{$_}), sort keys %$vote_def)) . '}';
+        return '{' . join(",", map{ $_ . "=>" . _votedef2str($vote_def->{$_})} sort keys %$vote_def ) . '}';
     }
 
     # otherwise stringify it
