@@ -1,0 +1,5 @@
+# My beautiful election
+#/Candidates: Candidate A;Candidate B;Candidate C; Candidate D
+#/Implicit Ranking: false
+
+Candidate A > Candidate B > /EMPTY_RANKING/

@@ -1,4 +1,5 @@
 ---
+# yamllint disable rule:line-length
 boudry-test1.cvotes:
   error: "^weight not permitted without weight_allowed flag"
 boudry-test2.cvotes:
@@ -11,3 +12,5 @@ cef-doc-invalid3.cvotes:
   error: "^Syntax error at position 12, expected EMPTY_RANKING INT WORD"
 cef-doc-invalid4.cvotes:
   error: "^Syntax error at position 12, expected EMPTY_RANKING INT WORD"
+cef-doc-invalid6.cvotes:
+  error: "^Syntax error at position 43, found EMPTY_RANKING '/EMPTY_RANKING/', expected INT WORD"
