@@ -61,7 +61,22 @@ tag:
 ;
 
 ranking:
-    choice_list multipliers     { return [ (defined $_[2]) ? ($_[2]) : (), @{$_[1]} ]; }
+    choice_list multipliers     {
+                                    # verify no duplicated choices/candidates in ranking
+                                    my %seen;
+                                    foreach my $ch_list ( @{$_[1]}) {
+                                        foreach my $eq_item ( @$ch_list ) {
+                                            if ( exists $seen{$eq_item} ) {
+                                                $_[0]->YYData->{ERRMSG} = "duplicate choice not allowed ($eq_item)";
+                                                $_[0]->YYError;
+                                            }
+                                            $seen{$eq_item} = 1;
+                                        }
+                                    }
+
+                                    # return ranking result
+                                    return [ (defined $_[2]) ? ($_[2]) : (), @{$_[1]} ];
+                                }
 |   EMPTY_RANKING multipliers   { return [ (defined $_[2]) ? ($_[2]) : () ]; }
 ;
 

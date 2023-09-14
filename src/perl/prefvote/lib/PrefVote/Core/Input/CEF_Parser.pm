@@ -802,42 +802,57 @@ sub
 		 'ranking', 2,
 sub
 #line 64 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
-{ return [ (defined $_[2]) ? ($_[2]) : (), @{$_[1]} ]; }
+{
+                                    # verify no duplicated choices/candidates in ranking
+                                    my %seen;
+                                    foreach my $ch_list ( @{$_[1]}) {
+                                        foreach my $eq_item ( @$ch_list ) {
+                                            if ( exists $seen{$eq_item} ) {
+                                                $_[0]->YYData->{ERRMSG} = "duplicate choice not allowed ($eq_item)";
+                                                $_[0]->YYError;
+                                            }
+                                            $seen{$eq_item} = 1;
+                                        }
+                                    }
+
+                                    # return ranking result
+                                    return [ (defined $_[2]) ? ($_[2]) : (), @{$_[1]} ];
+                                }
 	],
 	[#Rule 7
 		 'ranking', 2,
 sub
-#line 65 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+#line 80 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
 { return [ (defined $_[2]) ? ($_[2]) : () ]; }
 	],
 	[#Rule 8
 		 'choice_list', 3,
 sub
-#line 69 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+#line 84 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
 { return [ @{$_[1]}, $_[3] ]; }
 	],
 	[#Rule 9
 		 'choice_list', 1,
 sub
-#line 70 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+#line 85 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
 { return [ $_[1] ]; }
 	],
 	[#Rule 10
 		 'equal_list', 3,
 sub
-#line 74 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+#line 89 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
 { return [ @{$_[1]}, $_[3] ]; }
 	],
 	[#Rule 11
 		 'equal_list', 1,
 sub
-#line 75 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+#line 90 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
 { return [ $_[1] ]; }
 	],
 	[#Rule 12
 		 'candidate', 1,
 sub
-#line 79 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+#line 94 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
 { return $_[1]; }
 	],
 	[#Rule 13
@@ -846,37 +861,37 @@ sub
 	[#Rule 14
 		 'multipliers', 2,
 sub
-#line 84 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+#line 99 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
 { return { %{$_[1]}, %{$_[2]} }; }
 	],
 	[#Rule 15
 		 'multipliers', 2,
 sub
-#line 85 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+#line 100 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
 { return { %{$_[1]}, %{$_[2]} }; }
 	],
 	[#Rule 16
 		 'multipliers', 1,
 sub
-#line 86 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+#line 101 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
 { return $_[1]; }
 	],
 	[#Rule 17
 		 'multipliers', 1,
 sub
-#line 87 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+#line 102 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
 { return $_[1]; }
 	],
 	[#Rule 18
 		 'quantifier', 2,
 sub
-#line 91 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+#line 106 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
 { return { quantifier => $_[2]}; }
 	],
 	[#Rule 19
 		 'weight', 2,
 sub
-#line 95 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+#line 110 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
 {
                                     if ( not ( $_[0]->YYData->{VOTE_DEF}{params}{weight_allowed} // 0 )) {
                                         $_[0]->YYData->{ERRMSG} = "weight not permitted without weight_allowed flag";
@@ -888,25 +903,25 @@ sub
 	[#Rule 20
 		 'words', 2,
 sub
-#line 105 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+#line 120 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
 { return $_[1] . " " . $_[2]; }
 	],
 	[#Rule 21
 		 'words', 1,
 sub
-#line 106 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+#line 121 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
 { return "" . $_[1]; }
 	],
 	[#Rule 22
 		 'word', 1,
 sub
-#line 110 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+#line 125 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
 { return "" . $_[1]; }
 	],
 	[#Rule 23
 		 'word', 1,
 sub
-#line 111 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+#line 126 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
 { return 0 + $_[1]; }
 	]
 ],
@@ -914,7 +929,7 @@ sub
     bless($self,$class);
 }
 
-#line 114 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
+#line 129 "/home/ikluft/src/github/prefvote/src/perl/prefvote/lib/PrefVote/Core/Input//CEF_Parser.yp"
 
 
 sub _Error
