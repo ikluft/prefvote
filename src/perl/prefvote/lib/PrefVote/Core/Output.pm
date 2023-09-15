@@ -144,6 +144,11 @@ sub output
     # generate output table
     $method_class->do_counting_table( $format_class, $result_data );
 
+    # display average choice rank table for non-Core voting methods
+    if ( $method_class ne __PACKAGE__ ) {
+        __PACKAGE__->do_counting_table( $format_class, $result_data );
+    }
+
     # generate footer (if needed)
     $format_class->do_footer($result_data);
 
@@ -167,10 +172,11 @@ sub do_counting_table
     # generate output table
     my @result_rows;
     push @result_rows, [ 'Candidate', 'average ranking' ];
-    foreach my $cand (@candidates) {
-        push @result_rows, [ $cand, float_external( $acr->{$cand} ) // $num_cands ];
+    foreach my $cand (sort { ( $acr->{$a} // $num_cands ) <=> ( $acr->{$b} // $num_cands )} @candidates) {
+        push @result_rows, [ $cand, float_external( $acr->{$cand} // $num_cands ) ];
     }
-    $format_class->do_table( $result_data, \@result_rows, "Average ballot ranking positions" );
+    $format_class->do_table( $result_data, \@result_rows, "Average ballot ranking positions",
+        "Lower numbers are more favored. First place = 1." );
 
     return;
 }
