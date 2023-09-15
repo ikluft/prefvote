@@ -1,0 +1,5 @@
+# My beautiful election
+# (CEF example intended as invalid but works in PrefVote because parser handles */^ in any order
+#/Candidates: Candidate A;Candidate B;Candidate C
+
+Candidate A > Candidate B > Candidate A  * 8 ^7

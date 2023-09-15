@@ -12,5 +12,7 @@ cef-doc-invalid3.cvotes:
   error: "^Syntax error at position 12, expected EMPTY_RANKING INT WORD"
 cef-doc-invalid4.cvotes:
   error: "^duplicate choice not allowed \\(Candidate A\\) at position 39, expected EMPTY_RANKING INT WORD"
+cef-doc-invalid5.cvotes:
+  error: "^weight not permitted without weight_allowed flag"
 cef-doc-invalid6.cvotes:
   error: "^Syntax error at position 43, found EMPTY_RANKING '/EMPTY_RANKING/', expected INT WORD"
