@@ -70,7 +70,7 @@ sub do_counting_table
         push @result_rows, \@row;
     }
     $format_class->do_table( $result_data, \@result_rows, "Margin-of-victory matrix",
-        "This is a comparison of how each candidate ranked against the others." );
+        "This is a comparison of how each choice ranked against the others." );
 
     return;
 }
