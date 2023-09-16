@@ -533,7 +533,8 @@ Readonly::Array my @result_expected => (
                 "\x{1f6c7}"
             ]
         ],
-        'title' => 'Margin-of-victory matrix'
+        'title' => 'Margin-of-victory matrix',
+        'subtitle' => 'This is a comparison of how each choice ranked against the others.',
     }
 );
 
