@@ -146,7 +146,7 @@ sub output
 
     # display average choice rank table for non-Core voting methods
     if ( $method_class ne __PACKAGE__ ) {
-        __PACKAGE__->do_counting_table( $format_class, $result_data );
+        __PACKAGE__->do_counting_table( $format_class, $result_data, 1 );
     }
 
     # generate footer (if needed)
@@ -162,7 +162,7 @@ sub output
 # DO NOT USE PrefVote::Core FOR ACTUAL VOTE COUNTING - USE A SUBCLASS WHICH IMPLEMENTS A PROPER VOTING METHOD
 sub do_counting_table
 {
-    my ( $class, $format_class, $result_data ) = @_;
+    my ( $class, $format_class, $result_data, $is_secondary ) = @_;
 
     # generate candidate names list
     my @candidates = PrefVote::Core::Output->candidates_list($result_data);
@@ -176,7 +176,8 @@ sub do_counting_table
         push @result_rows, [ $cand, float_external( $acr->{$cand} // $num_cands ) ];
     }
     $format_class->do_table( $result_data, \@result_rows, "Average ballot ranking positions",
-        "Lower numbers are more favored. First place = 1." );
+        "Lower numbers are favored. First place = 1."
+            . (( $is_secondary // 0 ) ? " This data is used for breaking ties in the primary voting method." : ""));
 
     return;
 }
