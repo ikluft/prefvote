@@ -6,26 +6,26 @@ PrefVote interprets files named like \*.cvotes as [Condorcet Election Format (CE
 
 ### line
 
-![syntax diagram for line](syndiag-cef-line.svg)
+![syntax diagram for line](images/syndiag-cef-line.svg)
 
 ### candidate
 
-![syntax diagram for candidate](syndiag-cef-candidate.svg)
+![syntax diagram for candidate](images/syndiag-cef-candidate.svg)
 
 ### quantifier
 
-![syntax diagram for quantifier](syndiag-cef-quantifier.svg)
+![syntax diagram for quantifier](images/syndiag-cef-quantifier.svg)
 
 ### tag 
-![syntax diagram for tag](syndiag-cef-tag.svg)
+![syntax diagram for tag](images/syndiag-cef-tag.svg)
 
 ### weight
 
-![syntax diagram for weight](syndiag-cef-weight.svg)
+![syntax diagram for weight](images/syndiag-cef-weight.svg)
 
 ### words
 
-![syntax diagram for words](syndiag-cef-words.svg)
+![syntax diagram for words](images/syndiag-cef-words.svg)
 
 
     [work in progress - to be continued]
