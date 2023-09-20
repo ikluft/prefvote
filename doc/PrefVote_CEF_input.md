@@ -25,10 +25,7 @@ Syntax diagrams and Augmented Backus–Naur Form (ABNF) (see [Internet Standard 
 
 ### words
 
-    word = WORD / INT
-
-    words = words word
-    words =/ word
+    words = 1*( WORD / INT )
 
 ![syntax diagram for words](images/syndiag-cef-words.svg)
 
@@ -58,7 +55,7 @@ Syntax diagrams and Augmented Backus–Naur Form (ABNF) (see [Internet Standard 
 
 ### line
 
-PrefVote differs from the official CEF definition in allowing multipliers (quantifier and/or weight) to be in any order, as long as each appears no more than once. For strictly-defined CEF files, when both are specified then the weight must be first, followed by the quantifier.
+PrefVote differs from the official CEF definition in parsing multipliers (quantifier and/or weight) in any order, as long as each appears no more than once. For CEF files which strictly follow the official definition, when both are specified then the weight must be first, followed by the quantifier. PrefVote will not consider it an error if they are out of that order.
 
     tags = tags "," tag
     tags =/ tag
