@@ -55,9 +55,10 @@ Syntax diagrams and Augmented Backus–Naur Form (ABNF) (see [Internet Standard 
 
 ### line
 
-PrefVote differs from the official CEF definition in parsing multipliers (quantifier and/or weight) in any order, as long as each appears no more than once. For CEF files which strictly follow the official definition, when both are specified then the weight must be first, followed by the quantifier. PrefVote will not consider it an error if they are out of that order.
+PrefVote differs from the official CEF definition in parsing multipliers (quantifier and/or weight) in any order, as long as each appears no more than once. For CEF files which strictly follow the official definition, when both are specified then the weight must be first, followed by the quantifier. PrefVote will not consider it an error if quantifier is followed by weight.
 
-    tags = 1*tag
+    tags = tags "," tag
+	tags =/ tag
 
     multipliers = quantifier weight
     multipliers =/ weight quantifier
