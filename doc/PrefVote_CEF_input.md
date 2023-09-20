@@ -58,6 +58,8 @@ Syntax diagrams and Augmented Backus–Naur Form (ABNF) (see [Internet Standard 
 
 ### line
 
+PrefVote differs from the official CEF definition in allowing multipliers (quantifier and/or weight) to be in any order, as long as each appears no more than once. For strictly-defined CEF files, when both are specified then the weight must be first, followed by the quantifier.
+
     tags = tags "," tag
     tags =/ tag
 
