@@ -15,7 +15,9 @@ These must all occur before the first vote line.
 
 ## CEF vote lines: syntax diagrams and ABNF definitions
 
-Syntax diagrams and Augmented Backus–Naur Form (ABNF) (see [Internet Standard 68 / RFC 5234](https://tools.ietf.org/html/std68)) define how to parse lines of CEF votes.
+Syntax diagrams and
+[Augmented Backus–Naur Form (ABNF)](https://en.wikipedia.org/wiki/Augmented_Backus%E2%80%93Naur_form)
+(see [Internet Standard 68 / RFC 5234](https://tools.ietf.org/html/std68)) define how to parse lines of CEF votes.
 
 ### tokens
 
