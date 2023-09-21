@@ -2,16 +2,20 @@
 
 PrefVote interprets files named like \*.cvotes as [Condorcet Election Format (CEF)](https://github.com/CondorcetVote/CondorcetElectionFormat#invalid). CEF was developed as a common input file format intended to be supported by voting systems using Condorcet-compatible methods.
 
-## CEF parameter lines
+## CEF parameter lines and comments
+
+Comments start with a '#'. They do not have to be at the beginning of the line. No further parsing of the line is done after the start of a comment.
+
+CEF parameter lines begin with "#/" followed by the name of the parameter, a colon ':', and the value of the parameter.
 
 The CEF file begins with parameter lines at the top.
-These must all occur before the first ballot line.
+These must all occur before the first vote line.
 
     [work in progress - to be continued]
 
-## CEF ballot lines: syntax diagrams and ABNF definitions
+## CEF vote lines: syntax diagrams and ABNF definitions
 
-Syntax diagrams and Augmented Backus–Naur Form (ABNF) (see [Internet Standard 68 / RFC 5234](https://tools.ietf.org/html/std68)) define lines of the CEF ballot
+Syntax diagrams and Augmented Backus–Naur Form (ABNF) (see [Internet Standard 68 / RFC 5234](https://tools.ietf.org/html/std68)) define how to parse lines of CEF votes.
 
 ### tokens
 
