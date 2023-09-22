@@ -19,9 +19,9 @@ This is optional, but recommended. If not specified, the candidates will be coll
 
 ### #/Number of Seats:
 
-Integer value with the number of seats available for election or selection. In other words, this is how many winners there can be in the voting results.
+Integer value with the number of seats available for election or selection. In other words, this is how many winners are allowed in the voting results.
 
-This is optional. If not provided, PrefVote sets the nuber of seats to zero, which ranks all the candidates in order of voting results without specifying a number of winners. This differs from the CEF definition which sets an arbitrary integer 100 for the number of seats, intended to be more than the number of candidates in most elections. In effect both achieve similar results.
+This is optional. If not specified, PrefVote sets the number of seats to zero, which ranks all the candidates in order of voting results without mentioning a number of winners. This differs from the CEF definition which sets an arbitrary integer 100 for the number of seats, intended to be more than the number of candidates in most elections. In effect, both achieve similar results of ranking all the candidates.
 
     [work in progress - to be continued]
 
