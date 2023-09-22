@@ -11,6 +11,18 @@ CEF parameter lines begin with "#/" followed by the name of the parameter, a col
 The CEF file begins with parameter lines at the top.
 These must all occur before the first vote line.
 
+### #/Candidates:
+
+Semicolon-delimited list of names of choices/candidates in the election.
+
+This is optional, but recommended. If not specified, the candidates will be collected from ballot lines. It is recommended to specify valid candidates so that invalid candidates can be recognized.
+
+### #/Number of Seats:
+
+Integer value with the number of seats available for election or selection. In other words, this is how many winners there can be in the voting results.
+
+This is optional. If not provided, PrefVote sets the nuber of seats to zero, which ranks all the candidates in order of voting results without specifying a number of winners. This differs from the CEF definition which sets an arbitrary integer 100 for the number of seats, intended to be more than the number of candidates in most elections. In effect both achieve similar results.
+
     [work in progress - to be continued]
 
 ## CEF vote lines: syntax diagrams and ABNF definitions
