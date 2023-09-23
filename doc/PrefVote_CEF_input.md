@@ -23,6 +23,12 @@ Integer value with the number of seats available for election or selection. In o
 
 This is optional. If not specified, PrefVote sets the number of seats to zero, which ranks all the candidates in order of voting results without mentioning a number of winners. This differs from the CEF definition which sets an arbitrary integer 100 for the number of seats, intended to be more than the number of candidates in most elections. In effect, both achieve similar results of ranking all the candidates.
 
+### #/Implicit Ranking:
+
+Boolean "true" or "false" value, if set, signals that choices/candidates omitted from a ballot get ranked into last place.
+
+This is optional. The default value is true. It is recommended to set this to true (which happens by default). The setting can make a difference in voting results and is important to be aware which setting is in use.
+
     [work in progress - to be continued]
 
 ## CEF vote lines: syntax diagrams and ABNF definitions
