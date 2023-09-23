@@ -29,6 +29,14 @@ Boolean "true" or "false" value, if set, signals that choices/candidates omitted
 
 This is optional. The default value is true. It is recommended to set this to true (which happens by default). The setting can make a difference in voting results and is important to be aware which setting is in use.
 
+### #/Voting Methods:
+
+Semicolon-delimited list of names of voting methods allowed for processing the election.
+
+This can also be specified by the singular-form alias "#/Voting Method:".
+
+This is optional. CEF provides no default value and leaves that decision to the underlying voting system. PrefVote usually requires a voting method via the YAML or direct-API calls. For processing CEF, PrefVote uses a default value of RankedPairs.
+
     [work in progress - to be continued]
 
 ## CEF vote lines: syntax diagrams and ABNF definitions
