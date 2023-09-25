@@ -37,9 +37,17 @@ This can also be specified by the singular-form alias "#/Voting Method:".
 
 This is optional. CEF provides no default value and leaves that decision to the underlying voting system. PrefVote usually requires a voting method via the YAML or direct-API calls. For processing CEF, PrefVote uses a default value of RankedPairs.
 
-    [work in progress - to be continued]
+### #/Weight Allowed:
+
+Boolean "true" or "false" value, if set, signals that weights are allowed on votes. When weights are not allowed or not specified, they have a weight multiplier of 1.
+
+The default value is false. Specifying a weight (with the "^" operator) when the "Weight Allowed" parameter is not set is considered by PrefVote to be an error and results in rejection of any such ballot line as invalid.
 
 ## CEF vote lines: syntax diagrams and ABNF definitions
+
+Following the parameters are vote lines. No more parameters are allowed after the first vote line.
+
+Vote lines may represent individual ballots with a quantifier of 1, or ballots which all had the same content and a quantifier indicating how many identical-pattern ballots were aggregated into one line.
 
 Syntax diagrams and
 [Augmented Backus–Naur Form (ABNF)](https://en.wikipedia.org/wiki/Augmented_Backus%E2%80%93Naur_form)
