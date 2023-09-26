@@ -2,6 +2,31 @@
 
 PrefVote interprets files named like \*.cvotes as [Condorcet Election Format (CEF)](https://github.com/CondorcetVote/CondorcetElectionFormat#invalid). CEF was developed as a common input file format intended to be supported by voting systems using Condorcet-compatible methods.
 
+## Example
+
+This is an example of Condorcet Election Format (CEF) from the definition page.
+
+    # My beautiful election
+    #/Candidates: Candidate A;Candidate B;Candidate C
+    #/Implicit Ranking: true
+    #/Weight allowed: true
+
+    # Here the votes datas:
+    Candidate A > Candidate B > Candidate C * 42
+    julien@condorcet.vote , signature:55073db57b0a859911 || Candidate A > Candidate B > Candidate C # Same as above, so there will be 43 votes with this ranking. And tags are registered by the software if able.
+    Candidate C > Candidate A = Candidate B ^7 * 8 # 8 votes with a weight of 7.
+    Candidate B = Candidate A > Candidate C
+    Candidate C # Interpreted as Candidate C > Candidate A = Candidate B, because implicit ranking is true (which is also default, but it's better to say it)
+    Candidate B > Candidate C # Interpreted as Candidate B > Candidate C
+
+The example shows how all CEF files start with parameter lines which describe the election.
+
+After the parameters come the vote lines. Preferences are marked with the greater-than ">" operator. Equality among candidates are marked with the equals "=" operator.
+
+CEF allows tags to contain additional data about a vote line. At this time, PrefVote parses the tag data but does not use it.
+
+Parameters are no longer allowed after the first vote line.
+
 ## CEF parameter lines and comments
 
 Comments start with a '#'. They do not have to be at the beginning of the line. No further parsing of the line is done after the start of a comment.
