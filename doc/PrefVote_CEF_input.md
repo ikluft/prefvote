@@ -21,17 +21,17 @@ This is an example of Condorcet Election Format (CEF) from the definition page.
 
 The example shows how all CEF files start with parameter lines which describe the election.
 
-After the parameters come the vote lines. Preferences are marked with the greater-than ">" operator. Equality among candidates are marked with the equals "=" operator.
+After the parameters come the vote lines. Preferences are marked with the greater-than ">" operator. Equality among candidates are marked with the equals "=" operator. Candidate/option names may contain spaces.
 
 CEF allows tags to contain additional data about a vote line. At this time, PrefVote parses the tag data but does not use it.
 
-Parameters are no longer allowed after the first vote line.
+Parameters are no longer allowed after the first vote line. In other words, you cannot change the configuration of the election after processing the first vote.
 
 ## CEF parameter lines and comments
 
 Comments start with a '#'. They do not have to be at the beginning of the line. No further parsing of the line is done after the start of a comment.
 
-CEF parameter lines begin with "#/" followed by the name of the parameter, a colon ':', and the value of the parameter.
+CEF parameter lines begin with "#/" followed by the name of the parameter, a colon ':', and the value of the parameter. The parameter name may contain spaces.
 
 The CEF file begins with parameter lines at the top.
 These must all occur before the first vote line.
@@ -90,11 +90,15 @@ Syntax diagrams and
 
 ### words
 
+Sequences of words may have numbers in them as well. Since numbers are parsed as INT, those are included in recognized word sequences.
+
     words = 1*( WORD / INT )
 
 ![syntax diagram for words](images/syndiag-cef-words.svg)
 
 ### candidate
+
+Candidate names are sequences of words.
 
     candidate = words
 
