@@ -106,17 +106,26 @@ Candidate names are sequences of words.
 
 ### quantifier
 
+A quantifier specifies multiple votes which contained the same content and order.
+
     quantifier = "*" INT
 
 ![syntax diagram for quantifier](images/syndiag-cef-quantifier.svg)
 
 ### weight
 
+A weight specifies a vote which for some reason of voting rules counts as a greater value than others.
+Weights are only allowed when the "Weight Allowed" parameter is set to true.
+Under normal/default circumstances, they are not allowed and all votes have an equal weight of 1.
+
     weight = "^" INT
 
 ![syntax diagram for weight](images/syndiag-cef-weight.svg)
 
 ### tag 
+
+Tags are strings attached to a vote line.
+These are defined in the CEF standard but currently not used by PrefVote.
 
     tag = words
 
