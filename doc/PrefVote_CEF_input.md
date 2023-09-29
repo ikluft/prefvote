@@ -68,6 +68,10 @@ Boolean "true" or "false" value, if set, signals that weights are allowed on vot
 
 The default value is false. Specifying a weight (with the "^" operator) when the "Weight Allowed" parameter is not set is considered by PrefVote to be an error and results in rejection of any such ballot line as invalid.
 
+### Non-standard parameters
+
+Handling of non-standard parameter names is not defined by the CEF standard. For orderly degradation of service among varying versions of software, PrefVote takes no action when a non-standard parameter name is used. The effect is that all parameters are stored, but software only reads and acts on standard names from the spec.
+
 ## CEF vote lines: syntax diagrams and ABNF definitions
 
 Following the parameters are vote lines. No more parameters are allowed after the first vote line.
