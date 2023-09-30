@@ -1,6 +1,6 @@
 # PrefVote support of Condorcet Election Format (CEF) input files
 
-PrefVote interprets files named like \*.cvotes as [Condorcet Election Format (CEF)](https://github.com/CondorcetVote/CondorcetElectionFormat#invalid). CEF was developed as a common input file format intended to be supported by voting systems using Condorcet-compatible methods.
+PrefVote interprets files named like \*.cvotes as [Condorcet Election Format (CEF)](https://github.com/CondorcetVote/CondorcetElectionFormat#invalid). CEF was developed as a common input file format intended to be supported by voting systems using Condorcet-compatible methods. Its files consist of two sections: election/poll configuration parameters followed by vote data.
 
 ## Example
 
@@ -11,7 +11,7 @@ This is an example of Condorcet Election Format (CEF) from the definition page.
     #/Implicit Ranking: true
     #/Weight allowed: true
 
-    # Here the votes datas:
+    # vote data:
     Candidate A > Candidate B > Candidate C * 42
     julien@condorcet.vote , signature:55073db57b0a859911 || Candidate A > Candidate B > Candidate C # Same as above, so there will be 43 votes with this ranking. And tags are registered by the software if able.
     Candidate C > Candidate A = Candidate B ^7 * 8 # 8 votes with a weight of 7.
