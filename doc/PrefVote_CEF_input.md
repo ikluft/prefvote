@@ -1,6 +1,8 @@
 # PrefVote support of Condorcet Election Format (CEF) input files
 
-PrefVote interprets files named like \*.cvotes as [Condorcet Election Format (CEF)](https://github.com/CondorcetVote/CondorcetElectionFormat#invalid). CEF was developed as a common input file format intended to be supported by voting systems using Condorcet-compatible methods. Its files consist of two sections: election/poll configuration parameters followed by vote data.
+PrefVote interprets files named like \*.cvotes as [Condorcet Election Format (CEF)](https://github.com/CondorcetVote/CondorcetElectionFormat#invalid). CEF is intended as a common input file format intended to be supported by voting systems using Condorcet-compatible methods. PrefVote added support for CEF in addition to the original YAML-based input files.
+
+CEF files consist of two sections: election/poll configuration parameters followed by vote data.
 
 ## Example
 
