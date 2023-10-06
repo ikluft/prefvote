@@ -20,9 +20,9 @@ After the reference implementation in Perl, next up for language implementations
 
 ## Input file format
 
-The original and primary input file format of PrefVote is YAML with a predefined data structure. There is [documentation for the data format](doc/PrefVote_YAML_input.md). Also, as a library any data can be submitted directly.
+The original and primary input file format of PrefVote is YAML with a predefined data structure. There is [documentation for the data format](doc/PrefVote_YAML_input.md). Also, when PrefVote is used as a library any data can be submitted by calling functions directly.
 
-In support of a proposed Open Source standard for preference voting system, PrefVote also supports the [Condorcet Election Format (CEF)](https://github.com/CondorcetVote/CondorcetElectionFormat), or CEF. There is [documentation for PrefVote's support for CEF input files](doc/PrefVote_CEF_input.md).
+In support of a proposed Open Source standard for preference voting systems, PrefVote also supports the [Condorcet Election Format (CEF)](https://github.com/CondorcetVote/CondorcetElectionFormat), or CEF. There is [documentation for PrefVote's support for CEF input files](doc/PrefVote_CEF_input.md).
 
 ## Tie-breaking modifications to algorithms
 
