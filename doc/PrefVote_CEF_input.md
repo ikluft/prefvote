@@ -1,12 +1,12 @@
 # PrefVote support of Condorcet Election Format (CEF) input files
 
-PrefVote interprets files named like \*.cvotes as [Condorcet Election Format (CEF)](https://github.com/CondorcetVote/CondorcetElectionFormat). CEF is intended as a common input file format intended to be supported by voting systems using Condorcet-compatible methods. PrefVote added support for CEF in addition to the original YAML-based input files.
+PrefVote interprets files named like \*.cvotes as [Condorcet Election Format (CEF)](https://github.com/CondorcetVote/CondorcetElectionFormat). CEF is intended as a common input file format intended to be supported by voting systems using Condorcet-compatible preference voting methods. PrefVote added support for CEF in addition to its original YAML-based input files.
 
 CEF files consist of two sections: election/poll configuration parameters followed by vote data.
 
 ## Example
 
-This is an example of Condorcet Election Format (CEF) from the definition page.
+This is an example of Condorcet Election Format (CEF) from the author's definition page.
 
     # My beautiful election
     #/Candidates: Candidate A;Candidate B;Candidate C
@@ -23,7 +23,7 @@ This is an example of Condorcet Election Format (CEF) from the definition page.
 
 The example shows how all CEF files start with parameter lines which describe the election.
 
-After the parameters come the vote lines. Preferences are marked with the greater-than ">" operator. Equality among candidates are marked with the equals "=" operator. Candidate/option names may contain spaces.
+After the parameters come the vote lines. Preferences are marked with the greater-than ">" operator, indicating the first choice is preferred above the second. Equality among choices are marked with the equals "=" operator. Candidate/choice names may contain spaces.
 
 CEF allows tags to contain additional data about a vote line. At this time, PrefVote parses the tag data but does not use it.
 
@@ -37,6 +37,8 @@ CEF parameter lines begin with "#/" followed by the name of the parameter, a col
 
 The CEF file begins with parameter lines at the top.
 These must all occur before the first vote line.
+
+Recognized configuration parameters are described in the following subsections.
 
 ### #/Candidates:
 
