@@ -122,6 +122,7 @@ title: Test Vote 003 (100 ballots)
 </tbody>
 </table>
 <h3>Average ballot ranking positions</h3>
+<p>Lower numbers are favored. First place = 1.</p>
 <table border=1>
 <thead>
 <tr>
@@ -282,6 +283,42 @@ title: Test Vote 003 (100 ballots)
 </tr>
 </tbody>
 </table>
+<h3>Average ballot ranking positions</h3>
+<p>Lower numbers are favored. First place = 1. This data is used for breaking ties in the primary voting method.</p>
+<table border=1>
+<thead>
+<tr>
+<th>Candidate</th>
+<th>average ranking</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FACTIOUS</td>
+<td>2.98</td>
+</tr>
+<tr>
+<td>EVIL</td>
+<td>3.7</td>
+</tr>
+<tr>
+<td>ABNORMAL</td>
+<td>4.44</td>
+</tr>
+<tr>
+<td>BORING</td>
+<td>4.5</td>
+</tr>
+<tr>
+<td>CHAOTIC</td>
+<td>4.61</td>
+</tr>
+<tr>
+<td>DYSFUNCTIONAL</td>
+<td>4.69</td>
+</tr>
+</tbody>
+</table>
 </div>
 
 </blockquote>
@@ -333,6 +370,7 @@ title: Test Vote 003 (100 ballots)
 </tbody>
 </table>
 <h3>Margin-of-victory matrix</h3>
+<p>This is a comparison of how each choice ranked against the others.</p>
 <table border=1>
 <thead>
 <tr>
@@ -402,6 +440,42 @@ title: Test Vote 003 (100 ballots)
 </tr>
 </tbody>
 </table>
+<h3>Average ballot ranking positions</h3>
+<p>Lower numbers are favored. First place = 1. This data is used for breaking ties in the primary voting method.</p>
+<table border=1>
+<thead>
+<tr>
+<th>Candidate</th>
+<th>average ranking</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FACTIOUS</td>
+<td>2.98</td>
+</tr>
+<tr>
+<td>EVIL</td>
+<td>3.7</td>
+</tr>
+<tr>
+<td>ABNORMAL</td>
+<td>4.44</td>
+</tr>
+<tr>
+<td>BORING</td>
+<td>4.5</td>
+</tr>
+<tr>
+<td>CHAOTIC</td>
+<td>4.61</td>
+</tr>
+<tr>
+<td>DYSFUNCTIONAL</td>
+<td>4.69</td>
+</tr>
+</tbody>
+</table>
 </div>
 
 </blockquote>
@@ -453,6 +527,7 @@ title: Test Vote 003 (100 ballots)
 </tbody>
 </table>
 <h3>Margin-of-victory matrix</h3>
+<p>This is a comparison of how each choice ranked against the others.</p>
 <table border=1>
 <thead>
 <tr>
@@ -519,6 +594,42 @@ title: Test Vote 003 (100 ballots)
 <td>-11 ❌</td>
 <td>-3 ❌</td>
 <td>🛇</td>
+</tr>
+</tbody>
+</table>
+<h3>Average ballot ranking positions</h3>
+<p>Lower numbers are favored. First place = 1. This data is used for breaking ties in the primary voting method.</p>
+<table border=1>
+<thead>
+<tr>
+<th>Candidate</th>
+<th>average ranking</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FACTIOUS</td>
+<td>2.98</td>
+</tr>
+<tr>
+<td>EVIL</td>
+<td>3.7</td>
+</tr>
+<tr>
+<td>ABNORMAL</td>
+<td>4.44</td>
+</tr>
+<tr>
+<td>BORING</td>
+<td>4.5</td>
+</tr>
+<tr>
+<td>CHAOTIC</td>
+<td>4.61</td>
+</tr>
+<tr>
+<td>DYSFUNCTIONAL</td>
+<td>4.69</td>
 </tr>
 </tbody>
 </table>

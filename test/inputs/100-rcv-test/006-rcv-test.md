@@ -34,15 +34,6 @@ title: Test Vote 006 (100 ballots)
 <td>2 (3)</td>
 </tr>
 <tr>
-<td>ABNORMAL</td>
-<td>4.01000 (401/100)</td>
-<td>3</td>
-<td>4 / 4</td>
-<td>5 / 5</td>
-<td>5 / 5</td>
-<td>4 (2)</td>
-</tr>
-<tr>
 <td>FACTIOUS</td>
 <td>4.01000 (401/100)</td>
 <td>3</td>
@@ -50,6 +41,15 @@ title: Test Vote 006 (100 ballots)
 <td>3 / 3</td>
 <td>3 / 2</td>
 <td>2 (3)</td>
+</tr>
+<tr>
+<td>ABNORMAL</td>
+<td>4.01000 (401/100)</td>
+<td>3</td>
+<td>4 / 4</td>
+<td>5 / 5</td>
+<td>5 / 5</td>
+<td>4 (2)</td>
 </tr>
 <tr>
 <td>EVIL</td>
@@ -122,6 +122,7 @@ title: Test Vote 006 (100 ballots)
 </tbody>
 </table>
 <h3>Average ballot ranking positions</h3>
+<p>Lower numbers are favored. First place = 1.</p>
 <table border=1>
 <thead>
 <tr>
@@ -282,6 +283,42 @@ title: Test Vote 006 (100 ballots)
 </tr>
 </tbody>
 </table>
+<h3>Average ballot ranking positions</h3>
+<p>Lower numbers are favored. First place = 1. This data is used for breaking ties in the primary voting method.</p>
+<table border=1>
+<thead>
+<tr>
+<th>Candidate</th>
+<th>average ranking</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DYSFUNCTIONAL</td>
+<td>3.91</td>
+</tr>
+<tr>
+<td>BORING</td>
+<td>3.98</td>
+</tr>
+<tr>
+<td>ABNORMAL</td>
+<td>4.01</td>
+</tr>
+<tr>
+<td>FACTIOUS</td>
+<td>4.01</td>
+</tr>
+<tr>
+<td>EVIL</td>
+<td>4.11</td>
+</tr>
+<tr>
+<td>CHAOTIC</td>
+<td>4.43</td>
+</tr>
+</tbody>
+</table>
 </div>
 
 </blockquote>
@@ -333,6 +370,7 @@ title: Test Vote 006 (100 ballots)
 </tbody>
 </table>
 <h3>Margin-of-victory matrix</h3>
+<p>This is a comparison of how each choice ranked against the others.</p>
 <table border=1>
 <thead>
 <tr>
@@ -402,6 +440,42 @@ title: Test Vote 006 (100 ballots)
 </tr>
 </tbody>
 </table>
+<h3>Average ballot ranking positions</h3>
+<p>Lower numbers are favored. First place = 1. This data is used for breaking ties in the primary voting method.</p>
+<table border=1>
+<thead>
+<tr>
+<th>Candidate</th>
+<th>average ranking</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DYSFUNCTIONAL</td>
+<td>3.91</td>
+</tr>
+<tr>
+<td>BORING</td>
+<td>3.98</td>
+</tr>
+<tr>
+<td>FACTIOUS</td>
+<td>4.01</td>
+</tr>
+<tr>
+<td>ABNORMAL</td>
+<td>4.01</td>
+</tr>
+<tr>
+<td>EVIL</td>
+<td>4.11</td>
+</tr>
+<tr>
+<td>CHAOTIC</td>
+<td>4.43</td>
+</tr>
+</tbody>
+</table>
 </div>
 
 </blockquote>
@@ -453,6 +527,7 @@ title: Test Vote 006 (100 ballots)
 </tbody>
 </table>
 <h3>Margin-of-victory matrix</h3>
+<p>This is a comparison of how each choice ranked against the others.</p>
 <table border=1>
 <thead>
 <tr>
@@ -519,6 +594,42 @@ title: Test Vote 006 (100 ballots)
 <td>-15 ❌</td>
 <td>-12 ❌</td>
 <td>🛇</td>
+</tr>
+</tbody>
+</table>
+<h3>Average ballot ranking positions</h3>
+<p>Lower numbers are favored. First place = 1. This data is used for breaking ties in the primary voting method.</p>
+<table border=1>
+<thead>
+<tr>
+<th>Candidate</th>
+<th>average ranking</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DYSFUNCTIONAL</td>
+<td>3.91</td>
+</tr>
+<tr>
+<td>BORING</td>
+<td>3.98</td>
+</tr>
+<tr>
+<td>FACTIOUS</td>
+<td>4.01</td>
+</tr>
+<tr>
+<td>ABNORMAL</td>
+<td>4.01</td>
+</tr>
+<tr>
+<td>EVIL</td>
+<td>4.11</td>
+</tr>
+<tr>
+<td>CHAOTIC</td>
+<td>4.43</td>
 </tr>
 </tbody>
 </table>
