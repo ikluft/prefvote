@@ -40,4 +40,33 @@ PrefVote::Core::TestSpec->register_blackbox_spec(
 );
 __PACKAGE__->ballot_input_ties_policy(1);    # set flag for Core: this class allows input ballots to set A/B ties
 
+# list of names of winners in order by place, ties shown by a set of the tied candidates
+has winners => (
+    is          => 'rw',
+    isa         => ArrayRef [ Set [Str] ],
+    default     => sub { return [] },
+    handles_via => 'Array',
+    handles     => {
+        winners_all   => 'all',
+        winners_count => 'count',
+        winners_push  => 'push',
+    },
+);
+
+# 2-level hash of candidate-pair preference totals
+# This shows total votes where 1st index candidate if preferred over a 2nd index candidate.
+# Totals are unidirectional and must be combined to determine which candidate has greater number either direction.
+has pair => (
+    is          => 'rw',
+    isa         => HashRef [ HashRef [ InstanceOf ['PrefVote::Core::PairData'] ] ],
+    default     => sub { return {} },
+    handles_via => 'Hash',
+    handles     => {
+        pair_accessor => 'accessor',
+        pair_get      => 'get',
+        pair_keys     => 'keys',
+        pair_set      => 'set',
+    },
+);
+
 # TODO to be continued...
