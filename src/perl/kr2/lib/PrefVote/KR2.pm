@@ -31,7 +31,7 @@ extends 'PrefVote::Core';
 # blackbox testing structure
 Readonly::Hash my %blackbox_spec => (
     winners  => [qw(list set string)],
-    pair     => [qw(hash hash PrefVote::KR2::PairData)],
+    pair     => [qw(hash hash PrefVote::Core::PairData)],
 );
 PrefVote::Core::TestSpec->register_blackbox_spec(
     __PACKAGE__,
@@ -70,3 +70,87 @@ has pair => (
 );
 
 # TODO to be continued...
+
+# compute candidate-pair preference totals
+# each ballot ranks voter preferences in order - this totals preferences among each pair of candidates
+sub tally_preferences
+{
+    my $self = shift;
+
+    # compute preferences from ballots: loop through votes tallying preferences
+    my @choices = $self->choices_keys();    # list of candidates
+    foreach my $combo ( $self->ballots_keys() ) {
+
+        # loop through choices on the ballot
+        my $ballot       = $self->ballots_get($combo);
+        my @ballot_items = $ballot->items_all();
+
+        # choices contained on the ballot have all pairwise preferences recorded
+        my %seen_on_ballot;
+        for ( my $pos1 = 0 ; $pos1 < scalar @ballot_items - 1 ; $pos1++ ) {
+
+            # mark all following items on the ballot as less-favored than the current item
+            # This adds 2 levels of loops to support potential ties within each position.
+            my @item1 = item2list( $ballot_items[$pos1] );
+            foreach my $cand_i (@item1) {
+                $seen_on_ballot{$cand_i} = 1;
+                for ( my $pos2 = $pos1 + 1 ; $pos2 < scalar @ballot_items ; $pos2++ ) {
+                    my @item2 = item2list( $ballot_items[$pos2] );
+                    foreach my $cand_j (@item2) {
+                        $seen_on_ballot{$cand_j} = 1;
+                        $self->add_preference( $cand_i, $cand_j, $ballot->{quantity} );
+                    }
+                }
+            }
+        }
+
+        # all choices omitted from the ballot (unranked) count as less-preferred than all on the ballot
+        # no comparison is made between unranked choices - the voter didn't provide data on that
+        if ( $self->get_flag('implicit_ranking') ) {
+            my @included = keys %seen_on_ballot;
+            my @omitted  = grep { not exists $seen_on_ballot{$_} } @choices;
+            foreach my $in (@included) {
+                foreach my $out (@omitted) {
+                    $self->add_preference( $in, $out, $ballot->{quantity} );
+                }
+            }
+        }
+    }
+    return;
+}
+
+# count votes using Kluft Rank-Rate method
+sub count
+{
+    my $self = shift;
+
+    # stop now if there are no votes
+    return if $self->total_ballots() == 0;
+
+    # tally preferences into one-way candidate-pair totals
+    $self->tally_preferences();
+
+    # TODO
+
+    # save per-candidate final results in PrefVote::Core's choice_to_result map
+    $self->save_c2r( winners => $self->winners() );
+
+    #$self->debug_print(__PACKAGE__." count(): ".Dumper($self));
+    return;
+}
+
+# return short result list
+sub results
+{
+    my $self = shift;
+    return { ranked => $self->{winners} };
+}
+
+1;
+
+__END__
+
+# POD documentation
+=encoding utf8
+
+=head1 SYNOPSIS
