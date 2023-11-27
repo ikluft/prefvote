@@ -40,6 +40,14 @@ PrefVote::Core::TestSpec->register_blackbox_spec(
 );
 __PACKAGE__->ballot_input_ties_policy(1);    # set flag for Core: this class allows input ballots to set A/B ties
 
+# rating levels
+Readonly::Hash my %rating_levels =>
+{
+    1 => [],
+    3 => [ qr( favor oppose ) ],
+    5 => [ qr( favor2 favor1 oppose1 oppose2 ) ],
+}
+
 # list of names of winners in order by place, ties shown by a set of the tied candidates
 has winners => (
     is          => 'rw',
