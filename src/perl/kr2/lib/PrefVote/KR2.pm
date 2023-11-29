@@ -161,3 +161,22 @@ __END__
 =encoding utf8
 
 =head1 SYNOPSIS
+
+    use PrefVote::KR2;
+
+    # count votes from a properly-formatted YAML file
+    my $vote_obj = PrefVote::KR2::file2vote($progname);
+    $vote_obj->count();
+
+    # get results in YAML
+    print YAML::XS::Dump($vote_obj->result_yaml());
+
+    # get results for your own handling
+    my $results = $vote_obj->results();
+    ... process $results contents ...
+
+=head1 DESCRIPTION
+
+I<PrefVote::KR2> implements the Kluft Rank-Rate (KR2) preference voting algorithm for the I<PrefVote>
+system.
+KR2 is an experimental voting method under testing.
