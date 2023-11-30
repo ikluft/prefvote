@@ -180,3 +180,20 @@ __END__
 I<PrefVote::KR2> implements the Kluft Rank-Rate (KR2) preference voting algorithm for the I<PrefVote>
 system.
 KR2 is an experimental voting method under testing.
+
+=head1 SEE ALSO
+
+L<PrefVote::Core>
+
+The Kluft Rank-Rate (KR2) preference voting algorithm is experimental.
+As documentation is written it will be posted at L<https://ikluft.github.io/prefvote/doc/kr2/>.
+
+PrefVote on GitHub L<https://github.com/ikluft/prefvote>
+
+=head1 BUGS AND LIMITATIONS
+
+Please report bugs via GitHub at L<https://github.com/ikluft/prefvote/issues>
+
+Patches and enhancements may be submitted via a pull request at L<https://github.com/ikluft/prefvote/pulls>
+
+=cut
