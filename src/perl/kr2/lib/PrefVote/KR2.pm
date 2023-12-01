@@ -42,7 +42,7 @@ __PACKAGE__->ballot_input_ties_policy(1);    # set flag for Core: this class all
 
 # rating levels
 Readonly::Hash my %rating_levels => (
-    1 => [],
+    1 => [ qw(neutral) ],
     3 => [ qw(favor neutral oppose) ],
     5 => [ qw(favor2 favor1 neutral oppose1 oppose2) ],
 );
