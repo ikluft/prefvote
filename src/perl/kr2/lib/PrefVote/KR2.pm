@@ -30,8 +30,8 @@ extends 'PrefVote::Core';
 
 # blackbox testing structure
 Readonly::Hash my %blackbox_spec => (
-    winners  => [qw(list set string)],
-    pair     => [qw(hash hash PrefVote::Core::PairData)],
+    winners => [qw(list set string)],
+    pair    => [qw(hash hash PrefVote::Core::PairData)],
 );
 PrefVote::Core::TestSpec->register_blackbox_spec(
     __PACKAGE__,
@@ -42,9 +42,9 @@ __PACKAGE__->ballot_input_ties_policy(1);    # set flag for Core: this class all
 
 # rating levels
 Readonly::Hash my %rating_levels => (
-    1 => [ qw(neutral) ],
-    3 => [ qw(favor neutral oppose) ],
-    5 => [ qw(favor2 favor1 neutral oppose1 oppose2) ],
+    1 => [qw(neutral)],
+    3 => [qw(favor neutral oppose)],
+    5 => [qw(favor2 favor1 neutral oppose1 oppose2)],
 );
 
 # list of names of winners in order by place, ties shown by a set of the tied candidates
