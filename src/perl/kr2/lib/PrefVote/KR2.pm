@@ -126,6 +126,14 @@ sub tally_preferences
     return;
 }
 
+# compute Condorcet result ordering
+sub compute_condorcet
+{
+    my $self = shift;
+
+    # TODO
+}
+
 # count votes using Kluft Rank-Rate method
 sub count
 {
@@ -137,7 +145,8 @@ sub count
     # tally preferences into one-way candidate-pair totals
     $self->tally_preferences();
 
-    # TODO
+    # compute Condorcet result ordering
+    $self->compute_condorcet()
 
     # save per-candidate final results in PrefVote::Core's choice_to_result map
     $self->save_c2r( winners => $self->winners() );
