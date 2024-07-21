@@ -28,7 +28,7 @@ extends 'PrefVote::Core';
 
 # blackbox testing structure
 Readonly::Hash my %blackbox_spec => (
-    pair      => [qw(hash hash PrefVote::RankedPairs::PairData)],
+    pair      => [qw(hash hash PrefVote::Core::PairData)],
     pairclass => [qw(string)],
 );
 PrefVote::Core::TestSpec->register_blackbox_spec(
@@ -95,6 +95,9 @@ __END__
 =head1 SYNOPSIS
 
     use PrefVote::Core::PairMatrix;
+    my $pairmatrix = PrefVote::Core::PairMatrix->new( pairclass => "PrefVote::Core::PairData" );
+
+    # alternative
     my $pairmatrix = PrefVote::Core::PairMatrix->new( pairclass => "PrefVote::RankedPairs::PairData" );
 
 =head1 DESCRIPTION
