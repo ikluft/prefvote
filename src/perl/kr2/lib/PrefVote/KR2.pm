@@ -76,6 +76,37 @@ has pair => (
     },
 );
 
+# create candidate pair node if it didn't exist
+sub make_pair_node
+{
+    my ( $self, $cand_i, $cand_j ) = @_;
+    if ( not exists $self->{pair}{$cand_i} ) {
+        $self->{pair}{$cand_i} = {};
+    }
+    if ( not exists $self->{pair}{$cand_i}{$cand_j} ) {
+        $self->{pair}{$cand_i}{$cand_j} = PrefVote::RankedPairs::PairData->new();
+    }
+    return;
+}
+
+# record a candidate-pair preference
+# This adds to a total of votes favoring candidate cand1 over cand2. Note: cand2 over cand1 is a separate table entry.
+sub add_preference
+{
+    my ( $self, $cand_i, $cand_j, $quantity ) = @_;
+    $self->make_pair_node( $cand_i, $cand_j );
+    return $self->{pair}{$cand_i}{$cand_j}->add_preference($quantity);
+}
+
+# get preference in matrix entry
+sub get_preference
+{
+    my ( $self, $cand_i, $cand_j ) = @_;
+    return 0 if not exists $self->{pair}{$cand_i};               # use zero if the node doesn't exist
+    return 0 if not exists $self->{pair}{$cand_i}{$cand_j};      # use zero if the node doesn't exist
+    return $self->{pair}{$cand_i}{$cand_j}->preference() // 0;   # return preference, or zero if the node didn't have it
+}
+
 # TODO to be continued...
 
 # compute candidate-pair preference totals
