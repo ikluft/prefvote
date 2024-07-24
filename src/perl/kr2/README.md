@@ -16,6 +16,9 @@
 
 # SEE ALSO
 
+[PrefVote::Core](https://metacpan.org/pod/PrefVote%3A%3ACore)
+
+PrefVote on GitHub [https://github.com/ikluft/prefvote](https://github.com/ikluft/prefvote)
 # BUGS AND LIMITATIONS
 
 Please report bugs via GitHub at [https://github.com/ikluft/prefvote/issues](https://github.com/ikluft/prefvote/issues)
