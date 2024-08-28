@@ -5,5 +5,6 @@ Module subdirectories:
   * [PrefVote::STV](stv)
   * [PrefVote::Schulze](schulze)
   * [PrefVote::RankedPairs](rankedpairs)
+  * [PrefVote::KR2](kr2)
 
-All the voting method modules inherit from PrefVote::Core.
+PrefVote::Core is not a complete voting method. All the other voting method modules inherit from PrefVote::Core.
