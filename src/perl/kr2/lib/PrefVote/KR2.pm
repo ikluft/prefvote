@@ -1,6 +1,6 @@
 # PrefVote::KR2
 # ABSTRACT: Kluft Rank-Rate (KR2) vote counting module for PrefVote
-# Copyright (c) 2023 by Ian Kluft
+# Copyright (c) 2023-2024 by Ian Kluft
 # Open Source license: Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
 
 # pragmas to silence some warnings from Perl::Critic
@@ -107,7 +107,47 @@ sub get_preference
     return $self->{pair}{$cand_i}{$cand_j}->preference() // 0;   # return preference, or zero if the node didn't have it
 }
 
+# set a candidate-pair margin of victory (mov) in matrix entry
+sub set_mov
+{
+    my ( $self, $cand_i, $cand_j, $mov ) = @_;
+    $self->make_pair_node( $cand_i, $cand_j );
+    return $self->{pair}{$cand_i}{$cand_j}->mov($mov);
+}
+
+# get candidate-pair margin of victory (mov) in matrix entry
+sub get_mov
+{
+    my ( $self, $cand_i, $cand_j ) = @_;
+    return 0 if not exists $self->{pair}{$cand_i};             # zero if the node doesn't exist
+    return 0 if not exists $self->{pair}{$cand_i}{$cand_j};    # zero if the node doesn't exist
+    return $self->{pair}{$cand_i}{$cand_j}->get_mov();
+}
+
 # TODO to be continued...
+
+# get a choice/candidate's total of all margins of victory
+sub cand_total_mov
+{
+    my ( $self, $cand ) = @_;
+    my $total = 0;
+    foreach my $opponent ( keys %{ $self->pair_get($cand) } ) {
+        $total += $self->get_mov( $cand, $opponent );
+    }
+    return $total;
+}
+
+# return a ballot item as a list, whether it was a single scalar or a tie-group set
+# This code was borrowed from Schulze, which allows ties on input. The Ranked Pairs definition does not allow
+# input ties. PrefVote can be configured to allow it for consistency across Condorcet methods.
+sub item2list
+{
+    my $item = shift;
+    if ( ref $item eq 'Set::Tiny' ) {
+        return ( $item->elements() );
+    }
+    return ($item);
+}
 
 # compute candidate-pair preference totals
 # each ballot ranks voter preferences in order - this totals preferences among each pair of candidates
@@ -161,6 +201,20 @@ sub tally_preferences
 sub compute_condorcet
 {
     my $self = shift;
+
+    # loop through candidate pairs and compute margin of victory for each
+    foreach my $cand_i ( $self->pair_keys() ) {
+        foreach my $cand_j ( keys %{ $self->pair_accessor($cand_i) } ) {
+            # skip if we've already computed this pair in the reverse candidate order
+            next if exists $self->{pair}{$cand_i}{$cand_j}{mov};
+
+            # set up margin of victory (mov) and tentative i-j candidate pair (may be reordered)
+            my $pref_ij = $self->get_preference( $cand_i, $cand_j );
+            my $pref_ji = $self->get_preference( $cand_j, $cand_i );
+            $self->set_mov( $cand_i, $cand_j, $pref_ij - $pref_ji );
+            $self->set_mov( $cand_j, $cand_i, $pref_ji - $pref_ij );
+        }
+    }
 
     # TODO
     return;
@@ -221,6 +275,65 @@ __END__
 I<PrefVote::KR2> implements the Kluft Rank-Rate (KR2) preference voting algorithm for the I<PrefVote>
 system.
 KR2 is an experimental voting method under testing.
+
+=head1 METHODS
+
+These methods are in addition to L<those inherited from PrefVote::Core|PrefVote::Core/METHODS>.
+
+=over 1
+
+=item make_pair_node
+
+This should not be called by external code.
+
+This method is called by add_preference, set_mov and set_lock to initialize a pair node for a
+specific pair of candidates if it didn't already exist.
+The parameters are the ids of the two candidates of the pair in order of counting preferences
+of the first over the second.
+A separate pair node counts preferences in the opposite direction.
+
+=item add_preference
+
+This method records a counted candidate-pair preference.
+The parameters are the ids of the two candidates for the pair, and the quantity of ballots by which to increment it.
+The quantity is a function of how many ballots contained a specific permutation of candidates.
+
+=item get_preference
+
+This method returns the vote count for a specific candidate pair, indicating how many ballots had a preference for
+the first candidate over the second.
+If called before counting is complete, this yields the in-progress tally for that candidate pair.
+
+=item set_mov
+
+This should not be called by external code.
+
+This sets the margin of victory for a candidate pair.
+The parameters are the ids of the two candidates for the pair, and the margin of victory of votes counted.
+This counts both wins, adding votes for the first candidate over the second, and losses,
+subtracting votes for the second candidate over the first.
+So the corresponding pair reversing the order of the two candidates must be the negative of the same value.
+
+=item get_mov
+
+This reads the margin of victory for a candidate pair.
+The parameters are the ids of the two candidates for the pair.
+
+=item cand_total_mov
+
+This returns a candidate's total of their margins of victory.
+The parameter is the id of the candidate.
+
+=item tally_preferences
+
+This should not be called by external code.
+This is called by the count() method.
+
+This tallies the ballots which were already stored by PrefVote::Core::submit_ballot().
+This is where each entry in a ranked preference order is counted as a preference over all
+following lower-ranked candidates.
+Omitted candidates are counted as equals but less preferred than all other candidates for that ballot.
+This calls I<add_preference()> to register preferences from ballots into the candidate pair matrix.
 
 =head1 SEE ALSO
 
