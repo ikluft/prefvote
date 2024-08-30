@@ -270,14 +270,12 @@ sub process_winners
     # quota exceeded - we have a winner!
     my @round_winner;
     my $place             = $self->winners_count() + 1;
-    my $tiebreak_disabled = $self->config("no-tiebreak") // 0;    # config flag to disable tie-breaking by avg rank
     foreach my $curr_key (@round_candidate) {
 
         # mark all the candidates over quota who are tied for first place as winners
         if (
             ( $round->tally_get($curr_key)->votes() == $round->tally_get( $round_candidate[0] )->votes() )
-            and ( $tiebreak_disabled
-                or fp_equal( $self->average_ranking($curr_key), $self->average_ranking( $round_candidate[0] ) ) )
+            and fp_equal( $self->average_ranking($curr_key), $self->average_ranking( $round_candidate[0] ) )
             )
         {
             my $c_votes        = $round->tally_get($curr_key)->votes();
@@ -316,13 +314,11 @@ sub eliminate_losers
 
     # mark candidates tied for last as eliminated
     my @round_eliminated;
-    my $tiebreak_disabled = $self->config("no-tiebreak") // 0;    # config flag to disable tie-breaking by avg rank
     for ( $i = ( scalar @round_candidate ) - 1 ; $i > 0 ; $i-- ) {
         my $indexed_cand = $round_candidate[$i];
         if (
             ( $round->tally_get($last_cand)->votes() == $round->tally_get($indexed_cand)->votes() )
-            and ( $tiebreak_disabled
-                or fp_equal( $self->average_ranking($last_cand), $self->average_ranking($indexed_cand) ) )
+            and fp_equal( $self->average_ranking($last_cand), $self->average_ranking($indexed_cand) )
             )
         {
             $round->tally_get($indexed_cand)->mark_as_eliminated();
@@ -370,7 +366,6 @@ sub count
         }
 
         # sort in descending order
-        my $tiebreak_disabled = $self->config("no-tiebreak") // 0;    # config flag to disable tie-breaking by avg rank
         my @round_candidate   = $round->sort_candidates(
             sub {
                 # 1st/primary comparison: votes for candidate in descending order
@@ -381,12 +376,10 @@ sub count
                 }
 
                 # 2nd comparison: average ballot-ranking position in ascending order
-                if ( not $tiebreak_disabled ) {
-                    my $acr0 = $self->average_ranking( $_[0] );
-                    my $acr1 = $self->average_ranking( $_[1] );
-                    if ( not fp_equal( $acr0, $acr1 ) ) {
-                        return fp_cmp( $acr0, $acr1 );
-                    }
+                my $acr0 = $self->average_ranking( $_[0] );
+                my $acr1 = $self->average_ranking( $_[1] );
+                if ( not fp_equal( $acr0, $acr1 ) ) {
+                    return fp_cmp( $acr0, $acr1 );
                 }
 
                 # 3rd comparison: alphabetical (so ties in testing keep consistent order)

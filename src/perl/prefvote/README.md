@@ -219,9 +219,8 @@ It only makes sense for tie-breaking, where becomes meaningful if everything els
     For high-stakes elections, a runoff may be a more appropriate action.
     For polls on approval of a proposal or measure, a tie should mean failure to achieve a majority.
 
-    _PrefVote::Core_ makes average choice rank (ACR) data available to subclasses which must use it for tie-breaking,
-    except when the _no-tiebreak_ configuration flag is set.
-    Ties should be extremely unlikely with ACR tie-breaking enabled.
+    _PrefVote::Core_ makes average choice rank (ACR) data available to subclasses which must use it for tie-breaking.
+    Ties are less likely due to ACR tie-breaking, but cannot be made impossible.
 
 - result\_yaml()
 

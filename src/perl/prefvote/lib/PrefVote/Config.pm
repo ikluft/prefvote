@@ -68,12 +68,6 @@ All configuration entries default to non-existent and undefined.
 
 =over 1
 
-=item no-tiebreak
-
-If defined, this contains a boolean flag that inhibits the PrefVote system's use of L<PrefVote::Core>
-"average choice rank" (ACR) data for tie-breaking. This is recognized by L<PrefVote::STV>, L<PrefVote::Schulze> and
-L<PrefVote::RankedPairs>.
-
 =item input-ties
 
 (experimental)

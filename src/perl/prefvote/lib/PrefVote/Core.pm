@@ -1103,9 +1103,8 @@ For low-stakes polls, such as where to meet for dinner, a random selection such 
 For high-stakes elections, a runoff may be a more appropriate action.
 For polls on approval of a proposal or measure, a tie should mean failure to achieve a majority.
 
-I<PrefVote::Core> makes average choice rank (ACR) data available to subclasses which must use it for tie-breaking,
-except when the I<no-tiebreak> configuration flag is set.
-Ties should be extremely unlikely with ACR tie-breaking enabled.
+I<PrefVote::Core> makes average choice rank (ACR) data available to subclasses which must use it for tie-breaking.
+Ties are less likely with ACR tie-breaking, but cannot be made impossible.
 
 =item result_yaml()
 

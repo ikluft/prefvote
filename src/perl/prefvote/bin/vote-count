@@ -266,14 +266,6 @@ Supported configuration settings:
 
 =over 1
 
-=item no-tiebreak
-
-takes a boolean value, 1 for true or 0 for false.
-This indicating PrefVote voting methods should disable the
-normal tie-breaking by Average Choice Rank (ACR).
-The default is false, which allows tie-breaking with ACR.
-This setting is used by the STV, Schulze and RankedPairs voting methods.
-
 =item input-ties
 
 (for use in testing only)
