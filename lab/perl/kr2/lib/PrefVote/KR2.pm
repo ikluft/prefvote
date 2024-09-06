@@ -216,6 +216,9 @@ sub compute_condorcet
         }
     }
 
+    # set result order
+    
+
     # TODO
     return;
 }

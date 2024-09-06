@@ -18,7 +18,7 @@ use IPC::Run qw(run);
 Readonly::Array my @methods => qw(Core STV Schulze RankedPairs);
 Readonly::Scalar my $pvroot => dirname($FindBin::RealBin);
 Readonly::Scalar my $datadir => "$pvroot/test/inputs/100-rcv-test";
-Readonly::Scalar my $count_script => "$pvroot/src/perl/prefvote/bin/vote-count";
+Readonly::Scalar my $count_script => "$pvroot/lab/perl/prefvote/bin/vote-count";
 
 # global flags
 my $html_mode = 0;

@@ -12,7 +12,7 @@ use IPC::Run qw(run);
 # constants
 Readonly::Array my @methods => qw(Core STV Schulze RankedPairs);
 Readonly::Scalar my $pvroot => dirname($FindBin::RealBin);
-Readonly::Scalar my $count_script => "$pvroot/src/perl/prefvote/bin/vote-count";
+Readonly::Scalar my $count_script => "$pvroot/lab/perl/prefvote/bin/vote-count";
 Readonly::Scalar my $acr_compare_script => "$pvroot/test/acr-compare";
 Readonly::Array my @yaml_suffixes => qw(.yaml .yml);
 Readonly::Scalar my $markdown_suffix => ".md";

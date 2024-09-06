@@ -42,22 +42,22 @@ Readonly::Hash my %config => (
         build => 'dzil build',
         whitebox => {
             dirs => {
-                Core => '${pvroot}/src/perl/prefvote',
-                STV => '${pvroot}/src/perl/stv',
-                Schulze => '${pvroot}/src/perl/schulze',
-                RankedPairs => '${pvroot}/src/perl/rankedpairs',
+                Core => '${pvroot}/lab/perl/prefvote',
+                STV => '${pvroot}/lab/perl/stv',
+                Schulze => '${pvroot}/lab/perl/schulze',
+                RankedPairs => '${pvroot}/lab/perl/rankedpairs',
             },
             testdir => "t",
             test_re => qr{\.t$},
-            tp_args => [switches => ['-Isrc/perl/prefvote/lib', '-Ilib']],
+            tp_args => [switches => ['-Ilab/perl/prefvote/lib', '-Ilib']],
         },
         prove_params => "--lib",
         blackbox => {
             env => {
                 PERL5LIB => '${cwd}/prefvote/lib:${cwd}/stv/lib:${env/PERL5LIB}',
             },
-            cmd => [ '${pvroot}/src/perl/prefvote/bin/vote-count', "--test", '--method=${var/method}'],
-            tp_args => [switches => ['-Isrc/perl/prefvote/lib', '-Isrc/perl/stv/lib']],
+            cmd => [ '${pvroot}/lab/perl/prefvote/bin/vote-count', "--test", '--method=${var/method}'],
+            tp_args => [switches => ['-Ilab/perl/prefvote/lib', '-Ilab/perl/stv/lib']],
         }
     },
     rust => {

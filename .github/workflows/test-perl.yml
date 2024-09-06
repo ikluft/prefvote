@@ -3,9 +3,9 @@ name: Perl
 # yamllint disable rule:line-length
 on:  # yamllint disable-line rule:truthy
   push:
-    paths: ['src/perl/**', '.github/workflows/test-perl.yml']
+    paths: ['lab/perl/**', '.github/workflows/test-perl.yml']
   pull_request:
-    paths: ['src/perl/**', '.github/workflows/test-perl.yml']
+    paths: ['lab/perl/**', '.github/workflows/test-perl.yml']
   workflow_dispatch:
   # schedule:
   #   - cron: '42 5 * * *'
@@ -56,7 +56,7 @@ jobs:
             my $retcode = system( "cpanm", "--notest", @deps );
             return (($retcode >> 8) == 0);
           }
-          chdir "src/perl";
+          chdir "lab/perl";
           my $topdir = getcwd();
           my $success = 1;
           for my $subdir ( qw(prefvote stv schulze rankedpairs) ) {
@@ -86,7 +86,7 @@ jobs:
         run: |
           use feature qw(say);
           use POSIX qw(getcwd);
-          chdir "src/perl";
+          chdir "lab/perl";
           my $topdir = getcwd();
           $ENV{PERL5LIB} .= ":$topdir/prefvote/lib";
           my $success = 1;
