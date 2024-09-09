@@ -338,6 +338,19 @@ following lower-ranked candidates.
 Omitted candidates are counted as equals but less preferred than all other candidates for that ballot.
 This calls I<add_preference()> to register preferences from ballots into the candidate pair matrix.
 
+=item compute_condorcet
+
+This performs pairwise counting to generate Condorcet result ordering,
+also using PrefVote's ACR (average choice rank) for tie-breaking.
+
+=item count
+
+This counts votes using the KR2 (Kluft Rank-Rate) method.
+The count() method of L<PrefVote::Core> is overridden by I<PrefVote::KR2> in order to implement
+the KR2 voting algorithm.
+
+=back
+
 =head1 SEE ALSO
 
 L<PrefVote::Core>
