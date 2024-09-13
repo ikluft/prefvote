@@ -6,7 +6,7 @@ Implementations of several ranked-choice voting methods and algorithms are inclu
 
  Since the project's original language Perl has strengths in prototyping, that's the reference implementation in this project for multiple language implementations. With translations to multiple programming languages, the library is designed with a [common test suite](test/) among the different implementations to verify proper functioning.
  
-The legacy algorithms are in the [lab](lab/) directory. A newer algorithm "KR2" (Kluft Rank-Rate) is under experimentation in what is the new main source directory [src](src/).
+The legacy algorithms are in the [lab](lab/) directory. A newer algorithm "KR2" (Kluft Rank-Rate) is under experimentation in the main source directory "[src](src/)" for the library.
  
 Project-wide documentation is in the [doc](doc/) directory.
 
