@@ -172,12 +172,12 @@ sub do_counting_table
     # generate output table
     my @result_rows;
     push @result_rows, [ 'Candidate', 'average ranking' ];
-    foreach my $cand (sort { ( $acr->{$a} // $num_cands ) <=> ( $acr->{$b} // $num_cands )} @candidates) {
+    foreach my $cand ( sort { ( $acr->{$a} // $num_cands ) <=> ( $acr->{$b} // $num_cands ) } @candidates ) {
         push @result_rows, [ $cand, float_external( $acr->{$cand} // $num_cands ) ];
     }
     $format_class->do_table( $result_data, \@result_rows, "Average ballot ranking positions",
         "Lower numbers are favored. First place = 1."
-            . (( $is_secondary // 0 ) ? " This data is used for breaking ties in the primary voting method." : ""));
+            . ( ( $is_secondary // 0 ) ? " This data is used for breaking ties in the primary voting method." : "" ) );
 
     return;
 }

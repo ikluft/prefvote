@@ -205,6 +205,7 @@ sub compute_condorcet
     # loop through candidate pairs and compute margin of victory for each
     foreach my $cand_i ( $self->pair_keys() ) {
         foreach my $cand_j ( keys %{ $self->pair_accessor($cand_i) } ) {
+
             # skip if we've already computed this pair in the reverse candidate order
             next if exists $self->{pair}{$cand_i}{$cand_j}{mov};
 
@@ -217,7 +218,6 @@ sub compute_condorcet
     }
 
     # set result order
-    
 
     # TODO
     return;

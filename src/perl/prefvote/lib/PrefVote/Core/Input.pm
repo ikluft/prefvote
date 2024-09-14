@@ -124,7 +124,7 @@ sub parse_cef
     my $filepath = $self->filepath();
 
     # use PrefVote::Core::Input::CEF to parse the CEF file
-    my $cef_data = PrefVote::Core::Input::CEF->new(filepath => $filepath);
+    my $cef_data = PrefVote::Core::Input::CEF->new( filepath => $filepath );
 
     # copy data from PrefVote::Core::Input::CEF object into self
     $cef_data->xfer($self);

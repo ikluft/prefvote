@@ -40,14 +40,14 @@ Readonly::Scalar my $cef_default_title => "Condorcet Election";
 Readonly::Scalar my $cef_default_method => "RankedPairs";
 
 # required parameters for new objects
-Readonly::Array my @required_params => ( qw(filepath) );
+Readonly::Array my @required_params => (qw(filepath));
 
 # map CEF parameter names to PrefVote::Core parameter names
 Readonly::Hash my %cef2pv => (
-    'title' => 'name',
+    'title'           => 'name',
     'number of seats' => 'seats',
-    'voting method' => 'method',
-    'voting methods' => 'method',
+    'voting method'   => 'method',
+    'voting methods'  => 'method',
 );
 
 # map CEF keys to PrefVote::Core flag names
@@ -65,7 +65,7 @@ Readonly::Hash my %op_names => (
 
 #
 # class management functions
-# In order to minimize dependencies so independent modules can parse CEF with this, we do not inherit 
+# In order to minimize dependencies so independent modules can parse CEF with this, we do not inherit
 # from PrefVote or use Moo where this functionality would have been provided.
 # If others express interest, PrefVote::Core::Input::CEF can be spun off to a separate CPAN module.
 #
@@ -99,16 +99,16 @@ sub init
     if ( not $class->isa(__PACKAGE__) ) {
         croak __PACKAGE__ . "->new() prohibited for unrelated class $class";
     }
-    
+
     # initialize parameters
     $self->{_in_keys} = [ keys %args ];
-    foreach my $key ( @{$self->{_in_keys}} ) {
+    foreach my $key ( @{ $self->{_in_keys} } ) {
         $self->{$key} = $args{$key};
     }
 
     # chack for missing required parameters
     my @missing;
-    foreach my $required ( @required_params ) {
+    foreach my $required (@required_params) {
         exists $self->{$required} or push @missing, $required;
     }
     if (@missing) {
@@ -133,7 +133,7 @@ sub debug_print
     }
 
     # print only if object has debug flag and it is set
-    if ( $debug_mode or ( exists $self->{debug} and $self->{debug})) {
+    if ( $debug_mode or ( exists $self->{debug} and $self->{debug} ) ) {
         say STDERR $class . ": " . join( " ", @args );
     }
     return;
@@ -152,12 +152,12 @@ sub _votedef2str
 
     # handle array
     if ( ref $vote_def eq "ARRAY" ) {
-        return '[' . join(",", map { _votedef2str($_)} @$vote_def ) . ']';
+        return '[' . join( ",", map { _votedef2str($_) } @$vote_def ) . ']';
     }
 
     # handle hash
     if ( ref $vote_def eq "HASH" ) {
-        return '{' . join(",", map{ $_ . "=>" . _votedef2str($vote_def->{$_})} sort keys %$vote_def ) . '}';
+        return '{' . join( ",", map { $_ . "=>" . _votedef2str( $vote_def->{$_} ) } sort keys %$vote_def ) . '}';
     }
 
     # otherwise stringify it
@@ -168,10 +168,10 @@ sub _votedef2str
 sub _str2bool
 {
     my $str_in = shift;
-    if ( $str_in eq "1" or $str_in eq "true" or $str_in eq "yes") {
+    if ( $str_in eq "1" or $str_in eq "true" or $str_in eq "yes" ) {
         return 1;
     }
-    if ( $str_in eq "0" or $str_in eq "false" or $str_in eq "no") {
+    if ( $str_in eq "0" or $str_in eq "false" or $str_in eq "no" ) {
         return 0;
     }
     croak "_str2bool: unrecognized boolean value '$str_in'";
@@ -211,7 +211,7 @@ sub enumerate_candidates
 # instance method
 sub cef_second_pass
 {
-    my $self       = shift;
+    my $self = shift;
 
     # if a candidate list wasn't provided then collect them from ballots
     my @candidates;
@@ -229,13 +229,13 @@ sub cef_second_pass
     foreach my $candidate_name (@candidates) {
         $choices{$candidate_name} = $candidate_name;
     }
-    if ( not exists $self->{vote_def}{params}) {
+    if ( not exists $self->{vote_def}{params} ) {
         $self->{vote_def}{params} = {};
     }
     $self->{vote_def}{params}{choices} = \%choices;
 
     # scan ballots for explicit /EMPTY_RANKING/ marker
-    my $ballot_count = scalar @{$self->{ballots}};
+    my $ballot_count = scalar @{ $self->{ballots} };
     for ( my $ballot_index = 0 ; $ballot_index < $ballot_count ; $ballot_index++ ) {
         my $ballot = $self->{ballots}[$ballot_index];
         if ( ( scalar @$ballot ) == 1 and $ballot->[0] =~ qr(^ \s* \/EMPTY_RANKING\/ \s* $)x ) {
@@ -254,7 +254,7 @@ sub set_cef_param
     my ( $self, $cef_param_name, $value ) = @_;
 
     # record CEF parameters already seen
-    if ( not exists $self->{_cef_param}) {
+    if ( not exists $self->{_cef_param} ) {
         $self->{_cef_param} = {};
     }
     if ( $self->{_cef_param}{$cef_param_name} // 0 ) {
@@ -263,14 +263,15 @@ sub set_cef_param
     $self->{_cef_param}{$cef_param_name} = 1;
 
     # save parameter under PrefVote name
-    if ( exists $cef2pv{$cef_param_name}) {
-        $self->{vote_def}{$cef2pv{$cef_param_name}} = $value;
-    } elsif ( exists $cef2flags{$cef_param_name}) {
-        if ( not exists $self->{vote_def}{params}) {
+    if ( exists $cef2pv{$cef_param_name} ) {
+        $self->{vote_def}{ $cef2pv{$cef_param_name} } = $value;
+    } elsif ( exists $cef2flags{$cef_param_name} ) {
+        if ( not exists $self->{vote_def}{params} ) {
             $self->{vote_def}{params} = {};
         }
-        $self->{vote_def}{params}{$cef2flags{$cef_param_name}} = _str2bool( $value );
+        $self->{vote_def}{params}{ $cef2flags{$cef_param_name} } = _str2bool($value);
     } else {
+
         #carp( __PACKAGE__ . ":unrecognized CEF parameter $cef_param_name" );
     }
     return;
@@ -301,8 +302,8 @@ sub parse
     $self->debug_print("parse($filepath)");
 
     # initialize empty vote parameters, ballot list & test data
-    $self->{vote_def} = { method => $cef_default_method, params => {} };
-    $self->{ballots} = [];
+    $self->{vote_def}  = { method => $cef_default_method, params => {} };
+    $self->{ballots}   = [];
     $self->{test_data} = [];
 
     # instantiate a parser
@@ -320,10 +321,10 @@ sub parse
         if ( $line =~ qr(^ \s* \#/ \s* ([\w\s]+?) \s* : \s* (.*?) \s* $)x ) {
             $self->debug_print("CEF definition line: $1 - $2");
             my ( $param_name, $param_value ) = ( fc $1, $2 );
-            if ( scalar @{$self->{ballots}} > 0 ) {
+            if ( scalar @{ $self->{ballots} } > 0 ) {
                 croak( __PACKAGE__ . "->parse($filepath): can't define $param_name after first ballot line" );
             }
-            if ( $self->seen_cef_param( $param_name )) {
+            if ( $self->seen_cef_param($param_name) ) {
                 croak( __PACKAGE__ . "->parse($filepath): can't redefine $param_name" );
             }
             $self->set_cef_param( $param_name, $param_value );
@@ -344,8 +345,8 @@ sub parse
 
         # parse candidate preference order from line
         my @pref_order = $parser->parse( $line, $self->{vote_def} );
-        push @{$self->{ballots}}, \@pref_order;
-        $self->debug_print( "parse: pref_order=" . _votedef2str( @pref_order ) );
+        push @{ $self->{ballots} }, \@pref_order;
+        $self->debug_print( "parse: pref_order=" . _votedef2str(@pref_order) );
     }
 
     # clean up
@@ -361,8 +362,8 @@ sub parse
     #
 
     # use default title if not set
-    if ( not exists $self->{vote_def}{params}{name}) {
-        if ( not exists $self->{vote_def}{params}) {
+    if ( not exists $self->{vote_def}{params}{name} ) {
+        if ( not exists $self->{vote_def}{params} ) {
             $self->{vote_def}{params} = {};
         }
         $self->{vote_def}{params}{name} = $cef_default_title;
@@ -383,7 +384,7 @@ sub get_keys
 # instance method
 sub get
 {
-    my ($self, $key) = @_;
+    my ( $self, $key ) = @_;
     return if not exists $self->{$key};
     return $self->{$key};
 }
@@ -392,31 +393,35 @@ sub get
 # instance method
 sub xfer
 {
-    my ($self, $recipient) = @_;
+    my ( $self, $recipient ) = @_;
     my @skipped;
 
     # hashify list of input parameter keys so we know not to warn since they usually exist in destination
-    my %in_keys = grep { return ($_ => 1) } @{$self->{_in_keys}};
-    
+    my %in_keys = grep { return ( $_ => 1 ) } @{ $self->{_in_keys} };
+
     # transfer object fields to destination, except internal-only or those already existing in desetination
-    foreach my $key (keys %$self) {
-        if (substr($key, 0, 1) eq "_") {
+    foreach my $key ( keys %$self ) {
+        if ( substr( $key, 0, 1 ) eq "_" ) {
+
             # skip transfer for internal-only data prefixed with underscore "_"
             next;
         }
-        if (exists $recipient->{$key}) {
+        if ( exists $recipient->{$key} ) {
+
             # only warn about a field conflict if it wasn't in the input paramerters
-            if (not exists $in_keys{$key}) {
+            if ( not exists $in_keys{$key} ) {
+
                 # do not overwrite data in the recipient object - warn about it
                 push @skipped, $key;
             }
         } else {
+
             # copy item
             $recipient->{$key} = $self->{$key};
         }
     }
     if (@skipped) {
-        carp "warning: skipped transfer of CEF data in conflict with existing data ".join(" ", @skipped);
+        carp "warning: skipped transfer of CEF data in conflict with existing data " . join( " ", @skipped );
     }
     return;
 }
