@@ -1217,6 +1217,7 @@ where black-box tests may run the same ranked-chocie ballot data through multipl
 
 L<PrefVote>
 L<https://github.com/ikluft/prefvote>
+L<https://github.com/ikluft/prefvote/doc/perl-dev.md>
 
 =head1 BUGS AND LIMITATIONS
 

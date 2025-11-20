@@ -91,6 +91,7 @@ an exception. Voting functionality is under L<PrefVote::Core>.
 
 L<PrefVote::Core>. L<PrefVote::STV>, L<PrefVote::Schulze>
 L<https://github.com/ikluft/prefvote>
+L<https://github.com/ikluft/prefvote/doc/perl-dev.md>
 
 =head1 BUGS AND LIMITATIONS
 

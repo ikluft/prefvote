@@ -354,6 +354,7 @@ the KR2 voting algorithm.
 =head1 SEE ALSO
 
 L<PrefVote::Core>
+L<https://github.com/ikluft/prefvote/doc/perl-dev.md>
 
 The Kluft Rank-Rate (KR2) preference voting algorithm is experimental.
 As documentation is written it will be posted at L<https://ikluft.github.io/prefvote/doc/kr2/>.
