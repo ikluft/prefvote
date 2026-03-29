@@ -10,6 +10,16 @@ The legacy algorithms are in the [lab](lab/) directory. A newer algorithm "KR2" 
  
 Project-wide documentation is in the [doc](doc/) directory.
 
+### Preference voting online resources
+
+Here is general information about preference voting algorithms.
+
+* [ElectoWiki](https://electowiki.org/), electoral systems wiki
+* [FairVote](https://www.fairvote.org/), nonpartisan group promoting ranked choice voting (RCV) and proportional representation (PR)
+* ["What is Democracy?" video series](http://www.professorbray.net/Teaching/GTD/2020-SummerTerm2/GTD.html), Prof HL Bray, Duke University
+* ["Voting and Elections"](https://www.ams.org/publicoutreach/feature-column/fcarc-voting-introduction), American Mathematical Society articles
+* [papers defining Schulze voting method](http://www.9mail.de/m-schulze/), Marcus Schulze, posted 2004-2012
+
 ## About preference voting algorithms
 
 The original Vote::STV software implemented the [single transferable vote](https://en.wikipedia.org/wiki/Single_transferable_vote) algorithm, which is a subset of [ranked-choice voting](https://en.wikipedia.org/wiki/Ranked_voting), also called preference voting. PrefVote has expanded into a library of multiple voting method implementations all based on ranked choice.
