@@ -30,9 +30,6 @@ Here is general information about preference voting algorithms.
 
 * [ElectoWiki](https://electowiki.org/), electoral systems wiki
 * [FairVote](https://www.fairvote.org/), nonpartisan group promoting ranked choice voting (RCV) and proportional representation (PR)
-* ["What is Democracy?" video series](http://www.professorbray.net/Teaching/GTD/2020-SummerTerm2/GTD.html), Prof HL Bray, Duke University
-* ["Voting and Elections"](https://www.ams.org/publicoutreach/feature-column/fcarc-voting-introduction), American Mathematical Society articles
-* [papers defining Schulze voting method](http://www.9mail.de/m-schulze/), Marcus Schulze, posted 2004-2012
 * Wiki articles
   * Comparison: [electowiki](https://electowiki.org/wiki/Main_Page) [wikipedia](https://en.wikipedia.org/wiki/Comparison_of_electoral_systems)
   * Ranked voting: [electowiki](https://electowiki.org/wiki/Ranked_voting) [wikipedia](https://en.wikipedia.org/wiki/Ranked_voting)
@@ -40,6 +37,10 @@ Here is general information about preference voting algorithms.
   * Condorcet method: [electowiki](https://electowiki.org/wiki/Condorcet_method) [wikipedia](https://en.wikipedia.org/wiki/Condorcet_method)
   * Schulze method: [electowiki](https://electowiki.org/wiki/Schulze_method) [wikipedia](https://en.wikipedia.org/wiki/Schulze_method)
   * Ranked Pairs: [electowiki](https://electowiki.org/wiki/Ranked_Pairs) [wikipedia](https://en.wikipedia.org/wiki/Ranked_pairs)
+* ["What is Democracy?" video series](http://www.professorbray.net/Teaching/GTD/2020-SummerTerm2/GTD.html), Prof HL Bray, Duke University
+* ["Voting and Elections"](https://www.ams.org/publicoutreach/feature-column/fcarc-voting-introduction), American Mathematical Society articles
+* [papers defining Schulze voting method](http://www.9mail.de/m-schulze/), Marcus Schulze, posted 2004-2012
+* [Condorcet Voting](https://effectivegov.uchicago.edu/primers/condorcet-voting), part of Democracy Reform Primer Series, University of Chicago Center for Effective Government
 
 ## Input file format
 
