@@ -37,10 +37,12 @@ Here is general information about preference voting algorithms.
   * Condorcet method: [electowiki](https://electowiki.org/wiki/Condorcet_method) [wikipedia](https://en.wikipedia.org/wiki/Condorcet_method)
   * Schulze method: [electowiki](https://electowiki.org/wiki/Schulze_method) [wikipedia](https://en.wikipedia.org/wiki/Schulze_method)
   * Ranked Pairs: [electowiki](https://electowiki.org/wiki/Ranked_Pairs) [wikipedia](https://en.wikipedia.org/wiki/Ranked_pairs)
+  * Condorcet Paradox: [electowiki](https://electowiki.org/wiki/Condorcet_paradox) [wikipedia](https://en.wikipedia.org/wiki/Condorcet_paradox)
 * ["What is Democracy?" video series](http://www.professorbray.net/Teaching/GTD/2020-SummerTerm2/GTD.html), Prof HL Bray, Duke University
 * ["Voting and Elections"](https://www.ams.org/publicoutreach/feature-column/fcarc-voting-introduction), American Mathematical Society articles
 * [papers defining Schulze voting method](http://www.9mail.de/m-schulze/), Marcus Schulze, posted 2004-2012
 * [Condorcet Voting](https://effectivegov.uchicago.edu/primers/condorcet-voting), part of Democracy Reform Primer Series, University of Chicago Center for Effective Government
+* [Voting Methods](https://plato.stanford.edu/entries/voting-methods/), Stanford Encyclopedia of Philosophy
 
 ## Input file format
 
