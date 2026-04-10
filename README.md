@@ -39,6 +39,7 @@ Here is general information about preference voting algorithms.
   * Ranked Pairs: [electowiki](https://electowiki.org/wiki/Ranked_Pairs) [wikipedia](https://en.wikipedia.org/wiki/Ranked_pairs)
   * Condorcet Paradox: [electowiki](https://electowiki.org/wiki/Condorcet_paradox) [wikipedia](https://en.wikipedia.org/wiki/Condorcet_paradox)
   * Smith set: [electowiki](https://electowiki.org/wiki/Smith_set) [wikipedia](https://en.wikipedia.org/wiki/Smith_set)
+  * voting system criteria: [electowiki](https://electowiki.org/wiki/Voting_system_criterion) [wikipedia](https://en.wikipedia.org/wiki/Voting_criteria)
 * ["What is Democracy?" video series](http://www.professorbray.net/Teaching/GTD/2020-SummerTerm2/GTD.html), Prof HL Bray, Duke University
 * ["Voting and Elections"](https://www.ams.org/publicoutreach/feature-column/fcarc-voting-introduction), American Mathematical Society articles
 * [papers defining Schulze voting method](http://www.9mail.de/m-schulze/), Marcus Schulze, posted 2004-2012
