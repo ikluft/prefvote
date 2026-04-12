@@ -29,7 +29,6 @@ After the reference implementation in Perl, next up for language implementations
 Here is general information about preference voting algorithms.
 
 * [ElectoWiki](https://electowiki.org/), electoral systems wiki
-* [FairVote](https://www.fairvote.org/), nonpartisan group promoting ranked choice voting (RCV) and proportional representation (PR)
 * Wiki articles
   * Comparison: [electowiki](https://electowiki.org/wiki/Main_Page) [wikipedia](https://en.wikipedia.org/wiki/Comparison_of_electoral_systems)
   * Ranked voting: [electowiki](https://electowiki.org/wiki/Ranked_voting) [wikipedia](https://en.wikipedia.org/wiki/Ranked_voting)
@@ -40,6 +39,7 @@ Here is general information about preference voting algorithms.
   * Condorcet Paradox: [electowiki](https://electowiki.org/wiki/Condorcet_paradox) [wikipedia](https://en.wikipedia.org/wiki/Condorcet_paradox)
   * Smith set: [electowiki](https://electowiki.org/wiki/Smith_set) [wikipedia](https://en.wikipedia.org/wiki/Smith_set)
   * voting system criteria: [electowiki](https://electowiki.org/wiki/Voting_system_criterion) [wikipedia](https://en.wikipedia.org/wiki/Voting_criteria)
+* [FairVote](https://www.fairvote.org/), nonpartisan group promoting ranked choice voting (RCV) and proportional representation (PR)
 * ["What is Democracy?" video series](http://www.professorbray.net/Teaching/GTD/2020-SummerTerm2/GTD.html), Prof HL Bray, Duke University
 * ["Voting and Elections"](https://www.ams.org/publicoutreach/feature-column/fcarc-voting-introduction), American Mathematical Society articles
 * [papers defining Schulze voting method](http://www.9mail.de/m-schulze/), Marcus Schulze, posted 2004-2012
