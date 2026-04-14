@@ -1,10 +1,12 @@
 # PrefVote: Preference Voting library
 
+by Ian Kluft
+
 PrefVote is a project to promote preference voting.
 
-Implementations of several ranked-choice voting methods and algorithms are included in the ["LAB" (Legacy Algorithm Base)](lab/) directory. The Single Transferable Vote (STV) implementation is descended from the Vote::STV software written by Ian Kluft in Perl in 1999, with periodic maintenance over the years. Implemenation and experimentation with Condorcet-based algorithms Schulze and Ranked Pairs showed the flaws of STV, and why it has fallen out of favor.
+Implementations of several ranked-choice voting methods and algorithms are included in the ["LAB" (Legacy Algorithm Base)](lab/) directory. The Single Transferable Vote (STV) implementation is descended from the Vote::STV software I wrote in Perl in 1999, with periodic maintenance over the years. Implementation and experimentation with Condorcet-based algorithms Schulze and Ranked Pairs helped me better understand the flaws of STV, and why it has fallen out of favor among those looking for better voting algorithms.
 
- Since the project's original language Perl has strengths in prototyping, that's the reference implementation in this project for multiple language implementations. With translations to multiple programming languages, the library is designed with a [common test suite](test/) among the different implementations to verify proper functioning.
+Since the project's original language Perl has strengths in prototyping, that's the reference implementation in this project for multiple language implementations. With translations to multiple programming languages, the library is designed with a [common test suite](test/) among the different implementations to verify proper functioning.
  
 The legacy algorithms are in the [lab](lab/) directory. A newer algorithm "KR2" (Kluft Rank-Rate) is under experimentation in the main source directory "[src](src/)" for the library.
  
@@ -14,9 +16,9 @@ Project-wide documentation is in the [doc](doc/) directory.
 
 The original Vote::STV software implemented the [single transferable vote](https://en.wikipedia.org/wiki/Single_transferable_vote) algorithm, which is a subset of [ranked-choice voting](https://en.wikipedia.org/wiki/Ranked_voting), also called preference voting. PrefVote has expanded into a library of multiple voting method implementations all based on ranked choice.
 
-STV was the first implemented voting method in PrefVote since it was the original implementation as Vote::STV back to 1998. But STV has largely fallen out of favor because studies of voting methods found it lacking on some desirable characteristics. STV was retained while modernizing the code to develop testing infrastructure.
+STV was the first implemented voting method in PrefVote since it was the original implementation as Vote::STV back to 1998. But STV has largely fallen out of favor because studies of voting methods found it lacking on some desirable characteristics, particularly in close elections. STV was retained while modernizing the code to develop testing infrastructure.
 
-No voting method can be perfect, due to a long list of desirable properties, some of which [turn out to be in conflict](https://electowiki.org/wiki/Arrow%27s_impossibility_theorem). Given that there is no perfect voting method, it's important to have agreement among a community on which method it uses. Methods which meet [Condorcet requirements](https://electowiki.org/wiki/Condorcet_method) make comparisons between each pair of candidates and, if one exists, always pick a winner who beats all other candidates in pairwise comparisons. Condorcet methods differ in how to handle cases where there isn't a clear Condorcet winner.
+No voting method can be perfect, due to a long list of desirable properties, some of which [turn out to be in conflict](https://electowiki.org/wiki/Arrow%27s_impossibility_theorem). Given that there is no perfect voting method, it's important to have agreement among a community on which method it uses. Methods which meet [Condorcet requirements](https://electowiki.org/wiki/Condorcet_method) make comparisons between each pair of candidates and picks a winner who beats all other candidates in pairwise comparisons, if such a winner exists. Condorcet methods differ in how to handle cases where there isn't a clear Condorcet winner. Cycles can happen where a subset of leading candidates fail to beat the others in that group.
 
 The second voting method implemented in PrefVote was the [Schulze algorithm](https://en.wikipedia.org/wiki/Schulze_method) (see [full definition paper)](https://arxiv.org/abs/1804.02973). The method was designed by Marcus Schulze in 1997 to compute a graph out of voter preferences among candidates and pick the ones preferred over all others. An ordering of all the candidates can be computed over multiple rounds after removing the previous round's winner(s).
 
