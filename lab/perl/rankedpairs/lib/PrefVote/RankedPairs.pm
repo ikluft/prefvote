@@ -190,17 +190,6 @@ sub cand_total_wins
     return scalar keys %{ $self->graph_accessor($cand) };
 }
 
-# get a choice/candidate's total of all margins of victory
-sub cand_total_mov
-{
-    my ( $self, $cand ) = @_;
-    my $total = 0;
-    foreach my $opponent ( keys %{ $self->pair_get($cand) } ) {
-        $total += $self->get_mov( $cand, $opponent );
-    }
-    return $total;
-}
-
 # return a ballot item as a list, whether it was a single scalar or a tie-group set
 # This code was borrowed from Schulze, which allows ties on input. The Ranked Pairs definition does not allow
 # input ties. PrefVote can be configured to allow it for consistency across Condorcet methods.
@@ -627,11 +616,6 @@ The parameters are the ids of the two candidates for the pair.
 =item cand_total_wins
 
 This returns the count of total wins for a candidate over other candidates.
-The parameter is the id of the candidate.
-
-=item cand_total_mov
-
-This returns a candidate's total of their margins of victory.
 The parameter is the id of the candidate.
 
 =item tally_preferences

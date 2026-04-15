@@ -210,8 +210,6 @@ These methods are in addition to L<those inherited from PrefVote::Core|PrefVote:
 
 =item cand_total_wins()
 
-=item cand_total_mov()
-
 =item tally_preferences()
 
 =item sort_pairs()
