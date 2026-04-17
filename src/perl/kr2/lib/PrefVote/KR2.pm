@@ -14,6 +14,7 @@ package PrefVote::KR2;
 
 use utf8;
 use autodie;
+use builtin qw(true false);
 use Data::Dumper;
 use Readonly;
 use Set::Tiny qw(set);
@@ -31,8 +32,9 @@ extends 'PrefVote::Core';
 
 # blackbox testing structure
 Readonly::Hash my %blackbox_spec => (
-    winners => [qw(list set string)],
-    pair    => [qw(hash hash PrefVote::KR2::PairData)],
+    winners    => [qw(list set string)],
+    eliminated => [qw(list set string)],
+    pair       => [qw(hash hash PrefVote::KR2::PairData)],
 );
 PrefVote::Core::TestSpec->register_blackbox_spec(
     __PACKAGE__,
@@ -58,6 +60,19 @@ has winners => (
         winners_all   => 'all',
         winners_count => 'count',
         winners_push  => 'push',
+    },
+);
+
+# list of names of eliminated candidates in order by occurrence, ties shown by a set of the tied candidates
+has eliminated => (
+    is          => 'rw',
+    isa         => ArrayRef [ Set [Str] ],
+    default     => sub { return [] },
+    handles_via => 'Array',
+    handles     => {
+        eliminated_all   => 'all',
+        eliminated_count => 'count',
+        eliminated_push  => 'push',
     },
 );
 
@@ -277,13 +292,37 @@ sub mov_order
     my @choices = sort { $self->cmp_choice( $a, $b ) } $self->choices_keys();
 
     # detect ties and build result rankings
+    my $after_oppose_marker = false;
     while ( scalar @choices ) {
         my $leader    = shift @choices;
+
+        # set flag if oppose rating bound marker found
+        my $seen_oppose_marker = false;
+        if ( $leader =~ / ^ _oppose . * /x ) {
+            $seen_oppose_marker = true;
+        }
+
+        # find any candidates tied with the current leader and add them to a set/group for this result position
         my $tie_group = set($leader);
         while ( ( scalar @choices > 0 ) and ( $self->cmp_choice( $leader, $choices[0] ) == 0 ) ) {
-            $tie_group->insert( shift @choices );
+            my $tie_cand = shift @choices;
+            $tie_group->insert( $tie_cand );
+            if ( $tie_cand =~ / ^ _oppose . * /x ) {
+                $seen_oppose_marker = true;
+            }
         }
-        $self->winners_push($tie_group);
+
+        # add the set/group to either eliminated or winning result list
+        if ( $after_oppose_marker ) {
+            $self->eliminated_push($tie_group);
+        } else {
+            $self->winners_push($tie_group);
+        }
+
+        # if we encountered the oppose marker, set the after_oppose_marker so remaining candidates are eliminated
+        if ( $seen_oppose_marker ) {
+            $after_oppose_marker = true;
+        }
     }
     return;
 }
@@ -306,7 +345,7 @@ sub count
     $self->mov_order();
 
     # save per-candidate final results in PrefVote::Core's choice_to_result map
-    $self->save_c2r( winners => $self->winners() );
+    $self->save_c2r( winners => $self->winners(), eliminated => $self->eliminated() );
 
     #$self->debug_print(__PACKAGE__." count(): ".Dumper($self));
     return;

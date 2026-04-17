@@ -1,7 +1,7 @@
 # PrefVote::KR2::Output
 # ABSTRACT: output formatting for PrefVote::KR2
 # derived from Vote::KR2 by Ian Kluft
-# Copyright (c) 2022 by Ian Kluft
+# Copyright (c) 2022-2026 by Ian Kluft
 # Open Source license: Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
 
 # pragmas to silence some warnings from Perl::Critic
@@ -29,7 +29,7 @@ sub do_counting_table
     my @candidates = PrefVote::Core::Output->candidates_list($result_data);
 
     # generate victory matrix
-    my $round = $result_data->{rounds}[0];
+    my $pair = $result_data->{pair};
 
     # start with heading row
     my @result_rows = [ "", @candidates ];
@@ -50,13 +50,13 @@ sub do_counting_table
             }
 
             # add blank entry if no comparison occurred between these candidates (rare corner case)
-            if ( not exists $round->{pair}{$i}{$j}{mov} ) {
+            if ( not exists $pair->{$i}{$j}{mov} ) {
                 push @row, "";
                 next;
             }
 
             # add margin of victory and win/lose icon
-            my $margin = ( $round->{pair}{$i}{$j}{mov} // 0 );
+            my $margin = ( $pair->{$i}{$j}{mov} // 0 );
             my $icon =
                 ( $margin == 0 ) ? PrefVote::Core::Output::symbol("tie")
                 : (

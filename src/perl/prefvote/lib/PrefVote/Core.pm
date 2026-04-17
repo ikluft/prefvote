@@ -726,7 +726,7 @@ sub save_c2r
 
             # candidates in this list are tied if there's more than one
             my @group = $winners[$win_l1]->members();
-            my $group_count = scalar grep { !/ ^ _ /x } @group;
+            my $group_count = scalar grep { !/ ^ _ /x } @group; # skip count for rating bound markers (_.*)
             my $disposition;
             if ( $seats > 0 ) {
                 if ( $place + $group_count <= $seats ) {
@@ -756,15 +756,20 @@ sub save_c2r
     }
 
     # mark results for eliminated candidates
-    if ( exists $opts{eliminated} ) {
-        my @eliminated = @{ $opts{eliminated} };
-        for ( my $elim_l1 = scalar @eliminated - 1 ; $elim_l1 >= 0 ; $elim_l1-- ) {
-            my @group = $eliminated[$elim_l1]->members();
-            foreach my $cand_key (@group) {
+    my @eliminated = @{ $opts{eliminated} // [] };
+    for ( my $elim_l1 = scalar @eliminated - 1 ; $elim_l1 >= 0 ; $elim_l1-- ) {
+        my @group = $eliminated[$elim_l1]->members();
+        my $group_count = scalar grep { !/ ^ _ /x } @group; # skip count for rating bound markers (_.*)
+        foreach my $cand_key (@group) {
+            if ( $cand_key =~ / ^ _ /x ) {
+                # rating bound markers (starts with underscore) cannot win because they are not candidates
+                $self->c2r_set( $cand_key, [ $place, "bound" ] );
+            } else {
+                # save eliminated candidate
                 $self->c2r_set( $cand_key, [ $place + 1, "eliminated" ] );
             }
-            $place += scalar @group;
         }
+        $place += $group_count;
     }
 
     # compute average_choice_rank for candidates where it didn't exist so it will be recorded with YAML results

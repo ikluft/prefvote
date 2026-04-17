@@ -44,7 +44,7 @@ PrefVote::Core::TestSpec->register_blackbox_spec(
     parent => 'PrefVote::Core'
 );
 
-# list of names of winners in order by place, ties shown by an ArrayRef to the tied candidates
+# list of names of winners in order by place, ties shown by a set of the tied candidates
 has winners => (
     is          => 'rw',
     isa         => ArrayRef [ Set [Str] ],
@@ -57,7 +57,7 @@ has winners => (
     },
 );
 
-# list of names of eliminated candidates in order by occurrence, ties shown by an ArrayRef to the tied candidates
+# list of names of eliminated candidates in order by occurrence, ties shown by a set of the tied candidates
 has eliminated => (
     is          => 'rw',
     isa         => ArrayRef [ Set [Str] ],
