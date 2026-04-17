@@ -35,6 +35,7 @@ Readonly::Hash my %blackbox_spec => (
     winners    => [qw(list set string)],
     eliminated => [qw(list set string)],
     pair       => [qw(hash hash PrefVote::KR2::PairData)],
+    copeland_score => [qw(hash int)],
 );
 PrefVote::Core::TestSpec->register_blackbox_spec(
     __PACKAGE__,
@@ -70,18 +71,11 @@ has eliminated => (
     default     => sub { return [] },
     handles_via => 'Array',
     handles     => {
-        eliminated_all   => 'all',
-        eliminated_count => 'count',
-        eliminated_push  => 'push',
+        eliminated_all      => 'all',
+        eliminated_count    => 'count',
+        eliminated_push     => 'push',
+        eliminated_unshift  => 'unshift',
     },
-);
-
-# hash of Copeland scores (count of pairwise wins minus losses) per candidate, for result ordering
-# the scores are computed by cand_copeland_score() and cached here to prevent redundant computation
-has copeland_score => (
-    is          => 'rw',
-    isa         => HashRef [ Int ],
-    default     => sub { return {} },
 );
 
 # 2-level hash of candidate-pair preference totals
@@ -98,6 +92,14 @@ has pair => (
         pair_keys     => 'keys',
         pair_set      => 'set',
     },
+);
+
+# hash of Copeland scores (count of pairwise wins minus losses) per candidate, for result ordering
+# the scores are computed by cand_copeland_score() and cached here to prevent redundant computation
+has copeland_score => (
+    is          => 'rw',
+    isa         => HashRef [ Int ],
+    default     => sub { return {} },
 );
 
 # create candidate pair node if it didn't exist
@@ -314,7 +316,8 @@ sub mov_order
 
         # add the set/group to either eliminated or winning result list
         if ( $after_oppose_marker ) {
-            $self->eliminated_push($tie_group);
+            # eliminated items added in reverse of ranking order because in other methods, 1st elimination = last place
+            $self->eliminated_unshift($tie_group);
         } else {
             $self->winners_push($tie_group);
         }
@@ -324,6 +327,7 @@ sub mov_order
             $after_oppose_marker = true;
         }
     }
+
     return;
 }
 
@@ -355,7 +359,7 @@ sub count
 sub results
 {
     my $self = shift;
-    return { ranked => $self->{winners} };
+    return { ranked => $self->{winners}, eliminated => $self->{eliminated} };
 }
 
 1;
