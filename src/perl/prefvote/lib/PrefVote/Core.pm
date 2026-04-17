@@ -27,7 +27,7 @@ use PrefVote::Core::TestSpec;
 
 # supported voting methods - for constructing class names from vote definitions
 # use Core only for testing because the base class doesn't actually have voting-method code
-Readonly::Array my @voting_methods => qw(Core STV Schulze RankedPairs);
+Readonly::Array my @voting_methods => qw(Core STV Schulze RankedPairs KR2);
 
 # supported flags in a vote definition and their default values
 # the existence of a key here allows its existence in flags hash
@@ -43,7 +43,7 @@ use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
 use Types::Common qw(Str Int Bool Enum ArrayRef HashRef Map Tuple InstanceOf Any PositiveInt PositiveOrZeroInt
-    NonEmptySimpleStr);
+    NonEmptySimpleStr Maybe);
 use PrefVote::Core::Float qw(fp_equal fp_cmp float_internal PVPositiveOrZeroNum);
 use PrefVote::Core::Input;
 extends 'PrefVote';
@@ -117,7 +117,8 @@ has index_to_choice => (
 # Eliminated candidates still have place numbers depending on the order or strength of elimination.
 has choice_to_result => (
     is          => 'rw',
-    isa         => Map [ NonEmptySimpleStr, Tuple [ Int, Enum [qw(selected tied placed eliminated ranked)] ] ],
+    isa         => Map [ NonEmptySimpleStr, Tuple [ Maybe [ Int ],
+                         Enum [qw(selected tied placed eliminated ranked bound)] ] ],
     handles_via => 'Hash',
     handles     => {
         c2r_exists => 'exists',
@@ -725,9 +726,10 @@ sub save_c2r
 
             # candidates in this list are tied if there's more than one
             my @group = $winners[$win_l1]->members();
+            my $group_count = scalar grep { !/ ^ _ /x } @group;
             my $disposition;
             if ( $seats > 0 ) {
-                if ( $place + scalar @group <= $seats ) {
+                if ( $place + $group_count <= $seats ) {
                     $disposition = "selected";
                 } elsif ( $place < $seats and $place + scalar @group > $seats ) {
                     $disposition = "tied";
@@ -738,13 +740,18 @@ sub save_c2r
                 $disposition = "ranked";
             }
             foreach my $cand_key (@group) {
-                if ( defined $disposition ) {
+                if ( $cand_key =~ / ^ _ /x ) {
+                    # rating bound markers (starts with underscore) cannot win because they are not candidates
+                    $self->c2r_set( $cand_key, [ $place, "bound" ] );
+                } elsif ( defined $disposition ) {
+                    # save candidate place and any disposition (selected/placed/ranked)
                     $self->c2r_set( $cand_key, [ $place + 1, $disposition ] );
                 } else {
+                    # save candidate place without a disposition
                     $self->c2r_set( $cand_key, [ $place + 1 ] );
                 }
             }
-            $place += scalar @group;
+            $place += $group_count;
         }
     }
 

@@ -137,7 +137,8 @@ sub output
     my $c2r = $result_data->{choice_to_result};
     push @toc_rows, [ "Abbreviation", "Name/description", "Result" ];
     foreach my $name (@candidates) {
-        push @toc_rows, [ $name, $result_data->{choices}{$name}, join( "/", @{ $c2r->{$name} } ) ];
+        push @toc_rows, [ $name, $result_data->{choices}{$name},
+            (( $c2r->{$name}[1] // "" ) eq "bound" ? "-" : join( "/", @{ $c2r->{$name} } ) ) ];
     }
     $format_class->do_toc( $result_data, \@toc_rows );
 

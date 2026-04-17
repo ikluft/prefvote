@@ -1,6 +1,6 @@
 # PrefVote::KR2
 # ABSTRACT: Kluft Rank-Rate (KR2) vote counting module for PrefVote
-# Copyright (c) 2023-2024 by Ian Kluft
+# Copyright (c) 2023-2026 by Ian Kluft
 # Open Source license: Apache License 2.0 https://www.apache.org/licenses/LICENSE-2.0
 
 # pragmas to silence some warnings from Perl::Critic
@@ -22,16 +22,17 @@ use Set::Tiny qw(set);
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Common         qw(Str ArrayRef HashRef InstanceOf PositiveOrZeroInt NonEmptySimpleStr);
+use Types::Common         qw(Int Str ArrayRef HashRef InstanceOf PositiveOrZeroInt NonEmptySimpleStr);
 use PrefVote::Core::Float qw(fp_equal fp_cmp);
 use PrefVote::Core::Set   qw(Set);
+use PrefVote::KR2::PairData;
 use PrefVote::Core::TestSpec;
 extends 'PrefVote::Core';
 
 # blackbox testing structure
 Readonly::Hash my %blackbox_spec => (
     winners => [qw(list set string)],
-    pair    => [qw(hash hash PrefVote::Core::PairData)],
+    pair    => [qw(hash hash PrefVote::KR2::PairData)],
 );
 PrefVote::Core::TestSpec->register_blackbox_spec(
     __PACKAGE__,
@@ -60,12 +61,20 @@ has winners => (
     },
 );
 
+# hash of Copeland scores (count of pairwise wins minus losses) per candidate, for result ordering
+# the scores are computed by cand_copeland_score() and cached here to prevent redundant computation
+has copeland_score => (
+    is          => 'rw',
+    isa         => HashRef [ Int ],
+    default     => sub { return {} },
+);
+
 # 2-level hash of candidate-pair preference totals
 # This shows total votes where 1st index candidate if preferred over a 2nd index candidate.
 # Totals are unidirectional and must be combined to determine which candidate has greater number either direction.
 has pair => (
     is          => 'rw',
-    isa         => HashRef [ HashRef [ InstanceOf ['PrefVote::Core::PairData'] ] ],
+    isa         => HashRef [ HashRef [ InstanceOf ['PrefVote::KR2::PairData'] ] ],
     default     => sub { return {} },
     handles_via => 'Hash',
     handles     => {
@@ -84,7 +93,7 @@ sub make_pair_node
         $self->{pair}{$cand_i} = {};
     }
     if ( not exists $self->{pair}{$cand_i}{$cand_j} ) {
-        $self->{pair}{$cand_i}{$cand_j} = PrefVote::RankedPairs::PairData->new();
+        $self->{pair}{$cand_i}{$cand_j} = PrefVote::KR2::PairData->new();
     }
     return;
 }
@@ -124,16 +133,29 @@ sub get_mov
     return $self->{pair}{$cand_i}{$cand_j}->get_mov();
 }
 
-# TODO to be continued...
-
-# get a choice/candidate's total of all margins of victory
-sub cand_total_mov
+# get a choice/candidate's Copeland Score (total pairwise wins minus losses) for Condorcet result ordering
+sub cand_copeland_score
 {
     my ( $self, $cand ) = @_;
+
+    # if already computed for this candidate, we're done
+    if ( exists $self->{copeland}{$cand}) {
+        return $self->{copeland}{$cand};
+    }
+
+    # compute Copeland Score for this candidate
     my $total = 0;
     foreach my $opponent ( keys %{ $self->pair_get($cand) } ) {
-        $total += $self->get_mov( $cand, $opponent );
+        # get margin of victory against a single opponent (negative for a loss to the opponent)
+        my $mov = $self->get_mov( $cand, $opponent );
+
+        # add 1 for a win, -1 for a loss
+        $total++ if $mov > 0;
+        $total-- if $mov < 0;
     }
+
+    # save result and return
+    $self->{copeland}{$cand} = $total;
     return $total;
 }
 
@@ -197,7 +219,7 @@ sub tally_preferences
     return;
 }
 
-# compute Condorcet result ordering
+# compute margin of victory table for Condorcet pairwise comparisons
 sub compute_condorcet
 {
     my $self = shift;
@@ -217,9 +239,52 @@ sub compute_condorcet
         }
     }
 
-    # set result order
+    return;
+}
 
-    # TODO
+# comparison function for sorting results
+sub cmp_choice
+{
+    my ( $self, $cand1, $cand2 ) = @_;
+
+    # 1st comparison: Copeland Scores (pairwise wins minus losses) in descending order
+    my $copeland1 = $self->cand_copeland_score($cand1);
+    my $copeland2 = $self->cand_copeland_score($cand2);
+    if ( $copeland1 != $copeland2 ) {
+        return $copeland2 <=> $copeland1;  # order Copeland Scores from high to low
+    }
+
+    # 2nd comparison: choice/candidate's average choice rank ACR (ballot position) in ascending order
+    # ACR is computed by PrefVote::Core for all voting methods
+    my $place1 = $self->average_ranking($cand1);
+    my $place2 = $self->average_ranking($cand2);
+    if ( not fp_equal( $place1, $place2 ) ) {
+        return fp_cmp( $place1, $place2 );
+    }
+
+    return 0;
+}
+
+# use Margin of Victory table to determine voting result order
+# candidates are sorted by two factors:
+# primary: Copeland Score (count of pairwise wins minus pairwise defeats, 0 for ties)
+# secondary: PrefVote average choice rank ACR
+sub mov_order
+{
+    my $self = shift;
+
+    # sort list of candidates ordered by cmp_choice
+    my @choices = sort { $self->cmp_choice( $a, $b ) } $self->choices_keys();
+
+    # detect ties and build result rankings
+    while ( scalar @choices ) {
+        my $leader    = shift @choices;
+        my $tie_group = set($leader);
+        while ( ( scalar @choices > 0 ) and ( $self->cmp_choice( $leader, $choices[0] ) == 0 ) ) {
+            $tie_group->insert( shift @choices );
+        }
+        $self->winners_push($tie_group);
+    }
     return;
 }
 
@@ -236,6 +301,9 @@ sub count
 
     # compute Condorcet result ordering
     $self->compute_condorcet();
+
+    # result ordering using Copeland Score (count of pairwise wins minus pairwise defeats, 0 for ties) & PrefVote ACR
+    $self->mov_order();
 
     # save per-candidate final results in PrefVote::Core's choice_to_result map
     $self->save_c2r( winners => $self->winners() );
@@ -322,9 +390,9 @@ So the corresponding pair reversing the order of the two candidates must be the 
 This reads the margin of victory for a candidate pair.
 The parameters are the ids of the two candidates for the pair.
 
-=item cand_total_mov
+=item cand_copeland_score
 
-This returns a candidate's total of their margins of victory.
+This returns a candidate's Copeland Score, the total wins minus losses, from the margin of victory table.
 The parameter is the id of the candidate.
 
 =item tally_preferences

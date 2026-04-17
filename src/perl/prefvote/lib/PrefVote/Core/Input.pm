@@ -47,7 +47,7 @@ has vote_def => (
 # ballot list
 has ballots => (
     is          => 'rw',
-    isa         => ArrayRef [ ArrayRef [NonEmptySimpleStr] ],
+    isa         => ArrayRef [ ArrayRef [NonEmptySimpleStr | ArrayRef] ],
     handles_via => 'Array',
     handles     => {
         ballot_all   => 'all',
