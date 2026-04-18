@@ -178,7 +178,7 @@ sub do_counting_table
     }
     $format_class->do_table( $result_data, \@result_rows, "Average ballot ranking positions",
         "Lower numbers are favored. First place = 1."
-            . ( ( $is_secondary // 0 ) ? " This data is used for breaking ties in the primary voting method." : "" ) );
+            . ( ( $is_secondary // 0 ) ? " Average rank is used to break ties in the primary voting method." : "" ) );
 
     return;
 }

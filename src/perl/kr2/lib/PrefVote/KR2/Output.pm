@@ -32,13 +32,13 @@ sub do_counting_table
     my $pair = $result_data->{pair};
 
     # start with heading row
-    my @result_rows = [ "", @candidates ];
+    my @result_rows = [ "", "wins-loss", @candidates ];
 
     # generate victory matrix rows
     foreach my $i (@candidates) {
 
         # candidate name starts the row
-        my @row = ($i);
+        my @row = ($i, $result_data->{copeland}{$i});
 
         foreach my $j (@candidates) {
 
@@ -68,7 +68,7 @@ sub do_counting_table
         push @result_rows, \@row;
     }
     $format_class->do_table( $result_data, \@result_rows, "Margin-of-victory matrix",
-        "This is a comparison of how each choice ranked against the others." );
+        "This compares how each choice ranks against others, ordered by Kluft algorithm." );
 
     return;
 }
