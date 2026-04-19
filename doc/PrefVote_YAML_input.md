@@ -17,7 +17,7 @@ The first YAML document/section contains a definition of the vote - the voting a
 
 At the top level are two items. Both are required.
 
-* "method" names the voting algorithm, which may be Core, STV, Schulze or RankedPairs. Note that Core is for testing purposes only, and must never be used for processing actual people's votes because it only contains the average choice rank (ACR) which is only an average, not a quantitative measure. It is code which serves as a tie-breaker for all the other voting methods. But all voting must follow the principle that the candidate with the most votes wins.
+* "method" names the voting algorithm, which may be Core, STV, Schulze, RankedPairs or KR2. Note that Core is for testing purposes only, and must never be used for processing actual people's votes because it only contains the average choice rank (ACR) which is only an average, not a quantitative measure. It is code which serves as a tie-breaker for all the other voting methods. But all voting must follow the principle that the candidate with the most votes wins.
 Example: "method: RankedPairs"
 * "params" contains a YAML structure which will be passed to the voting algorithm
 
