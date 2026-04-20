@@ -354,14 +354,15 @@ sub mov_order
     my @choices = sort { $self->cmp_choice( $a, $b ) } $self->choices_keys();
 
     # detect ties and build result rankings
-    my $after_oppose_marker = false;
+    my $elimination_marker = $rating_def{ $self->levels() }{elimination};
+    my $after_elimination_marker = false;
     while ( scalar @choices ) {
         my $leader    = shift @choices;
 
         # set flag if oppose rating bound marker found
-        my $seen_oppose_marker = false;
-        if ( $leader =~ / ^ _oppose . * /x ) {
-            $seen_oppose_marker = true;
+        my $seen_elimination_marker = false;
+        if ( $elimination_marker and ( substr $leader, 0, length( $elimination_marker )) eq $elimination_marker ) {
+            $seen_elimination_marker = true;
         }
 
         # find any candidates tied with the current leader and add them to a set/group for this result position
@@ -370,21 +371,21 @@ sub mov_order
             my $tie_cand = shift @choices;
             $tie_group->insert( $tie_cand );
             if ( $tie_cand =~ / ^ _oppose . * /x ) {
-                $seen_oppose_marker = true;
+                $seen_elimination_marker = true;
             }
         }
 
         # add the set/group to either eliminated or winning result list
-        if ( $after_oppose_marker ) {
-            # eliminated items added in reverse of ranking order because in other methods, 1st elimination = last place
+        if ( $after_elimination_marker ) {
+            # eliminated items add in reverse of ranking order because 1st elimination = last place (STV precedent)
             $self->eliminated_unshift($tie_group);
         } else {
             $self->winners_push($tie_group);
         }
 
-        # if we encountered the oppose marker, set the after_oppose_marker so remaining candidates are eliminated
-        if ( $seen_oppose_marker ) {
-            $after_oppose_marker = true;
+        # if we encountered elimination marker, set after_elimination_marker so remaining candidates are eliminated
+        if ( $seen_elimination_marker ) {
+            $after_elimination_marker = true;
         }
     }
 
