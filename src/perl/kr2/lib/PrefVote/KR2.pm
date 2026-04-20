@@ -145,20 +145,58 @@ sub rating_bound_marker_policy
     return true;
 }
 
-# PrefVote::Core calls subclass init_hook() if provided: add rating bound markers to list of valid ballot choices
+# PrefVote::Core::init_core calls subclass init_hook() if provided: add rating bound markers to list of ballot choices
 sub init_subclass
 {
     my $self = shift;
 
     # validate choices is a hash ref
     if ( ref $self->{choices} ne "HASH" ) {
-        PrefVote::Core::Exception->throw( description => "KR2 choices_ontrigger() found non-hash in choices" );
+        PrefVote::Core::Exception->throw( description => "KR2 init_subclass() found non-hash in choices" );
     }
 
     # append KR2 rating bound markers to choices
     foreach my $marker ( @{$rating_def{ $self->levels() }{bounds}} ) {
         $self->{choices}{$marker} = "[rating bound $marker]";
     }
+    return;
+}
+
+# PrefVote::Core::submit_ballot() calls subclass validate_ballot() if provided
+# this throws an exception to reject a ballot, otherwise returns to allow processing to continue
+# KR2 validates ballots for rating bound markers all there in the right order
+sub validate_ballot
+{
+    my ( $self, @ballot ) = @_;
+
+    # extract rating bound markers from the ballot to make sure they're all there in the right order
+    # after PrefVote::Core::filter_ballot(), each ballot entry is a Set::Tiny object with one or more entries
+    my @markers;
+    foreach my $item ( @ballot ) {
+        # embedded list for input tie
+        push @markers, grep { substr( $_, 0, 1 ) eq "_" } $item->members();
+    }
+
+    # rating bound markers must match expected list: identical order, not missing any, not adding new ones
+    my @marker_expected = @{ $rating_def{ $self->levels() }{bounds} };
+    my $marker_fail = false;
+    if ( scalar @markers != scalar @marker_expected ) {
+        $marker_fail = true;
+    } else {
+        for ( my $i=0; $i < scalar @markers; $i++ ) {
+            if ( $markers[$i] ne $marker_expected[$i] ) {
+                $marker_fail = true;
+                last;
+            }
+        }
+    }
+    if ( $marker_fail ) {
+        PrefVote::Core::Exception->throw( description => "KR2 ballot failed validation: rating bound markers "
+            . "found: " . join( "/", @markers )
+            . "expected: " . join( "/", @marker_expected )
+        );
+    }
+
     return;
 }
 

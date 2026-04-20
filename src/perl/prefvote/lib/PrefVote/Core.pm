@@ -567,14 +567,14 @@ sub submit_ballot
         }
     }
 
+    # filter ballot for recognized/allowed items only
+    my @filtered_ballot = $self->filter_ballot( @ballot );
+
     # call hook if provided for voting method subclass to perform ballot validation
     # Since we're already called from an exception-catching block, it may throw an exception to reject the ballot.
     if ( $self->can( "validate_ballot" )) {
-        $self->validate_ballot( @ballot );
+        $self->validate_ballot( @filtered_ballot );
     }
-
-    # filter ballot for recognized/allowed items only
-    my @filtered_ballot = $self->filter_ballot( @ballot );
 
     # Note: ballots are anonymous and become aggregated once this function is called.
     # Protection against casting multiple votes must be done elsewhere
