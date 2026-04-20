@@ -46,6 +46,8 @@ Semicolon-delimited list of names of choices/candidates in the election.
 
 This is optional, but recommended. If not specified, the candidates will be collected from ballot lines. It is recommended to specify valid candidates so that invalid candidates can be recognized.
 
+Candidate names may not begin with an underscore character. Those are reserved for PrefVote internal use.
+
 ### #/Number of Seats:
 
 Integer value with the number of seats available for election or selection. In other words, this is how many winners are allowed in the voting results.
@@ -75,6 +77,17 @@ The default value is false. Specifying a weight (with the "^" operator) when the
 ### Non-standard parameters
 
 Handling of non-standard parameter names is not defined by the CEF standard. For orderly degradation of service among varying versions of software, PrefVote takes no action when a non-standard parameter name is used. The effect is that all parameters are stored, but software only reads and acts on standard names from the spec.
+
+#### #/Levels:
+
+For the Kluft Rank-Rate (KR2) voting method, a number of levels from 1-5 may be specified.
+The default is 1.
+
+* 1 means the vote does not use any rating levels.
+* 2 means the levels are "support" and "oppose". A "\_neutral" rating bound marker is required on each ballot. Choices/candidates placing less than the "\_neutral" marker are eliminated before other ranking results.
+* 3 means the levels are "support", "neutral" and "oppose". Rating bound markers "\_support" and "\_oppose" are required on each ballot. Choices/candidates placing less than the "\_oppose" marker are eliminated before other ranking results.
+* 4 means the levels are "support2" (strong support), "support1" (weak support), "oppose1" (weak oppose), and "oppose2" (strong oppose). Rating bound markers "\_support", "\_neutral" and "\_oppose" are required on each ballot. Choices/candidates placing less than the "\_oppose2" marker are eliminated before other ranking results.
+* 5 means the levels are "support2" (strong support), "support1" (weak support), "neutral", "oppose1" (weak oppose), and "oppose2" (strong oppose). Rating bound markers "\_support2", "\_support1", "\_oppose1" and "\_oppose2" are required on each ballot. Choices/candidates placing less than the "\_oppose2" marker are eliminated before other ranking results.
 
 ## CEF vote lines: syntax diagrams and ABNF definitions
 

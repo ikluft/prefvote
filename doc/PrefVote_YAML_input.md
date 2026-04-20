@@ -25,9 +25,16 @@ The params structure contains the following items.
 
 * "name" is the title of the vote topic as it should be displayed on results. It should be the same title as was displayed on ballots when votes were collected. This is a required parameter.
 * "seats" is the number of seats up for election. The default number is 1. A future planned feature is to allow zero seats to mean the overall ranking order is the desired result. The use case for zero seats is for ranking polls. Until then, set the number of seats to the number of available choices to achieve a similar result.
-* "choices" is a hash/map structure defining the choices or candidates. The map key is a short/abbreviated string for the choice. The map value is the full display name of the choice. This is a required parameter.
+* "choices" is a hash/map structure defining the choices or candidates. The map key is a short/abbreviated string for the choice. The map value is the full display name of the choice. Choice names may not begin with an underscore character, which is reserved for PrefVote internal use. This is a required parameter.
 * "implicit_ranking" is an optional boolean flag which defaults to true.  If set, it instructs PrefVote to set omitted candidates on each ballot to be added, tied for last place. This was added to correspond to a flag in the Condorcet Election Format (CEF).
 * "weight_allowed" is an optional boolean flag which defaults to false. If set, PrefVote allows ballots to contain weighting multipliers which increase the number of times that ballot is counted compared to others. This was added to correspond to a flag in the Condorcet Election Format (CEF).
+* "levels" is used by the Kluft Rank-Rate (KR2) voting method for the number of levels (1-5). Default is 1.
+  * 1 means the vote does not use any rating levels.
+  * 2 means the levels are "support" and "oppose". A "\_neutral" rating bound marker is required on each ballot. Choices/candidates placing less than the "\_neutral" marker are eliminated before other ranking results.
+  * 3 means the levels are "support", "neutral" and "oppose". Rating bound markers "\_support" and "\_oppose" are required on each ballot. Choices/candidates placing less than the "\_oppose" marker are eliminated before other ranking results.
+  * 4 means the levels are "support2" (strong support), "support1" (weak support), "oppose1" (weak oppose), and "oppose2" (strong oppose). Rating bound markers "\_support", "\_neutral" and "\_oppose" are required on each ballot. Choices/candidates placing less than the "\_oppose2" marker are eliminated before other ranking results.
+  * 5 means the levels are "support2" (strong support), "support1" (weak support), "neutral", "oppose1" (weak oppose), and "oppose2" (strong oppose). Rating bound markers "\_support2", "\_support1", "\_oppose1" and "\_oppose2" are required on each ballot. Choices/candidates placing less than the "\_oppose2" marker are eliminated before other ranking results.
+
 
 An example from a test vote shows a vote called "Test Vote" with 1 available seat and 6 choices, which for testing purposes start with the letters A through F and have whimsical names.
 
