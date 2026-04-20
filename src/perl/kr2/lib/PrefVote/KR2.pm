@@ -66,13 +66,13 @@ Readonly::Hash my %rating_def => (
     4 => {
         levels => [qw( support2 support1 oppose1 oppose2 )],
         bounds => [qw( _support2 _neutral _oppose2 )],
-        elimination => "_oppose2",
+        elimination => "_neutral",
         default => [ equal => "_neutral" ],
     },
     5 => {
         levels => [qw( support2 support1 neutral oppose1 oppose2 )],
         bounds => [qw( _support2 _support1 _oppose1 _oppose2 )],
-        elimination => "_oppose2",
+        elimination => "_oppose1",
         default => [ above => "_oppose1" ],
     },
 );
