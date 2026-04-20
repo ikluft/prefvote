@@ -173,8 +173,14 @@ sub validate_ballot
     # after PrefVote::Core::filter_ballot(), each ballot entry is a Set::Tiny object with one or more entries
     my @markers;
     foreach my $item ( @ballot ) {
-        # embedded list for input tie
-        push @markers, grep { substr( $_, 0, 1 ) eq "_" } $item->members();
+        # extract tie set for each ballot ranking
+        my @rank_set = $item->members();
+        my @rank_set_markers = grep { substr( $_, 0, 1 ) eq "_" } @rank_set;
+        if ( scalar @rank_set_markers > 1 ) {
+            PrefVote::Core::Exception->throw( description => "KR2 ballot failed validation: "
+                . " rating bound markers cannot be equal rank" );
+        }
+        push @markers, @rank_set_markers;
     }
 
     # rating bound markers must match expected list: identical order, not missing any, not adding new ones
