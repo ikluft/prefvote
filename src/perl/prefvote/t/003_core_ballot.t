@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use autodie;
 use Carp qw(croak);
-use Test::More tests => 32;
+use Test::More tests => 44;
 use Readonly;
 use Set::Tiny qw(set);
 use PrefVote::Core::Ballot;
@@ -15,8 +15,12 @@ Readonly::Array my @ballot_tests => (
     { ballot => [qw(EVIL FACTIOUS DYSFUNCTIONAL CHAOTIC ABNORMAL BORING)], total => 6, hex => '453201' },
     { ballot => [qw(BORING DYSFUNCTIONAL CHAOTIC EVIL ABNORMAL)],          total => 5, hex => '13240' },
     { ballot => [qw(BORING DYSFUNCTIONAL CHAOTIC/FACTIOUS EVIL ABNORMAL)], total => 6, hex => '13[25]40' },
+    { ballot => [qw(BORING DYSFUNCTIONAL), [qw(CHAOTIC FACTIOUS)], qw(EVIL ABNORMAL)], total => 6, hex => '13[25]40' },
     { ballot => [qw(BORING/DYSFUNCTIONAL CHAOTIC/FACTIOUS EVIL/ABNORMAL)], total => 6, hex => '[13][25][04]' },
+    { ballot => [["BORING", "DYSFUNCTIONAL"], ["CHAOTIC", "FACTIOUS"], ["EVIL", "ABNORMAL"]], total => 6,
+        hex => '[13][25][04]' },
     { ballot => [qw(BORING/DYSFUNCTIONAL/CHAOTIC/FACTIOUS/EVIL/ABNORMAL)], total => 6, hex => '[012345]' },
+    { ballot => [[qw(BORING DYSFUNCTIONAL CHAOTIC FACTIOUS EVIL ABNORMAL)]], total => 6, hex => '[012345]' },
 );
 
 # convert an array to a set of ballot items

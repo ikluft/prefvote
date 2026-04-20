@@ -261,7 +261,7 @@ sub init_core
             . join( ", ", @violations ));
     }
 
-    # do subclass initialization, if method is provided
+    # do subclass initialization, if init_subclass() method is provided
     if ( $self->can( "init_subclass" )) {
         $self->init_subclass();
     }
@@ -349,6 +349,10 @@ sub get_flag
     # return flag value
     return $self->flag($flag_name) ? 1 : 0;
 }
+
+#
+# utility functions for ballot counting
+#
 
 # tally ballot positions of choices/candidates
 # This is used to compute the average choice rank (ACR) for tie-breaking, ranked 1 (1st) to n, or n+1 for omitted.
@@ -474,6 +478,58 @@ sub ballot_to_hex
     return $hex_id;
 }
 
+# filter ballot for recognized/allowed items only
+sub filter_ballot
+{
+    my ( $self, @ballot ) = @_;
+    my @filtered_ballot;
+
+    # assemble ballot as a list of single items or tied sets for each ranking position
+    foreach my $item (@ballot) {
+
+        # check for ballot-input ties
+        if ( not ref $item and index( $item, "/" ) == -1 and index( $item, "=" ) == -1 ) {
+
+            # just a single item - save it if it's valid
+            if ( $self->choice_exists($item) ) {
+                push @filtered_ballot, set($item);
+            }
+            next;
+        }
+
+        # handle ballot-input tie if allowed by this voting method
+        if ( not $self->ballot_input_ties_policy() ) {
+            PrefVote::Core::Exception->throw( description => "ballot-input ties not allowed in " . ( ref $self ) );
+        }
+        my @tie_items;
+        if ( not ref $item ) {
+            # original method of marking a ballot-item tie was / or = delimeters
+            foreach my $tie_item ( split( qr([/=])x, $item ) ) {
+                if ( $self->choice_exists($tie_item) ) {
+                    push @tie_items, $tie_item;
+                }
+            }
+        } elsif ( ref $item eq "ARRAY" ) {
+            # YAML ballots use embedded lists to mark ballot-item ties
+            foreach my $tie_item ( @$item ) {
+                if ( $self->choice_exists($tie_item) ) {
+                    push @tie_items, $tie_item;
+                }
+            }
+        } else {
+            PrefVote::Core::Exception->throw( description => "ballot item is unexpected ref to " . ( ref $item ) );
+        }
+        push @filtered_ballot, set(@tie_items);
+    }
+
+    # throw exception for empty ballot after filtering
+    if ( ( scalar @filtered_ballot ) == 0 ) {
+        PrefVote::Core::Exception->throw( description => "empty ballot" );
+    }
+
+    return @filtered_ballot;
+}
+
 #
 # data input
 #
@@ -484,8 +540,7 @@ sub submit_ballot
 {
     my ( $self, @ballot ) = @_;
 
-    # filter out invalid items from ballot
-    my @filtered_ballot;
+    # if ballot contains parameters in a hash, do sanity checks
     my $quantity = 1;
     my $weight   = 1;
     if ( ref $ballot[0] eq "HASH" ) {
@@ -511,35 +566,15 @@ sub submit_ballot
             $weight = $params->{weight};
         }
     }
-    foreach my $item (@ballot) {
 
-        # check for ballot-input ties
-        if ( index( $item, "/" ) == -1 and index( $item, "=" ) == -1 ) {
-
-            # just a single item - save it if it's valid
-            if ( $self->choice_exists($item) ) {
-                push @filtered_ballot, set($item);
-            }
-            next;
-        }
-
-        # handle ballot-input tie if allowed by this voting method
-        if ( not $self->ballot_input_ties_policy() ) {
-            PrefVote::Core::Exception->throw( description => "ballot-input ties not allowed in " . ( ref $self ) );
-        }
-        my @set_items;
-        foreach my $set_item ( split( qr([/=])x, $item ) ) {
-            if ( $self->choice_exists($set_item) ) {
-                push @set_items, $set_item;
-            }
-        }
-        push @filtered_ballot, set(@set_items);
+    # call hook if provided for voting method subclass to perform ballot validation
+    # Since we're already called from an exception-catching block, it may throw an exception to reject the ballot.
+    if ( $self->can( "validate_ballot" )) {
+        $self->validate_ballot( @ballot );
     }
 
-    # throw exception for empty ballot after filtering
-    if ( ( scalar @filtered_ballot ) == 0 ) {
-        PrefVote::Core::Exception->throw( description => "empty ballot" );
-    }
+    # filter ballot for recognized/allowed items only
+    my @filtered_ballot = $self->filter_ballot( @ballot );
 
     # Note: ballots are anonymous and become aggregated once this function is called.
     # Protection against casting multiple votes must be done elsewhere
