@@ -16,6 +16,7 @@ package PrefVote::Core;
 use utf8;
 use feature qw(fc);
 use autodie;
+use builtin qw(true false);
 use DateTime;
 use Readonly;
 use Set::Tiny    qw(set);
@@ -132,13 +133,6 @@ has choices => (
     is       => 'ro',
     isa      => HashRef [NonEmptySimpleStr],
     required => 1,
-    trigger  => sub {
-        my $self = shift;
-        $self->debug_print( "set choices to " . join( " ", $self->choices_keys() ) );
-        $self->gen_choice_hex();
-        PrefVote::Core::Ballot::set_choices( $self->choices_keys() );
-        PrefVote::Core::Ballot::ballot_input_ties_flag( $self->ballot_input_ties_policy() );
-    },
     handles_via => 'Hash',
     handles     => {
         choices_count  => 'count',
@@ -214,8 +208,8 @@ has
     );
 
 # By default PrefVote::Core sets ballot-input ties policy to false.
-# Override this in voting method subclasses which allow input ties. (i.e. Schulze)
-my $ballot_input_ties_policy = __PACKAGE__->config("input-ties") // 0;    # only change this for testing purposes
+# Override this in voting method subclasses which allow input ties. (i.e. Schulze, RankedPairs, KR2)
+my $ballot_input_ties_policy = __PACKAGE__->config("input-ties") // 0;
 
 sub ballot_input_ties_policy
 {
@@ -227,9 +221,62 @@ sub ballot_input_ties_policy
     return $ballot_input_ties_policy;
 }
 
-# final result status per candidate
-# key: candidate abbreviation string
-# value: hashref with place (integer),
+# class/subclass configuration on handling Rating Bound Markers (support/oppose thresholds) mixed with candidate list
+# Override this in voting method subclasses which allow Rating Bound Markers (i.e. KR2)
+sub rating_bound_marker_policy
+{
+    return false;
+}
+
+# setup or reset instance (class method)
+sub setup_instance
+{
+    my ($class, %params ) = @_;
+
+    ## no critic (Subroutines::ProtectPrivateSubs)
+    PrefVote::Core->_clear_instance();    # replace the singleton: toss out previous instance if it exists
+    ## use critic (Subroutines::ProtectPrivateSubs)
+    my $vote_obj = eval { $class->instance(%params) };
+    if ( not defined $vote_obj ) {
+        PrefVote::Core::Exception->throw( description => "failed to instantiate object of $class: $@" );
+    }
+    $vote_obj->init_core();
+    return $vote_obj;
+}
+
+# initialization
+sub init_core
+{
+    my $self = shift;
+
+    # set policy flags, may be overridden by subclass
+    PrefVote::Core::Ballot::ballot_input_ties_flag( $self->ballot_input_ties_policy() );
+
+    # validate choices: cannot begin with underscore, reserved for KR2 rating bound markers
+    # Do this check before KR2 uses init_subclass to add rating bound markers to choices list.
+    my @sorted_keys = sort $self->choices_keys();
+    my @violations = grep { / ^ _ /x } @sorted_keys;
+    if ( scalar @violations > 0 ) {
+        PrefVote::Core::Exception->throw( description => "choice/candidate starting with underscore not allowed: "
+            . join( ", ", @violations ));
+    }
+
+    # do subclass initialization, if method is provided
+    if ( $self->can( "init_subclass" )) {
+        $self->init_subclass();
+    }
+
+    # initialize lookup tables
+    $self->choice_to_index( {} );
+    $self->index_to_choice( {} );
+
+    # initialize choices data
+    $self->debug_print( "set choices to " . join( " ", $self->choices_keys() ) );
+    $self->gen_choice_hex();
+    PrefVote::Core::Ballot::set_choices( $self->choices_keys() );
+
+    return;
+}
 
 # utility for functions to select between class and object
 sub _class_or_obj
@@ -304,6 +351,8 @@ sub get_flag
 }
 
 # tally ballot positions of choices/candidates
+# This is used to compute the average choice rank (ACR) for tie-breaking, ranked 1 (1st) to n, or n+1 for omitted.
+# There is no special adjustment for KR2 method rating levels except ratings are among candidates in ordering.
 sub save_ranking
 {
     my ( $self, @ballot ) = @_;
@@ -388,10 +437,6 @@ sub gen_choice_hex
     # compute how many hex digits are needed for all the choices
     my $count     = $self->choices_count();
     my $hexdigits = int( log($count) / log(16) );    # compute number of hex digits necessary to contain total choices
-
-    # initialize lookup tables - we can't count a default value being set yet since this is called from a trigger
-    $self->choice_to_index( {} );
-    $self->index_to_choice( {} );
 
     # populate lookup tables in both directions: choice id <-> hex index
     my @sorted_keys = sort $self->choices_keys();
@@ -621,7 +666,7 @@ sub determine_method
             }
         } else {
             PrefVote::Core::Exception->throw(
-                description => "voting method not specified when multiple choices exist" );
+                description => "a voting method must be specified when the vote definition allows multiple" );
         }
     } else {
         if ( defined $selected_method and $selected_method ne $methods_allowed[0] ) {
@@ -688,13 +733,7 @@ sub file2vote
             $params->{testspec} = PrefVote::Core::TestSpec->new( checklist => $testspec );
         }
     }
-    ## no critic (Subroutines::ProtectPrivateSubs)
-    PrefVote::Core->_clear_instance();    # replace the singleton: toss out previous instance if it exists
-    ## use critic (Subroutines::ProtectPrivateSubs)
-    my $vote_obj = eval { $class->instance(%$params) };
-    if ( not defined $vote_obj ) {
-        PrefVote::Core::Exception->throw( description => "failed to instantiate object of $class: $@" );
-    }
+    my $vote_obj = $class->setup_instance(%$params);
 
     # ingest ballots from 2nd YAML document
     ingest_ballots( $vote_obj, $input_doc );

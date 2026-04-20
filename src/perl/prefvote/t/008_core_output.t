@@ -98,7 +98,7 @@ Readonly::Array my @result_expected => (
 {
     local @ARGV = ();
     my $vote_obj;
-    lives_ok( sub { $vote_obj = PrefVote::Core->instance(%core_params) }, "1: instantiate PrefVote::Core" );
+    lives_ok( sub { $vote_obj = PrefVote::Core->setup_instance(%core_params) }, "1: instantiate PrefVote::Core" );
     PrefVote::Core::Output::set_mock_stdin("");
     dies_ok( sub { PrefVote::Core::Output::main() }, "dies as expected on empty command line" );
 }
@@ -107,7 +107,7 @@ Readonly::Array my @result_expected => (
 {
     local @ARGV = qw(--format=RawCapture --method=core);
     my $vote_obj;
-    lives_ok( sub { $vote_obj = PrefVote::Core->instance(%core_params) }, "2: instantiate PrefVote::Core" );
+    lives_ok( sub { $vote_obj = PrefVote::Core->setup_instance(%core_params) }, "2: instantiate PrefVote::Core" );
     PrefVote::Core::Output::set_mock_stdin("");
     dies_ok( sub { PrefVote::Core::Output::main() }, "dies as expected on empty stdin" );
 }
@@ -116,7 +116,7 @@ Readonly::Array my @result_expected => (
 {
     local @ARGV = qw(--format=RawCapture --method=core);
     my $vote_obj;
-    lives_ok( sub { $vote_obj = PrefVote::Core->instance(%core_params) }, "2: instantiate PrefVote::Core" );
+    lives_ok( sub { $vote_obj = PrefVote::Core->setup_instance(%core_params) }, "2: instantiate PrefVote::Core" );
     PrefVote::Core::Output::set_mock_stdin($mock_input);
     lives_ok( sub { PrefVote::Core::Output::main() }, "main processes YAML result" );
     my $output = PrefVote::Core::Output::RawCapture::get_output();

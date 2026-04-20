@@ -76,10 +76,10 @@ sub basic_tests
     # instantiate voting object (7 tests)
     # never instantiate PrefVote::Core directly except for testing - use a subclass which implements a voting method
     my $vote_obj;
-    lives_ok( sub { $vote_obj = PrefVote::Core->instance(%core_params) }, "instantiate PrefVote::Core" );
-    ok( defined $vote_obj, "instance(core_params) returned a defined value" );
-    ok( ref $vote_obj,     "instance(core_params) returned a reference" );
-    isa_ok( $vote_obj, "PrefVote::Core", "instance(core_params) returned correct object" );
+    lives_ok( sub { $vote_obj = PrefVote::Core->setup_instance(%core_params) }, "instantiate PrefVote::Core" );
+    ok( defined $vote_obj, "setup_instance(core_params) returned a defined value" );
+    ok( ref $vote_obj,     "setup_instance(core_params) returned a reference" );
+    isa_ok( $vote_obj, "PrefVote::Core", "setup_instance(core_params) returned correct object" );
     is( $vote_obj->name(),  $core_params{name},  "name attribute check" );
     is( $vote_obj->seats(), $core_params{seats}, "seats attribute check" );
     is_deeply( $vote_obj->choices(), $core_params{choices}, "choices hash attribute check" );

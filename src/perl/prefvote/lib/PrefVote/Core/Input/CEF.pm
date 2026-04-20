@@ -48,6 +48,7 @@ Readonly::Hash my %cef2pv => (
     'number of seats' => 'seats',
     'voting method'   => 'method',
     'voting methods'  => 'method',
+    'levels'          => 'levels',
 );
 
 # map CEF keys to PrefVote::Core flag names

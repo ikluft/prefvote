@@ -23,7 +23,7 @@ use Set::Tiny qw(set);
 use Moo;
 use MooX::TypeTiny;
 use MooX::HandlesVia;
-use Types::Common         qw(Int Str ArrayRef HashRef InstanceOf PositiveOrZeroInt NonEmptySimpleStr);
+use Types::Common         qw(Int IntRange Str ArrayRef HashRef InstanceOf PositiveOrZeroInt NonEmptySimpleStr);
 use PrefVote::Core::Float qw(fp_equal fp_cmp);
 use PrefVote::Core::Set   qw(Set);
 use PrefVote::KR2::PairData;
@@ -36,6 +36,7 @@ Readonly::Hash my %blackbox_spec => (
     eliminated => [qw(list set string)],
     pair       => [qw(hash hash PrefVote::KR2::PairData)],
     copeland_score => [qw(hash int)],
+    levels    => [qw(int)],
 );
 PrefVote::Core::TestSpec->register_blackbox_spec(
     __PACKAGE__,
@@ -44,11 +45,36 @@ PrefVote::Core::TestSpec->register_blackbox_spec(
 );
 __PACKAGE__->ballot_input_ties_policy(1);    # set flag for Core: this class allows input ballots to set A/B ties
 
-# rating levels
-Readonly::Hash my %rating_levels => (
-    1 => [qw(neutral)],
-    3 => [qw(favor neutral oppose)],
-    5 => [qw(favor2 favor1 neutral oppose1 oppose2)],
+# ratings: level and bound definitions
+Readonly::Hash my %rating_def => (
+    1 => {
+        levels => [qw( all )],
+        bounds => [],
+        default => [qw( end )],
+    },
+    2 => {
+        levels => [qw( support oppose )],
+        bounds => [qw( _neutral )],
+        default => [ equal => "_neutral" ],
+    },
+    3 => {
+        levels => [qw( support neutral oppose )],
+        bounds => [qw( _support _oppose )],
+        elimination => "_oppose",
+        default => [ above => "_oppose" ],
+    },
+    4 => {
+        levels => [qw( support2 support1 oppose1 oppose2 )],
+        bounds => [qw( _support2 _neutral _oppose2 )],
+        elimination => "_oppose2",
+        default => [ equal => "_neutral" ],
+    },
+    5 => {
+        levels => [qw( support2 support1 neutral oppose1 oppose2 )],
+        bounds => [qw( _support2 _support1 _oppose1 _oppose2 )],
+        elimination => "_oppose2",
+        default => [ above => "_oppose1" ],
+    },
 );
 
 # list of names of winners in order by place, ties shown by a set of the tied candidates
@@ -101,6 +127,40 @@ has copeland_score => (
     isa         => HashRef [ Int ],
     default     => sub { return {} },
 );
+
+# number of rating levels used in the voting
+# 1 = no ratings used (default), 2 = support/oppose, 3 = support/neutral/oppose,
+# 4 = strong/weak support/oppose, 5 = strong support/weak support/neutral/weak oppose/strong oppose
+# configurable from the YAML vote config file or CEF parameters
+has levels => (
+    is          => 'rw',
+    isa         => IntRange[1, 5],
+    default     => 1,
+);
+
+# class/subclass configuration on handling Rating Bound Markers (support/oppose thresholds) mixed with candidate list
+# overrides PrefVote::Core::rating_bound_marker_policy() method to allow Rating Bound Markers in this subclass
+sub rating_bound_marker_policy
+{
+    return true;
+}
+
+# PrefVote::Core calls subclass init_hook() if provided: add rating bound markers to list of valid ballot choices
+sub init_subclass
+{
+    my $self = shift;
+
+    # validate choices is a hash ref
+    if ( ref $self->{choices} ne "HASH" ) {
+        PrefVote::Core::Exception->throw( description => "KR2 choices_ontrigger() found non-hash in choices" );
+    }
+
+    # append KR2 rating bound markers to choices
+    foreach my $marker ( @{$rating_def{ $self->levels() }{bounds}} ) {
+        $self->{choices}{$marker} = "[rating bound $marker]";
+    }
+    return;
+}
 
 # create candidate pair node if it didn't exist
 sub make_pair_node
