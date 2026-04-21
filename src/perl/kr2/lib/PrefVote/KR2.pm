@@ -174,7 +174,7 @@ sub validate_ballot
     my @markers;
     foreach my $item ( @ballot ) {
         # extract tie set for each ballot ranking
-        my @rank_set = $item->members();
+        my @rank_set = item2list( $item );
         my @rank_set_markers = grep { substr( $_, 0, 1 ) eq "_" } @rank_set;
         if ( scalar @rank_set_markers > 1 ) {
             PrefVote::Core::Exception->throw( description => "KR2 ballot failed validation: "
@@ -220,7 +220,7 @@ sub make_pair_node
 }
 
 # record a candidate-pair preference
-# This adds to a total of votes favoring candidate cand1 over cand2. Note: cand2 over cand1 is a separate table entry.
+# This adds to a total of votes favoring candidate cand_i over cand_j. Note: cand_j over cand_i is a separate entry.
 sub add_preference
 {
     my ( $self, $cand_i, $cand_j, $quantity ) = @_;
@@ -306,33 +306,51 @@ sub tally_preferences
         my $ballot       = $self->ballots_get($combo);
         my @ballot_items = $ballot->items_all();
 
-        # choices contained on the ballot have all pairwise preferences recorded
+        # enumerate which items are on this ballot
+        # used to find what's missing and look up position of rating bound markers for implicit ranking insertion
         my %seen_on_ballot;
+        {
+            for ( my $pos = 0; $pos < scalar @ballot_items; $pos++ ) {
+                foreach my $item ( item2list( $ballot_items[$pos] )) {
+                    $seen_on_ballot{$item} = $pos; # save position where the item is on the ballot
+                }
+            }
+        }
+
+        # if implicit ranking is enabled, which it always should be in KR2, insert missing items at default position
+        if ( $self->get_flag('implicit_ranking') ) {
+            my @included = keys %seen_on_ballot;
+            my @omitted  = grep { not exists $seen_on_ballot{$_} } @choices;
+            my $default_pos = $rating_def{ $self->levels() }{default};
+            my $marker_name = $default_pos->[1] // "";
+            if ( $default_pos->[0] eq "end" ) {
+                # append omitted items in a separate ranking position at the end
+                push @ballot_items, Set::Tiny->new( @omitted );
+            } elsif ( $default_pos->[0] eq "equal" ) {
+                # insert omitted items into the ranking position at the default position
+                if ( not ref $ballot_items[ $seen_on_ballot{ $marker_name } ] ) {
+                    my $entry = $ballot_items[ $seen_on_ballot{ $marker_name } ];
+                    $ballot_items[ $seen_on_ballot{ $marker_name } ] = Set::Tiny->new( ( $entry ) );
+                }
+                $ballot_items[ $seen_on_ballot{ $marker_name } ]->insert( @omitted );
+            } elsif ( $default_pos->[0] eq "above" ) {
+                # insert omitted items in a separate ranking position above/before the default position
+                splice @ballot_items, $seen_on_ballot{ $marker_name }, 0, Set::Tiny->new( @omitted );
+            }
+        }
+
+        # choices contained on the ballot have all pairwise preferences recorded
         for ( my $pos1 = 0 ; $pos1 < scalar @ballot_items - 1 ; $pos1++ ) {
 
             # mark all following items on the ballot as less-favored than the current item
             # This adds 2 levels of loops to support potential ties within each position.
             my @item1 = item2list( $ballot_items[$pos1] );
             foreach my $cand_i (@item1) {
-                $seen_on_ballot{$cand_i} = 1;
                 for ( my $pos2 = $pos1 + 1 ; $pos2 < scalar @ballot_items ; $pos2++ ) {
                     my @item2 = item2list( $ballot_items[$pos2] );
                     foreach my $cand_j (@item2) {
-                        $seen_on_ballot{$cand_j} = 1;
                         $self->add_preference( $cand_i, $cand_j, $ballot->{quantity} );
                     }
-                }
-            }
-        }
-
-        # all choices omitted from the ballot (unranked) count as less-preferred than all on the ballot
-        # no comparison is made between unranked choices - the voter didn't provide data on that
-        if ( $self->get_flag('implicit_ranking') ) {
-            my @included = keys %seen_on_ballot;
-            my @omitted  = grep { not exists $seen_on_ballot{$_} } @choices;
-            foreach my $in (@included) {
-                foreach my $out (@omitted) {
-                    $self->add_preference( $in, $out, $ballot->{quantity} );
                 }
             }
         }
