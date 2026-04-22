@@ -59,7 +59,7 @@ jobs:
           chdir "lab/perl";
           my $topdir = getcwd();
           my $success = 1;
-          for my $subdir ( qw(prefvote stv schulze rankedpairs) ) {
+          for my $subdir ( qw(prefvote stv schulze rankedpairs kr2) ) {
             chdir "$topdir/$subdir";
             say "=== authordeps $subdir";
             if (not do_cpanm(qx(dzil authordeps --missing))) {$success=0; next}
