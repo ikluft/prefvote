@@ -99,7 +99,6 @@ has eliminated => (
     handles     => {
         eliminated_all      => 'all',
         eliminated_count    => 'count',
-        eliminated_push     => 'push',
         eliminated_unshift  => 'unshift',
     },
 );
