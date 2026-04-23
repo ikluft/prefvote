@@ -10,7 +10,7 @@ use File::Basename;
 use IPC::Run qw(run);
 
 # constants
-Readonly::Array my @methods => qw(Core STV Schulze RankedPairs);
+Readonly::Array my @methods => qw(Core STV Schulze RankedPairs KR2);
 Readonly::Scalar my $pvroot => dirname($FindBin::RealBin);
 Readonly::Scalar my $count_script => "$pvroot/lab/perl/prefvote/bin/vote-count";
 Readonly::Scalar my $acr_compare_script => "$pvroot/test/acr-compare";

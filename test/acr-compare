@@ -15,7 +15,7 @@ use YAML::XS;
 use IPC::Run qw(run);
 
 # constants
-Readonly::Array my @methods => qw(Core STV Schulze RankedPairs);
+Readonly::Array my @methods => qw(Core STV Schulze RankedPairs KR2);
 Readonly::Scalar my $pvroot => dirname($FindBin::RealBin);
 Readonly::Scalar my $datadir => "$pvroot/test/inputs/100-rcv-test";
 Readonly::Scalar my $count_script => "$pvroot/lab/perl/prefvote/bin/vote-count";
@@ -77,7 +77,7 @@ sub html_table
     my $rows = $opts{rows};
 
     # table heading
-    say "<table>";
+    say "<table border=1>";
 
     # generate header from first row
     if ($opts{header_row} // 0) {
@@ -119,27 +119,14 @@ sub do_compare
     # collect some runtime data locations
     my $choices = $rundata->{Core}{choices};
 
-    # compute pairwise victories (pwv) to estimate Condorcet
-    # using this we can see where Schulze & Ranked Pairs resolve ambiguities
+    # use KR2 Copeland score for pairwise victories (pwv) and Condorcet result
+    # using this we can see where Schulze, Ranked Pairs & KR2 resolve ambiguities
     my %pwv;
-    my %victories;
+    my $kr2_copeland = $rundata->{KR2}{copeland};
     {
-        my $rp_pair = $rundata->{RankedPairs}{pair};
-        foreach my $choice (keys %$choices) {
-            my $pairwise_victory = 0;
-            foreach my $opponent (keys %$rp_pair) {
-                my $mov = $rp_pair->{$choice}{$opponent}{mov} // 0;
-                if ($mov > 0) {
-                    $pairwise_victory++;
-                } elsif ($mov == 0) {
-                    #$pairwise_victory += 0.5;
-                }
-            }
-            $victories{$choice} = $pairwise_victory;
-        }
-        my @pwv_order = sort {$victories{$b} <=> $victories{$a}} keys %victories;
+        my @pwv_order = sort {$kr2_copeland->{$b} <=> $kr2_copeland->{$a}} sort keys %$kr2_copeland;
         for (my $i=0; $i<scalar @pwv_order; $i++) {
-            if ($i>0 and $victories{$pwv_order[$i]} == $victories{$pwv_order[$i-1]}) {
+            if ($i>0 and $kr2_copeland->{$pwv_order[$i]} == $kr2_copeland->{$pwv_order[$i-1]}) {
                 $pwv{$pwv_order[$i]} = $pwv{$pwv_order[$i-1]};
             } else {
                 $pwv{$pwv_order[$i]} = $i+1;
@@ -151,7 +138,7 @@ sub do_compare
     my @choices = keys %$choices;
     my $num_choices = scalar @choices;
     my @core_order = sort {$rundata->{Core}{choice_to_result}{$a}[0] <=> $rundata->{Core}{choice_to_result}{$b}[0]} @choices;
-    my @table = (["choice", "avg choice rank", @methods, "Condorcet"]);
+    my @table = (["choice", "avg choice rank", @methods, "Copeland"]);
     for (my $i=0; $i<$num_choices; $i++) {
         my @row = ($core_order[$i], acr_fmt($rundata, $core_order[$i]));
         foreach my $method (@methods) {
@@ -162,13 +149,15 @@ sub do_compare
                     .$rundata->{$method."-notb"}{choice_to_result}{$core_order[$i]}[0];
             }
         }
-        push @row, $pwv{$core_order[$i]}." (".$victories{$core_order[$i]}.")";
+        push @row, $pwv{$core_order[$i]}." (".$kr2_copeland->{$core_order[$i]}.")";
         push @table, \@row;
     }
     if ($html_mode) {
         say html_table(rows =>\@table, header_row => 1);
+        say "<p><small><i>Voting results shown with/without ACR tie-breaking.</i></small></p>";
     } else {
         say generate_table(rows =>\@table, header_row => 1, style => 'boxrule');
+        say "Voting results shown with/without ACR tie-breaking.";
         say "";
     }
 }

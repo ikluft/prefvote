@@ -11,7 +11,7 @@ use YAML;
 use IPC::Run qw(run);
 
 # constants
-Readonly::Array my @methods => qw(Core STV Schulze RankedPairs);
+Readonly::Array my @methods => qw(Core STV Schulze RankedPairs KR2);
 Readonly::Scalar my $progname => $0;
 Readonly::Scalar my $pvroot => dirname($Bin);
 Readonly::Scalar my $count_script => "$pvroot/lab/perl/prefvote/bin/vote-count";

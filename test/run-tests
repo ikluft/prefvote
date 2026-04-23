@@ -24,13 +24,14 @@ use HTML::Escape qw(escape_html);
 # configuration settings per language implementation
 Readonly::Scalar my $pvroot => dirname($FindBin::RealBin);
 Readonly::Array my @supported_languages => (qw(perl rust));
-Readonly::Array my @supported_methods => (qw(Core STV Schulze RankedPairs));
+Readonly::Array my @supported_methods => (qw(Core STV Schulze RankedPairs KR2));
 Readonly::Hash my %config => (
     methods => {
         Core => 'PrefVote core - for testing only',
         STV => 'Single Transferable Vote (STV)',
         Schulze => 'Schulze/Beatpath',
         RankedPairs => "Ranked Pairs",
+        KR2 => "Kluft Rank-Rate (KR2)",
     },
     blackbox => {
         name => "black box tests",
@@ -46,6 +47,7 @@ Readonly::Hash my %config => (
                 STV => '${pvroot}/lab/perl/stv',
                 Schulze => '${pvroot}/lab/perl/schulze',
                 RankedPairs => '${pvroot}/lab/perl/rankedpairs',
+                KR2 => '${pvroot}/lab/perl/kr2',
             },
             testdir => "t",
             test_re => qr{\.t$},
@@ -149,7 +151,7 @@ sub markdown_table
     foreach my $row (@$rows) {
         say "| ".join(" | ", @$row)." |";
     }
-    say;
+    say "";
     return;
 }
 
