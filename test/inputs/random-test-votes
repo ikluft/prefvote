@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # random-test-votes - generate random votes for PrefVote test cases
-use Modern::Perl qw(2015); # require 5.20.0 or later
+use Modern::Perl qw(2024); # require 5.38.0 or later
 use autodie;
 use List::Util qw(shuffle);
 

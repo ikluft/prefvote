@@ -2,7 +2,7 @@
 # PODNAME: run-tests
 # test script launcher for PrefVote preference voting system
 
-use Modern::Perl qw(2013); # require 5.16.0 or later
+use Modern::Perl qw(2024); # require 5.38.0 or later
 use autodie;
 use Carp qw(croak);
 use Config;
