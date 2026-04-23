@@ -224,7 +224,7 @@ sub tally_preferences
 
         # choices contained on the ballot have all pairwise preferences recorded
         my %seen_on_ballot;
-        for ( my $pos1 = 0 ; $pos1 < scalar @ballot_items - 1 ; $pos1++ ) {
+        for ( my $pos1 = 0 ; $pos1 < scalar @ballot_items ; $pos1++ ) {
 
             # mark all following items on the ballot as less-favored than the current item
             # This adds 2 levels of loops to support potential ties within each position.
