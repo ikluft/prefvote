@@ -22,20 +22,23 @@ Numbers in each cell are test cases planned/passed/failed.
 <th>STV</th>
 <th>Schulze</th>
 <th>RankedPairs</th>
+<th>KR2</th>
 <th>total</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Perl whitebox</td>
-<td>354/354/0</td>
+<td>525/525/0</td>
 <td>193/193/0</td>
 <td>183/183/0</td>
 <td>139/139/0</td>
-<td>869/869/0</td>
+<td>133/133/0</td>
+<td>1173/1173/0</td>
 </tr>
 <tr>
 <td>Rust whitebox</td>
+<td>𝟬</td>
 <td>𝟬</td>
 <td>𝟬</td>
 <td>𝟬</td>
@@ -44,14 +47,16 @@ Numbers in each cell are test cases planned/passed/failed.
 </tr>
 <tr>
 <td>Perl blackbox</td>
-<td>7794/7794/0</td>
-<td>8958/8958/0</td>
-<td>10315/10315/0</td>
-<td>8295/8295/0</td>
-<td>35362/35362/0</td>
+<td>8322/8322/0</td>
+<td>9486/9486/0</td>
+<td>10425/10425/0</td>
+<td>9093/9093/0</td>
+<td>8808/8808/0</td>
+<td>46134/46134/0</td>
 </tr>
 <tr>
 <td>Rust blackbox</td>
+<td>𝟬</td>
 <td>𝟬</td>
 <td>𝟬</td>
 <td>𝟬</td>
@@ -60,11 +65,12 @@ Numbers in each cell are test cases planned/passed/failed.
 </tr>
 <tr>
 <td>total</td>
-<td>8148/8148/0</td>
-<td>9151/9151/0</td>
-<td>10498/10498/0</td>
-<td>8434/8434/0</td>
-<td>36231/36231/0</td>
+<td>8847/8847/0</td>
+<td>9679/9679/0</td>
+<td>10608/10608/0</td>
+<td>9232/9232/0</td>
+<td>8941/8941/0</td>
+<td>47307/47307/0</td>
 </tr>
 </tbody>
 </table>
