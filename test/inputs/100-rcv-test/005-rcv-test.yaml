@@ -587,7 +587,7 @@ Core:
     5: FACTIOUS
   name: Test Vote 005
   seats: 1
-  timestamp: Wed Apr 22 20:40:12 2026
+  timestamp: Wed Apr 22 21:58:46 2026
   total_ballots: 50
 KR2:
   average_choice_rank:
@@ -1221,7 +1221,7 @@ KR2:
         mov: 1
         preference: 24
   seats: 1
-  timestamp: Wed Apr 22 20:40:15 2026
+  timestamp: Wed Apr 22 21:58:48 2026
   total_ballots: 50
   winners:
     - [FACTIOUS]
@@ -1902,7 +1902,7 @@ RankedPairs:
         mov: 1
         preference: 24
   seats: 1
-  timestamp: Wed Apr 22 20:40:14 2026
+  timestamp: Wed Apr 22 21:58:48 2026
   total_ballots: 50
   winners:
     - [FACTIOUS]
@@ -2606,7 +2606,7 @@ STV:
       tally: {}
       votes_used: 0
   seats: 1
-  timestamp: Wed Apr 22 20:40:13 2026
+  timestamp: Wed Apr 22 21:58:46 2026
   total_ballots: 50
   winners:
     - [FACTIOUS]
@@ -3520,7 +3520,7 @@ Schulze:
       pair: {}
       win_flag: {}
   seats: 1
-  timestamp: Wed Apr 22 20:40:14 2026
+  timestamp: Wed Apr 22 21:58:47 2026
   total_ballots: 50
   winners:
     - [FACTIOUS]
