@@ -55,6 +55,7 @@ Readonly::Hash my %rating_def => (
     2 => {
         levels => [qw( support oppose )],
         bounds => [qw( _neutral )],
+        elimination => "_neutral",
         default => [ equal => "_neutral" ],
     },
     3 => {
@@ -535,13 +536,17 @@ The number of rating groups in a KR2 election are called levels. The definition 
 
 Level 1 has only one group, and therefore no rating bound markers. This is equivalent to a regular Condorcet ranked-choice election. The ballot does not present rating options. Choices are not marked as eliminated in the results. (This is the least complicated level, but collects no rating information.)
 
-Level 2 has two groups to rank choices: support and oppose. Each ballot contains a rating bound marker called "\_neutral". Choices which are omitted from any ballot are inserted as tied with each other and the "\_neutral" marker. Choices are not marked as eliminated in the results, but can be seen whether they are above or below the "\_neutral" marker.
+Level 2 has two groups to rank choices: support and oppose. Each ballot contains a rating bound marker called "\_neutral". Choices which are omitted from any ballot are inserted as tied with each other and the "\_neutral" marker. Choices are marked as eliminated and cannot win if the results place them below the "\_neutral" marker.
 
 Level 3 has three groups to rank choices: support, neutral and oppose. Each ballot contains rating bound markers called "\_support" and "\_oppose". Choices which are omitted from any ballot are inserted as tied with each other just above the "\_oppose" marker. Choices are marked as eliminated and cannot win if the results place them below the "\_oppose" marker. (This level is the recommended maximum for non-technical audiences.)
 
-Level 4 has four groups to rank choices: strong support ("\_support2"), weak support ("\_support1"), weak oppose ("_oppose1") and strong oppose ("\_oppose2"). Each ballot contains rating bound markers called "\_support2", "\_neutral" and "\_oppose2". Choices which are omitted from any ballot are inserted as tied with each other and the "\_neutral" marker. Choices are marked as eliminated and cannot win if the results place them below the "\_neutral" marker.
+Level 4 has four groups to rank choices: strong support ("\_support2"), weak support ("\_support1"), weak oppose ("\_oppose1") and strong oppose ("\_oppose2"). Each ballot contains rating bound markers called "\_support2", "\_neutral" and "\_oppose2". Choices which are omitted from any ballot are inserted as tied with each other and the "\_neutral" marker. Choices are marked as eliminated and cannot win if the results place them below the "\_neutral" marker.
 
-Level 5 has five groups to rank choices: strong support ("\_support2"), weak support ("\_support1"), neutral, weak oppose ("_oppose1") and strong oppose ("\_oppose2"). Each ballot contains rating bound markers called "\_support2", "\_support1", "\_oppose1" and "\_oppose2". Choices which are omitted from any ballot are inserted as tied with each other just above the "\_oppose1" marker. Choices are marked as eliminated and cannot win if the results place them below the "\_oppose1" marker. (This is the most complicated level, but obtains the most data on voter intent.)
+Level 5 has five groups to rank choices: strong support ("\_support2"), weak support ("\_support1"), neutral, weak oppose ("\_oppose1") and strong oppose ("\_oppose2"). Each ballot contains rating bound markers called "\_support2", "\_support1", "\_oppose1" and "\_oppose2". Choices which are omitted from any ballot are inserted as tied with each other just above the "\_oppose1" marker. Choices are marked as eliminated and cannot win if the results place them below the "\_oppose1" marker. (This is the most complicated level, but obtains the most data on voter intent.)
+
+Candidates who are eliminated by KR2 for falling below the opposition threshold in the results cannot win, even if open seats are available. In cases of organizational elections, it is recommended to adopt a rule before the election on how vacancies are filled if not enough choices are selected. Candidates eliminated should be barred from filling any vacancy until the next election.
+
+KR2 allows voters to submit tied rankings for choices. But rating bound markers must not be tied with each other - they have to appear in the correct order in separate positions on each ballot.
 
 =head1 METHODS
 
