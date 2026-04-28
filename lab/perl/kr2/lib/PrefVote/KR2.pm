@@ -145,6 +145,12 @@ sub rating_bound_marker_policy
     return true;
 }
 
+# allow unit tests to access the %rating_def read-only structure
+sub get_rating_def
+{
+    return \%rating_def;
+}
+
 # PrefVote::Core::init_core calls subclass init_hook() if provided: add rating bound markers to list of ballot choices
 sub init_subclass
 {

@@ -235,6 +235,7 @@ sub setup_instance
 
     ## no critic (Subroutines::ProtectPrivateSubs)
     PrefVote::Core->_clear_instance();    # replace the singleton: toss out previous instance if it exists
+    $class->_clear_instance();    # replace the singleton: toss out previous instance if it exists
     ## use critic (Subroutines::ProtectPrivateSubs)
     my $vote_obj = eval { $class->instance(%params) };
     if ( not defined $vote_obj ) {
