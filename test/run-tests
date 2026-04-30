@@ -36,7 +36,7 @@ Readonly::Hash my %config => (
     blackbox => {
         name => "black box tests",
         data => '${pvroot}/test/inputs',
-        test_re => qr{\.(yaml|yml)$},
+        test_re => qr{-test\.(yaml|yml)$},
     },
     perl => {
         name => "Perl",
