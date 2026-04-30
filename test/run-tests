@@ -4,7 +4,8 @@
 
 use Modern::Perl qw(2024); # require 5.38.0 or later
 use autodie;
-use Carp qw(croak);
+use builtin qw(true false);
+use Carp qw(carp croak);
 use Config;
 use English;
 use Cwd;
@@ -20,6 +21,7 @@ use TAP::Parser::Aggregator;
 use TAP::Parser::SourceHandler::RawTAP;
 use Text::Table::Tiny 1.02 qw/ generate_table /;
 use HTML::Escape qw(escape_html);
+use YAML::XS;
 
 # configuration settings per language implementation
 Readonly::Scalar my $pvroot => dirname($FindBin::RealBin);
@@ -36,7 +38,7 @@ Readonly::Hash my %config => (
     blackbox => {
         name => "black box tests",
         data => '${pvroot}/test/inputs',
-        test_re => qr{-test\.(yaml|yml)$},
+        test_re => qr{-test\.(yaml|yml)$}x,
     },
     perl => {
         name => "Perl",
@@ -50,7 +52,7 @@ Readonly::Hash my %config => (
                 KR2 => '${pvroot}/lab/perl/kr2',
             },
             testdir => "t",
-            test_re => qr{\.t$},
+            test_re => qr{\.t$}x,
             tp_args => [switches => ['-Ilab/perl/prefvote/lib', '-Ilib']],
         },
         prove_params => "--lib",
@@ -75,20 +77,24 @@ Readonly::Scalar my $orig_cwd => getcwd();
 Readonly::Hash my %callbacks => (
     test => sub {
         my $test = shift;
-        if ( $test->is_ok && not $test->directive ) {
+        if ( $test->is_ok and not $test->directive ) {
             # normal passing test
             print color 'green';
+            return;
         }
-        elsif ( !$test->is_ok ) {    # even if it's TODO
+        if ( not $test->is_ok ) {    # even if it's TODO
             print color 'red';
+            return;
         }
-        elsif ( $test->has_skip ) {
+        if ( $test->has_skip ) {
             print color 'white on_blue';
-
+            return;
         }
-        elsif ( $test->has_todo ) {
+        if ( $test->has_todo ) {
             print color 'white';
+            return;
         }
+        return;
     },
     ELSE => sub {
         # plan, comment, and so on (anything which isn't a test line)
@@ -103,9 +109,14 @@ Readonly::Hash my %callbacks => (
 );
 
 #
-# result summary processing
+# globals
 #
+
+# result summary processing
 my %results;
+
+# cache of allowed methods per test file - so we can open each file only once
+my %test_file_methods;
 
 # create box & language headings in results
 sub touch_result
@@ -132,6 +143,7 @@ sub save_result
         $results{$box}{$lang_set}{$method}{pass} += $pass;
         $results{$box}{$lang_set}{$method}{fail} += $fail;
     }
+    return;
 }
 
 # print table in Markdown
@@ -379,7 +391,7 @@ sub find_test_files
     #say STDERR "find_test_file ($dir, $test_re)";
     opendir(my $dh, "$dir")
         or croak "Can't open $dir: $! (cwd=".getcwd().")";
-    my @all = grep { $_ !~ /^\./ } readdir($dh);
+    my @all = grep { $_ !~ /^\./x } readdir($dh);
     closedir $dh;
     my @files;
     foreach my $name (sort @all) {
@@ -406,7 +418,7 @@ sub run_whitebox_tests
     # loop through whitebox test scripts for this method
     if (not exists $config{$lang}{whitebox}) {
         touch_result("whitebox", $lang); # make sure the result row exists
-        warn "whitebox tests not configured for language $lang";
+        carp "whitebox tests not configured for language $lang";
         return;
     }
     my $dir = str_expand($config{$lang}{whitebox}{dirs}{$method}, \%opts);
@@ -446,6 +458,53 @@ sub run_whitebox_tests
     return;
 }
 
+# check if the specified voting method is among the allowed methods in a test file
+# expected use case: KR2 Levels 2-5 include rating bound markers incompatible with other ranked methods
+sub is_method_allowed
+{
+    my ( $method, $test_file ) = @_;
+    my @allowed;
+
+    # if the test file has already been read before, load allowed methods from cache
+    if ( exists $test_file_methods{ $test_file } ) {
+        @allowed = @{ $test_file_methods{ $test_file } };
+        say STDERR "is_method_allowed($method, $test_file): " . join( " ", @allowed ) . " (from cache)";
+    } else {
+        # read allowed methods from file
+        my @yaml_data = YAML::XS::LoadFile( $test_file );
+
+        # sanity checks on file contents
+        if ( ref $yaml_data[0] ne "HASH" ) {
+            # not proper YAML for test file - skip it
+            $test_file_methods{ $test_file } = [];
+            return false;
+        }
+        if ( not exists $yaml_data[0]{method} ) {
+            # not proper YAML for test file - skip it
+            $test_file_methods{ $test_file } = [];
+            return false;
+        }
+
+        # read allowed methods
+        @allowed = split " ", $yaml_data[0]{method};
+
+        # save allowed methods in cache so we don't have to open and read the file again
+        $test_file_methods{ $test_file } = [ @allowed ];
+        say STDERR "is_method_allowed($method, $test_file): " . join( " ", @allowed );
+    }
+
+    # check if specified voting method is among the methods allowed for this test
+    # return true if it's found in the list
+    foreach my $allow_method ( @allowed ) {
+        if ( $allow_method eq $method ) {
+            return true;
+        }
+    }
+
+    # if it wasn't found, it isn't permitted
+    return false;
+}
+
 # run blackbox tests (applicable across languages, can't use knowledge of implementation)
 sub run_blackbox_tests
 {
@@ -457,7 +516,7 @@ sub run_blackbox_tests
     # collect blackbox test parameters for selected language
     if (not exists $config{$lang}{blackbox}) {
         touch_result("blackbox", $lang); # make sure the result row exists
-        warn "blackbox tests not configured for language $lang";
+        carp "blackbox tests not configured for language $lang";
         return;
     }
     if (not exists $config{$lang}{blackbox}{cmd}) {
@@ -478,6 +537,7 @@ sub run_blackbox_tests
     # run blackbox tests for the selected language on the test data
     foreach my $test_file (@test_files) {
         (-f $test_file) or next;
+        is_method_allowed( $method, $test_file ) or next;
         say "running blackbox tests: $method on $test_file";
 
         # run the blackbox tests in the selected language
@@ -515,6 +575,7 @@ sub run_blackbox_tests
         $agg->add("$method: $test_file", $parser);
     }
     chdir $orig_cwd;
+    return;
 }
 
 # process command-line
