@@ -468,7 +468,7 @@ sub is_method_allowed
     # if the test file has already been read before, load allowed methods from cache
     if ( exists $test_file_methods{ $test_file } ) {
         @allowed = @{ $test_file_methods{ $test_file } };
-        say STDERR "is_method_allowed($method, $test_file): " . join( " ", @allowed ) . " (from cache)";
+        #say STDERR "is_method_allowed($method, $test_file): " . join( " ", @allowed ) . " (from cache)";
     } else {
         # read allowed methods from file
         my @yaml_data = YAML::XS::LoadFile( $test_file );
@@ -490,7 +490,7 @@ sub is_method_allowed
 
         # save allowed methods in cache so we don't have to open and read the file again
         $test_file_methods{ $test_file } = [ @allowed ];
-        say STDERR "is_method_allowed($method, $test_file): " . join( " ", @allowed );
+        #say STDERR "is_method_allowed($method, $test_file): " . join( " ", @allowed );
     }
 
     # check if specified voting method is among the methods allowed for this test
