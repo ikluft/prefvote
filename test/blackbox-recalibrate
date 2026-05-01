@@ -22,11 +22,12 @@ $YAML::InlineSeries = 16;
 # collect run data for all voting methods
 sub collect_rundata
 {
-    my ( $path, $methods ) = shift;
+    my ( $path, $methods ) = @_;
     my %rundata;
 
     # loop through voting methods - run vote counting with and without ACR tiebreaking
     foreach my $method (@$methods) {
+        #say STDERR "collect_rundata - $method";
         my $yaml_text;
         my @cmd = ($count_script, "--format=yaml", "--method=$method", $path);
         run \@cmd, \undef, \$yaml_text;
@@ -65,7 +66,8 @@ sub process_file
         or croak "$progname: failed to back up $path: $!";
 
     # get voting methods declared by the test file
-    my @methods = split " ", $yaml_doc[0]{method};
+    my @methods = split " ", $yaml_doc[0]->{method};
+    #say STDERR "process_file($path): methods = ".join(" - ", @methods );
 
     # construct and replace new blackbox testing data
     $yaml_doc[2] = collect_rundata($path, \@methods);
