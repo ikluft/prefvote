@@ -35,8 +35,8 @@ Readonly::Hash my %blackbox_spec => (
     winners    => [qw(list set string)],
     eliminated => [qw(list set string)],
     pair       => [qw(hash hash PrefVote::KR2::PairData)],
-    copeland_score => [qw(hash int)],
-    levels    => [qw(int)],
+    copeland   => [qw(hash int)],
+    levels     => [qw(int)],
 );
 PrefVote::Core::TestSpec->register_blackbox_spec(
     __PACKAGE__,
@@ -122,7 +122,7 @@ has pair => (
 
 # hash of Copeland scores (count of pairwise wins minus losses) per candidate, for result ordering
 # the scores are computed by cand_copeland_score() and cached here to prevent redundant computation
-has copeland_score => (
+has copeland => (
     is          => 'rw',
     isa         => HashRef [ Int ],
     default     => sub { return {} },
