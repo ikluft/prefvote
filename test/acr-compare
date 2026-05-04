@@ -11,11 +11,10 @@ use FindBin;
 use File::Basename;
 use Text::Table::Tiny 1.02 qw(generate_table);
 use HTML::Escape qw(escape_html);
-use YAML::XS;
+use YAML::Any qw(Load LoadFile);
 use IPC::Run qw(run);
 
 # constants
-Readonly::Array my @methods => qw(Core STV Schulze RankedPairs KR2);
 Readonly::Scalar my $pvroot => dirname($FindBin::RealBin);
 Readonly::Scalar my $datadir => "$pvroot/test/inputs/100-rcv-test";
 Readonly::Scalar my $count_script => "$pvroot/lab/perl/prefvote/bin/vote-count";
@@ -26,15 +25,15 @@ my $html_mode = 0;
 # collect run data for all voting methods, with and without avg choice rank (ACR) tiebreaking
 sub collect_rundata
 {
-    my $path = shift;
+    my ( $path, $methods ) = @_;
     my %rundata;
 
     # loop through voting methods - run vote counting with and without ACR tiebreaking
-    foreach my $method (@methods) {
+    foreach my $method (@$methods) {
         my $yaml_text;
         my @cmd = ($count_script, "--format=yaml", "--method=$method", $path);
         run \@cmd, \undef, \$yaml_text;
-        my @raw_rundata = YAML::XS::Load($yaml_text);
+        my @raw_rundata = Load($yaml_text);
         if (not exists $raw_rundata[0]{$method}) {
             croak "malformed YAML output from $path: $method voting result not found";
         }
@@ -46,7 +45,7 @@ sub collect_rundata
         push @cmd, "--config", "no-tiebreak=1";
         my $yaml_text_notb;
         run \@cmd, \undef, \$yaml_text_notb;
-        my @raw_rundata_notb = YAML::XS::Load($yaml_text_notb);
+        my @raw_rundata_notb = Load($yaml_text_notb);
         if (not exists $raw_rundata_notb[0]{$method}) {
             croak "malformed YAML output from $path: $method_key voting result not found";
         }
@@ -109,9 +108,10 @@ sub html_table
 sub do_compare
 {
     my $path = shift;
-    my @yaml_doc = YAML::XS::LoadFile($path);
+    my @yaml_doc = LoadFile($path);
     my $metadata = $yaml_doc[0];
-    my $rundata = collect_rundata($path);
+    my @methods = split " ", $metadata->{method};
+    my $rundata = collect_rundata($path, \@methods);
 
     # print title
     say "title: ".$metadata->{params}{name}." (".$rundata->{Core}{total_ballots}." ballots)";

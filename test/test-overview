@@ -8,14 +8,23 @@ use Readonly;
 use FindBin;
 use File::Basename;
 use IPC::Run qw(run);
+use YAML::Any qw(LoadFile);
 
 # constants
-Readonly::Array my @methods => qw(Core STV Schulze RankedPairs KR2);
 Readonly::Scalar my $pvroot => dirname($FindBin::RealBin);
 Readonly::Scalar my $count_script => "$pvroot/lab/perl/prefvote/bin/vote-count";
 Readonly::Scalar my $acr_compare_script => "$pvroot/test/acr-compare";
 Readonly::Array my @yaml_suffixes => qw(.yaml .yml);
 Readonly::Scalar my $markdown_suffix => ".md";
+
+# get allowed methods from test file
+sub get_methods
+{
+    my $yaml_file = shift;
+    my @yaml_data = LoadFile($yaml_file);
+    my @methods = split " ", $yaml_data[0]->{method};
+    return @methods;
+}
 
 # process test data file into a Markdown overview
 sub process_test_file
@@ -31,6 +40,9 @@ sub process_test_file
     }
     open (my $out_fh, ">", $outfile)
         or croak "$0: failed to open $outfile for writing: $!";
+
+    # get allowed methods from test file
+    my @methods = get_methods($yaml_file);
 
     # generate title
     say $out_fh "# Black-box test data overview for [$filename$suffix]($filename$suffix)";
