@@ -1,0 +1,348 @@
+#!/usr/bin/perl
+# sim-unit-interval-voting - generate simulated 2D spectrum of candidates and voters, and resulting voting data
+use Modern::Perl qw(2024); # require 5.38.0 or later
+use autodie;
+use Carp qw(carp croak);
+use builtin qw(true false);
+use Getopt::Long;
+use Readonly;
+use GD::SVG;
+use YAML::Any qw(LoadFile DumpFile);
+
+# constants
+Readonly::Scalar my $SCALING_FACTOR => 10;  # scale coordinate distances to 0..1 range
+Readonly::Scalar my $IMG_SIDE => 200;
+Readonly::Scalar my $IMG_MARGIN => 20;
+Readonly::Scalar my $IMG_SIZE => $IMG_SIDE + $IMG_MARGIN * 2;
+Readonly::Hash my %CANDIDATE_NAME => (
+    "ABNORMAL" => "abnormal antisocial",
+    "BORING" => "tedious boring",
+    "CHAOTIC" => "chaotic unpredictable",
+    "DYSFUNCTIONAL" => "dysfunctional incompetent",
+    "EVIL" => "evil villain",
+    "FACTIOUS" => "factious divisive",
+    "GROWLER" => "loud angry growler",
+    "HOTHEAD" => "incendiary hothead",
+    "IDIOT" => "ignorant idiot",
+    "JERK" => "inconsiderate jerk",
+    "KEGGAR" => "perpetually drunk",
+    "LIAR" => "liar, cheat, thief",
+    "MORON" => "embarrassing moron",
+    "NITWIT" => "scatterbrained nitwit",
+    "OBNOXIOUS" => "dreadful obnoxious",
+    "PARIAH" => "despised pariah",
+);
+Readonly::Array my @CANDIDATE_KEYS => sort keys %CANDIDATE_NAME;
+Readonly::Hash my %KR2_RATING_BOUNDS => (
+    1 => {},
+    2 => { _neutral => 0.5 },
+    3 => { _support => 0.3333, _oppose => 0.6666 },
+    4 => { _support2 => 0.3333, _neutral => 0.5, _oppose2 => 0.6666},
+    5 => { _support2 => 0.3333, _support1 => 0.4444, _oppose1 => 0.5555, _oppose2 => 0.6666 },
+);
+Readonly::Scalar my $MIN_CANDIDATES => 2;
+Readonly::Scalar my $MAX_CANDIDATES => scalar keys %CANDIDATE_NAME;
+Readonly::Scalar my $MIN_VOTERS => 2;
+Readonly::Scalar my $MAX_VOTERS => 5000;
+Readonly::Scalar my $DEFAULT_SEATS => 1;
+Readonly::Scalar my $MAX_SEATS => 5;
+Readonly::Scalar my $MAX_NUM => 999;  # maximum data set number for title
+Readonly::Scalar my $IMG_NAME_FORMAT => "poll-spectrum-plot-%04d.svg";
+Readonly::Scalar my $SIM_NAME_FORMAT => "kr2_sim_config_%04d.yaml";
+Readonly::Scalar my $POLL_NAME_FORMAT => "%04d_kr2_level%d-test.yaml";  # must match blackbox test search pattern
+Readonly::Scalar my $L1_METHODS => "Core STV Schulze RankedPairs KR2";
+Readonly::Scalar my $L2345_METHODS => "Core KR2";
+
+# vote simulation configuration
+my %config;
+$config{opt} = {};     # command-line options
+$config{params} = {};  # parameters for vote simulation
+$config{gen} = {};     # random generated data (candidates and voters)
+
+# generate a floating point random positional coordinate on the political spectrum (-5..+5)
+sub rand_pol
+{
+    return rand(10)-5;
+}
+
+# return a candidate key string (short name) from an index number
+sub candidate_index
+{
+    my $index = shift;
+    return $CANDIDATE_KEYS[ $index ];
+}
+
+# generate candidates as random 2D coordinates
+sub gen_candidates
+{
+    my $n_cand = $config{params}{candidates};
+    $config{gen}{candidate_coord} = [];
+
+    for ( my $i = 0; $i < $n_cand; $i++ ) {
+        push @{$config{gen}{candidate_coord}}, [ rand_pol(), rand_pol(), candidate_index( $i ) ];
+    }
+    return;
+}
+
+# generate voters as random 2D coordinates
+sub gen_voters
+{
+    my $n_voter = $config{params}{voters};
+    $config{gen}{voter_coord} = [];
+
+    while ( $n_voter-- > 0 ) {
+        if ( $config{params}{center_grouping} // false ) {
+            # voters clustered: around center on average
+            push @{$config{gen}{voter_coord}}, [ ( rand_pol() + rand_pol()) / 2, ( rand_pol() + rand_pol()) / 2 ];
+        } else {
+            # voters not clustered: simple random coordinates
+            push @{$config{gen}{voter_coord}}, [ rand_pol(), rand_pol() ];
+    }
+    }
+    return;
+}
+
+# plot a 2D graph of candidates and voters
+sub plot_graph
+{
+    my $params = $config{params};
+    my $candidates = $config{gen}{candidate_coord};
+    my $voters = $config{gen}{voter_coord};
+
+    # check file does not yet exist before we begin
+    my $filename = sprintf( $IMG_NAME_FORMAT, $params->{num});
+    if ( -e $filename ) {
+        # skip if the plot image exists
+        return;
+    }
+
+    # initialize image
+    my $image = GD::SVG::Image->new( $IMG_SIZE, $IMG_SIZE );
+    my $white = $image->colorAllocate(255,255,255);  # first color is background
+    my $black = $image->colorAllocate(0,0,0);
+    my $gray = $image->colorAllocate(127,127,127);
+    my $red = $image->colorAllocate(255,0,0);
+    my $green = $image->colorAllocate(0,255,0);
+    my $blue = $image->colorAllocate(0,0,255);
+
+    # draw background
+    $image->filledRectangle( 0, 0, $IMG_SIZE, $IMG_SIZE, $white );
+
+    # draw axes
+    $image->line( $IMG_MARGIN, $IMG_MARGIN + $IMG_SIDE / 2,
+        $IMG_MARGIN + $IMG_SIDE, $IMG_MARGIN + $IMG_SIDE / 2,
+        $gray );
+    $image->line( $IMG_MARGIN + $IMG_SIDE / 2, $IMG_MARGIN,
+        $IMG_MARGIN + $IMG_SIDE / 2, $IMG_MARGIN + $IMG_SIDE,
+        $gray );
+
+    # plot candidates
+    for ( my $i = 0; $i < scalar @$candidates; $i++ ) {
+        my ( $x, $y, $name ) = @{ $candidates->[$i] };
+        #my $letter = chr( ord( 'A' ) + $i );
+        my $letter = substr( $name, 0, 1 );
+        $image->filledEllipse( $IMG_MARGIN + $IMG_SIDE / 2 + $x * 20, $IMG_MARGIN + $IMG_SIDE / 2 + $y * 20,
+            4, 4, $red );
+        $image->string(gdSmallFont,
+            $IMG_MARGIN + $IMG_SIDE / 2 + $x * 20 + 1,
+            $IMG_MARGIN + $IMG_SIDE / 2 + $y * 20 + 1,
+            $letter,
+            $red );
+    }
+
+    # plot voters
+    foreach my $voter ( @$voters ) {
+        my ( $x, $y ) = @$voter;
+        $image->filledEllipse( $IMG_MARGIN + $IMG_SIDE / 2 + $x * 20, $IMG_MARGIN + $IMG_SIDE / 2 + $y * 20,
+            2, 2, $blue );
+    }
+
+    # plot data set number
+    $image->string( gdLargeFont, 0, 0, sprintf( "%03d", $params->{num}), $green );
+
+    # generate file
+    open ( my $img_fh, ">", $filename )
+        or croak "$0: can't open $filename for writing: $!";
+    #print $img_fh $image->png;
+    print $img_fh $image->svg;
+    close $img_fh;
+    return;
+}
+
+# save configuration to run again later
+sub save_config
+{
+    my $filename = sprintf ( $SIM_NAME_FORMAT, $config{params}{num} );
+
+    # write to YAML file 3 document sections: parameters, candidate coordinates, voter coordinates
+    DumpFile( $filename, $config{params}, $config{gen}{candidate_coord}, $config{gen}{voter_coord} );
+
+    return;
+}
+
+# compute candidate-voter distance in the 2-axis poltical spectrum data
+sub cv_dist
+{
+    my ( $v1, $v2, $c1, $c2 ) = @_;
+    return sqrt( ( $c1 - $v1 )**2 + ( $c2 - $v2 )**2 ) / $SCALING_FACTOR;
+}
+
+# generate vote data for simulated poll based on distances between candidate and voter coordinates
+sub gen_ballots
+{
+    my ( $level ) = @_;
+    my $params = $config{params};
+    my $candidates = $config{gen}{candidate_coord};
+    my $voters = $config{gen}{voter_coord};
+    my @ballots;
+
+    # generate ballots
+    foreach my $voter ( @$voters ) {
+        # collect rating bound markers and their distance thresholds for the specified level
+        my %distances = %{$KR2_RATING_BOUNDS{$level}};
+
+        # compute distances from voter coordinates to each candidate's coordinates
+        foreach my $candidate ( @$candidates ) {
+            my ( $c1, $c2, $c_name ) = @$candidate;
+            $distances{$c_name} = cv_dist( @$voter, $c1, $c2 );
+        }
+
+        # sort candidates and rating bound markers by distances to generate how this voter would cast a ballot
+        push @ballots, [ sort { $distances{$a} <=> $distances{$b} } keys %distances ];
+    }
+    return @ballots;
+}
+
+# general KR2 poll data for a specified level
+sub gen_kr2_poll
+{
+    my ( $level ) = @_;
+    my $params = $config{params};
+    my $candidates = $config{gen}{candidate_coord};
+    my $voters = $config{gen}{voter_coord};
+    my $filename = sprintf ( $POLL_NAME_FORMAT, $params->{num}, $level );
+    
+    # generate header data for poll
+    my $method = ( $level == 1 ) ? $L1_METHODS : $L2345_METHODS;
+    my %poll_sim = (
+        method => $method,
+        params => {
+            choices => {},
+            name => sprintf( "KR2 Test Suite %04d", $params->{num}),
+            seats => $params->{seats},
+            levels => $level,
+        }
+    );
+    my @candidate_keys = @CANDIDATE_KEYS[ 0 .. ( $params->{candidates}-1 ) ];
+    foreach my $key ( @candidate_keys ) {
+        $poll_sim{params}{choices}{$key} = $CANDIDATE_NAME{$key};  # copy full candidate name by key
+    }
+
+    # generate vote data for simulated poll based on distances between candidate and voter coordinates
+    my @ballots = gen_ballots( $level );
+
+    # save simulated poll data for the specified KR2 level
+    # note: in KR2 Level 1, all other voting methods are allowed since there are no rating bound markers
+    DumpFile( $filename, \%poll_sim, \@ballots );
+
+    return;
+}
+
+# process configuration from command line arguments
+sub config_from_cli
+{
+    my $opts = $config{opt};
+    my $filename = sprintf ( $SIM_NAME_FORMAT, $opts->{num} );
+
+    # before doing work to generate data, make sure the data file doesn't already exist
+    if ( -e $filename ) {
+        croak "$0: data file $filename exists and would be overwritten - rename to save, otherwise delete it";
+    }
+
+    # if a config file was not provided, validate parameters to generate a config
+    foreach my $key ( qw(num candidates voters)) {
+        if ( length($opts->{$key}) == 0 ) {
+            croak "$0: --$key cannot be empty";
+        }
+        if ( $opts->{$key} =~ / \D /x ) {
+            croak "$0: --$key must be a positive integer (got $opts->{$key})";
+        }
+        $config{params}{$key} = $opts->{$key};
+    }
+    if ( $opts->{num} > $MAX_NUM ) {
+        croak "$0: maximum for --num is $MAX_NUM";
+    }
+    if ( $opts->{candidates} < $MIN_CANDIDATES ) {
+        croak "$0: minimum for --candidates is $MIN_CANDIDATES";
+    }
+    if ( $opts->{candidates} > $MAX_CANDIDATES ) {
+        croak "$0: maximum for --candidates is $MAX_CANDIDATES";
+    }
+    if ( $opts->{voters} < $MIN_VOTERS ) {
+        croak "$0: minimum for --voters is $MIN_VOTERS";
+    }
+    if ( $opts->{voters} > $MAX_VOTERS ) {
+        croak "$0: maximum for --voters is $MAX_VOTERS";
+    }
+
+    # seats have a default value but must be positive integer if provided
+    if ( not exists $opts->{seats} ) {
+        $opts->{seats} = $DEFAULT_SEATS;
+    } else {
+        if ( $opts->{seats} =~ / \D /x ) {
+            croak "$0: --seats must be a positive integer (got $opts->{seats})";
+        }
+        if ( $opts->{seats} == 0) {
+            croak "$0: --seats must be a positive integer (got $opts->{seats})";
+        }
+        if ( $opts->{seats} > $MAX_SEATS ) {
+            croak "$0: maximum for --seats is $MAX_SEATS";
+        }
+    }
+    $config{params}{seats} = $opts->{seats};
+
+    # copy center_grouping flag, default to false
+    $config{params}{center_grouping} = $opts->{center_grouping} // false;
+
+    gen_candidates();
+    gen_voters();
+    save_config();
+
+    return;
+}
+
+#
+# mainline
+#
+
+{
+    # command line processing
+    GetOptions( $config{opt}, "num|n=i", "candidates|cand|c:i", "voters|v:i", "seats|s:i",
+        "center_grouping|center-grouping|center", "debug" )
+        or croak "usage: $0 --num=n [--candidates=c --voters=v [--seats=s] [--center_grouping]] [--debug]";
+
+    # if a parmameter file is provided, load it
+    my $opts = $config{opt};
+    my $filename = sprintf ( $SIM_NAME_FORMAT, $opts->{num} );
+    if ( not exists $opts->{candidates} or not exists $opts->{voters} ) {
+        # read from YAML file 3 document sections: parameters, candidate coordinates, voter coordinates
+        if ( not -e $filename ) {
+            croak "$0: input file $filename not found - specify --candidates and --voters numbers to generate it";
+        }
+        my @yaml_data = LoadFile( $filename );
+        if ( scalar @yaml_data ) {
+            $config{params} = shift @yaml_data;
+            $config{gen}{candidate_coord} = shift @yaml_data;
+            $config{gen}{voter_coord} = shift @yaml_data;
+        } else {
+            croak "YAML configuration failed to load";
+        }
+    } else {
+        # process configuration from command line arguments
+        config_from_cli();
+    }
+    plot_graph();
+    for my $level ( 1 .. 5 ) {
+        gen_kr2_poll( $level );
+    }
+}

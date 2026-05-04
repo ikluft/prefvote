@@ -1,0 +1,74 @@
+
+<svg height="240" width="240" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<rect height="240" id="1-0-0" style="fill: rgb(255,255,255); fill-opacity: 1.0; stroke: rgb(255,255,255); stroke-opacity: 1.0; stroke-width: 1" width="240" x="0" y="0" />
+	<line id="2-20-120" style="fill: rgb(127,127,127); fill-opacity: 1.0; stroke: rgb(127,127,127); stroke-linecap: square; stroke-opacity: 1.0; stroke-width: 1" x1="20" x2="220" y1="120" y2="120" />
+	<line id="3-120-20" style="fill: rgb(127,127,127); fill-opacity: 1.0; stroke: rgb(127,127,127); stroke-linecap: square; stroke-opacity: 1.0; stroke-width: 1" x1="120" x2="120" y1="20" y2="220" />
+	<ellipse cx="87.5628514642092" cy="48.57817245594" id="4-87.5628514642092-48.57817245594" rx="2" ry="2" style="fill: rgb(255,0,0); fill-opacity: 1.0; stroke: rgb(255,0,0); stroke-opacity: 1.0; stroke-width: 1" />
+	<text fill="rgb(255,0,0)" font="Helvetica" font-size="11" font-weight="normal" id="5-88.5628514642092-49.57817245594" x="88.5628514642092" y="58.57817245594">F</text>
+	<ellipse cx="219.981019839858" cy="105.702198249591" id="6-219.981019839858-105.702198249591" rx="2" ry="2" style="fill: rgb(255,0,0); fill-opacity: 1.0; stroke: rgb(255,0,0); stroke-opacity: 1.0; stroke-width: 1" />
+	<text fill="rgb(255,0,0)" font="Helvetica" font-size="11" font-weight="normal" id="7-220.981019839858-106.702198249591" x="220.981019839858" y="115.702198249591">E</text>
+	<ellipse cx="159.118158470425" cy="161.743587746166" id="8-159.118158470425-161.743587746166" rx="2" ry="2" style="fill: rgb(255,0,0); fill-opacity: 1.0; stroke: rgb(255,0,0); stroke-opacity: 1.0; stroke-width: 1" />
+	<text fill="rgb(255,0,0)" font="Helvetica" font-size="11" font-weight="normal" id="9-160.118158470425-162.743587746166" x="160.118158470425" y="171.743587746166">D</text>
+	<ellipse cx="90.4253138316452" cy="209.507292219257" id="10-90.4253138316452-209.507292219257" rx="2" ry="2" style="fill: rgb(255,0,0); fill-opacity: 1.0; stroke: rgb(255,0,0); stroke-opacity: 1.0; stroke-width: 1" />
+	<text fill="rgb(255,0,0)" font="Helvetica" font-size="11" font-weight="normal" id="11-91.4253138316452-210.507292219257" x="91.4253138316452" y="219.507292219257">C</text>
+	<ellipse cx="99.4029145018448" cy="113.78482267507" id="12-99.4029145018448-113.78482267507" rx="2" ry="2" style="fill: rgb(255,0,0); fill-opacity: 1.0; stroke: rgb(255,0,0); stroke-opacity: 1.0; stroke-width: 1" />
+	<text fill="rgb(255,0,0)" font="Helvetica" font-size="11" font-weight="normal" id="13-100.402914501845-114.78482267507" x="100.402914501845" y="123.78482267507">B</text>
+	<ellipse cx="44.7791431410938" cy="68.2707520462058" id="14-44.7791431410938-68.2707520462058" rx="2" ry="2" style="fill: rgb(255,0,0); fill-opacity: 1.0; stroke: rgb(255,0,0); stroke-opacity: 1.0; stroke-width: 1" />
+	<text fill="rgb(255,0,0)" font="Helvetica" font-size="11" font-weight="normal" id="15-45.7791431410938-69.2707520462058" x="45.7791431410938" y="78.2707520462058">A</text>
+	<ellipse cx="121.095321436401" cy="217.35025210981" id="16-121.095321436401-217.35025210981" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="76.5154063602538" cy="145.535609144523" id="17-76.5154063602538-145.535609144523" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="129.320092049751" cy="84.6444738162064" id="18-129.320092049751-84.6444738162064" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="58.24770122142" cy="49.9085092030186" id="19-58.24770122142-49.9085092030186" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="64.0070583550668" cy="121.056929088098" id="20-64.0070583550668-121.056929088098" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="172.36653077038" cy="128.126592100037" id="21-172.36653077038-128.126592100037" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="137.195537979552" cy="166.850051456947" id="22-137.195537979552-166.850051456947" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="75.0077446327042" cy="122.280379512742" id="23-75.0077446327042-122.280379512742" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="156.75910134748" cy="32.8356036382104" id="24-156.75910134748-32.8356036382104" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="124.160092782567" cy="140.955447147226" id="25-124.160092782567-140.955447147226" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="134.030930976987" cy="34.457203499892" id="26-134.030930976987-34.457203499892" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="122.096931732857" cy="52.2294213796698" id="27-122.096931732857-52.2294213796698" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="133.299870168965" cy="111.260079950529" id="28-133.299870168965-111.260079950529" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="214.77566601581" cy="95.6835251528702" id="29-214.77566601581-95.6835251528702" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="95.0802372599142" cy="53.4460567934844" id="30-95.0802372599142-53.4460567934844" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="73.369719876051" cy="77.6071399250186" id="31-73.369719876051-77.6071399250186" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="68.769419110636" cy="46.860200094426" id="32-68.769419110636-46.860200094426" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="96.1837715979116" cy="187.597287967597" id="33-96.1837715979116-187.597287967597" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="162.76819500264" cy="56.1540021088604" id="34-162.76819500264-56.1540021088604" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="151.038920388895" cy="67.5283768092726" id="35-151.038920388895-67.5283768092726" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="161.349679614143" cy="193.018412316604" id="36-161.349679614143-193.018412316604" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="128.800393241174" cy="75.390985122661" id="37-128.800393241174-75.390985122661" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="67.523711247533" cy="162.278463610062" id="38-67.523711247533-162.278463610062" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="98.05633669299" cy="116.771906850838" id="39-98.05633669299-116.771906850838" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="109.854448980168" cy="143.289679183187" id="40-109.854448980168-143.289679183187" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="139.042175911827" cy="65.7711078704694" id="41-139.042175911827-65.7711078704694" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="98.6498799103984" cy="147.474883168002" id="42-98.6498799103984-147.474883168002" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="91.7409610212404" cy="64.9246869884422" id="43-91.7409610212404-64.9246869884422" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="33.15287517067" cy="94.9884755655546" id="44-33.15287517067-94.9884755655546" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="78.6760580932126" cy="80.2263705688604" id="45-78.6760580932126-80.2263705688604" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="146.324370879599" cy="74.3936695181788" id="46-146.324370879599-74.3936695181788" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="157.24847972791" cy="92.6135075872908" id="47-157.24847972791-92.6135075872908" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="127.520187704882" cy="88.8866264699402" id="48-127.520187704882-88.8866264699402" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="119.55708764272" cy="131.30696940913" id="49-119.55708764272-131.30696940913" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="185.823940208924" cy="50.9998622621424" id="50-185.823940208924-50.9998622621424" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="189.475837192434" cy="97.167796088965" id="51-189.475837192434-97.167796088965" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="108.009424649056" cy="164.865734710764" id="52-108.009424649056-164.865734710764" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="67.3481712424676" cy="85.756868487809" id="53-67.3481712424676-85.756868487809" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="125.066811404214" cy="131.019260712708" id="54-125.066811404214-131.019260712708" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="141.994608316973" cy="100.057323005078" id="55-141.994608316973-100.057323005078" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="129.937905699963" cy="123.367948427728" id="56-129.937905699963-123.367948427728" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="127.815507443738" cy="141.842863222192" id="57-127.815507443738-141.842863222192" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="186.566677803729" cy="121.354767582921" id="58-186.566677803729-121.354767582921" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="91.606929617727" cy="188.448560254673" id="59-91.606929617727-188.448560254673" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="136.582201362133" cy="132.488818446649" id="60-136.582201362133-132.488818446649" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="109.29345330516" cy="98.2241711096124" id="61-109.29345330516-98.2241711096124" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="144.892076052271" cy="111.316697518771" id="62-144.892076052271-111.316697518771" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="137.117738909988" cy="143.223441845382" id="63-137.117738909988-143.223441845382" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="129.175348218855" cy="170.555995484057" id="64-129.175348218855-170.555995484057" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<ellipse cx="194.912574624645" cy="141.706299830472" id="65-194.912574624645-141.706299830472" rx="1" ry="1" style="fill: rgb(0,0,255); fill-opacity: 1.0; stroke: rgb(0,0,255); stroke-opacity: 1.0; stroke-width: 1" />
+	<text fill="rgb(0,255,0)" font="Helvetica" font-size="16" font-weight="normal" id="66-0-0" x="0" y="14">001</text>
+	<!--
+	Generated using the Perl SVG Module V2.87
+	by Ronan Oger
+
+	-->
+</svg>

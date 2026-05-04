@@ -583,7 +583,7 @@ Core:
     5: FACTIOUS
   name: Test Vote 001
   seats: 1
-  timestamp: Wed Apr 22 21:58:29 2026
+  timestamp: Fri May  1 00:47:42 2026
   total_ballots: 50
 KR2:
   average_choice_rank:
@@ -1103,7 +1103,6 @@ KR2:
     DYSFUNCTIONAL: -3
     EVIL: 3
     FACTIOUS: 5
-  copeland_score: {}
   eliminated: []
   flags: {}
   index_to_choice:
@@ -1213,7 +1212,7 @@ KR2:
         mov: 14
         preference: 31
   seats: 1
-  timestamp: Wed Apr 22 21:58:32 2026
+  timestamp: Fri May  1 00:47:44 2026
   total_ballots: 50
   winners:
     - [FACTIOUS]
@@ -1765,11 +1764,11 @@ RankedPairs:
     - cand: [FACTIOUS, CHAOTIC]
     - cand: [FACTIOUS, BORING]
     - cand: [EVIL, BORING]
-    - cand: [FACTIOUS, EVIL]
     - cand: [FACTIOUS, ABNORMAL]
+    - cand: [FACTIOUS, EVIL]
     - cand: [EVIL, DYSFUNCTIONAL]
-    - cand: [EVIL, ABNORMAL]
     - cand: [FACTIOUS, DYSFUNCTIONAL]
+    - cand: [EVIL, ABNORMAL]
     - cand: [EVIL, CHAOTIC]
     - cand: [ABNORMAL, DYSFUNCTIONAL]
     - cand: [CHAOTIC, ABNORMAL]
@@ -1890,7 +1889,7 @@ RankedPairs:
         mov: 14
         preference: 31
   seats: 1
-  timestamp: Wed Apr 22 21:58:31 2026
+  timestamp: Fri May  1 00:47:44 2026
   total_ballots: 50
   winners:
     - [FACTIOUS]
@@ -2590,7 +2589,7 @@ STV:
       tally: {}
       votes_used: 0
   seats: 1
-  timestamp: Wed Apr 22 21:58:30 2026
+  timestamp: Fri May  1 00:47:43 2026
   total_ballots: 50
   winners:
     - [FACTIOUS]
@@ -3517,7 +3516,7 @@ Schulze:
       pair: {}
       win_flag: {}
   seats: 1
-  timestamp: Wed Apr 22 21:58:30 2026
+  timestamp: Fri May  1 00:47:43 2026
   total_ballots: 50
   winners:
     - [FACTIOUS]

@@ -1,0 +1,1255 @@
+---
+method: Core KR2
+params:
+  choices:
+    ABNORMAL: abnormal antisocial
+    BORING: tedious boring
+    CHAOTIC: chaotic unpredictable
+    DYSFUNCTIONAL: dysfunctional incompetent
+    EVIL: evil villain
+    FACTIOUS: factious divisive
+  levels: 3
+  name: KR2 Test Suite 0001
+  seats: 1
+---
+- [CHAOTIC, _support, DYSFUNCTIONAL, BORING, _oppose, EVIL, ABNORMAL, FACTIOUS]
+- [BORING, CHAOTIC, _support, ABNORMAL, DYSFUNCTIONAL, FACTIOUS, _oppose, EVIL]
+- [BORING, FACTIOUS, _support, DYSFUNCTIONAL, ABNORMAL, EVIL, CHAOTIC, _oppose]
+- [ABNORMAL, FACTIOUS, _support, BORING, _oppose, DYSFUNCTIONAL, CHAOTIC, EVIL]
+- [BORING, ABNORMAL, _support, FACTIOUS, CHAOTIC, DYSFUNCTIONAL, _oppose, EVIL]
+- [DYSFUNCTIONAL, EVIL, _support, BORING, CHAOTIC, FACTIOUS, _oppose, ABNORMAL]
+- [DYSFUNCTIONAL, CHAOTIC, BORING, _support, EVIL, FACTIOUS, _oppose, ABNORMAL]
+- [BORING, ABNORMAL, _support, FACTIOUS, CHAOTIC, DYSFUNCTIONAL, _oppose, EVIL]
+- [_support, FACTIOUS, EVIL, BORING, ABNORMAL, DYSFUNCTIONAL, _oppose, CHAOTIC]
+- [BORING, DYSFUNCTIONAL, _support, CHAOTIC, FACTIOUS, EVIL, ABNORMAL, _oppose]
+- [FACTIOUS, _support, BORING, ABNORMAL, EVIL, DYSFUNCTIONAL, _oppose, CHAOTIC]
+- [FACTIOUS, BORING, _support, ABNORMAL, EVIL, DYSFUNCTIONAL, _oppose, CHAOTIC]
+- [BORING, DYSFUNCTIONAL, _support, FACTIOUS, EVIL, ABNORMAL, CHAOTIC, _oppose]
+- [EVIL, _support, DYSFUNCTIONAL, BORING, _oppose, FACTIOUS, CHAOTIC, ABNORMAL]
+- [FACTIOUS, ABNORMAL, BORING, _support, DYSFUNCTIONAL, _oppose, EVIL, CHAOTIC]
+- [ABNORMAL, FACTIOUS, BORING, _support, DYSFUNCTIONAL, CHAOTIC, _oppose, EVIL]
+- [FACTIOUS, ABNORMAL, _support, BORING, _oppose, DYSFUNCTIONAL, EVIL, CHAOTIC]
+- [CHAOTIC, _support, DYSFUNCTIONAL, BORING, ABNORMAL, _oppose, FACTIOUS, EVIL]
+- [_support, FACTIOUS, EVIL, BORING, DYSFUNCTIONAL, ABNORMAL, _oppose, CHAOTIC]
+- [FACTIOUS, _support, BORING, EVIL, DYSFUNCTIONAL, ABNORMAL, _oppose, CHAOTIC]
+- [DYSFUNCTIONAL, _support, CHAOTIC, BORING, EVIL, _oppose, FACTIOUS, ABNORMAL]
+- [BORING, FACTIOUS, _support, ABNORMAL, DYSFUNCTIONAL, EVIL, _oppose, CHAOTIC]
+- [CHAOTIC, BORING, _support, DYSFUNCTIONAL, ABNORMAL, FACTIOUS, _oppose, EVIL]
+- [BORING, _support, FACTIOUS, ABNORMAL, DYSFUNCTIONAL, CHAOTIC, EVIL, _oppose]
+- [BORING, DYSFUNCTIONAL, _support, CHAOTIC, FACTIOUS, ABNORMAL, EVIL, _oppose]
+- [FACTIOUS, BORING, _support, EVIL, ABNORMAL, DYSFUNCTIONAL, _oppose, CHAOTIC]
+- [BORING, DYSFUNCTIONAL, CHAOTIC, _support, ABNORMAL, FACTIOUS, EVIL, _oppose]
+- [FACTIOUS, ABNORMAL, BORING, _support, DYSFUNCTIONAL, _oppose, EVIL, CHAOTIC]
+- [ABNORMAL, _support, BORING, FACTIOUS, CHAOTIC, _oppose, DYSFUNCTIONAL, EVIL]
+- [FACTIOUS, ABNORMAL, BORING, _support, DYSFUNCTIONAL, CHAOTIC, _oppose, EVIL]
+- [BORING, FACTIOUS, _support, EVIL, DYSFUNCTIONAL, ABNORMAL, _oppose, CHAOTIC]
+- [BORING, EVIL, _support, DYSFUNCTIONAL, FACTIOUS, ABNORMAL, _oppose, CHAOTIC]
+- [BORING, FACTIOUS, _support, DYSFUNCTIONAL, ABNORMAL, EVIL, CHAOTIC, _oppose]
+- [BORING, DYSFUNCTIONAL, _support, CHAOTIC, FACTIOUS, ABNORMAL, EVIL, _oppose]
+- [EVIL, _support, FACTIOUS, BORING, DYSFUNCTIONAL, _oppose, ABNORMAL, CHAOTIC]
+- [EVIL, _support, DYSFUNCTIONAL, BORING, FACTIOUS, _oppose, ABNORMAL, CHAOTIC]
+- [CHAOTIC, DYSFUNCTIONAL, BORING, _support, ABNORMAL, FACTIOUS, EVIL, _oppose]
+- [ABNORMAL, FACTIOUS, BORING, _support, DYSFUNCTIONAL, CHAOTIC, _oppose, EVIL]
+- [BORING, DYSFUNCTIONAL, _support, CHAOTIC, FACTIOUS, EVIL, ABNORMAL, _oppose]
+- [BORING, DYSFUNCTIONAL, _support, FACTIOUS, EVIL, ABNORMAL, CHAOTIC, _oppose]
+- [BORING, DYSFUNCTIONAL, _support, FACTIOUS, EVIL, CHAOTIC, ABNORMAL, _oppose]
+- [DYSFUNCTIONAL, BORING, _support, CHAOTIC, EVIL, FACTIOUS, ABNORMAL, _oppose]
+- [EVIL, DYSFUNCTIONAL, _support, BORING, FACTIOUS, CHAOTIC, _oppose, ABNORMAL]
+- [CHAOTIC, _support, DYSFUNCTIONAL, BORING, ABNORMAL, _oppose, FACTIOUS, EVIL]
+- [DYSFUNCTIONAL, BORING, _support, EVIL, CHAOTIC, FACTIOUS, ABNORMAL, _oppose]
+- [BORING, FACTIOUS, _support, ABNORMAL, DYSFUNCTIONAL, EVIL, CHAOTIC, _oppose]
+- [BORING, DYSFUNCTIONAL, _support, EVIL, FACTIOUS, ABNORMAL, CHAOTIC, _oppose]
+- [DYSFUNCTIONAL, BORING, _support, CHAOTIC, EVIL, FACTIOUS, ABNORMAL, _oppose]
+- [DYSFUNCTIONAL, CHAOTIC, BORING, _support, EVIL, FACTIOUS, ABNORMAL, _oppose]
+- [DYSFUNCTIONAL, EVIL, _support, BORING, CHAOTIC, _oppose, FACTIOUS, ABNORMAL]
+---
+Core:
+  average_choice_rank:
+    ABNORMAL: 4.16
+    BORING: 2.06
+    CHAOTIC: 4.36
+    DYSFUNCTIONAL: 2.94
+    EVIL: 4.28
+    FACTIOUS: 3.2
+  ballots:
+    015234:
+      hex_id: 015234
+      items:
+        - [ABNORMAL]
+        - [BORING]
+        - [FACTIOUS]
+        - [CHAOTIC]
+        - [DYSFUNCTIONAL]
+        - [EVIL]
+      quantity: 1
+      weight: 1
+    051324:
+      hex_id: 051324
+      items:
+        - [ABNORMAL]
+        - [FACTIOUS]
+        - [BORING]
+        - [DYSFUNCTIONAL]
+        - [CHAOTIC]
+        - [EVIL]
+      quantity: 3
+      weight: 1
+    105234:
+      hex_id: 105234
+      items:
+        - [BORING]
+        - [ABNORMAL]
+        - [FACTIOUS]
+        - [CHAOTIC]
+        - [DYSFUNCTIONAL]
+        - [EVIL]
+      quantity: 2
+      weight: 1
+    120354:
+      hex_id: 120354
+      items:
+        - [BORING]
+        - [CHAOTIC]
+        - [ABNORMAL]
+        - [DYSFUNCTIONAL]
+        - [FACTIOUS]
+        - [EVIL]
+      quantity: 1
+      weight: 1
+    132054:
+      hex_id: 132054
+      items:
+        - [BORING]
+        - [DYSFUNCTIONAL]
+        - [CHAOTIC]
+        - [ABNORMAL]
+        - [FACTIOUS]
+        - [EVIL]
+      quantity: 1
+      weight: 1
+    132504:
+      hex_id: 132504
+      items:
+        - [BORING]
+        - [DYSFUNCTIONAL]
+        - [CHAOTIC]
+        - [FACTIOUS]
+        - [ABNORMAL]
+        - [EVIL]
+      quantity: 2
+      weight: 1
+    132540:
+      hex_id: 132540
+      items:
+        - [BORING]
+        - [DYSFUNCTIONAL]
+        - [CHAOTIC]
+        - [FACTIOUS]
+        - [EVIL]
+        - [ABNORMAL]
+      quantity: 2
+      weight: 1
+    134502:
+      hex_id: 134502
+      items:
+        - [BORING]
+        - [DYSFUNCTIONAL]
+        - [EVIL]
+        - [FACTIOUS]
+        - [ABNORMAL]
+        - [CHAOTIC]
+      quantity: 1
+      weight: 1
+    135402:
+      hex_id: 135402
+      items:
+        - [BORING]
+        - [DYSFUNCTIONAL]
+        - [FACTIOUS]
+        - [EVIL]
+        - [ABNORMAL]
+        - [CHAOTIC]
+      quantity: 2
+      weight: 1
+    135420:
+      hex_id: 135420
+      items:
+        - [BORING]
+        - [DYSFUNCTIONAL]
+        - [FACTIOUS]
+        - [EVIL]
+        - [CHAOTIC]
+        - [ABNORMAL]
+      quantity: 1
+      weight: 1
+    143502:
+      hex_id: 143502
+      items:
+        - [BORING]
+        - [EVIL]
+        - [DYSFUNCTIONAL]
+        - [FACTIOUS]
+        - [ABNORMAL]
+        - [CHAOTIC]
+      quantity: 1
+      weight: 1
+    150324:
+      hex_id: 150324
+      items:
+        - [BORING]
+        - [FACTIOUS]
+        - [ABNORMAL]
+        - [DYSFUNCTIONAL]
+        - [CHAOTIC]
+        - [EVIL]
+      quantity: 1
+      weight: 1
+    150342:
+      hex_id: 150342
+      items:
+        - [BORING]
+        - [FACTIOUS]
+        - [ABNORMAL]
+        - [DYSFUNCTIONAL]
+        - [EVIL]
+        - [CHAOTIC]
+      quantity: 2
+      weight: 1
+    153042:
+      hex_id: 153042
+      items:
+        - [BORING]
+        - [FACTIOUS]
+        - [DYSFUNCTIONAL]
+        - [ABNORMAL]
+        - [EVIL]
+        - [CHAOTIC]
+      quantity: 2
+      weight: 1
+    154302:
+      hex_id: 154302
+      items:
+        - [BORING]
+        - [FACTIOUS]
+        - [EVIL]
+        - [DYSFUNCTIONAL]
+        - [ABNORMAL]
+        - [CHAOTIC]
+      quantity: 1
+      weight: 1
+    213054:
+      hex_id: 213054
+      items:
+        - [CHAOTIC]
+        - [BORING]
+        - [DYSFUNCTIONAL]
+        - [ABNORMAL]
+        - [FACTIOUS]
+        - [EVIL]
+      quantity: 1
+      weight: 1
+    231054:
+      hex_id: 231054
+      items:
+        - [CHAOTIC]
+        - [DYSFUNCTIONAL]
+        - [BORING]
+        - [ABNORMAL]
+        - [FACTIOUS]
+        - [EVIL]
+      quantity: 3
+      weight: 1
+    231405:
+      hex_id: 231405
+      items:
+        - [CHAOTIC]
+        - [DYSFUNCTIONAL]
+        - [BORING]
+        - [EVIL]
+        - [ABNORMAL]
+        - [FACTIOUS]
+      quantity: 1
+      weight: 1
+    312450:
+      hex_id: 312450
+      items:
+        - [DYSFUNCTIONAL]
+        - [BORING]
+        - [CHAOTIC]
+        - [EVIL]
+        - [FACTIOUS]
+        - [ABNORMAL]
+      quantity: 2
+      weight: 1
+    314250:
+      hex_id: 314250
+      items:
+        - [DYSFUNCTIONAL]
+        - [BORING]
+        - [EVIL]
+        - [CHAOTIC]
+        - [FACTIOUS]
+        - [ABNORMAL]
+      quantity: 1
+      weight: 1
+    321450:
+      hex_id: 321450
+      items:
+        - [DYSFUNCTIONAL]
+        - [CHAOTIC]
+        - [BORING]
+        - [EVIL]
+        - [FACTIOUS]
+        - [ABNORMAL]
+      quantity: 3
+      weight: 1
+    341250:
+      hex_id: 341250
+      items:
+        - [DYSFUNCTIONAL]
+        - [EVIL]
+        - [BORING]
+        - [CHAOTIC]
+        - [FACTIOUS]
+        - [ABNORMAL]
+      quantity: 2
+      weight: 1
+    431502:
+      hex_id: 431502
+      items:
+        - [EVIL]
+        - [DYSFUNCTIONAL]
+        - [BORING]
+        - [FACTIOUS]
+        - [ABNORMAL]
+        - [CHAOTIC]
+      quantity: 1
+      weight: 1
+    431520:
+      hex_id: 431520
+      items:
+        - [EVIL]
+        - [DYSFUNCTIONAL]
+        - [BORING]
+        - [FACTIOUS]
+        - [CHAOTIC]
+        - [ABNORMAL]
+      quantity: 2
+      weight: 1
+    451302:
+      hex_id: 451302
+      items:
+        - [EVIL]
+        - [FACTIOUS]
+        - [BORING]
+        - [DYSFUNCTIONAL]
+        - [ABNORMAL]
+        - [CHAOTIC]
+      quantity: 1
+      weight: 1
+    501324:
+      hex_id: 501324
+      items:
+        - [FACTIOUS]
+        - [ABNORMAL]
+        - [BORING]
+        - [DYSFUNCTIONAL]
+        - [CHAOTIC]
+        - [EVIL]
+      quantity: 1
+      weight: 1
+    501342:
+      hex_id: 501342
+      items:
+        - [FACTIOUS]
+        - [ABNORMAL]
+        - [BORING]
+        - [DYSFUNCTIONAL]
+        - [EVIL]
+        - [CHAOTIC]
+      quantity: 3
+      weight: 1
+    510432:
+      hex_id: 510432
+      items:
+        - [FACTIOUS]
+        - [BORING]
+        - [ABNORMAL]
+        - [EVIL]
+        - [DYSFUNCTIONAL]
+        - [CHAOTIC]
+      quantity: 2
+      weight: 1
+    514032:
+      hex_id: 514032
+      items:
+        - [FACTIOUS]
+        - [BORING]
+        - [EVIL]
+        - [ABNORMAL]
+        - [DYSFUNCTIONAL]
+        - [CHAOTIC]
+      quantity: 1
+      weight: 1
+    514302:
+      hex_id: 514302
+      items:
+        - [FACTIOUS]
+        - [BORING]
+        - [EVIL]
+        - [DYSFUNCTIONAL]
+        - [ABNORMAL]
+        - [CHAOTIC]
+      quantity: 1
+      weight: 1
+    541032:
+      hex_id: 541032
+      items:
+        - [FACTIOUS]
+        - [EVIL]
+        - [BORING]
+        - [ABNORMAL]
+        - [DYSFUNCTIONAL]
+        - [CHAOTIC]
+      quantity: 1
+      weight: 1
+    541302:
+      hex_id: 541302
+      items:
+        - [FACTIOUS]
+        - [EVIL]
+        - [BORING]
+        - [DYSFUNCTIONAL]
+        - [ABNORMAL]
+        - [CHAOTIC]
+      quantity: 1
+      weight: 1
+  choice_rank:
+    ABNORMAL: [4, 6, 6, 9, 12, 13, 0]
+    BORING: [19, 9, 22, 0, 0, 0, 0]
+    CHAOTIC: [5, 4, 7, 6, 8, 20, 0]
+    DYSFUNCTIONAL: [8, 16, 4, 15, 7, 0, 0]
+    EVIL: [4, 5, 5, 11, 9, 16, 0]
+    FACTIOUS: [10, 10, 6, 9, 14, 1, 0]
+  choice_to_index:
+    ABNORMAL: 0
+    BORING: 1
+    CHAOTIC: 2
+    DYSFUNCTIONAL: 3
+    EVIL: 4
+    FACTIOUS: 5
+  choice_to_result:
+    ABNORMAL: [4, placed]
+    BORING: [1, selected]
+    CHAOTIC: [6, placed]
+    DYSFUNCTIONAL: [2, placed]
+    EVIL: [5, placed]
+    FACTIOUS: [3, placed]
+  choices:
+    ABNORMAL: abnormal antisocial
+    BORING: tedious boring
+    CHAOTIC: chaotic unpredictable
+    DYSFUNCTIONAL: dysfunctional incompetent
+    EVIL: evil villain
+    FACTIOUS: factious divisive
+  flags: {}
+  index_to_choice:
+    0: ABNORMAL
+    1: BORING
+    2: CHAOTIC
+    3: DYSFUNCTIONAL
+    4: EVIL
+    5: FACTIOUS
+  name: KR2 Test Suite 0001
+  seats: 1
+  timestamp: Fri May  1 02:08:00 2026
+  total_ballots: 50
+KR2:
+  average_choice_rank:
+    ABNORMAL: 5.14
+    BORING: 2.4
+    CHAOTIC: 5.5
+    DYSFUNCTIONAL: 3.62
+    EVIL: 5.44
+    FACTIOUS: 4
+    _oppose: 7.02
+    _support: 2.88
+  ballots:
+    05173264:
+      hex_id: 05173264
+      items:
+        - [ABNORMAL]
+        - [FACTIOUS]
+        - [BORING]
+        - [_support]
+        - [DYSFUNCTIONAL]
+        - [CHAOTIC]
+        - [_oppose]
+        - [EVIL]
+      quantity: 2
+      weight: 1
+    05716324:
+      hex_id: 05716324
+      items:
+        - [ABNORMAL]
+        - [FACTIOUS]
+        - [_support]
+        - [BORING]
+        - [_oppose]
+        - [DYSFUNCTIONAL]
+        - [CHAOTIC]
+        - [EVIL]
+      quantity: 1
+      weight: 1
+    07152634:
+      hex_id: 07152634
+      items:
+        - [ABNORMAL]
+        - [_support]
+        - [BORING]
+        - [FACTIOUS]
+        - [CHAOTIC]
+        - [_oppose]
+        - [DYSFUNCTIONAL]
+        - [EVIL]
+      quantity: 1
+      weight: 1
+    10752364:
+      hex_id: 10752364
+      items:
+        - [BORING]
+        - [ABNORMAL]
+        - [_support]
+        - [FACTIOUS]
+        - [CHAOTIC]
+        - [DYSFUNCTIONAL]
+        - [_oppose]
+        - [EVIL]
+      quantity: 2
+      weight: 1
+    12703564:
+      hex_id: 12703564
+      items:
+        - [BORING]
+        - [CHAOTIC]
+        - [_support]
+        - [ABNORMAL]
+        - [DYSFUNCTIONAL]
+        - [FACTIOUS]
+        - [_oppose]
+        - [EVIL]
+      quantity: 1
+      weight: 1
+    13270546:
+      hex_id: 13270546
+      items:
+        - [BORING]
+        - [DYSFUNCTIONAL]
+        - [CHAOTIC]
+        - [_support]
+        - [ABNORMAL]
+        - [FACTIOUS]
+        - [EVIL]
+        - [_oppose]
+      quantity: 1
+      weight: 1
+    13725046:
+      hex_id: 13725046
+      items:
+        - [BORING]
+        - [DYSFUNCTIONAL]
+        - [_support]
+        - [CHAOTIC]
+        - [FACTIOUS]
+        - [ABNORMAL]
+        - [EVIL]
+        - [_oppose]
+      quantity: 2
+      weight: 1
+    13725406:
+      hex_id: 13725406
+      items:
+        - [BORING]
+        - [DYSFUNCTIONAL]
+        - [_support]
+        - [CHAOTIC]
+        - [FACTIOUS]
+        - [EVIL]
+        - [ABNORMAL]
+        - [_oppose]
+      quantity: 2
+      weight: 1
+    13745026:
+      hex_id: 13745026
+      items:
+        - [BORING]
+        - [DYSFUNCTIONAL]
+        - [_support]
+        - [EVIL]
+        - [FACTIOUS]
+        - [ABNORMAL]
+        - [CHAOTIC]
+        - [_oppose]
+      quantity: 1
+      weight: 1
+    13754026:
+      hex_id: 13754026
+      items:
+        - [BORING]
+        - [DYSFUNCTIONAL]
+        - [_support]
+        - [FACTIOUS]
+        - [EVIL]
+        - [ABNORMAL]
+        - [CHAOTIC]
+        - [_oppose]
+      quantity: 2
+      weight: 1
+    13754206:
+      hex_id: 13754206
+      items:
+        - [BORING]
+        - [DYSFUNCTIONAL]
+        - [_support]
+        - [FACTIOUS]
+        - [EVIL]
+        - [CHAOTIC]
+        - [ABNORMAL]
+        - [_oppose]
+      quantity: 1
+      weight: 1
+    14735062:
+      hex_id: 14735062
+      items:
+        - [BORING]
+        - [EVIL]
+        - [_support]
+        - [DYSFUNCTIONAL]
+        - [FACTIOUS]
+        - [ABNORMAL]
+        - [_oppose]
+        - [CHAOTIC]
+      quantity: 1
+      weight: 1
+    15703426:
+      hex_id: 15703426
+      items:
+        - [BORING]
+        - [FACTIOUS]
+        - [_support]
+        - [ABNORMAL]
+        - [DYSFUNCTIONAL]
+        - [EVIL]
+        - [CHAOTIC]
+        - [_oppose]
+      quantity: 1
+      weight: 1
+    15703462:
+      hex_id: 15703462
+      items:
+        - [BORING]
+        - [FACTIOUS]
+        - [_support]
+        - [ABNORMAL]
+        - [DYSFUNCTIONAL]
+        - [EVIL]
+        - [_oppose]
+        - [CHAOTIC]
+      quantity: 1
+      weight: 1
+    15730426:
+      hex_id: 15730426
+      items:
+        - [BORING]
+        - [FACTIOUS]
+        - [_support]
+        - [DYSFUNCTIONAL]
+        - [ABNORMAL]
+        - [EVIL]
+        - [CHAOTIC]
+        - [_oppose]
+      quantity: 2
+      weight: 1
+    15743062:
+      hex_id: 15743062
+      items:
+        - [BORING]
+        - [FACTIOUS]
+        - [_support]
+        - [EVIL]
+        - [DYSFUNCTIONAL]
+        - [ABNORMAL]
+        - [_oppose]
+        - [CHAOTIC]
+      quantity: 1
+      weight: 1
+    17503246:
+      hex_id: 17503246
+      items:
+        - [BORING]
+        - [_support]
+        - [FACTIOUS]
+        - [ABNORMAL]
+        - [DYSFUNCTIONAL]
+        - [CHAOTIC]
+        - [EVIL]
+        - [_oppose]
+      quantity: 1
+      weight: 1
+    21730564:
+      hex_id: 21730564
+      items:
+        - [CHAOTIC]
+        - [BORING]
+        - [_support]
+        - [DYSFUNCTIONAL]
+        - [ABNORMAL]
+        - [FACTIOUS]
+        - [_oppose]
+        - [EVIL]
+      quantity: 1
+      weight: 1
+    23170546:
+      hex_id: 23170546
+      items:
+        - [CHAOTIC]
+        - [DYSFUNCTIONAL]
+        - [BORING]
+        - [_support]
+        - [ABNORMAL]
+        - [FACTIOUS]
+        - [EVIL]
+        - [_oppose]
+      quantity: 1
+      weight: 1
+    27310654:
+      hex_id: 27310654
+      items:
+        - [CHAOTIC]
+        - [_support]
+        - [DYSFUNCTIONAL]
+        - [BORING]
+        - [ABNORMAL]
+        - [_oppose]
+        - [FACTIOUS]
+        - [EVIL]
+      quantity: 2
+      weight: 1
+    27316405:
+      hex_id: 27316405
+      items:
+        - [CHAOTIC]
+        - [_support]
+        - [DYSFUNCTIONAL]
+        - [BORING]
+        - [_oppose]
+        - [EVIL]
+        - [ABNORMAL]
+        - [FACTIOUS]
+      quantity: 1
+      weight: 1
+    31724506:
+      hex_id: 31724506
+      items:
+        - [DYSFUNCTIONAL]
+        - [BORING]
+        - [_support]
+        - [CHAOTIC]
+        - [EVIL]
+        - [FACTIOUS]
+        - [ABNORMAL]
+        - [_oppose]
+      quantity: 2
+      weight: 1
+    31742506:
+      hex_id: 31742506
+      items:
+        - [DYSFUNCTIONAL]
+        - [BORING]
+        - [_support]
+        - [EVIL]
+        - [CHAOTIC]
+        - [FACTIOUS]
+        - [ABNORMAL]
+        - [_oppose]
+      quantity: 1
+      weight: 1
+    32174506:
+      hex_id: 32174506
+      items:
+        - [DYSFUNCTIONAL]
+        - [CHAOTIC]
+        - [BORING]
+        - [_support]
+        - [EVIL]
+        - [FACTIOUS]
+        - [ABNORMAL]
+        - [_oppose]
+      quantity: 1
+      weight: 1
+    32174560:
+      hex_id: 32174560
+      items:
+        - [DYSFUNCTIONAL]
+        - [CHAOTIC]
+        - [BORING]
+        - [_support]
+        - [EVIL]
+        - [FACTIOUS]
+        - [_oppose]
+        - [ABNORMAL]
+      quantity: 1
+      weight: 1
+    34712560:
+      hex_id: 34712560
+      items:
+        - [DYSFUNCTIONAL]
+        - [EVIL]
+        - [_support]
+        - [BORING]
+        - [CHAOTIC]
+        - [FACTIOUS]
+        - [_oppose]
+        - [ABNORMAL]
+      quantity: 1
+      weight: 1
+    34712650:
+      hex_id: 34712650
+      items:
+        - [DYSFUNCTIONAL]
+        - [EVIL]
+        - [_support]
+        - [BORING]
+        - [CHAOTIC]
+        - [_oppose]
+        - [FACTIOUS]
+        - [ABNORMAL]
+      quantity: 1
+      weight: 1
+    37214650:
+      hex_id: 37214650
+      items:
+        - [DYSFUNCTIONAL]
+        - [_support]
+        - [CHAOTIC]
+        - [BORING]
+        - [EVIL]
+        - [_oppose]
+        - [FACTIOUS]
+        - [ABNORMAL]
+      quantity: 1
+      weight: 1
+    43715260:
+      hex_id: 43715260
+      items:
+        - [EVIL]
+        - [DYSFUNCTIONAL]
+        - [_support]
+        - [BORING]
+        - [FACTIOUS]
+        - [CHAOTIC]
+        - [_oppose]
+        - [ABNORMAL]
+      quantity: 1
+      weight: 1
+    47315602:
+      hex_id: 47315602
+      items:
+        - [EVIL]
+        - [_support]
+        - [DYSFUNCTIONAL]
+        - [BORING]
+        - [FACTIOUS]
+        - [_oppose]
+        - [ABNORMAL]
+        - [CHAOTIC]
+      quantity: 1
+      weight: 1
+    47316520:
+      hex_id: 47316520
+      items:
+        - [EVIL]
+        - [_support]
+        - [DYSFUNCTIONAL]
+        - [BORING]
+        - [_oppose]
+        - [FACTIOUS]
+        - [CHAOTIC]
+        - [ABNORMAL]
+      quantity: 1
+      weight: 1
+    47513602:
+      hex_id: 47513602
+      items:
+        - [EVIL]
+        - [_support]
+        - [FACTIOUS]
+        - [BORING]
+        - [DYSFUNCTIONAL]
+        - [_oppose]
+        - [ABNORMAL]
+        - [CHAOTIC]
+      quantity: 1
+      weight: 1
+    50173264:
+      hex_id: 50173264
+      items:
+        - [FACTIOUS]
+        - [ABNORMAL]
+        - [BORING]
+        - [_support]
+        - [DYSFUNCTIONAL]
+        - [CHAOTIC]
+        - [_oppose]
+        - [EVIL]
+      quantity: 1
+      weight: 1
+    50173642:
+      hex_id: 50173642
+      items:
+        - [FACTIOUS]
+        - [ABNORMAL]
+        - [BORING]
+        - [_support]
+        - [DYSFUNCTIONAL]
+        - [_oppose]
+        - [EVIL]
+        - [CHAOTIC]
+      quantity: 2
+      weight: 1
+    50716342:
+      hex_id: 50716342
+      items:
+        - [FACTIOUS]
+        - [ABNORMAL]
+        - [_support]
+        - [BORING]
+        - [_oppose]
+        - [DYSFUNCTIONAL]
+        - [EVIL]
+        - [CHAOTIC]
+      quantity: 1
+      weight: 1
+    51704362:
+      hex_id: 51704362
+      items:
+        - [FACTIOUS]
+        - [BORING]
+        - [_support]
+        - [ABNORMAL]
+        - [EVIL]
+        - [DYSFUNCTIONAL]
+        - [_oppose]
+        - [CHAOTIC]
+      quantity: 1
+      weight: 1
+    51740362:
+      hex_id: 51740362
+      items:
+        - [FACTIOUS]
+        - [BORING]
+        - [_support]
+        - [EVIL]
+        - [ABNORMAL]
+        - [DYSFUNCTIONAL]
+        - [_oppose]
+        - [CHAOTIC]
+      quantity: 1
+      weight: 1
+    57104362:
+      hex_id: 57104362
+      items:
+        - [FACTIOUS]
+        - [_support]
+        - [BORING]
+        - [ABNORMAL]
+        - [EVIL]
+        - [DYSFUNCTIONAL]
+        - [_oppose]
+        - [CHAOTIC]
+      quantity: 1
+      weight: 1
+    57143062:
+      hex_id: 57143062
+      items:
+        - [FACTIOUS]
+        - [_support]
+        - [BORING]
+        - [EVIL]
+        - [DYSFUNCTIONAL]
+        - [ABNORMAL]
+        - [_oppose]
+        - [CHAOTIC]
+      quantity: 1
+      weight: 1
+    75410362:
+      hex_id: 75410362
+      items:
+        - [_support]
+        - [FACTIOUS]
+        - [EVIL]
+        - [BORING]
+        - [ABNORMAL]
+        - [DYSFUNCTIONAL]
+        - [_oppose]
+        - [CHAOTIC]
+      quantity: 1
+      weight: 1
+    75413062:
+      hex_id: 75413062
+      items:
+        - [_support]
+        - [FACTIOUS]
+        - [EVIL]
+        - [BORING]
+        - [DYSFUNCTIONAL]
+        - [ABNORMAL]
+        - [_oppose]
+        - [CHAOTIC]
+      quantity: 1
+      weight: 1
+  choice_rank:
+    ABNORMAL: [4, 6, 0, 6, 9, 9, 10, 6, 0]
+    BORING: [19, 6, 11, 14, 0, 0, 0, 0, 0]
+    CHAOTIC: [5, 3, 2, 6, 6, 6, 8, 14, 0]
+    DYSFUNCTIONAL: [8, 11, 5, 4, 13, 8, 1, 0, 0]
+    EVIL: [4, 3, 2, 5, 10, 7, 8, 11, 0]
+    FACTIOUS: [8, 10, 2, 6, 8, 11, 4, 1, 0]
+    _oppose: [0, 0, 0, 0, 4, 9, 19, 18, 0]
+    _support: [2, 11, 28, 9, 0, 0, 0, 0, 0]
+  choice_to_index:
+    ABNORMAL: 0
+    BORING: 1
+    CHAOTIC: 2
+    DYSFUNCTIONAL: 3
+    EVIL: 4
+    FACTIOUS: 5
+    _oppose: 6
+    _support: 7
+  choice_to_result:
+    ABNORMAL: [4, placed]
+    BORING: [1, selected]
+    CHAOTIC: [6, placed]
+    DYSFUNCTIONAL: [2, placed]
+    EVIL: [5, placed]
+    FACTIOUS: [3, placed]
+    _oppose: [6, bound]
+    _support: [1, bound]
+  choices:
+    ABNORMAL: abnormal antisocial
+    BORING: tedious boring
+    CHAOTIC: chaotic unpredictable
+    DYSFUNCTIONAL: dysfunctional incompetent
+    EVIL: evil villain
+    FACTIOUS: factious divisive
+    _oppose: '[rating bound _oppose]'
+    _support: '[rating bound _support]'
+  copeland:
+    ABNORMAL: -2
+    BORING: 7
+    CHAOTIC: -5
+    DYSFUNCTIONAL: 3
+    EVIL: -2
+    FACTIOUS: 1
+    _oppose: -7
+    _support: 5
+  eliminated: []
+  flags: {}
+  index_to_choice:
+    0: ABNORMAL
+    1: BORING
+    2: CHAOTIC
+    3: DYSFUNCTIONAL
+    4: EVIL
+    5: FACTIOUS
+    6: _oppose
+    7: _support
+  levels: 3
+  name: KR2 Test Suite 0001
+  pair:
+    ABNORMAL:
+      BORING:
+        mov: -34
+        preference: 8
+      CHAOTIC:
+        mov: 6
+        preference: 28
+      DYSFUNCTIONAL:
+        mov: -14
+        preference: 18
+      EVIL:
+        mov: 0
+        preference: 25
+      FACTIOUS:
+        mov: -24
+        preference: 13
+      _oppose:
+        mov: 32
+        preference: 41
+      _support:
+        mov: -30
+        preference: 10
+    BORING:
+      ABNORMAL:
+        mov: 34
+        preference: 42
+      CHAOTIC:
+        mov: 34
+        preference: 42
+      DYSFUNCTIONAL:
+        mov: 20
+        preference: 35
+      EVIL:
+        mov: 34
+        preference: 42
+      FACTIOUS:
+        mov: 22
+        preference: 36
+      _oppose:
+        mov: 50
+        preference: 50
+      _support:
+        mov: 16
+        preference: 33
+    CHAOTIC:
+      ABNORMAL:
+        mov: -6
+        preference: 22
+      BORING:
+        mov: -34
+        preference: 8
+      DYSFUNCTIONAL:
+        mov: -32
+        preference: 9
+      EVIL:
+        mov: -2
+        preference: 24
+      FACTIOUS:
+        mov: -12
+        preference: 19
+      _oppose:
+        mov: 18
+        preference: 34
+      _support:
+        mov: -32
+        preference: 9
+    DYSFUNCTIONAL:
+      ABNORMAL:
+        mov: 14
+        preference: 32
+      BORING:
+        mov: -20
+        preference: 15
+      CHAOTIC:
+        mov: 32
+        preference: 41
+      EVIL:
+        mov: 26
+        preference: 38
+      FACTIOUS:
+        mov: 4
+        preference: 27
+      _oppose:
+        mov: 44
+        preference: 47
+      _support:
+        mov: -12
+        preference: 19
+    EVIL:
+      ABNORMAL:
+        mov: 0
+        preference: 25
+      BORING:
+        mov: -34
+        preference: 8
+      CHAOTIC:
+        mov: 2
+        preference: 26
+      DYSFUNCTIONAL:
+        mov: -26
+        preference: 12
+      FACTIOUS:
+        mov: -20
+        preference: 15
+      _oppose:
+        mov: 20
+        preference: 35
+      _support:
+        mov: -36
+        preference: 7
+    FACTIOUS:
+      ABNORMAL:
+        mov: 24
+        preference: 37
+      BORING:
+        mov: -22
+        preference: 14
+      CHAOTIC:
+        mov: 12
+        preference: 31
+      DYSFUNCTIONAL:
+        mov: -4
+        preference: 23
+      EVIL:
+        mov: 20
+        preference: 35
+      _oppose:
+        mov: 38
+        preference: 44
+      _support:
+        mov: -18
+        preference: 16
+    _oppose:
+      ABNORMAL:
+        mov: -32
+        preference: 9
+      BORING:
+        mov: -50
+      CHAOTIC:
+        mov: -18
+        preference: 16
+      DYSFUNCTIONAL:
+        mov: -44
+        preference: 3
+      EVIL:
+        mov: -20
+        preference: 15
+      FACTIOUS:
+        mov: -38
+        preference: 6
+      _support:
+        mov: -50
+    _support:
+      ABNORMAL:
+        mov: 30
+        preference: 40
+      BORING:
+        mov: -16
+        preference: 17
+      CHAOTIC:
+        mov: 32
+        preference: 41
+      DYSFUNCTIONAL:
+        mov: 12
+        preference: 31
+      EVIL:
+        mov: 36
+        preference: 43
+      FACTIOUS:
+        mov: 18
+        preference: 34
+      _oppose:
+        mov: 50
+        preference: 50
+  seats: 1
+  timestamp: Fri May  1 02:08:01 2026
+  total_ballots: 50
+  winners:
+    - [BORING]
+    - [_support]
+    - [DYSFUNCTIONAL]
+    - [FACTIOUS]
+    - [ABNORMAL]
+    - [EVIL]
+    - [CHAOTIC]
+    - [_oppose]
