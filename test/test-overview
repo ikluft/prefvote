@@ -16,6 +16,7 @@ Readonly::Scalar my $count_script => "$pvroot/lab/perl/prefvote/bin/vote-count";
 Readonly::Scalar my $acr_compare_script => "$pvroot/test/acr-compare";
 Readonly::Array my @yaml_suffixes => qw(.yaml .yml);
 Readonly::Scalar my $markdown_suffix => ".md";
+Readonly::Scalar my $plot_pattern => "poll-spectrum-plot-%04d.svg";
 
 # get allowed methods from test file
 sub get_methods
@@ -38,8 +39,10 @@ sub process_test_file
     if (-f $outfile) {
         croak "$0: file exists: $outfile";
     }
+    ## no critic (RequireBriefOpen)
     open (my $out_fh, ">", $outfile)
         or croak "$0: failed to open $outfile for writing: $!";
+    ## critic (RequireBriefOpen)
 
     # get allowed methods from test file
     my @methods = get_methods($yaml_file);
@@ -47,6 +50,16 @@ sub process_test_file
     # generate title
     say $out_fh "# Black-box test data overview for [$filename$suffix]($filename$suffix)";
     say $out_fh "";
+
+    # insert poll spectrum plot if persent
+    my $set_num = int ( substr $filename, 0, 4 );
+    my $plot_name = sprintf $plot_pattern, $set_num;
+    if ( -e ( $dirs . $plot_name )) {
+        say $out_fh "<figure>";
+        say $out_fh qq(<img src="$plot_name">);
+        say $out_fh "<figcaption>2-axis random candidate/voter positions - votes computed by distance</figcaption>";
+        say $out_fh "</figure>";
+    }
     
     # summary table
     my $summary_text;
@@ -70,6 +83,7 @@ sub process_test_file
     }
 
     close $out_fh;
+    return;
 }
 
 # main

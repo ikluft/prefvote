@@ -1,5 +1,9 @@
 # Black-box test data overview for [0004_kr2_level1-test.yaml](0004_kr2_level1-test.yaml)
 
+<figure>
+<img src="poll-spectrum-plot-0004.svg">
+<figcaption>2-axis random candidate/voter positions - votes computed by distance</figcaption>
+</figure>
 <blockquote>
 title: KR2 Test Suite 0004 (100 ballots)
 <table border=1>
