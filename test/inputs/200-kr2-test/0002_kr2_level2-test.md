@@ -50,14 +50,14 @@ title: KR2 Test Suite 0002 (100 ballots)
 <td>4.70000 (470/100)</td>
 <td>5</td>
 <td>6 / 6</td>
-<td>7 (-6)</td>
+<td>6 (-6)</td>
 </tr>
 <tr>
 <td>ABNORMAL</td>
 <td>4.77000 (477/100)</td>
 <td>6</td>
 <td>5 / 5</td>
-<td>6 (-4)</td>
+<td>5 (-4)</td>
 </tr>
 </tbody>
 </table>

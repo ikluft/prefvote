@@ -22,42 +22,42 @@ title: KR2 Test Suite 0004 (100 ballots)
 <td>2.46000 (246/100)</td>
 <td>1</td>
 <td>1 / 1</td>
-<td>2 (6)</td>
+<td>1 (6)</td>
 </tr>
 <tr>
 <td>ABNORMAL</td>
 <td>2.62000 (262/100)</td>
 <td>2</td>
 <td>2 / 2</td>
-<td>3 (4)</td>
+<td>2 (4)</td>
 </tr>
 <tr>
 <td>BORING</td>
 <td>3.23000 (323/100)</td>
 <td>3</td>
 <td>4 / 4</td>
-<td>6 (-2)</td>
+<td>4 (-2)</td>
 </tr>
 <tr>
 <td>EVIL</td>
 <td>3.61000 (361/100)</td>
 <td>4</td>
 <td>3 / 3</td>
-<td>4 (2)</td>
+<td>3 (2)</td>
 </tr>
 <tr>
 <td>FACTIOUS</td>
 <td>4.08000 (408/100)</td>
 <td>5</td>
 <td>5 / 5</td>
-<td>7 (-4)</td>
+<td>5 (-4)</td>
 </tr>
 <tr>
 <td>DYSFUNCTIONAL</td>
 <td>5.00000 (500/100)</td>
 <td>6</td>
 <td>6 / 6</td>
-<td>8 (-6)</td>
+<td>6 (-6)</td>
 </tr>
 </tbody>
 </table>

@@ -36,7 +36,7 @@ title: KR2 Test Suite 0004 (100 ballots)
 <td>3.23000 (323/100)</td>
 <td>3</td>
 <td>4 / 4</td>
-<td>5 (-2)</td>
+<td>4 (-2)</td>
 </tr>
 <tr>
 <td>EVIL</td>
@@ -50,14 +50,14 @@ title: KR2 Test Suite 0004 (100 ballots)
 <td>4.08000 (408/100)</td>
 <td>5</td>
 <td>5 / 5</td>
-<td>6 (-4)</td>
+<td>5 (-4)</td>
 </tr>
 <tr>
 <td>DYSFUNCTIONAL</td>
 <td>5.00000 (500/100)</td>
 <td>6</td>
 <td>6 / 6</td>
-<td>7 (-6)</td>
+<td>6 (-6)</td>
 </tr>
 </tbody>
 </table>

@@ -36,42 +36,42 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>3.40500 (681/200)</td>
 <td>3</td>
 <td>3 / 3</td>
-<td>4 (3)</td>
+<td>3 (3)</td>
 </tr>
 <tr>
 <td>CHAOTIC</td>
 <td>4.58500 (917/200)</td>
 <td>4</td>
 <td>4 / 4</td>
-<td>5 (1)</td>
+<td>4 (1)</td>
 </tr>
 <tr>
 <td>FACTIOUS</td>
 <td>4.98500 (997/200)</td>
 <td>5</td>
 <td>5 / 5</td>
-<td>6 (-2)</td>
+<td>5 (-2)</td>
 </tr>
 <tr>
 <td>BORING</td>
 <td>5.23500 (1047/200)</td>
 <td>6</td>
 <td>7 / 7</td>
-<td>8 (-5)</td>
+<td>7 (-5)</td>
 </tr>
 <tr>
 <td>DYSFUNCTIONAL</td>
 <td>5.39500 (1079/200)</td>
 <td>7</td>
 <td>6 / 6</td>
-<td>6 (-2)</td>
+<td>5 (-2)</td>
 </tr>
 <tr>
 <td>HOTHEAD</td>
 <td>6.70000 (1340/200)</td>
 <td>8</td>
 <td>8 / 8</td>
-<td>10 (-9)</td>
+<td>8 (-9)</td>
 </tr>
 </tbody>
 </table>

@@ -124,7 +124,7 @@ sub do_compare
     my %pwv;
     my $kr2_copeland = $rundata->{KR2}{copeland};
     {
-        my @pwv_order = sort {$kr2_copeland->{$b} <=> $kr2_copeland->{$a}} sort keys %$kr2_copeland;
+        my @pwv_order = sort {$kr2_copeland->{$b} <=> $kr2_copeland->{$a}} sort grep { not /^_/x } keys %$kr2_copeland;
         for (my $i=0; $i<scalar @pwv_order; $i++) {
             if ($i>0 and $kr2_copeland->{$pwv_order[$i]} == $kr2_copeland->{$pwv_order[$i-1]}) {
                 $pwv{$pwv_order[$i]} = $pwv{$pwv_order[$i-1]};

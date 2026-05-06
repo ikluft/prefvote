@@ -43,21 +43,21 @@ title: KR2 Test Suite 0002 (100 ballots)
 <td>4.30000 (430/100)</td>
 <td>4</td>
 <td>4 / 4</td>
-<td>6 (-1)</td>
+<td>4 (-1)</td>
 </tr>
 <tr>
 <td>DYSFUNCTIONAL</td>
 <td>4.70000 (470/100)</td>
 <td>5</td>
 <td>6 / 6</td>
-<td>8 (-6)</td>
+<td>6 (-6)</td>
 </tr>
 <tr>
 <td>ABNORMAL</td>
 <td>4.77000 (477/100)</td>
 <td>6</td>
 <td>5 / 5</td>
-<td>7 (-3)</td>
+<td>5 (-3)</td>
 </tr>
 </tbody>
 </table>

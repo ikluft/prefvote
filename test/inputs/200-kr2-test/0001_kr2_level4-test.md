@@ -29,35 +29,35 @@ title: KR2 Test Suite 0001 (50 ballots)
 <td>2.94000 (147/50)</td>
 <td>2</td>
 <td>2 / 2</td>
-<td>3 (4)</td>
+<td>2 (4)</td>
 </tr>
 <tr>
 <td>FACTIOUS</td>
 <td>3.20000 (160/50)</td>
 <td>3</td>
 <td>3 / 3</td>
-<td>4 (2)</td>
+<td>3 (2)</td>
 </tr>
 <tr>
 <td>ABNORMAL</td>
 <td>4.16000 (208/50)</td>
 <td>4</td>
 <td>4 / 4</td>
-<td>6 (-3)</td>
+<td>4 (-3)</td>
 </tr>
 <tr>
 <td>EVIL</td>
 <td>4.28000 (214/50)</td>
 <td>5</td>
 <td>5 / 5</td>
-<td>6 (-3)</td>
+<td>4 (-3)</td>
 </tr>
 <tr>
 <td>CHAOTIC</td>
 <td>4.36000 (218/50)</td>
 <td>6</td>
 <td>6 / 6</td>
-<td>8 (-6)</td>
+<td>6 (-6)</td>
 </tr>
 </tbody>
 </table>

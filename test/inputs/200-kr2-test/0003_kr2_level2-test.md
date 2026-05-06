@@ -57,7 +57,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>5.23500 (1047/200)</td>
 <td>6</td>
 <td>7 / 7</td>
-<td>8 (-6)</td>
+<td>7 (-6)</td>
 </tr>
 <tr>
 <td>DYSFUNCTIONAL</td>
@@ -71,7 +71,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>6.70000 (1340/200)</td>
 <td>8</td>
 <td>8 / 8</td>
-<td>9 (-8)</td>
+<td>8 (-8)</td>
 </tr>
 </tbody>
 </table>
