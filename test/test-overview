@@ -55,9 +55,9 @@ sub process_test_file
     my $set_num = int ( substr $filename, 0, 4 );
     my $plot_name = sprintf $plot_pattern, $set_num;
     if ( -e ( $dirs . $plot_name )) {
-        say $out_fh "<figure>";
+        say $out_fh "<figure style=\"text-align: center\">";
         say $out_fh qq(<img src="$plot_name">);
-        say $out_fh "<figcaption>2-axis random candidate/voter positions - votes computed by distance</figcaption>";
+        say $out_fh "<figcaption>2-axis random candidate/voter positions<br>ballots computed by distance between voter and candidate</figcaption>";
         say $out_fh "</figure>";
     }
     
