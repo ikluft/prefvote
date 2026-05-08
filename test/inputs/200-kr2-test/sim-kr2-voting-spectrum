@@ -7,7 +7,8 @@ use builtin qw(true false);
 use Getopt::Long;
 use Readonly;
 use GD::SVG;
-use YAML::XS qw(LoadFile DumpFile);
+use YAML::XS qw(LoadFile);
+use YAML::Dumper;
 
 # constants
 Readonly::Scalar my $SCALING_FACTOR => 10;  # scale coordinate distances to 0..1 range
@@ -58,6 +59,23 @@ my %config;
 $config{opt} = {};     # command-line options
 $config{params} = {};  # parameters for vote simulation
 $config{gen} = {};     # random generated data (candidates and voters)
+
+# dump YAML file
+# use YAML::Dumper so we can force more compact inline series mode (flow sequences) on lists up to 16 items
+sub dump_yaml_file
+{
+    my ( $filename, @content ) = @_;
+
+    # write to YAML file 3 document sections: parameters, candidate coordinates, voter coordinates
+    open( my $yaml_fh, ">", $filename )
+        or croak "failed to write $filename: $!";
+    my $dumper = YAML::Dumper->new;
+    $dumper->inline_series(16);
+    print $yaml_fh $dumper->dump( @content );
+    close( $yaml_fh )
+        or croak "failed to close $filename: $!";
+    return;
+}
 
 # generate a floating point random positional coordinate on the political spectrum (-5..+5)
 sub rand_pol
@@ -175,7 +193,7 @@ sub save_config
     my $filename = sprintf ( $SIM_NAME_FORMAT, $config{params}{num} );
 
     # write to YAML file 3 document sections: parameters, candidate coordinates, voter coordinates
-    DumpFile( $filename, $config{params}, $config{gen}{candidate_coord}, $config{gen}{voter_coord} );
+    dump_yaml_file( $filename, $config{params}, $config{gen}{candidate_coord}, $config{gen}{voter_coord} );
 
     return;
 }
@@ -243,7 +261,7 @@ sub gen_kr2_poll
 
     # save simulated poll data for the specified KR2 level
     # note: in KR2 Level 1, all other voting methods are allowed since there are no rating bound markers
-    DumpFile( $filename, \%poll_sim, \@ballots );
+    dump_yaml_file( $filename, \%poll_sim, \@ballots );
 
     return;
 }

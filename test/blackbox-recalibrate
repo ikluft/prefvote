@@ -7,7 +7,8 @@ use Readonly;
 use FindBin qw($Bin);
 use File::Basename qw(dirname);
 use File::Copy qw(cp);;
-use YAML::XS qw(Load LoadFile DumpFile);
+use YAML::XS qw(Load LoadFile);
+use YAML::Dumper;
 use IPC::Run qw(run);
 
 # constants
@@ -15,6 +16,23 @@ use IPC::Run qw(run);
 Readonly::Scalar my $progname => $0;
 Readonly::Scalar my $pvroot => dirname($Bin);
 Readonly::Scalar my $count_script => "$pvroot/lab/perl/prefvote/bin/vote-count";
+
+# dump YAML file
+# use YAML::Dumper so we can force more compact inline series mode (flow sequences) on lists up to 16 items
+sub dump_yaml_file
+{
+    my ( $filename, @content ) = @_;
+
+    # write to YAML file 3 document sections: parameters, candidate coordinates, voter coordinates
+    open my $yaml_fh, ">", $filename
+        or croak "failed to write $filename: $!";
+    my $dumper = YAML::Dumper->new;
+    $dumper->inline_series(16);
+    print $yaml_fh $dumper->dump( @content );
+    close $yaml_fh
+        or croak "failed to close $filename: $!";
+    return;
+}
 
 # collect run data for all voting methods
 sub collect_rundata
@@ -68,7 +86,9 @@ sub process_file
 
     # construct and replace new blackbox testing data
     $yaml_doc[2] = collect_rundata($path, \@methods);
-    DumpFile($path, @yaml_doc);
+    say STDERR "updating $path";
+    dump_yaml_file($path, @yaml_doc);
+    return;
 }
 
 # process command line
