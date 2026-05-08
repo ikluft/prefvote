@@ -7,7 +7,7 @@ use builtin qw(true false);
 use Getopt::Long;
 use Readonly;
 use GD::SVG;
-use YAML::Any qw(LoadFile DumpFile);
+use YAML::XS qw(LoadFile DumpFile);
 
 # constants
 Readonly::Scalar my $SCALING_FACTOR => 10;  # scale coordinate distances to 0..1 range
@@ -136,6 +136,9 @@ sub plot_graph
         $IMG_MARGIN + $IMG_SIDE / 2, $IMG_MARGIN + $IMG_SIDE,
         $gray );
 
+    # plot data set number
+    $image->string( gdLargeFont, 0, 0, sprintf( "%04d", $params->{num}), $green );
+
     # plot candidates
     for ( my $i = 0; $i < scalar @$candidates; $i++ ) {
         my ( $x, $y, $name ) = @{ $candidates->[$i] };
@@ -156,9 +159,6 @@ sub plot_graph
         $image->filledEllipse( $IMG_MARGIN + $IMG_SIDE / 2 + $x * 20, $IMG_MARGIN + $IMG_SIDE / 2 + $y * 20,
             2, 2, $blue );
     }
-
-    # plot data set number
-    $image->string( gdLargeFont, 0, 0, sprintf( "%03d", $params->{num}), $green );
 
     # generate file
     open ( my $img_fh, ">", $filename )
