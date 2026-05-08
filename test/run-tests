@@ -21,7 +21,7 @@ use TAP::Parser::Aggregator;
 use TAP::Parser::SourceHandler::RawTAP;
 use Text::Table::Tiny 1.02 qw/ generate_table /;
 use HTML::Escape qw(escape_html);
-use YAML::XS;
+use YAML::XS qw(LoadFile);
 
 # configuration settings per language implementation
 Readonly::Scalar my $pvroot => dirname($FindBin::RealBin);
@@ -471,7 +471,7 @@ sub is_method_allowed
         #say STDERR "is_method_allowed($method, $test_file): " . join( " ", @allowed ) . " (from cache)";
     } else {
         # read allowed methods from file
-        my @yaml_data = YAML::XS::LoadFile( $test_file );
+        my @yaml_data = LoadFile( $test_file );
 
         # sanity checks on file contents
         if ( ref $yaml_data[0] ne "HASH" ) {

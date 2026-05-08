@@ -11,7 +11,7 @@ use FindBin;
 use File::Basename;
 use Text::Table::Tiny 1.02 qw(generate_table);
 use HTML::Escape qw(escape_html);
-use YAML::Any qw(Load LoadFile);
+use YAML::XS qw(Load LoadFile);
 use IPC::Run qw(run);
 
 # constants

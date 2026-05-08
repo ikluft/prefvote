@@ -7,7 +7,7 @@ use Readonly;
 use FindBin qw($Bin);
 use File::Basename qw(dirname);
 use File::Copy qw(cp);;
-use YAML qw(Load LoadFile DumpFile);
+use YAML::XS qw(Load LoadFile DumpFile);
 use IPC::Run qw(run);
 
 # constants
@@ -15,9 +15,6 @@ use IPC::Run qw(run);
 Readonly::Scalar my $progname => $0;
 Readonly::Scalar my $pvroot => dirname($Bin);
 Readonly::Scalar my $count_script => "$pvroot/lab/perl/prefvote/bin/vote-count";
-
-# configuration
-$YAML::InlineSeries = 16;
 
 # collect run data for all voting methods
 sub collect_rundata

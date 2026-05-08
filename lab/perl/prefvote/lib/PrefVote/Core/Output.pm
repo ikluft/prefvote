@@ -24,7 +24,7 @@ use English;
 use Getopt::Long;
 use Data::Dumper;
 use Readonly;
-use YAML::XS;
+use YAML::XS qw(Load);
 use IPC::Run qw(run);
 use PrefVote::Core;
 use PrefVote::Core::Exception;
@@ -264,7 +264,7 @@ sub main
 
         # decode results data from YAML
         #__PACKAGE__->debug_print("output() receieved YAML: ".Dumper($yaml_textref));
-        my @yaml_docs = YAML::XS::Load($$yaml_textref);
+        my @yaml_docs = Load($$yaml_textref);
         __PACKAGE__->debug_print( "output() decoded YAML: " . Dumper( \@yaml_docs ) );
         my $result_data_root = $yaml_docs[0];
 

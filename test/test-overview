@@ -8,7 +8,7 @@ use Readonly;
 use FindBin;
 use File::Basename;
 use IPC::Run qw(run);
-use YAML::Any qw(LoadFile);
+use YAML::XS qw(LoadFile);
 
 # constants
 Readonly::Scalar my $pvroot => dirname($FindBin::RealBin);
