@@ -197,6 +197,21 @@ As called from PrefVote::Core:
 
 =head1 DESCRIPTION
 
+=head1 FUNCTIONS
+
+=over 1
+
+=item read_vote_file(filepath)
+
+uses the I<filepath> parameter as a string with the filename of an input file to read and parse.
+The input file can be YAML with a .yaml or .yml suffix, or Condorcet Election Format with a .cvotes suffix.
+It returns a list of the parsed input document's data structures.
+
+This function throws exceptions if the filepath names a file which doesn't exist or is not a regular file.
+It also throws an exception if the content of that file can't be parsed by L<YAML::XS>.
+
+=back
+
 =head1 SEE ALSO
 
 L<PrefVote::Core>

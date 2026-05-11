@@ -21,6 +21,7 @@ use DateTime;
 use Readonly;
 use Set::Tiny    qw(set);
 use Scalar::Util qw(reftype);
+use YAML::Dumper;
 use PrefVote::Core::Ballot;
 use PrefVote::Core::Exception;
 use PrefVote::Core::MethodMismatchException;
@@ -922,23 +923,27 @@ sub format_output
 {
     my ( $self, $format ) = @_;
 
+    # set up YAML dumper to force more compact inline series mode (flow sequences) on lists up to 16 items
+    my $dumper = YAML::Dumper->new;
+    $dumper->inline_series(16);
+
     # directly handle special cases of YAML and raw YAML formats
     if ( fc($format) eq fc("yaml") ) {
 
         # output YAML results
-        print YAML::XS::Dump( $self->result_yaml() );
+        print $dumper->dump( $self->result_yaml() );
         return;
     }
     if ( fc($format) eq fc("rawyaml") ) {
 
         # output YAML results
-        print YAML::XS::Dump($self);
+        print $dumper->dump($self);
         return;
     }
 
     # run output handler
     require PrefVote::Core::Output;
-    PrefVote::Core::Output::do_output( $format, ref $self, [ YAML::XS::Dump( $self->result_yaml() ) ] );
+    PrefVote::Core::Output::do_output( $format, ref $self, [ $dumper->dump( $self->result_yaml() ) ] );
     return;
 }
 
@@ -965,7 +970,7 @@ __END__
     $vote_obj->count();
 
     # get results in YAML
-    print YAML::XS::Dump($vote_obj->result_yaml());
+    print YAML::Any::Dump($vote_obj->result_yaml());
 
     # get results for your own handling
     my $results = $vote_obj->results();
@@ -1210,12 +1215,12 @@ uses the I<format> parameter to determine the function to call for output format
 
 =item yaml
 
-calls L<YAML::XS> I<Dump()> using the output of the I<result_yaml()> method.
+calls L<YAML::Dumper> using the output of the I<result_yaml()> method.
 This detailed data is intended for use by an external program provided by a developer.
 
 =item rawyaml
 
-calls L<YAML::XS> I<Dump()> using this object.
+calls L<YAML::Dumper> using this object.
 This is intended for testing only, and is used to create black box testing baseline data from the current run.
 
 =item others
@@ -1257,14 +1262,21 @@ The L<vote-count> script performs that task when given the I<--test> command-lin
 returns true if the method string passed as a parameter matches any of the supported voting methods.
 The matching is not case-sensitive.
 
-=item read_vote_file(filepath)
+=item file2vote({key => value, ...}, filepath)
 
-uses the I<filepath> parameter as a string with the filename of an input file to read and parse.
-The input file can be YAML with a .yaml or .yml suffix, or Condorcet Election Format with a .cvotes suffix.
-It returns a list of the parsed input document's data structures.
+reads a YAML input file and constructs an object of I<PrefVote::Core>
+or the appropriate subclass to handle the selected voting method.
 
-This function throws exceptions if the filepath names a file which doesn't exist or is not a regular file.
-It also throws an exception if the content of that file can't be parsed by L<YAML::XS>.
+It takes a file path as a parameter.
+Optionally a hash reference may be provided inserted as the first option in order to provide
+key/value configuration options.
+The options are passed to determine_method() so the only currently supported option is "method",
+which must be provided if the YAML data allows more that one type of voting method on the data.
+It determines which voting method to use on this run.
+
+The scenario of a vote definition supporting more than one type of voting method is for testing,
+where black-box tests may run the same ranked-choice ballot data through multiple voting methods, one at a time.
+In practice, an actual election/poll must disclose the counting algorithm to participants before they cast votes.
 
 =item determine_method({key => value, ...}, votedef)
 
@@ -1282,21 +1294,6 @@ in order to select which one to use.
 
 Currently supported voting methods are Core (testing only), STV, Schulze and RankedPairs.
 New voting methods can be implemented by adding a new subclass of L<PrefVote::Core>.
-
-=item file2vote({key => value, ...}, filepath)
-
-reads a YAML input file and constructs an object of I<PrefVote::Core>
-or the appropriate subclass to handle the selected voting method.
-
-It takes a file path as a parameter.
-Optionally a hash reference may be provided inserted as the first option in order to provide
-key/value configuration options.
-The options are passed to determine_method() so the only currently supported option is "method",
-which must be provided if the YAML data allows more that one type of voting method on the data.
-It determines which voting method to use on this run.
-
-The scenario of a vote definition supporting more than one type of voting method is mainly for testing,
-where black-box tests may run the same ranked-chocie ballot data through multiple voting methods, one at a time.
 
 =back
 
