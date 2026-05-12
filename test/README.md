@@ -110,29 +110,29 @@ The diagrams in the KR2 test suite show candidates labeled with letters and unla
     * [006-rcv-test.yaml](inputs/100-rcv-test/006-rcv-test.md): 6 candidates, 100 random ballots → 2 seats available
 * 2-axis random candidate/voter position sets (200-kr2-test) for KR2
     * <img src="inputs/200-kr2-test/poll-spectrum-plot-0001.svg" align="right" width="180" height="180">KR2 Test Suite 0001: 6 candidates, 50 voters → 1 seat available
-        * L1 [0001\_kr2\_level1-test.md](inputs/200-kr2-test/0001_kr2_level1-test.md): Core STV Schulze RankedPairs KR2
-        * L2 [0001\_kr2\_level2-test.md](inputs/200-kr2-test/0001_kr2_level2-test.md): Core KR2
-        * L3 [0001\_kr2\_level3-test.md](inputs/200-kr2-test/0001_kr2_level3-test.md): Core KR2
-        * L4 [0001\_kr2\_level4-test.md](inputs/200-kr2-test/0001_kr2_level4-test.md): Core KR2
-        * L5 [0001\_kr2\_level5-test.md](inputs/200-kr2-test/0001_kr2_level5-test.md): Core KR2 <br style="clear: both">
+        * Level 1 [0001\_kr2\_level1-test.md](inputs/200-kr2-test/0001_kr2_level1-test.md): Core STV Schulze RankedPairs KR2
+        * Level 2 [0001\_kr2\_level2-test.md](inputs/200-kr2-test/0001_kr2_level2-test.md): Core KR2
+        * Level 3 [0001\_kr2\_level3-test.md](inputs/200-kr2-test/0001_kr2_level3-test.md): Core KR2
+        * Level 4 [0001\_kr2\_level4-test.md](inputs/200-kr2-test/0001_kr2_level4-test.md): Core KR2
+        * Level 5 [0001\_kr2\_level5-test.md](inputs/200-kr2-test/0001_kr2_level5-test.md): Core KR2 <br style="clear: both">
     * <img src="inputs/200-kr2-test/poll-spectrum-plot-0002.svg" align="right" width="180" height="180">KR2 Test Suite 0002: 6 candidates, 100 voters → 2 seats available
-        * L1 [0002\_kr2\_level1-test.md](inputs/200-kr2-test/0002_kr2_level1-test.md): Core STV Schulze RankedPairs KR2
-        * L2 [0002\_kr2\_level2-test.md](inputs/200-kr2-test/0002_kr2_level2-test.md): Core KR2
-        * L3 [0002\_kr2\_level3-test.md](inputs/200-kr2-test/0002_kr2_level3-test.md): Core KR2
-        * L4 [0002\_kr2\_level4-test.md](inputs/200-kr2-test/0002_kr2_level4-test.md): Core KR2
-        * L5 [0002\_kr2\_level5-test.md](inputs/200-kr2-test/0002_kr2_level5-test.md): Core KR2 <br style="clear: both">
+        * Level 1 [0002\_kr2\_level1-test.md](inputs/200-kr2-test/0002_kr2_level1-test.md): Core STV Schulze RankedPairs KR2
+        * Level 2 [0002\_kr2\_level2-test.md](inputs/200-kr2-test/0002_kr2_level2-test.md): Core KR2
+        * Level 3 [0002\_kr2\_level3-test.md](inputs/200-kr2-test/0002_kr2_level3-test.md): Core KR2
+        * Level 4 [0002\_kr2\_level4-test.md](inputs/200-kr2-test/0002_kr2_level4-test.md): Core KR2
+        * Level 5 [0002\_kr2\_level5-test.md](inputs/200-kr2-test/0002_kr2_level5-test.md): Core KR2 <br style="clear: both">
     * <img src="inputs/200-kr2-test/poll-spectrum-plot-0003.svg" align="right" width="180" height="180">KR2 Test Suite 0003: 8 candidates, 200 voters → 1 seat available
-        * L1 [0003\_kr2\_level1-test.md](inputs/200-kr2-test/0003_kr2_level1-test.md): Core STV Schulze RankedPairs KR2
-        * L2 [0003\_kr2\_level2-test.md](inputs/200-kr2-test/0003_kr2_level2-test.md): Core KR2
-        * L3 [0003\_kr2\_level3-test.md](inputs/200-kr2-test/0003_kr2_level3-test.md): Core KR2
-        * L4 [0003\_kr2\_level4-test.md](inputs/200-kr2-test/0003_kr2_level4-test.md): Core KR2
-        * L5 [0003\_kr2\_level5-test.md](inputs/200-kr2-test/0003_kr2_level5-test.md): Core KR2 <br style="clear: both">
+        * Level 1 [0003\_kr2\_level1-test.md](inputs/200-kr2-test/0003_kr2_level1-test.md): Core STV Schulze RankedPairs KR2
+        * Level 2 [0003\_kr2\_level2-test.md](inputs/200-kr2-test/0003_kr2_level2-test.md): Core KR2
+        * Level 3 [0003\_kr2\_level3-test.md](inputs/200-kr2-test/0003_kr2_level3-test.md): Core KR2
+        * Level 4 [0003\_kr2\_level4-test.md](inputs/200-kr2-test/0003_kr2_level4-test.md): Core KR2
+        * Level 5 [0003\_kr2\_level5-test.md](inputs/200-kr2-test/0003_kr2_level5-test.md): Core KR2 <br style="clear: both">
     * <img src="inputs/200-kr2-test/poll-spectrum-plot-0004.svg" align="right" width="180" height="180">KR2 Test Suite 0004: 6 candidates, 100 voters → 1 seat available
-        * L1 [0004\_kr2\_level1-test.md](inputs/200-kr2-test/0004_kr2_level1-test.md): Core STV Schulze RankedPairs KR2
-        * L2 [0004\_kr2\_level2-test.md](inputs/200-kr2-test/0004_kr2_level2-test.md): Core KR2
-        * L3 [0004\_kr2\_level3-test.md](inputs/200-kr2-test/0004_kr2_level3-test.md): Core KR2
-        * L4 [0004\_kr2\_level4-test.md](inputs/200-kr2-test/0004_kr2_level4-test.md): Core KR2
-        * L5 [0004\_kr2\_level5-test.md](inputs/200-kr2-test/0004_kr2_level5-test.md): Core KR2 <br style="clear: both">
+        * Level 1 [0004\_kr2\_level1-test.md](inputs/200-kr2-test/0004_kr2_level1-test.md): Core STV Schulze RankedPairs KR2
+        * Level 2 [0004\_kr2\_level2-test.md](inputs/200-kr2-test/0004_kr2_level2-test.md): Core KR2
+        * Level 3 [0004\_kr2\_level3-test.md](inputs/200-kr2-test/0004_kr2_level3-test.md): Core KR2
+        * Level 4 [0004\_kr2\_level4-test.md](inputs/200-kr2-test/0004_kr2_level4-test.md): Core KR2
+        * Level 5 [0004\_kr2\_level5-test.md](inputs/200-kr2-test/0004_kr2_level5-test.md): Core KR2 <br style="clear: both">
 
 ### Comparing voting method results
 
