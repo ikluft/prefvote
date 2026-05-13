@@ -2,6 +2,8 @@
 
 PrefVote is designed for multiple programming language implementations using a common test suite. The test suite consists of "black box" test specs used across all languages, plus "white box" unit tests within each language's source code directory. The test harness collects [Test Anything Protocol (TAP)](https://testanything.org/) data from each language's unit tests to report the results.
 
+*Current status:* The reference implementation is in Perl, and takes advantage of TAP (Test Anywhere Protocol) which originally started with Perl unit-testing system developers. PrefVote in Perl has extensive whitebox tests. And the blackbox tests for all (future) language implementations is in Perl. The next planned language implementations will be Rust and Python.
+
 ## Scripts in the test directory
 
 * acr-compare: comparison of voting methods with and without average-choice-rank (ACR) tie-breaking
