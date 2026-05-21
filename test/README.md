@@ -101,6 +101,8 @@ To test the KR2 algorithm, the test suite was expanded to use a 2-axis coordinat
 
 The diagrams in the KR2 test suite show candidates labeled with letters and unlabeled points for voters. In theory, candidates deeper inside the cluster of voters should be more centrist and end up more preferred, and ones out in the fringes should be more distant and less preferred.
 
+One advantage of the 2-axis diagram is the reader can easily tell how each candidate should fare in the election based on their distance from the center of the graph. Then the test results, even though based on random data, can immediately be recognized as whether they look correct.
+
 ### Test results
 
 * fully-random ballot sets (100-rcv-test) for all Ranked Choice algorithms
