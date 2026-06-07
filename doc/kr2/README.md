@@ -19,6 +19,6 @@ But they're too complicated to explain to the non-technical public. While the [S
 
 With the Schulze and Tideman algorithms named for their authors, I call this the Kluft Rank-Rate (KR2) method.
 
-Technical documentation in the [PrefVote::KR2 module source code directory](../lab/perl/kr2/).
+Technical documentation in the [PrefVote::KR2 module source code directory](../../lab/perl/kr2/).
 
 A paper on the algorithm will be written in this directory.

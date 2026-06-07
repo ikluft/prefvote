@@ -14,8 +14,8 @@ PrefVote documentation
 
 ### Development
 
-* [Core](../src/perl/prefvote) (Perl 🧅)
-* [KR2 (Kluft Rank-Rate)](../src/perl/kr2/) algorithm development (Perl 🧅)
+* [Core](../lab/perl/prefvote) (Perl 🧅)
+* [KR2 (Kluft Rank-Rate)](../lab/perl/kr2/) algorithm development (Perl 🧅)
 
 ### Legacy Algorithm Base ("LAB")
 
