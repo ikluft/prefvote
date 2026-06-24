@@ -8,16 +8,14 @@ PrefVote documentation
 
 ## Voting method research
 
-* [KR2 (Kluft Rank-Rate)](kr2/) documentation
+* [KR2 (Kluft Rank-Rate)](kr2/) voting algorithm documentation
 
 ## Code libraries
 
-### Development
+### Legacy Algorithm Base ("LAB")
 
 * [Core](../lab/perl/prefvote) (Perl 🧅)
 * [KR2 (Kluft Rank-Rate)](../lab/perl/kr2/) algorithm development (Perl 🧅)
-
-### Legacy Algorithm Base ("LAB")
 
 algorithm code maintained for comparison to KR2
 
