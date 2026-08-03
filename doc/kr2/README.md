@@ -39,6 +39,8 @@ Otherwise ties are broken by using the average choice rank (ACR) where 1st choic
 
 #### Rating levels
 
-KR2 ballots can defined before the poll to use multiple rating groups. If no groups are configured, then the vote is a Condorcet-compliant ranked choice algorithm. Testing has so far shown it to be comparable to the Schulze 2004 or Tideman 1987 (Ranked Pairs) methods. If multiple rating groups are defined, then "rating bound markers" between the groups are inserted in each ballot by the vote entry system. By definition of the algorithm, these markers must all be present in the correct order. Otherwise a ballot missing any rating bound markers or using them out of order must be rejected.
+KR2 ballots can defined before the poll to use multiple rating groups. If no groups are configured, then the vote is a Condorcet-compliant ranked choice algorithm. Testing has so far shown it to be comparable to the Schulze 2004 or Tideman 1987 (Ranked Pairs) methods. If multiple rating groups are defined, then "rating bound markers" between the groups are inserted in each ballot by the vote entry system at the boundaries as specified by the voter, such as between approve and neutral. By definition of the algorithm, these markers must all be present in the correct order. A ballot missing any rating bound markers or using them out of order must be rejected.
 
 The number of rating groups in a KR2 election are called levels. The definition of a poll/election must include a level number if one is desired. Otherwise Level 1 is the default setting.
+
+The default setting at Level 1 is compatible with other ranked choice voting algorithms, taking input ballots with the voter's ranking order and no rating bound markers. At that level, it still differentiates from other ranked choice algorithms by how it breaks a Condorcet tie/paradox using average choice rank (ACR).
