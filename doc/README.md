@@ -1,6 +1,8 @@
 PrefVote documentation
 ======================
 
+The ranked choice voting algorithms in PrefVote can serve purposes for elections and polls. The larger end of the use cases are for elections of public positions or private organizations where one or more winners are chosen from the top of the election ranking. Among the smaller-scale cases, they can be used by teams or groups to combine individual preference rankings into a group ranking. Ranked choice polling can also be used for multiple-choice decisions in meetings or electronic polls.
+
 ## File formats
 
 * [PrefVote_YAML_input.md](PrefVote_YAML_input.md) - YAML input format for PrefVote
