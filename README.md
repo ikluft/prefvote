@@ -4,7 +4,7 @@ by Ian Kluft
 
 PrefVote is a project to promote preference voting.
 
-Implementations of several ranked-choice voting methods and algorithms are included in the ["LAB" (Legacy Algorithm Base)](lab/) directory. The Single Transferable Vote (STV) implementation is descended from the Vote::STV software I wrote in Perl in 1999, with periodic maintenance over the years. Implementation and experimentation with Condorcet-based algorithms Schulze and Ranked Pairs helped me better understand the flaws of STV, and why it has fallen out of favor among those looking for better voting algorithms.
+Implementations of several ranked-choice voting methods and algorithms are included in the ["LAB" (Legacy Algorithm Base)](lab/) directory. (Yes, it's supposed to also sound like laboratory.) The Single Transferable Vote (STV) implementation is descended from the Vote::STV software I wrote in Perl in 1999, with periodic maintenance over the years. Implementation and experimentation with Condorcet-based algorithms Schulze and Ranked Pairs helped me better understand the flaws of STV, and why it has fallen out of favor among those looking for better voting algorithms.
 
 Since the project's original language Perl has strengths in prototyping, that's the reference implementation in this project for multiple language implementations. With translations to multiple programming languages, the library is designed with a [common test suite](test/) among the different implementations to verify proper functioning.
  
@@ -62,4 +62,4 @@ PrefVote's Core module from which all the voting methods inherit common code is 
 
 ACR isn't a Condorcet-compliant method on its own, which PrefVote requires, except having grandfathered in STV. It's basically a cardinal voting method, equivalent to Score Voting but with the number order reversed (1 = 1st place, etc).
 
-In case of a Condorcet paradox (tie), then ACR becomes useful as a tie-breaker method. It uses the voters' average ranking order to break a Condorcet tie.
+In case of a Condorcet paradox (tie), then ACR becomes useful as a tie-breaker method. It uses the voters' average ranking order to break a Condorcet tie. Condorcet uses rankings to find the majority preference when one exists. But in close elections it's possible for no Condorcet winner to exist. All Condorcet-based algorithms augment it with a tie-breaking method. The evolution of PrefVote to include ACR influenced the development of the KR2 algorithm as a tie-breaker which preserves voter preferences and can be explained to the public.
