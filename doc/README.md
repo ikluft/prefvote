@@ -7,7 +7,7 @@ The ranked choice voting algorithms in PrefVote can serve purposes for elections
 
 Setup and configuration instructions for contributing developers
 
-* [perl-dev.md](Perl Development Environment)
+* [Perl Development Environment](perl-dev.md)
 
 ## File formats
 
