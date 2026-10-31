@@ -1,9 +1,17 @@
 Kluft Rank-Rate (KR2) voting method
 ===================================
 
-## Experimental voting method
+The Kluft Rank-Rate (KR2) voting method is intended to advance preference/ranked choice voting. Condorcet-compliant voting methods have been around for decades, making pairwise comparison of voter preferences between candidates. They have proven to be technically sound. But complexity has been a barrier to public acceptance. All Condorcet methods have some kind of tie-breaking when no candidates win outright on the Condorcet criteria. Use of graph algorithms has been common. For tie-breaking, the KR2 algorithm uses a cardinal method. The algorithm has been tested against random voting data and, with satisfactory results so far, the next step is to write a paper about it.
 
-This is an area for experimentation with the Kluft Rank-Rate (KR2) voting method.  The algorithm has been tested against random voting data and, with satisfactory results so far, the next step is to write a paper about it.
+KR2 adds an additional feature of rating levels. These are optionally selected by the administrator before starting the poll. If enabled, voters rate choices by approval, opposition or neutrality. The KR2 level indicates how many rating groups are used.
+
+* At Level 1, rating is disabled and everything is in one group, like other ranked voting algorithms.
+* Level 2 has two rating groups: approve and oppose.
+* Level 3 has three rating groups: approve, neutral and oppose. This is expected to be the most common.
+* Level 4 has four rating groups: strong approve, approve, oppose and strong oppose.
+* Level 5 has five rating groups: strong approve, approve, neutral, oppose and strong oppose.
+
+The ratings are handled by including rating bound markers in the ballot to divide the voter's choices. The bound markers are excluded from lists of winning or losing choices, but can be configured as thresholds of acceptance or rejection. The rating bound markers must be in the correct order, wherever they are among the voter's selections - otherwise the ballot will be rejected. The results will then include rating bound markers among the list of choices. Results which show choices falling below the threshold(s) of opposition are marked as eliminated, even if it leaves one or more available seats of a multi-winner race vacant.
 
 ## Simplifying Condorcet for acceptance by the public
 
