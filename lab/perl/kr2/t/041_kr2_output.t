@@ -774,7 +774,7 @@ Readonly::Array my @result_expected => (
             ]
         ],
         'title' => 'Margin-of-victory matrix',
-        'subtitle' => 'This compares how each choice ranks against others, ordered by Kluft algorithm.',
+        'subtitle' => 'This compares how each choice ranks against others, ordered by KR2 (Kluft Rank-Rate) algorithm.',
     },
 );
 
