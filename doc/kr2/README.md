@@ -13,7 +13,7 @@ While RCV is a big step up from FPTP, there are limitations to the ["Single Tran
 
 There are better ranked choice algorithms at capturing voters' intent, including properly differentiating similar candidates without splitting the vote between them. Variations of the [Condorcet Method](https://electowiki.org/wiki/Condorcet_method) make pairwise comparisons of candidates' wins against others, and pick one if they are preferred against everyone else. But there isn't always a "Condorcet winner" who beats all other candidates in pairwise comparisons. So all Condorcet-based voting methods add some form of tie-breaking to select a winner. Condorcet methods are accepted by mathematicians and computer scientists as much more effective voting methods than FPTP or STV.
 
-So Condorcet methods are better. But they tend to be too complicated to explain to the non-technical public. While the [Schulze]() and [Tideman/Ranked Pairs]() methods are mathematically and technically sound, they involve graph theory algorithms which are much too complex to explain for public acceptance. We must solve that before Condorcet algorithms can break through to become acceptable for wider public use.
+So Condorcet methods are better. But they tend to be too complicated to explain to the non-technical public. While the [Schulze](https://electowiki.org/wiki/Schulze_method) and [Tideman/Ranked Pairs](https://electowiki.org/wiki/Ranked_Pairs) methods are mathematically and technically sound, they involve graph theory algorithms which are much too complex to explain for public acceptance. We must solve that before Condorcet algorithms can break through to become acceptable for wider public use.
 
 ## The Kluft Rank-Rate (KR2) method
 
