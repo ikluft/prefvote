@@ -3,7 +3,7 @@ Kluft Rank-Rate (KR2) voting method
 
 ## Experimental voting method
 
-This is an area for experimentation with the Kluft Rank-Rate (KR2) voting method.  The experiment has been testing the algorithm against test data and, with satisfactory results so far, has led to writing a paper about it.
+This is an area for experimentation with the Kluft Rank-Rate (KR2) voting method.  The algorithm has been tested against random voting data and, with satisfactory results so far, the next step is to write a paper about it.
 
 ## Simplifying Condorcet for acceptance by the public
 
