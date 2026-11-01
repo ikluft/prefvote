@@ -5,7 +5,7 @@ The Kluft Rank-Rate (KR2) voting method is intended to advance preference/ranked
 
 KR2 adds an additional feature of rating levels. These are optionally selected by the administrator before starting the poll. If enabled, voters rate choices by approval, opposition or neutrality. The KR2 level indicates how many rating groups are used.
 
-* At Level 1, rating is disabled and everything is in one group, like other ranked voting algorithms.
+* At Level 1, rating is disabled and everything is in one group, like other ranked voting algorithms. (KR2 still differs from other Condorcet methods by using average choice rank for tie-breaking.)
 * Level 2 has two rating groups: approve and oppose.
 * Level 3 has three rating groups: approve, neutral and oppose. This is expected to be the most common.
 * Level 4 has four rating groups: strong approve, approve, oppose and strong oppose.
@@ -54,3 +54,83 @@ If multiple rating groups are defined, then "rating bound markers" between the g
 The number of rating groups in a KR2 election are called levels. The definition of a poll/election must include a level number if one is desired. Otherwise Level 1 is the default setting.
 
 The default setting at Level 1 is compatible with other ranked choice voting algorithms, taking input ballots with the voter's ranking order and no rating bound markers. At that level, it still differentiates from other ranked choice algorithms by how it breaks a Condorcet tie/paradox using average choice rank (ACR).
+
+##### Comparisons involving rating bound markers
+
+In computation, sorting a list involves comparisons between each of the items. A corner case introduced by KR2's rating bound markers is how to handle comparisons when these markers are one or both of the items being compared in result sorting. The following rules were made to handle this scenario:
+
+* As in other comparison functions between parameters p1 and p2, 0 means equal/tie, -1 means p1 &lt; p2, +1 means p1 &gt; p2
+* If p1 and p2 are regular ballot items: equality is a tie (0)
+* If p1 and p2 are both rating bound markers: support2 &gt; support &gt; neutral &gt; oppose &gt; oppose2
+* In a tie between a regular ballot item and an oppose marker: the oppose marker is greater (rationale: tying with an oppose marker indicates the option is generally opposed)
+* In a tie between a regular ballot item and a support or neutral marker: the support or neutral marker is less (rationale: tying with a support or neutral marker indicates the item is included at the marker's level)
+
+<table border="1">
+<tr>
+<th rowspan="2" colspan="2">&nbsp;</th>
+<th colspan="6" align="center">p2</th>
+</tr>
+<tr>
+<th>item</th>
+<th>support2</th>
+<th>support</th>
+<th>neutral</th>
+<th>oppose</th>
+<th>oppose2</th>
+</tr>
+<tr>
+<th rowspan="6">p1</th>
+<th>item</th>
+<td>0</td>
+<td>+1</td>
+<td>+1</td>
+<td>+1</td>
+<td>-1</td>
+<td>-1</td>
+</tr>
+<tr>
+<th>support2</th>
+<td>-1</td>
+<td>n/a</td>
+<td>+1</td>
+<td>+1</td>
+<td>+1</td>
+<td>+1</td>
+</tr>
+<tr>
+<th>support</th>
+<td>-1</td>
+<td>-1</td>
+<td>n/a</td>
+<td>+1</td>
+<td>+1</td>
+<td>+1</td>
+</tr>
+<tr>
+<th>neutral</th>
+<td>-1</td>
+<td>-1</td>
+<td>-1</td>
+<td>n/a</td>
+<td>+1</td>
+<td>+1</td>
+</tr>
+<tr>
+<th>oppose</th>
+<td>+1</td>
+<td>-1</td>
+<td>-1</td>
+<td>-1</td>
+<td>n/a</td>
+<td>+1</td>
+</tr>
+<tr>
+<th>oppose2</th>
+<td>+1</td>
+<td>-1</td>
+<td>-1</td>
+<td>-1</td>
+<td>-1</td>
+<td>n/a</td>
+</tr>
+</table>
