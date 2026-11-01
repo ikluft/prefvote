@@ -68,7 +68,7 @@ sub do_counting_table
         push @result_rows, \@row;
     }
     $format_class->do_table( $result_data, \@result_rows, "Margin-of-victory matrix",
-        "This compares how each choice ranks against others, ordered by KR2 (Kluft Rank-Rate) algorithm." );
+        "This compares how each choice ranks against others. The KR2 (Kluft Rank-Rate) algorithm orders results by pairwise wins minus losses, with tie-breaking by average ballot ranking." );
 
     return;
 }
