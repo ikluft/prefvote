@@ -65,10 +65,10 @@ In computation, sorting a list involves comparisons between each of the items. A
 * In a tie between a regular ballot item and an oppose marker: the oppose marker is greater (rationale: tying with an oppose marker indicates the option is generally opposed)
 * In a tie between a regular ballot item and a support or neutral marker: the support or neutral marker is less (rationale: tying with a support or neutral marker indicates the item is included at the marker's level)
 
-<table border="1">
+<table>
 <tr>
 <th rowspan="2" colspan="2">&nbsp;</th>
-<th colspan="6" align="center">p2</th>
+<th colspan="6">p2</th>
 </tr>
 <tr>
 <th>item</th>
