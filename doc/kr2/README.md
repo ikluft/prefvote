@@ -39,7 +39,7 @@ The Kluft Rank-Rate (KR2) voting method combines ranked choice ballots in multip
 
 KR2 is a Condorcet-compliant system. That means the definition starts with using ranked preference ballot data to perform pairwise comparisons among all candidates. If one candidate beats all the others in pairwise comparisons, then that candidate wins.
 
-It is possible for close elections to have two or more candidates either tie or make a cycle of beating each other which prevents having one pairwise winner. All Condorcet methods differ in how to handle these ties, also known as the Condorcet Paradox. KR2 orders the candidates by their Copeland Score, which is the number of pairwise wins minus the pairwise losses, with pairwise ties counting as zero. It acts like a round-robin tournament, where competing teams play against each other to make such a ranking order. Except the ranked preference ballots contain enough information to order the candidates by Copeland Score. A Condorcet Winner, if present, will always win this ranking.
+It is possible for close elections to have two or more candidates either tie or make a cycle of beating each other which prevents having one pairwise winner. All Condorcet methods differ in how to handle these ties, also known as the Condorcet Paradox. KR2 orders the candidates by their [Copeland Score](https://electowiki.org/wiki/Copeland%27s_method), which is the number of pairwise wins minus the pairwise losses, with pairwise ties counting as zero. It acts like a round-robin tournament, where competing teams play against each other to make such a ranking order. Except the ranked preference ballots contain enough information to order the candidates by [Copeland Score](https://electowiki.org/wiki/Copeland%27s_method). A Condorcet Winner, if present, will always win this ranking.
 
 #### Condorcet tie-breaking
 
@@ -57,7 +57,7 @@ The default setting at Level 1 is compatible with other ranked choice voting alg
 
 ##### Comparisons involving rating bound markers
 
-Sorting PrefVote's voting results involves [three-way comparisons](https://en.wikipedia.org/wiki/Three-way_comparison) between each of the items. A corner case introduced by KR2's rating bound markers is how to handle comparisons when these markers are one or both of the items being compared in result sorting. The following rules were made to handle this scenario:
+Sorting PrefVote's voting results involves [three-way comparisons](https://en.wikipedia.org/wiki/Three-way_comparison) between each of the items. A corner case introduced by KR2's rating bound markers is how to handle comparisons when these markers are one or both of the items being compared in result sorting. This scenario only comes into play in cases when there is a tie by both [Condorcet](https://electowiki.org/wiki/Condorcet_method)/[Copeland Score](https://electowiki.org/wiki/Copeland%27s_method) and the average choice rank (ACR). The following rules were made to handle final result ordering in this scenario:
 
 * As in other three-way comparison functions between parameters p1 and p2, 0 means equal/tie, -1 means p1 &lt; p2, +1 means p1 &gt; p2.
 * If p1 and p2 are regular ballot items: equality is a tie (0).
