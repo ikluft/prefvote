@@ -60,7 +60,7 @@ The default setting at Level 1 is compatible with other ranked choice voting alg
 Sorting PrefVote's voting results involves [three-way comparisons](https://en.wikipedia.org/wiki/Three-way_comparison) between each of the items. A corner case introduced by KR2's rating bound markers is how to handle comparisons when these markers are one or both of the items being compared in result sorting. This scenario only comes into play in cases when there is a tie by both [Condorcet](https://electowiki.org/wiki/Condorcet_method)/[Copeland Score](https://electowiki.org/wiki/Copeland%27s_method) and the average choice rank (ACR). The following rules were made to handle final result ordering in this scenario:
 
 * As in other three-way comparison functions between parameters p1 and p2, 0 means equal/tie, -1 means p1 &lt; p2, +1 means p1 &gt; p2.
-* If p1 and p2 are regular ballot items: equality is a tie (0).
+* If p1 and p2 are both regular ballot items: equality is a genuine tie (0).
 * If p1 and p2 are both rating bound markers: support2 &gt; support &gt; neutral &gt; oppose &gt; oppose2.
 * In a tie between a regular ballot item and an oppose marker: the oppose marker is greater.
   * rationale: tying with an oppose marker indicates the option is generally opposed, and must be below the marker to show as opposed.

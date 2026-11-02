@@ -15,6 +15,7 @@ package PrefVote::KR2;
 use utf8;
 use autodie;
 use builtin qw(true false);
+use Carp qw(confess);
 use Data::Dumper;
 use Readonly;
 use Set::Tiny qw(set);
@@ -76,6 +77,18 @@ Readonly::Hash my %rating_def => (
         elimination => "_oppose1",
         default => [ above => "_oppose1" ],
     },
+);
+
+# rating reference order hash used in comparison/sorting for ties involving any types of rating bound markers
+# The numbers are arbitary but set the correct relative order for known rating bound marker names.
+Readonly::Hash my %rating_ref_order => (
+    "_support2" => 7,
+    "_support1" => 6,
+    "_support"  => 5,
+    "_neutral"  => 4,
+    "_oppose"   => 3,
+    "_oppose1"  => 2,
+    "_oppose2"  => 1,
 );
 
 # list of names of winners in order by place, ties shown by a set of the tied candidates
@@ -387,6 +400,51 @@ sub compute_condorcet
     return;
 }
 
+# In case of tie by 1st & 2nd comparison, handle the tie by rules for ballot items vs rating bound markers.
+#
+# three-way comparison between parameters p1 and p2: 0 means equal/tie, -1 means p1 &lt; p2, +1 means p1 > p2.
+#   If p1 and p2 are both regular ballot items: equality means a genuine tie (0)
+#   If p1 and p2 are both rating bound markers: support2 > support > neutral > oppose > oppose2
+#   In a tie between a regular ballot item and an oppose marker: the oppose marker is greater
+#   * rationale: tying with an oppose marker, the item must be below the marker to show as opposed
+#   In a tie between a regular ballot item and a support or neutral marker: the support or neutral marker is lesser
+#   * rationale: tying with a support or neutral marker, the item must be above the marker to show as that level
+sub cmp_rating_rules
+{
+    my ( $self, $cand1, $cand2 ) = @_;
+
+    # p1 & p2 are both regular ballot items: equality is a genuine tie (0)
+    if ( substr($cand1, 0, 1) ne "_" and substr($cand2, 0, 1) ne "_" ) {
+        return 0;
+    }
+
+    # p1 & p2 are both rating bound markers: sort by support2 > support/support1 > neutral > oppose/oppose1 > oppose2
+    # use %rating_ref_order to obtain arbitary integer numbers in correct order from rating bound marker names
+    if ( substr($cand1, 0, 1) eq "_" and substr($cand2, 0, 1) eq "_" ) {
+        return $rating_ref_order{$cand1} <=> $rating_ref_order{$cand2};
+    }
+
+    # tie between regular ballot item and oppose marker: oppose marker is greater
+    if ( substr($cand1, 0, 7) eq "_oppose" ) {
+        return 1;
+    }
+    if ( substr($cand2, 0, 7) eq "_oppose" ) {
+        return -1;
+    }
+
+    # tie between a regular ballot item and a support or neutral marker: the support or neutral marker is lesser
+    if ( substr($cand1, 0, 8) eq "_support" or $cand1 eq "_neutral" ) {
+        return -1;
+    }
+    if ( substr($cand2, 0, 8) eq "_support" or $cand2 eq "_neutral" ) {
+        return 1;
+    }
+
+    # all possibilities exhausted - should never reach here
+    # (The rules above will need updating if new rating bound markers are ever added. That would break here.)
+    confess( "cmp_rating_rules( $cand1, $cand2 ) failed - possible corrupted data or marker rules need update" );
+}
+
 # comparison function for sorting results
 sub cmp_choice
 {
@@ -407,7 +465,8 @@ sub cmp_choice
         return fp_cmp( $place1, $place2 );
     }
 
-    return 0;
+    # 3rd comparison: in case of tie by 1st & 2nd comparison, use rules for ballot items vs rating bound markers
+    return $self->cmp_rating_rules($cand1, $cand2);
 }
 
 # use Margin of Victory table to determine voting result order
