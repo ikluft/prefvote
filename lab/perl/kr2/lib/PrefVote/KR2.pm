@@ -406,9 +406,12 @@ sub compute_condorcet
 #   If p1 and p2 are both regular ballot items: equality means a genuine tie (0)
 #   If p1 and p2 are both rating bound markers: support2 > support > neutral > oppose > oppose2
 #   In a tie between a regular ballot item and an oppose marker: the oppose marker is greater
-#   * rationale: tying with an oppose marker, the item must be below the marker to show as opposed
-#   In a tie between a regular ballot item and a support or neutral marker: the support or neutral marker is lesser
-#   * rationale: tying with a support or neutral marker, the item must be above the marker to show as that level
+#   * rationale: tying with an oppose marker, the item must be below the marker in the results to show as opposed
+#   In a tie between a regular ballot item and a neutral marker: a tie is allowed meaning neutral or undecided.
+#   * rationale: unrated items start out by default being tied to neutral when it exists, in even-numbered levels.
+#   In a tie between a regular ballot item and a support marker: the support marker is lesser.
+#   * rationale: tying with a support marker, the item must be above the marker in the results to show as supported.
+
 sub cmp_rating_rules
 {
     my ( $self, $cand1, $cand2 ) = @_;
@@ -432,11 +435,19 @@ sub cmp_rating_rules
         return -1;
     }
 
-    # tie between a regular ballot item and a support or neutral marker: the support or neutral marker is lesser
-    if ( substr($cand1, 0, 8) eq "_support" or $cand1 eq "_neutral" ) {
+    # tie between a regular ballot item and a neutral marker: a tie is allowed meaning neutral or undecided
+    if ( $cand1 eq "_neutral" ) {
+        return 0;
+    }
+    if ( $cand2 eq "_neutral" ) {
+        return 0;
+    }
+
+    # tie between a regular ballot item and a support marker: the support marker is lesser
+    if ( substr($cand1, 0, 8) eq "_support" ) {
         return -1;
     }
-    if ( substr($cand2, 0, 8) eq "_support" or $cand2 eq "_neutral" ) {
+    if ( substr($cand2, 0, 8) eq "_support" ) {
         return 1;
     }
 

@@ -63,9 +63,11 @@ Sorting PrefVote's voting results involves [three-way comparisons](https://en.wi
 * If p1 and p2 are both regular ballot items: equality is a genuine tie (0).
 * If p1 and p2 are both rating bound markers: support2 &gt; support &gt; neutral &gt; oppose &gt; oppose2.
 * In a tie between a regular ballot item and an oppose marker: the oppose marker is greater.
-  * rationale: tying with an oppose marker indicates the option is generally opposed, and must be below the marker to show as opposed.
-* In a tie between a regular ballot item and a support or neutral marker: the support or neutral marker is lesser.
-  * rationale: tying with a support or neutral marker indicates the item is included at the marker's level, and must be above the marker to show as that level.
+  * rationale: tying with an oppose marker indicates the option is generally opposed, and must be below the marker in the results to show as opposed.
+* In a tie between a regular ballot item and a neutral marker: a tie is allowed meaning neutral or undecided.
+  * rationale: unrated items start out by default being tied to neutral when it exists, in even-numbered levels.
+* In a tie between a regular ballot item and a support marker: the support marker is lesser.
+  * rationale: tying with a support marker indicates the option is generally supported, and must be above the marker in the results to show as supported.
 
 <table>
 <tr>
@@ -86,7 +88,7 @@ Sorting PrefVote's voting results involves [three-way comparisons](https://en.wi
 <td>0</td>
 <td>+1</td>
 <td>+1</td>
-<td>+1</td>
+<td>0</td>
 <td>-1</td>
 <td>-1</td>
 </tr>
@@ -110,7 +112,7 @@ Sorting PrefVote's voting results involves [three-way comparisons](https://en.wi
 </tr>
 <tr>
 <th>neutral</th>
-<td>-1</td>
+<td>0</td>
 <td>-1</td>
 <td>-1</td>
 <td>n/a</td>
