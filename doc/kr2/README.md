@@ -63,7 +63,7 @@ Sorting PrefVote's voting results involves [three-way comparisons](https://en.wi
 
 * As in other three-way comparison functions between parameters p1 and p2, 0 means equal/tie, -1 means p1 &lt; p2, +1 means p1 &gt; p2.
 * If p1 and p2 are both regular ballot items: equality is a genuine tie (0).
-* If p1 and p2 are both rating bound markers: support2 &gt; support &gt; neutral &gt; oppose &gt; oppose2.
+* If p1 and p2 are both rating bound markers: support2 (strong support) &gt; support &gt; neutral &gt; oppose &gt; oppose2 (strong oppose).
 * In a tie between a regular ballot item and an oppose marker: the oppose marker is greater.
   * rationale: tying with an oppose marker indicates the option is generally opposed, and must be below the marker in the results to show as opposed.
 * In a tie between a regular ballot item and a neutral marker: a tie is allowed meaning neutral or undecided.
