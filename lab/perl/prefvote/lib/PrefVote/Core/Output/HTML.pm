@@ -134,7 +134,7 @@ This should not be called externally - use L<PrefVote::Core::Output>
 
 ⛔ This is for PrefVote internal use only.
 
-PrefVote::Core::Output::Text is used by L<PrefVote::Core::Output> when HTML is selected as the output format.
+PrefVote::Core::Output::HTML is used by L<PrefVote::Core::Output> when HTML is selected as the output format.
 It provides functions for formatting output including tables in HTML.
 
 =head1 SEE ALSO
