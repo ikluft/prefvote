@@ -1,7 +1,7 @@
 Kluft Rank-Rate (KR2) voting method
 ===================================
 
-The Kluft Rank-Rate (KR2) voting method is intended to advance preference/ranked choice voting. It can be used even for small groups to capture as much as possible of voters' intent. It uses a ranked-choice ballot process for pairwise comparison of all choices. It breaks ties by using choices' average position on the ballot as a rating. Optionally, a poll can be configured to allow voters to rate choices as support, neutral or oppose categories.
+The Kluft Rank-Rate (KR2) voting method is intended to advance preference/ranked choice voting. It can be used even for small groups to combine individual rankings into the group's ranking. It's intended to capture as much as possible of voters' intent. It uses a ranked-choice ballot process for pairwise comparison of all choices. It breaks ties by using choices' average position on the ballot as a rating. Optionally, a poll can be configured to allow voters to rate choices as support, neutral or oppose categories.
 
 Condorcet-compliant voting methods have been around for decades, making pairwise comparison of voter preferences between candidates. They have proven to be technically sound. But complexity has been a barrier to public acceptance. All Condorcet methods have some kind of tie-breaking when no candidates win outright on the Condorcet criteria. Use of graph algorithms has been common. For tie-breaking, the KR2 algorithm uses a cardinal method. The algorithm has been tested against random voting data and, with satisfactory results so far, the next step is to write a paper about it.
 
