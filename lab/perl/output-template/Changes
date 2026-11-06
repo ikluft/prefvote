@@ -1,0 +1,20 @@
+Change log for PrefVote::Core::Output::Template
+
+{{$NEXT}}
+ [API CHANGE]
+
+ [BUG FIXES]
+
+ [DOCS]
+
+ [ENHANCEMENTS]
+
+ [MAJOR]
+
+ [MINOR]
+
+ [REVISION]
+ - new PrefVote::Core::Output::Template implementation
+
+ [SECURITY]
+
