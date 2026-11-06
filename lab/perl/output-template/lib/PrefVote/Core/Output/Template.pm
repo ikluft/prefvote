@@ -22,7 +22,10 @@ use Template;
 use parent       qw(PrefVote);
 
 # parameters are accumulated here to be handed to the template
-our %param;
+if ( not __PACKAGE__->config_exists("output-template")) {
+    __PACKAGE__->config("output-template", {});
+}
+my $param = __PACKAGE__->config("output-template", {});
 
 # method to generate header is skipped
 sub do_header
@@ -34,9 +37,9 @@ sub do_header
 sub do_toc
 {
     my ( $class, $result_data, $toc_rows ) = @_;
-    $param{class} = $class;
-    $param{result_data} = $result_data;
-    $param{toc_rows} = $toc_rows;
+    $param->{class} = $class;
+    $param->{result_data} = $result_data;
+    $param->{toc_rows} = $toc_rows;
     return;
 }
 
@@ -44,14 +47,14 @@ sub do_toc
 sub do_table
 {
     my ( $class, $result_data, $result_rows, $title, $subtitle ) = @_;
-    if ( not exists $param{tables}) {
-        $param{tables} = [];
+    if ( not exists $param->{tables}) {
+        $param->{tables} = [];
     }
     my %table_entry;
     $table_entry{result_rows} = $result_rows;
     $table_entry{title} = $title;
     $table_entry{subtitle} = $subtitle;
-    push @{$param{tables}}, \%table_entry;
+    push @{$param->{tables}}, \%table_entry;
     return;
 }
 
@@ -61,17 +64,17 @@ sub do_footer
     my ( $class, $result_data ) = @_;
 
     # feed the accumulated data to the template
-    my $template = Template->new(
+    my $template_obj = Template->new(
         INTERPOLATE  => 1,               # expand "$var" in plain text
         POST_CHOMP   => 1,               # cleanup whitespace
         EVAL_PERL    => 0,               # for security best practices, do not evaluate Perl code blocks
     );
-    my $template_path = $class->config("template_path");
+    my $template_path = $class->config("template");
     if ( not defined $template_path ) {
-        croak( "template_path not found in configuration" );
+        croak( "template setting not found in configuration" );
     }
-    $template->process( $template_path, \%params )
-        or croak( $template->error());
+    $template_obj->process( $template_path, $param )
+        or croak( $template_obj->error());
 
     return;
 }
