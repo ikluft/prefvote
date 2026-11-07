@@ -943,7 +943,10 @@ sub format_output
 
     # run output handler
     require PrefVote::Core::Output;
-    PrefVote::Core::Output::do_output( $format, ref $self, [ $dumper->dump( $self->result_yaml() ) ] );
+    PrefVote::Core::Output::do_output( $format, ref $self, [ $dumper->dump(
+            $self->result_yaml(),  # vote result data
+            __PACKAGE__->config(), # configuration data
+        ) ] );
     return;
 }
 

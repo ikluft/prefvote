@@ -166,7 +166,7 @@ sub do_counting_table
     my ( $class, $format_class, $result_data, $is_secondary ) = @_;
 
     # generate candidate names list
-    my @candidates = PrefVote::Core::Output->candidates_list($result_data);
+    my @candidates = __PACKAGE__->candidates_list($result_data);
     my $num_cands  = scalar @candidates;
     my $acr        = $result_data->{average_choice_rank};
 
@@ -246,11 +246,11 @@ sub main
         if ($debug) {
             $Data::Dumper::Sortkeys = 1;
             $Data::Dumper::Indent   = 1;
-            PrefVote::Core::Output->debug(1);
+            __PACKAGE__->debug(1);
         }
 
         # check if a class which can handle the requested format exists
-        my $format_class = class_search( "PrefVote::Core::Output::$format", "formatting" );
+        my $format_class = class_search( __PACKAGE__."::$format", "formatting" );
 
         # check if a class which can handle the requested voting method exists
         my $voting_method = PrefVote::Core::supported_method($method);
@@ -262,11 +262,17 @@ sub main
         # slurp standard input
         my $yaml_textref = stdinslurp();
 
-        # decode results data from YAML
+        # decode results and configuration data from YAML
         #__PACKAGE__->debug_print("output() receieved YAML: ".Dumper($yaml_textref));
         my @yaml_docs = Load($$yaml_textref);
         __PACKAGE__->debug_print( "output() decoded YAML: " . Dumper( \@yaml_docs ) );
         my $result_data_root = $yaml_docs[0];
+        my $import_config = $yaml_docs[1];
+
+        # unpack configuration
+        foreach my $key ( sort keys %$import_config ) {
+            __PACKAGE__->config($key, $import_config->{$key});
+        }
 
         # double check proper formatting and voting method from received data
         # top level hash should be named for votring method
