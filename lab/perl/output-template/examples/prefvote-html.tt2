@@ -24,7 +24,7 @@
             [% results.total_ballots %] seat[% IF results.seats > 1 %]s[% END %] available
             [%- END %]
             &#x26AB; [% HTML.escape( results.total_ballots ) %] ballots processed
-            <!-- &#x26AB; [% results.timestamp %] -->
+            &#x26AB; [% results.timestamp %]
             </p>
 
             [%# toc %]
