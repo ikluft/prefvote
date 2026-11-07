@@ -60,7 +60,6 @@ sub config_exists
 # get list of existing config keys
 sub config_keys
 {
-    my ( $self_or_class ) = @_;
     return $config_ref->keys();
 }
 
