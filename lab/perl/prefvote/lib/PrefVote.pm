@@ -44,6 +44,9 @@ sub debug_print
 sub config
 {
     my ( $self_or_class, @args ) = @_;
+    if ( scalar @args == 0 ) {
+        return $config_ref;
+    }
     return $config_ref->accessor(@args);
 }
 
@@ -52,6 +55,13 @@ sub config_exists
 {
     my ( $self_or_class, $key ) = @_;
     return $config_ref->exists($key);
+}
+
+# get list of existing config keys
+sub config_keys
+{
+    my ( $self_or_class ) = @_;
+    return $config_ref->keys();
 }
 
 1;
