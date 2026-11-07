@@ -14,18 +14,84 @@ use warnings;
 package PrefVote::Core::Output::Template;
 
 use utf8;
+use autodie;
 use charnames qw(:loose);
 use feature   qw(say);
+use parent    qw(PrefVote);
 use Carp      qw(croak);
-use autodie;
+use HTML::Escape qw(escape_html);
 use Template;
-use parent       qw(PrefVote);
+use Readonly;
+use Data::Dumper;
+
+# constants
+Readonly::Hash my %rating_bound_desc => (
+    "_support2" => "strong support (above)",
+    "_support1" => "support (above)",
+    "_support" => "support (above)",
+    "_neutral" => "neutral",
+    "_oppose" => "oppose (below)",
+    "_oppose1" => "oppose (below)",
+    "_oppose2" => "strong oppose (below)",
+);
 
 # parameters are accumulated here to be handed to the template
 if ( not __PACKAGE__->config_exists("output-template")) {
     __PACKAGE__->config("output-template", {});
 }
-my $param = __PACKAGE__->config("output-template", {});
+my $param = __PACKAGE__->config("output-template");
+
+# HTML filters (escape and whitespace)
+sub htmlify
+{
+    my $str = escape_html(shift);
+    return $str;
+}
+
+# generate HTML table from an array
+sub html_table
+{
+    my %opts = @_;
+    my $rows = $opts{rows};
+    my $header_row = $opts{header_row} // 0;
+    my $rating_bounds = $opts{rating_bounds} // 0;
+
+    # result list
+    my @out;
+
+    # table heading
+    push @out, '<table>';
+
+    # generate header from first row
+    if ( $header_row ) {
+        my $header = shift @$rows;
+        push @out, "<thead>";
+        push @out, "<tr>";
+        foreach my $col_item (@$header) {
+            push @out, "<th>" . htmlify($col_item) . "</th>";
+        }
+        push @out, "</tr>";
+        push @out, "</thead>";
+    }
+
+    # generate table from remainder of rows
+    push @out, "<tbody>";
+    foreach my $row (@$rows) {
+        push @out, "<tr>";
+        if ( $rating_bounds and substr($row->[0], 0, 1) eq "_" ) {
+            my $bound_desc = $rating_bound_desc{$row->[0]};
+            push @out, "<td colspan=\"" . ( scalar @$row ) . "\"><i>rating boundary: $bound_desc</i></td>";
+        } else {
+            foreach my $col_item (@$row) {
+                push @out, "<td>" . htmlify($col_item) . "</td>";
+            }
+        }
+        push @out, "</tr>";
+    }
+    push @out, "</tbody>";
+    push @out, "</table>";
+    return join( "\n", @out );
+}
 
 # method to generate header is skipped
 sub do_header
@@ -37,6 +103,13 @@ sub do_header
 sub do_toc
 {
     my ( $class, $result_data, $toc_rows ) = @_;
+    if ( __PACKAGE__->debug()) {
+        my @keys = __PACKAGE__->config_keys();
+        say STDERR "$class config keys -> ".join(" ", @keys);
+        foreach my $key ( sort @keys ) {
+            say STDERR "$class config[$key] -> ".((not ref $key) ? $key : Dumper(__PACKAGE__->config($key)));
+        }
+    }
     $param->{class} = $class;
     $param->{result_data} = $result_data;
     $param->{toc_rows} = $toc_rows;
@@ -69,11 +142,18 @@ sub do_footer
         POST_CHOMP   => 1,               # cleanup whitespace
         EVAL_PERL    => 0,               # for security best practices, do not evaluate Perl code blocks
     );
-    my $template_path = $class->config("template");
-    if ( not defined $template_path ) {
+    my $config_args = $class->config("config");
+    if ( not exists $config_args->{template} ) {
         croak( "template setting not found in configuration" );
     }
-    $template_obj->process( $template_path, $param )
+    my $template_path = $config_args->{template};
+    my %template_vars = (
+        html_table => \&html_table,
+        results => $result_data,
+        param => $param,
+        config => $config_args,
+    );
+    $template_obj->process( $template_path, \%template_vars )
         or croak( $template_obj->error());
 
     return;
