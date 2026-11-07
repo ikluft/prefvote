@@ -1,0 +1,44 @@
+<!DOCTYPE html> [% USE HTML %][% USE Dumper %]
+<!-- vim: set filetype=tt2html ai ts=4 sw=4: -->
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        [% IF config.exists("stylesheet") -%]
+            [% FOREACH css IN config.stylesheet.split('\|') %]
+            <link rel="stylesheet" href="[% css %]">
+            [% END %]
+        [% END %]
+        <title>[% param.result_data.name %]</title>
+
+    </head>
+    <body>
+        <div id="prefvote_div">
+            <h1>Vote count: [% param.result_data.name %]</h1>
+
+            [%# header %]
+            <p>
+            [% IF param.result_data.seats == 0 -%]
+            ranking order
+            [%- ELSE -%]
+            [% HTML.escape( param.result_data.total_ballots ) %] seat[% IF param.result_data.seats > 1 %]s[% END %] available
+            [%- END %]
+            &#x26AB; [% HTML.escape( param.result_data.total_ballots ) %] ballots processed
+            </p>
+
+            [%# toc %]
+            [% html_table( "rows", param.toc_rows, "header_row", 1, "rating_bounds", 1 ) %]
+
+            [%# tables %]
+            [% FOREACH table IN param.tables %]
+                [% html_table( "rows", table.result_rows, "header_row", 1 ) %]
+            [% END %]
+
+            <!--
+            <pre>config: [%# Dumper.dump_html(config) %]</pre>
+            <pre>param: [%# Dumper.dump_html(param) %]</pre>
+            -->
+        </div>
+    </body>
+</html>
+
