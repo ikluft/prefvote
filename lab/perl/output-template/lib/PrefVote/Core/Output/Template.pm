@@ -139,13 +139,15 @@ sub do_footer
     }
 
     # feed the accumulated data to the template
+    my $config_args = $class->config("config");
+    my $include_path = $config_args->{include};
     my $template_obj = Template->new(
         INTERPOLATE  => 1,               # expand "$var" in plain text
         POST_CHOMP   => 1,               # cleanup whitespace
         EVAL_PERL    => 0,               # for security best practices, do not evaluate Perl code blocks
         ENCODING     => 'utf8',          # force UTF-8 encoding
+        (defined $include_path ? (INCLUDE_PATH => $include_path) : ()),
     );
-    my $config_args = $class->config("config");
     if ( not exists $config_args->{template} ) {
         croak( "template setting not found in configuration" );
     }
