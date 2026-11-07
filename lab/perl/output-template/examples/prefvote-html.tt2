@@ -9,21 +9,22 @@
             <link rel="stylesheet" href="[% css %]">
             [% END %]
         [% END %]
-        <title>[% param.result_data.name %]</title>
+        <title>[% HTML.escape( results.name ) %]</title>
 
     </head>
     <body>
         <div id="prefvote_div">
-            <h1>Vote count: [% param.result_data.name %]</h1>
+            <h1>Vote count: [% HTML.escape( results.name ) %]</h1>
 
             [%# header %]
             <p>
-            [% IF param.result_data.seats == 0 -%]
+            [% IF results.seats == 0 -%]
             ranking order
             [%- ELSE -%]
-            [% HTML.escape( param.result_data.total_ballots ) %] seat[% IF param.result_data.seats > 1 %]s[% END %] available
+            [% results.total_ballots %] seat[% IF results.seats > 1 %]s[% END %] available
             [%- END %]
-            &#x26AB; [% HTML.escape( param.result_data.total_ballots ) %] ballots processed
+            &#x26AB; [% HTML.escape( results.total_ballots ) %] ballots processed
+            <!-- &#x26AB; [% results.timestamp %] -->
             </p>
 
             [%# toc %]
@@ -31,12 +32,22 @@
 
             [%# tables %]
             [% FOREACH table IN param.tables %]
+                [% IF table.exists("title") %]
+                    <h3>[% HTML.escape( table.title ) %]</h3>
+                [% END %]
+                [% IF table.exists("subtitle") %]
+                    <p>[% HTML.escape( table.subtitle ) %]</p>
+                [% END %]
                 [% html_table( "rows", table.result_rows, "header_row", 1 ) %]
             [% END %]
 
             <!--
+            <hr>
             <pre>config: [%# Dumper.dump_html(config) %]</pre>
+            <hr>
             <pre>param: [%# Dumper.dump_html(param) %]</pre>
+            <hr>
+            <pre>results: [%# Dumper.dump_html(results) %]</pre>
             -->
         </div>
     </body>

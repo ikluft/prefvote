@@ -103,15 +103,7 @@ sub do_header
 sub do_toc
 {
     my ( $class, $result_data, $toc_rows ) = @_;
-    if ( __PACKAGE__->debug()) {
-        my @keys = __PACKAGE__->config_keys();
-        say STDERR "$class config keys -> ".join(" ", @keys);
-        foreach my $key ( sort @keys ) {
-            say STDERR "$class config[$key] -> ".((not ref $key) ? $key : Dumper(__PACKAGE__->config($key)));
-        }
-    }
     $param->{class} = $class;
-    $param->{result_data} = $result_data;
     $param->{toc_rows} = $toc_rows;
     return;
 }
@@ -136,11 +128,22 @@ sub do_footer
 {
     my ( $class, $result_data ) = @_;
 
+    # make debug status available before template
+    if ( __PACKAGE__->debug()) {
+        my @keys = __PACKAGE__->config_keys();
+        say STDERR "$class config keys -> ".join(" ", @keys);
+        foreach my $key ( sort @keys ) {
+            my $value = __PACKAGE__->config($key);
+            say STDERR "$class config[$key] -> ".((not ref $value) ? $value : Dumper($value));
+        }
+    }
+
     # feed the accumulated data to the template
     my $template_obj = Template->new(
         INTERPOLATE  => 1,               # expand "$var" in plain text
         POST_CHOMP   => 1,               # cleanup whitespace
         EVAL_PERL    => 0,               # for security best practices, do not evaluate Perl code blocks
+        ENCODING     => 'utf8',          # force UTF-8 encoding
     );
     my $config_args = $class->config("config");
     if ( not exists $config_args->{template} ) {
