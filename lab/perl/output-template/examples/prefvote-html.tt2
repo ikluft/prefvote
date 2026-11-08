@@ -14,9 +14,17 @@
     </head>
     <body>
         <div id="prefvote_div">
-            <h1>Vote count: [% HTML.escape( results.name ) %]</h1>
+            [% TRY %]
+                [% PROCESS "header.tt2" %]
+            [% CATCH file %]
+                <h1>Vote count: [% HTML.escape( results.name ) %]</h1>
+            [% END %]
 
-            [%# header %]
+            [%# heading %]
+            [% TRY %]
+                [% INCLUDE "heading_top.tt2" %]
+            [% CATCH file %]
+            [% END %]
             <p>
             [% IF results.seats == 0 -%]
             ranking order
@@ -26,11 +34,24 @@
             &#x26AB; [% HTML.escape( results.total_ballots ) %] ballots processed
             &#x26AB; [% results.timestamp %]
             </p>
+            [% TRY %]
+                [% INCLUDE "heading_bottom.tt2" %]
+            [% CATCH file %]
+            [% END %]
 
             [%# toc %]
+            [% TRY %]
+                [% INCLUDE "toc_top.tt2" %]
+            [% CATCH file %]
+            [% END %]
             [% html_table( "rows", param.toc_rows, "header_row", 1, "rating_bounds", 1 ) %]
+            [% TRY %]
+                [% INCLUDE "toc_bottom.tt2" %]
+            [% CATCH file %]
+            [% END %]
 
             [%# tables %]
+            [% count = 0 %]
             [% FOREACH table IN param.tables %]
                 [% IF table.exists("title") %]
                     <h3>[% HTML.escape( table.title ) %]</h3>
@@ -38,7 +59,25 @@
                 [% IF table.exists("subtitle") %]
                     <p>[% HTML.escape( table.subtitle ) %]</p>
                 [% END %]
+                [% toptext = "table" _ count _ "_top.tt2" %]
+                [% TRY %]
+                    [% INCLUDE $toptext %]
+                [% CATCH file %]
+                    <!-- [% toptext %] -->
+                [% END %]
                 [% html_table( "rows", table.result_rows, "header_row", 1 ) %]
+                [% bottomtext = "table" _ count _ "_bottom.tt2" %]
+                [% TRY %]
+                    [% INCLUDE $bottomtext %]
+                [% CATCH file %]
+                    <!-- [% bottomtext %] -->
+                [% END %]
+                [% count = count + 1 %]
+            [% END %]
+
+            [% TRY %]
+                [% INCLUDE "footer.tt2" %]
+            [% CATCH file %]
             [% END %]
 
             <!--
