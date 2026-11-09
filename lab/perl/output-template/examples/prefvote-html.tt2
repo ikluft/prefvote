@@ -32,7 +32,9 @@
             [% results.total_ballots %] seat[% IF results.seats > 1 %]s[% END %] available
             [%- END %]
             &#x26AB; [% HTML.escape( results.total_ballots ) %] ballots processed
+            [%- IF not config.exists("omit-timestamp") -%]
             &#x26AB; [% results.timestamp %]
+            [%- END %]
             </p>
             [% TRY %]
                 [% INCLUDE "heading_bottom.tt2" %]
