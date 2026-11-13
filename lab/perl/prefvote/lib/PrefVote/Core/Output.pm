@@ -36,7 +36,7 @@ Readonly::Hash my %symbols => (
     "lose"    => "\N{CROSS MARK}",
     "tie"     => "\N{LARGE BLUE CIRCLE}",
     "lock"    => "\N{LOCK}",
-    "n/a"     => "\N{PROHIBITED SIGN}",
+    "n/a"     => "\N{CIRCLED DIVISION SLASH}",
     "unknown" => "\N{WHITE QUESTION MARK ORNAMENT}",
 );
 my %symbol_alias;

@@ -398,7 +398,7 @@ title: KR2 Test Suite 0001 (50 ballots)
 <tbody>
 <tr>
 <td>BORING</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>20 ✅</td>
 <td>22 ✅</td>
 <td>34 ✅</td>
@@ -408,7 +408,7 @@ title: KR2 Test Suite 0001 (50 ballots)
 <tr>
 <td>DYSFUNCTIONAL</td>
 <td>-20 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>4 ✅</td>
 <td>14 ✅</td>
 <td>26 ✅</td>
@@ -418,7 +418,7 @@ title: KR2 Test Suite 0001 (50 ballots)
 <td>FACTIOUS</td>
 <td>-22 ❌</td>
 <td>-4 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>24 ✅</td>
 <td>20 ✅</td>
 <td>12 ✅</td>
@@ -428,7 +428,7 @@ title: KR2 Test Suite 0001 (50 ballots)
 <td>-34 ❌</td>
 <td>-14 ❌</td>
 <td>-24 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>0 🔵</td>
 <td>6 ✅</td>
 </tr>
@@ -438,7 +438,7 @@ title: KR2 Test Suite 0001 (50 ballots)
 <td>-26 ❌</td>
 <td>-20 ❌</td>
 <td>0 🔵</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>2 ✅</td>
 </tr>
 <tr>
@@ -448,7 +448,7 @@ title: KR2 Test Suite 0001 (50 ballots)
 <td>-12 ❌</td>
 <td>-6 ❌</td>
 <td>-2 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 </tr>
 </tbody>
 </table>
@@ -555,7 +555,7 @@ title: KR2 Test Suite 0001 (50 ballots)
 <tbody>
 <tr>
 <td>BORING</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>20 ✅🔒</td>
 <td>22 ✅🔒</td>
 <td>34 ✅🔒</td>
@@ -565,7 +565,7 @@ title: KR2 Test Suite 0001 (50 ballots)
 <tr>
 <td>DYSFUNCTIONAL</td>
 <td>-20 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>4 ✅🔒</td>
 <td>14 ✅🔒</td>
 <td>26 ✅🔒</td>
@@ -575,7 +575,7 @@ title: KR2 Test Suite 0001 (50 ballots)
 <td>FACTIOUS</td>
 <td>-22 ❌</td>
 <td>-4 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>24 ✅🔒</td>
 <td>20 ✅🔒</td>
 <td>12 ✅🔒</td>
@@ -585,7 +585,7 @@ title: KR2 Test Suite 0001 (50 ballots)
 <td>-34 ❌</td>
 <td>-14 ❌</td>
 <td>-24 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>0 🔵</td>
 <td>6 ✅🔒</td>
 </tr>
@@ -595,7 +595,7 @@ title: KR2 Test Suite 0001 (50 ballots)
 <td>-26 ❌</td>
 <td>-20 ❌</td>
 <td>0 🔵</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>2 ✅🔒</td>
 </tr>
 <tr>
@@ -605,7 +605,7 @@ title: KR2 Test Suite 0001 (50 ballots)
 <td>-12 ❌</td>
 <td>-6 ❌</td>
 <td>-2 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 </tr>
 </tbody>
 </table>
@@ -714,7 +714,7 @@ title: KR2 Test Suite 0001 (50 ballots)
 <tr>
 <td>BORING</td>
 <td>5</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>20 ✅</td>
 <td>22 ✅</td>
 <td>34 ✅</td>
@@ -725,7 +725,7 @@ title: KR2 Test Suite 0001 (50 ballots)
 <td>DYSFUNCTIONAL</td>
 <td>3</td>
 <td>-20 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>4 ✅</td>
 <td>14 ✅</td>
 <td>26 ✅</td>
@@ -736,7 +736,7 @@ title: KR2 Test Suite 0001 (50 ballots)
 <td>1</td>
 <td>-22 ❌</td>
 <td>-4 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>24 ✅</td>
 <td>20 ✅</td>
 <td>12 ✅</td>
@@ -747,7 +747,7 @@ title: KR2 Test Suite 0001 (50 ballots)
 <td>-34 ❌</td>
 <td>-14 ❌</td>
 <td>-24 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>0 🔵</td>
 <td>6 ✅</td>
 </tr>
@@ -758,7 +758,7 @@ title: KR2 Test Suite 0001 (50 ballots)
 <td>-26 ❌</td>
 <td>-20 ❌</td>
 <td>0 🔵</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>2 ✅</td>
 </tr>
 <tr>
@@ -769,7 +769,7 @@ title: KR2 Test Suite 0001 (50 ballots)
 <td>-12 ❌</td>
 <td>-6 ❌</td>
 <td>-2 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 </tr>
 </tbody>
 </table>

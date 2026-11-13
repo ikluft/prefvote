@@ -394,7 +394,7 @@ title: Test Vote 006 (100 ballots)
 <tbody>
 <tr>
 <td>DYSFUNCTIONAL</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>1 ✅</td>
 <td>8 ✅</td>
 <td>5 ✅</td>
@@ -404,7 +404,7 @@ title: Test Vote 006 (100 ballots)
 <tr>
 <td>BORING</td>
 <td>-1 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>-1 ❌</td>
 <td>7 ✅</td>
 <td>3 ✅</td>
@@ -414,7 +414,7 @@ title: Test Vote 006 (100 ballots)
 <td>FACTIOUS</td>
 <td>-8 ❌</td>
 <td>1 ✅</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>13 ✅</td>
 <td>-7 ❌</td>
 <td>14 ✅</td>
@@ -424,7 +424,7 @@ title: Test Vote 006 (100 ballots)
 <td>-5 ❌</td>
 <td>-7 ❌</td>
 <td>-13 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>9 ✅</td>
 <td>12 ✅</td>
 </tr>
@@ -434,7 +434,7 @@ title: Test Vote 006 (100 ballots)
 <td>-3 ❌</td>
 <td>7 ✅</td>
 <td>-9 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>8 ✅</td>
 </tr>
 <tr>
@@ -444,7 +444,7 @@ title: Test Vote 006 (100 ballots)
 <td>-14 ❌</td>
 <td>-12 ❌</td>
 <td>-8 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 </tr>
 </tbody>
 </table>
@@ -551,7 +551,7 @@ title: Test Vote 006 (100 ballots)
 <tbody>
 <tr>
 <td>DYSFUNCTIONAL</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>1 ✅🔒</td>
 <td>8 ✅🔒</td>
 <td>5 ✅🔒</td>
@@ -561,7 +561,7 @@ title: Test Vote 006 (100 ballots)
 <tr>
 <td>BORING</td>
 <td>-1 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>-1 ❌</td>
 <td>7 ✅🔒</td>
 <td>3 ✅🔒</td>
@@ -571,7 +571,7 @@ title: Test Vote 006 (100 ballots)
 <td>FACTIOUS</td>
 <td>-8 ❌</td>
 <td>1 ✅🔒</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>13 ✅🔒</td>
 <td>-7 ❌</td>
 <td>14 ✅🔒</td>
@@ -581,7 +581,7 @@ title: Test Vote 006 (100 ballots)
 <td>-5 ❌</td>
 <td>-7 ❌</td>
 <td>-13 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>9 ✅🔒</td>
 <td>12 ✅🔒</td>
 </tr>
@@ -591,7 +591,7 @@ title: Test Vote 006 (100 ballots)
 <td>-3 ❌</td>
 <td>7 ✅</td>
 <td>-9 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>8 ✅🔒</td>
 </tr>
 <tr>
@@ -601,7 +601,7 @@ title: Test Vote 006 (100 ballots)
 <td>-14 ❌</td>
 <td>-12 ❌</td>
 <td>-8 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 </tr>
 </tbody>
 </table>
@@ -710,7 +710,7 @@ title: Test Vote 006 (100 ballots)
 <tr>
 <td>DYSFUNCTIONAL</td>
 <td>5</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>1 ✅</td>
 <td>8 ✅</td>
 <td>6 ✅</td>
@@ -721,7 +721,7 @@ title: Test Vote 006 (100 ballots)
 <td>BORING</td>
 <td>1</td>
 <td>-1 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>-1 ❌</td>
 <td>3 ✅</td>
 <td>7 ✅</td>
@@ -732,7 +732,7 @@ title: Test Vote 006 (100 ballots)
 <td>1</td>
 <td>-8 ❌</td>
 <td>1 ✅</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>-7 ❌</td>
 <td>13 ✅</td>
 <td>14 ✅</td>
@@ -743,7 +743,7 @@ title: Test Vote 006 (100 ballots)
 <td>-6 ❌</td>
 <td>-3 ❌</td>
 <td>7 ✅</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>-9 ❌</td>
 <td>8 ✅</td>
 </tr>
@@ -754,7 +754,7 @@ title: Test Vote 006 (100 ballots)
 <td>-7 ❌</td>
 <td>-13 ❌</td>
 <td>9 ✅</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>12 ✅</td>
 </tr>
 <tr>
@@ -765,7 +765,7 @@ title: Test Vote 006 (100 ballots)
 <td>-14 ❌</td>
 <td>-8 ❌</td>
 <td>-12 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 </tr>
 </tbody>
 </table>

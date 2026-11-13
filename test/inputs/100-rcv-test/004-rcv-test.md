@@ -394,7 +394,7 @@ title: Test Vote 004 (250 ballots)
 <tbody>
 <tr>
 <td>FACTIOUS</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>8 ✅</td>
 <td>58 ✅</td>
 <td>71 ✅</td>
@@ -404,7 +404,7 @@ title: Test Vote 004 (250 ballots)
 <tr>
 <td>EVIL</td>
 <td>-8 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>48 ✅</td>
 <td>71 ✅</td>
 <td>67 ✅</td>
@@ -414,7 +414,7 @@ title: Test Vote 004 (250 ballots)
 <td>CHAOTIC</td>
 <td>-58 ❌</td>
 <td>-48 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>19 ✅</td>
 <td>4 ✅</td>
 <td>15 ✅</td>
@@ -424,7 +424,7 @@ title: Test Vote 004 (250 ballots)
 <td>-71 ❌</td>
 <td>-71 ❌</td>
 <td>-19 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>9 ✅</td>
 <td>2 ✅</td>
 </tr>
@@ -434,7 +434,7 @@ title: Test Vote 004 (250 ballots)
 <td>-67 ❌</td>
 <td>-4 ❌</td>
 <td>-9 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>12 ✅</td>
 </tr>
 <tr>
@@ -444,7 +444,7 @@ title: Test Vote 004 (250 ballots)
 <td>-15 ❌</td>
 <td>-2 ❌</td>
 <td>-12 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 </tr>
 </tbody>
 </table>
@@ -551,7 +551,7 @@ title: Test Vote 004 (250 ballots)
 <tbody>
 <tr>
 <td>FACTIOUS</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>8 ✅🔒</td>
 <td>58 ✅🔒</td>
 <td>71 ✅🔒</td>
@@ -561,7 +561,7 @@ title: Test Vote 004 (250 ballots)
 <tr>
 <td>EVIL</td>
 <td>-8 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>48 ✅🔒</td>
 <td>71 ✅🔒</td>
 <td>67 ✅🔒</td>
@@ -571,7 +571,7 @@ title: Test Vote 004 (250 ballots)
 <td>CHAOTIC</td>
 <td>-58 ❌</td>
 <td>-48 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>19 ✅🔒</td>
 <td>4 ✅🔒</td>
 <td>15 ✅🔒</td>
@@ -581,7 +581,7 @@ title: Test Vote 004 (250 ballots)
 <td>-71 ❌</td>
 <td>-71 ❌</td>
 <td>-19 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>9 ✅🔒</td>
 <td>2 ✅🔒</td>
 </tr>
@@ -591,7 +591,7 @@ title: Test Vote 004 (250 ballots)
 <td>-67 ❌</td>
 <td>-4 ❌</td>
 <td>-9 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>12 ✅🔒</td>
 </tr>
 <tr>
@@ -601,7 +601,7 @@ title: Test Vote 004 (250 ballots)
 <td>-15 ❌</td>
 <td>-2 ❌</td>
 <td>-12 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 </tr>
 </tbody>
 </table>
@@ -710,7 +710,7 @@ title: Test Vote 004 (250 ballots)
 <tr>
 <td>FACTIOUS</td>
 <td>5</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>8 ✅</td>
 <td>58 ✅</td>
 <td>71 ✅</td>
@@ -721,7 +721,7 @@ title: Test Vote 004 (250 ballots)
 <td>EVIL</td>
 <td>3</td>
 <td>-8 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>48 ✅</td>
 <td>71 ✅</td>
 <td>67 ✅</td>
@@ -732,7 +732,7 @@ title: Test Vote 004 (250 ballots)
 <td>1</td>
 <td>-58 ❌</td>
 <td>-48 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>19 ✅</td>
 <td>4 ✅</td>
 <td>15 ✅</td>
@@ -743,7 +743,7 @@ title: Test Vote 004 (250 ballots)
 <td>-71 ❌</td>
 <td>-71 ❌</td>
 <td>-19 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>9 ✅</td>
 <td>2 ✅</td>
 </tr>
@@ -754,7 +754,7 @@ title: Test Vote 004 (250 ballots)
 <td>-67 ❌</td>
 <td>-4 ❌</td>
 <td>-9 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>12 ✅</td>
 </tr>
 <tr>
@@ -765,7 +765,7 @@ title: Test Vote 004 (250 ballots)
 <td>-15 ❌</td>
 <td>-2 ❌</td>
 <td>-12 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 </tr>
 </tbody>
 </table>

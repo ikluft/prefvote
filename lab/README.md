@@ -217,7 +217,7 @@ Notes about the STV example:
 <tbody>
 <tr>
 <td>FACTIOUS</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>7 ✅</td>
 <td>57 ✅</td>
 <td>67 ✅</td>
@@ -227,7 +227,7 @@ Notes about the STV example:
 <tr>
 <td>EVIL</td>
 <td>-7 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>48 ✅</td>
 <td>68 ✅</td>
 <td>68 ✅</td>
@@ -237,7 +237,7 @@ Notes about the STV example:
 <td>CHAOTIC</td>
 <td>-57 ❌</td>
 <td>-48 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>16 ✅</td>
 <td>5 ✅</td>
 <td>15 ✅</td>
@@ -247,7 +247,7 @@ Notes about the STV example:
 <td>-67 ❌</td>
 <td>-68 ❌</td>
 <td>-16 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>13 ✅</td>
 <td>5 ✅</td>
 </tr>
@@ -257,7 +257,7 @@ Notes about the STV example:
 <td>-68 ❌</td>
 <td>-5 ❌</td>
 <td>-13 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>11 ✅</td>
 </tr>
 <tr>
@@ -267,7 +267,7 @@ Notes about the STV example:
 <td>-15 ❌</td>
 <td>-5 ❌</td>
 <td>-11 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 </tr>
 </tbody>
 </table>
@@ -345,7 +345,7 @@ Notes about the Schulze example:
 <tbody>
 <tr>
 <td>FACTIOUS</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>7 ✅🔒</td>
 <td>57 ✅🔒</td>
 <td>67 ✅🔒</td>
@@ -355,7 +355,7 @@ Notes about the Schulze example:
 <tr>
 <td>EVIL</td>
 <td>-7 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>48 ✅🔒</td>
 <td>68 ✅🔒</td>
 <td>68 ✅🔒</td>
@@ -365,7 +365,7 @@ Notes about the Schulze example:
 <td>CHAOTIC</td>
 <td>-57 ❌</td>
 <td>-48 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>16 ✅🔒</td>
 <td>5 ✅🔒</td>
 <td>15 ✅🔒</td>
@@ -375,7 +375,7 @@ Notes about the Schulze example:
 <td>-67 ❌</td>
 <td>-68 ❌</td>
 <td>-16 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>13 ✅🔒</td>
 <td>5 ✅🔒</td>
 </tr>
@@ -385,7 +385,7 @@ Notes about the Schulze example:
 <td>-68 ❌</td>
 <td>-5 ❌</td>
 <td>-13 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>11 ✅🔒</td>
 </tr>
 <tr>
@@ -395,7 +395,7 @@ Notes about the Schulze example:
 <td>-15 ❌</td>
 <td>-5 ❌</td>
 <td>-11 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 </tr>
 </tbody>
 </table>

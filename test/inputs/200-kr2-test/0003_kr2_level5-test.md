@@ -285,7 +285,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <tr>
 <td>EVIL</td>
 <td>11</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>56 ✅</td>
 <td>46 ✅</td>
 <td>44 ✅</td>
@@ -302,7 +302,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>ABNORMAL</td>
 <td>9</td>
 <td>-56 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>30 ✅</td>
 <td>34 ✅</td>
 <td>114 ✅</td>
@@ -319,7 +319,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>7</td>
 <td>-46 ❌</td>
 <td>-30 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>24 ✅</td>
 <td>78 ✅</td>
 <td>200 ✅</td>
@@ -336,7 +336,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>-44 ❌</td>
 <td>-34 ❌</td>
 <td>-24 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>92 ✅</td>
 <td>82 ✅</td>
 <td>56 ✅</td>
@@ -353,7 +353,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>-114 ❌</td>
 <td>-78 ❌</td>
 <td>-92 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>14 ✅</td>
 <td>18 ✅</td>
 <td>82 ✅</td>
@@ -370,7 +370,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>-200 ❌</td>
 <td>-82 ❌</td>
 <td>-14 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>24 ✅</td>
 <td>22 ✅</td>
 <td>66 ✅</td>
@@ -387,7 +387,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>-56 ❌</td>
 <td>-18 ❌</td>
 <td>-24 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>0 🔵</td>
 <td>30 ✅</td>
 <td>60 ✅</td>
@@ -404,7 +404,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>-82 ❌</td>
 <td>-22 ❌</td>
 <td>0 🔵</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>16 ✅</td>
 <td>44 ✅</td>
 <td>112 ✅</td>
@@ -421,7 +421,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>-66 ❌</td>
 <td>-30 ❌</td>
 <td>-16 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>22 ✅</td>
 <td>86 ✅</td>
 <td>102 ✅</td>
@@ -438,7 +438,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>-60 ❌</td>
 <td>-44 ❌</td>
 <td>-22 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>200 ✅</td>
 <td>86 ✅</td>
 </tr>
@@ -455,7 +455,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>-112 ❌</td>
 <td>-86 ❌</td>
 <td>-200 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>24 ✅</td>
 </tr>
 <tr>
@@ -472,7 +472,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>-102 ❌</td>
 <td>-86 ❌</td>
 <td>-24 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 </tr>
 </tbody>
 </table>

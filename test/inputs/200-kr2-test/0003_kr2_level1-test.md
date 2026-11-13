@@ -504,7 +504,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <tbody>
 <tr>
 <td>EVIL</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>56 ✅</td>
 <td>44 ✅</td>
 <td>108 ✅</td>
@@ -516,7 +516,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <tr>
 <td>ABNORMAL</td>
 <td>-56 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>34 ✅</td>
 <td>114 ✅</td>
 <td>106 ✅</td>
@@ -528,7 +528,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>GROWLER</td>
 <td>-44 ❌</td>
 <td>-34 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>92 ✅</td>
 <td>56 ✅</td>
 <td>88 ✅</td>
@@ -540,7 +540,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>-108 ❌</td>
 <td>-114 ❌</td>
 <td>-92 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>18 ✅</td>
 <td>82 ✅</td>
 <td>44 ✅</td>
@@ -552,7 +552,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>-106 ❌</td>
 <td>-56 ❌</td>
 <td>-18 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>0 🔵</td>
 <td>30 ✅</td>
 <td>84 ✅</td>
@@ -564,7 +564,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>-88 ❌</td>
 <td>-82 ❌</td>
 <td>0 🔵</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>16 ✅</td>
 <td>80 ✅</td>
 </tr>
@@ -576,7 +576,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>-44 ❌</td>
 <td>-30 ❌</td>
 <td>-16 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>102 ✅</td>
 </tr>
 <tr>
@@ -588,7 +588,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>-84 ❌</td>
 <td>-80 ❌</td>
 <td>-102 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 </tr>
 </tbody>
 </table>
@@ -715,7 +715,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <tbody>
 <tr>
 <td>EVIL</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>56 ✅🔒</td>
 <td>44 ✅🔒</td>
 <td>108 ✅🔒</td>
@@ -727,7 +727,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <tr>
 <td>ABNORMAL</td>
 <td>-56 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>34 ✅🔒</td>
 <td>114 ✅🔒</td>
 <td>106 ✅🔒</td>
@@ -739,7 +739,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>GROWLER</td>
 <td>-44 ❌</td>
 <td>-34 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>92 ✅🔒</td>
 <td>56 ✅🔒</td>
 <td>88 ✅🔒</td>
@@ -751,7 +751,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>-108 ❌</td>
 <td>-114 ❌</td>
 <td>-92 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>18 ✅🔒</td>
 <td>82 ✅🔒</td>
 <td>44 ✅🔒</td>
@@ -763,7 +763,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>-106 ❌</td>
 <td>-56 ❌</td>
 <td>-18 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>0 🔵</td>
 <td>30 ✅🔒</td>
 <td>84 ✅🔒</td>
@@ -775,7 +775,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>-88 ❌</td>
 <td>-82 ❌</td>
 <td>0 🔵</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>16 ✅🔒</td>
 <td>80 ✅🔒</td>
 </tr>
@@ -787,7 +787,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>-44 ❌</td>
 <td>-30 ❌</td>
 <td>-16 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>102 ✅🔒</td>
 </tr>
 <tr>
@@ -799,7 +799,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>-84 ❌</td>
 <td>-80 ❌</td>
 <td>-102 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 </tr>
 </tbody>
 </table>
@@ -928,7 +928,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <tr>
 <td>EVIL</td>
 <td>7</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>56 ✅</td>
 <td>44 ✅</td>
 <td>108 ✅</td>
@@ -941,7 +941,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>ABNORMAL</td>
 <td>5</td>
 <td>-56 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>34 ✅</td>
 <td>114 ✅</td>
 <td>106 ✅</td>
@@ -954,7 +954,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>3</td>
 <td>-44 ❌</td>
 <td>-34 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>92 ✅</td>
 <td>56 ✅</td>
 <td>88 ✅</td>
@@ -967,7 +967,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>-108 ❌</td>
 <td>-114 ❌</td>
 <td>-92 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>18 ✅</td>
 <td>82 ✅</td>
 <td>44 ✅</td>
@@ -980,7 +980,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>-106 ❌</td>
 <td>-56 ❌</td>
 <td>-18 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>0 🔵</td>
 <td>30 ✅</td>
 <td>84 ✅</td>
@@ -993,7 +993,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>-88 ❌</td>
 <td>-82 ❌</td>
 <td>0 🔵</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>16 ✅</td>
 <td>80 ✅</td>
 </tr>
@@ -1006,7 +1006,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>-44 ❌</td>
 <td>-30 ❌</td>
 <td>-16 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>102 ✅</td>
 </tr>
 <tr>
@@ -1019,7 +1019,7 @@ title: KR2 Test Suite 0003 (200 ballots)
 <td>-84 ❌</td>
 <td>-80 ❌</td>
 <td>-102 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 </tr>
 </tbody>
 </table>

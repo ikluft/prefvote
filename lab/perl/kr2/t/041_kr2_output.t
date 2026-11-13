@@ -715,7 +715,7 @@ Readonly::Array my @result_expected => (
             [
                 'EVIL',
                 undef,
-                "\x{1f6c7}",
+                "\x{2298}",
                 "1 \x{2705}",
                 "12 \x{2705}",
                 "7 \x{2705}",
@@ -726,7 +726,7 @@ Readonly::Array my @result_expected => (
                 'FACTIOUS',
                 undef,
                 "-1 \x{274c}",
-                "\x{1f6c7}",
+                "\x{2298}",
                 "12 \x{2705}",
                 "10 \x{2705}",
                 "13 \x{2705}",
@@ -737,7 +737,7 @@ Readonly::Array my @result_expected => (
                 undef,
                 "-12 \x{274c}",
                 "-12 \x{274c}",
-                "\x{1f6c7}",
+                "\x{2298}",
                 "2 \x{2705}",
                 "2 \x{2705}",
                 "15 \x{2705}"
@@ -748,7 +748,7 @@ Readonly::Array my @result_expected => (
                 "-7 \x{274c}",
                 "-10 \x{274c}",
                 "-2 \x{274c}",
-                "\x{1f6c7}",
+                "\x{2298}",
                 "0 \x{1f535}",
                 "6 \x{2705}"
             ],
@@ -759,7 +759,7 @@ Readonly::Array my @result_expected => (
                 "-13 \x{274c}",
                 "-2 \x{274c}",
                 "0 \x{1f535}",
-                "\x{1f6c7}",
+                "\x{2298}",
                 "1 \x{2705}"
             ],
             [
@@ -770,7 +770,7 @@ Readonly::Array my @result_expected => (
                 "-15 \x{274c}",
                 "-6 \x{274c}",
                 "-1 \x{274c}",
-                "\x{1f6c7}"
+                "\x{2298}"
             ]
         ],
         'title' => 'Margin-of-victory matrix',

@@ -398,7 +398,7 @@ title: KR2 Test Suite 0004 (100 ballots)
 <tbody>
 <tr>
 <td>CHAOTIC</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>16 ✅</td>
 <td>36 ✅</td>
 <td>26 ✅</td>
@@ -408,7 +408,7 @@ title: KR2 Test Suite 0004 (100 ballots)
 <tr>
 <td>ABNORMAL</td>
 <td>-16 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>56 ✅</td>
 <td>28 ✅</td>
 <td>24 ✅</td>
@@ -418,7 +418,7 @@ title: KR2 Test Suite 0004 (100 ballots)
 <td>EVIL</td>
 <td>-36 ❌</td>
 <td>-56 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>2 ✅</td>
 <td>18 ✅</td>
 <td>50 ✅</td>
@@ -428,7 +428,7 @@ title: KR2 Test Suite 0004 (100 ballots)
 <td>-26 ❌</td>
 <td>-28 ❌</td>
 <td>-2 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>12 ✅</td>
 <td>98 ✅</td>
 </tr>
@@ -438,7 +438,7 @@ title: KR2 Test Suite 0004 (100 ballots)
 <td>-24 ❌</td>
 <td>-18 ❌</td>
 <td>-12 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>10 ✅</td>
 </tr>
 <tr>
@@ -448,7 +448,7 @@ title: KR2 Test Suite 0004 (100 ballots)
 <td>-50 ❌</td>
 <td>-98 ❌</td>
 <td>-10 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 </tr>
 </tbody>
 </table>
@@ -555,7 +555,7 @@ title: KR2 Test Suite 0004 (100 ballots)
 <tbody>
 <tr>
 <td>CHAOTIC</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>16 ✅🔒</td>
 <td>36 ✅🔒</td>
 <td>26 ✅🔒</td>
@@ -565,7 +565,7 @@ title: KR2 Test Suite 0004 (100 ballots)
 <tr>
 <td>ABNORMAL</td>
 <td>-16 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>56 ✅🔒</td>
 <td>28 ✅🔒</td>
 <td>24 ✅🔒</td>
@@ -575,7 +575,7 @@ title: KR2 Test Suite 0004 (100 ballots)
 <td>EVIL</td>
 <td>-36 ❌</td>
 <td>-56 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>2 ✅🔒</td>
 <td>18 ✅🔒</td>
 <td>50 ✅🔒</td>
@@ -585,7 +585,7 @@ title: KR2 Test Suite 0004 (100 ballots)
 <td>-26 ❌</td>
 <td>-28 ❌</td>
 <td>-2 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>12 ✅🔒</td>
 <td>98 ✅🔒</td>
 </tr>
@@ -595,7 +595,7 @@ title: KR2 Test Suite 0004 (100 ballots)
 <td>-24 ❌</td>
 <td>-18 ❌</td>
 <td>-12 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>10 ✅🔒</td>
 </tr>
 <tr>
@@ -605,7 +605,7 @@ title: KR2 Test Suite 0004 (100 ballots)
 <td>-50 ❌</td>
 <td>-98 ❌</td>
 <td>-10 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 </tr>
 </tbody>
 </table>
@@ -714,7 +714,7 @@ title: KR2 Test Suite 0004 (100 ballots)
 <tr>
 <td>CHAOTIC</td>
 <td>5</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>16 ✅</td>
 <td>36 ✅</td>
 <td>26 ✅</td>
@@ -725,7 +725,7 @@ title: KR2 Test Suite 0004 (100 ballots)
 <td>ABNORMAL</td>
 <td>3</td>
 <td>-16 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>56 ✅</td>
 <td>28 ✅</td>
 <td>24 ✅</td>
@@ -736,7 +736,7 @@ title: KR2 Test Suite 0004 (100 ballots)
 <td>1</td>
 <td>-36 ❌</td>
 <td>-56 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>2 ✅</td>
 <td>18 ✅</td>
 <td>50 ✅</td>
@@ -747,7 +747,7 @@ title: KR2 Test Suite 0004 (100 ballots)
 <td>-26 ❌</td>
 <td>-28 ❌</td>
 <td>-2 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>12 ✅</td>
 <td>98 ✅</td>
 </tr>
@@ -758,7 +758,7 @@ title: KR2 Test Suite 0004 (100 ballots)
 <td>-24 ❌</td>
 <td>-18 ❌</td>
 <td>-12 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 <td>10 ✅</td>
 </tr>
 <tr>
@@ -769,7 +769,7 @@ title: KR2 Test Suite 0004 (100 ballots)
 <td>-50 ❌</td>
 <td>-98 ❌</td>
 <td>-10 ❌</td>
-<td>🛇</td>
+<td>⊘</td>
 </tr>
 </tbody>
 </table>
