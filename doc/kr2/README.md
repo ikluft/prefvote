@@ -3,6 +3,21 @@ Kluft Rank-Rate (KR2) voting method
 
 The Kluft Rank-Rate (KR2) voting method is intended to advance preference/ranked choice voting. It can be used even for small groups to combine individual rankings into the group's ranking. It's designed to capture more of voters' intent. It uses a ranked-choice ballot process for pairwise comparison of all choices. It breaks ties by using choices' average position on the ballot as a rating. Optionally, a poll can be configured to allow voters to rate choices as support, neutral or oppose categories.
 
+## Contents
+
+* <a href="#overview">Overview of the Kluft Rank-Rate (KR2) algorithm</a>
+* <a href="#simplifying">Simplifying Condorcet for acceptance by the public</a>
+* <a href="#details">Details of the Kluft Rank-Rate (KR2) method</a>
+  * <a href="#algorithm">Algorithm</a>
+  * <a href="#condorcet-compliance">Condorcet compliance</a>
+  * <a href="#condorcet-tiebreaking">Condorcet tie-breaking</a>
+  * <a href="#rating-levels">Rating levels</a>
+    * <a href="#comparison-markers">Comparisons involving rating bound markers</a>
+
+<hr>
+
+## <a name="overview">Overview of the Kluft Rank-Rate (KR2) algorithm</a>
+
 Condorcet-compliant voting methods have been around for decades, making pairwise comparison of voter preferences between candidates. They have proven to be technically sound. But complexity has been a barrier to public acceptance. All Condorcet methods have some kind of tie-breaking when no candidates win outright on the Condorcet criteria. Use of graph algorithms has been common. For tie-breaking, the KR2 algorithm uses a cardinal method. The algorithm has been tested against random voting data and, with satisfactory results so far, the next step is to write a paper about it.
 
 KR2 is similar to other Condorcet voting systems in making pairwise comparisons of candidates to choose the Condorcet Winner, if one exists. But it differs in the following ways:
@@ -21,7 +36,7 @@ KR2 adds an additional feature of rating levels. These are optionally selected b
 
 The ratings are handled by including rating bound markers in the ballot to divide the voter's choices. The bound markers are excluded from lists of winning or losing choices, but can be configured as thresholds of acceptance or rejection. The rating bound markers must be in the correct order, wherever they are among the voter's selections - otherwise the ballot will be rejected. The results will then include rating bound markers among the list of choices. Results which show choices falling below the threshold(s) of opposition are marked as eliminated, even if it leaves one or more available seats of a multi-winner race vacant.
 
-## Simplifying Condorcet for acceptance by the public
+## <a name="simplifying">Simplifying Condorcet for acceptance by the public</a>
 
 In elections, ["Ranked Choice Voting" (RCV)](https://electowiki.org/wiki/Instant-runoff_voting) is becoming more widely accepted as a step up from the old ["First Past the Post" (FPTP)](https://electowiki.org/wiki/First_Past_the_Post_electoral_system) voting. Instead of voting for just one candidate, Ranked Choice allows voters to submit their preferences in order. With more information available about voters' intentions, the system can eliminate run-off elections by handling everything in one pass.
 
@@ -31,7 +46,7 @@ There are better ranked choice algorithms at capturing voters' intent, including
 
 So Condorcet methods are better. But they tend to be too complicated to explain to the non-technical public. While the [Schulze](https://electowiki.org/wiki/Schulze_method) and [Tideman/Ranked Pairs](https://electowiki.org/wiki/Ranked_Pairs) methods are mathematically and technically sound, they involve graph theory algorithms which are much too complex to explain for public acceptance. We must solve that before Condorcet algorithms can break through to become acceptable for wider public use.
 
-## The Kluft Rank-Rate (KR2) method
+## <a name="details">Details of the Kluft Rank-Rate (KR2) method</a>
 
 With the Schulze and Tideman algorithms named for their authors, I call this the Kluft Rank-Rate (KR2) method.
 
@@ -39,21 +54,21 @@ Technical documentation is in the [PrefVote::KR2 module source code directory](.
 
 A paper on the algorithm will be written in this directory.
 
-#### Algorithm
+### <a name="algorithm">Algorithm</a>
 
 The Kluft Rank-Rate (KR2) voting method combines ranked choice ballots in multiple rating groups to incorporate approval or opposition information into a ranked choice poll or election. KR2 polls/elections can have single or multiple winners, depending on the number of seats (winners per election) configured for the poll.
 
-#### Condorcet compliance
+### <a name="condorcet-compliance">Condorcet compliance</a>
 
 KR2 is a Condorcet-compliant system. That means the definition starts with using ranked preference ballot data to perform pairwise comparisons among all candidates. If one candidate beats all the others in pairwise comparisons, then that candidate wins.
 
 It is possible for close elections to have two or more candidates either tie or make a cycle of beating each other which prevents having one pairwise winner. All Condorcet methods differ in how to handle these ties, also known as the Condorcet Paradox. KR2 orders the candidates by their [Copeland Score](https://electowiki.org/wiki/Copeland%27s_method), which is the number of pairwise wins minus the pairwise losses, with pairwise ties counting as zero. It acts like a round-robin tournament, where competing teams play against each other to make such a ranking order. Except the ranked preference ballots contain enough information to order the candidates by [Copeland Score](https://electowiki.org/wiki/Copeland%27s_method). A Condorcet Winner, if present, will always win this ranking.
 
-#### Condorcet tie-breaking
+### <a name="condorcet-tiebreaking">Condorcet tie-breaking</a>
 
 Otherwise ties are broken by using the average choice rank (ACR) where 1st choice equals 1, 2nd choice is 2, etc. ACR is used as a secondary sorting criteria so that it won't break Condorcet ordering. ACR is mathematically equivalent to a Borda Count, except reversed to favor lower numbers instead of higher, because of the simplicity value of first place being 1. Thus far, the algorithm is like Black's Method, except that positional data (ACR in this case) is used to break ties, without throwing out the Condorcet ordering.
 
-#### Rating levels
+### <a name="rating-levels">Rating levels</a>
 
 KR2 ballots can defined before the poll to use multiple rating groups. If no groups are configured, then the vote is a Condorcet-compliant ranked choice algorithm. Testing has so far shown it to be comparable to the Schulze 2004 or Tideman 1987 (Ranked Pairs) methods.
 
@@ -63,7 +78,7 @@ The number of rating groups in a KR2 election are called levels. The definition 
 
 The default setting at Level 1 is compatible with other ranked choice voting algorithms, taking input ballots with the voter's ranking order and no rating bound markers. At that level, it still differentiates from other ranked choice algorithms by how it breaks a Condorcet tie/paradox using average choice rank (ACR).
 
-##### Comparisons involving rating bound markers
+#### <a name="comparison-markers">Comparisons involving rating bound markers</a>
 
 Sorting PrefVote's voting results involves [three-way comparisons](https://en.wikipedia.org/wiki/Three-way_comparison) between each of the items. A corner case introduced by KR2's rating bound markers is how to handle comparisons when these markers are one or both of the items being compared in result sorting. This scenario only comes into play in cases when there is a tie by both [Condorcet](https://electowiki.org/wiki/Condorcet_method)/[Copeland Score](https://electowiki.org/wiki/Copeland%27s_method) and the average choice rank (ACR). The following rules were made to handle final result ordering in this scenario:
 
