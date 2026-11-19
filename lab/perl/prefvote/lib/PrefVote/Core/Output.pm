@@ -123,6 +123,16 @@ sub output
 {
     my ( $class, $format_class, $method_class, $result_data ) = @_;
 
+    # run auxiliary formatter classes if any were specified
+    if ( __PACKAGE__->has_config( "format_aux" )) {
+        my $aux_formats = __PACKAGE__->config( "format_aux" );
+        my @aux_products;
+        foreach my $aux_class ( @$aux_formats ) {
+            push @aux_products, $aux_class->do_aux( $result_data );
+        }
+        __PACKAGE__->config( "aux_products, \@aux_products );
+    }
+
     # generate candidate names list
     my @candidates = $class->candidates_list($result_data);
 
@@ -228,6 +238,21 @@ sub class_search
     PrefVote::Core::Exception->throw( description => "could not load $type class $search" );
 }
 
+# search for possibly multiple comma-delimited formatter classes
+# The first (and possibly only) result is the primary formatter class. Others are auxiliary (i.e. diagrams).
+sub format_search
+{
+    my $search = shift;
+    my @result;
+
+    # split the comma-delimited search parameter and perform searches for each formatter class
+    # any failed searches end the program
+    foreach my $fmt_class ( split /,/x, $search ) {
+        push @result, class_search( __PACKAGE__."::$fmt_class", "formatting" );
+    }
+    return @result;
+}
+
 # mainline to launch appropriate formatter subclass and forward YAML data to it
 sub main
 {
@@ -241,7 +266,7 @@ sub main
         # process command line
         GetOptions( "debug" => \$debug, "format=s" => \$format, "method=s" => \$method );
         if ( not defined $format or not defined $method ) {
-            croak "usage: $0 --format=output_format --method=voting_method";
+            croak "usage: $0 --format=output_format[,aux_format...] --method=voting_method";
         }
         if ($debug) {
             $Data::Dumper::Sortkeys = 1;
@@ -249,10 +274,15 @@ sub main
             __PACKAGE__->debug(1);
         }
 
-        # check if a class which can handle the requested format exists
-        my $format_class = class_search( __PACKAGE__."::$format", "formatting" );
+        # Check if a class which can handle the requested format exists.
+        # If more than one format is specified (comma-delimited), the first is primary - others are also loaded.
+        my ( $format_class, @format_aux ) = format_search( $format );
+        if ( scalar @format_aux > 0 ) {
+            __PACKAGE__->config( "format_aux", \@format_aux );
+        }
 
-        # check if a class which can handle the requested voting method exists
+        # Check if a class which can handle the requested voting method exists.
+        # There can only be one voting method specified.
         my $voting_method = PrefVote::Core::supported_method($method);
         if ( not defined $voting_method ) {
             croak "$method is not a supported voting method";
