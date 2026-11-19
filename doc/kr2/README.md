@@ -1,7 +1,7 @@
 Kluft Rank-Rate (KR2) voting method
 ===================================
 
-The Kluft Rank-Rate (KR2) voting method is intended to advance preference/ranked choice voting. It can be used even for small groups to combine individual rankings into the group's ranking. It's designed to capture more of voters' intent. It uses a ranked-choice ballot process for pairwise comparison of all choices. It breaks ties by using choices' average position on the ballot as a rating. Optionally, a poll can be configured to allow voters to rate choices as support, neutral or oppose categories.
+The Kluft Rank-Rate (KR2) voting method is intended to advance preference/ranked choice voting. It can be used even for small groups to combine individual rankings into the group's ranking. It's designed to capture more of voters' intent. It uses a ranked-choice ballot process for pairwise comparison of all choices, similar to a round-robin tournament. It breaks ties by using choices' average position on the ballot as a rating. Optionally, a poll can be configured to allow voters to rate choices as support, neutral or oppose categories.
 
 ## Contents
 
