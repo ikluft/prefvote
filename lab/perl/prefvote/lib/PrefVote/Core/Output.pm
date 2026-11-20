@@ -124,13 +124,13 @@ sub output
     my ( $class, $format_class, $method_class, $result_data ) = @_;
 
     # run auxiliary formatter classes if any were specified
-    if ( __PACKAGE__->has_config( "format_aux" )) {
+    if ( __PACKAGE__->config_exists( "format_aux" )) {
         my $aux_formats = __PACKAGE__->config( "format_aux" );
         my @aux_products;
         foreach my $aux_class ( @$aux_formats ) {
             push @aux_products, $aux_class->do_aux( $result_data );
         }
-        __PACKAGE__->config( "aux_products, \@aux_products );
+        __PACKAGE__->config( "aux_products", \@aux_products );
     }
 
     # generate candidate names list
