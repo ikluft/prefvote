@@ -16,31 +16,57 @@ Project-wide documentation is in the [doc](doc/) directory.
 
 The original Vote::STV software implemented the [single transferable vote](https://electowiki.org/wiki/Single_transferable_vote) algorithm, which is a subset of [ranked-choice voting](https://electowiki.org/wiki/Ranked_voting), also called preference voting. PrefVote has expanded into a library of multiple voting method implementations all based on ranked choice.
 
+### STV: Single Transferable Vote
+
 STV was the first implemented voting method in PrefVote since it was the original implementation as Vote::STV back to 1998. But STV has largely fallen out of favor because studies of voting methods found it lacking on some desirable characteristics, particularly some quirks in close elections in how votes transfer upon elimination of losing candidates. STV was retained while modernizing the code to develop testing infrastructure.
 
 No voting method can be perfect, due to a long list of desirable properties, some of which [turn out to be in conflict according to Arrow's Impossibility Theorem](https://electowiki.org/wiki/Arrow%27s_impossibility_theorem). Given that there is no perfect voting method, it's important to have agreement among a community on which method it uses. Methods which meet [Condorcet requirements](https://electowiki.org/wiki/Condorcet_method) make comparisons between each pair of candidates and picks a winner who beats all other candidates in pairwise comparisons, if such a winner exists. *Think of a sports round-robin tournament, which is analagous.* Condorcet methods, similar to round-robin tournaments, differ in how to handle cases when there isn't a clear Condorcet or tournament winner. Cycles can happen where a subset of leading candidates fail to beat the others in that group.
 
+### Schulze Method
+
 The second voting method implemented in PrefVote was the [Schulze algorithm](https://electowiki.org/wiki/Schulze_method) (see [full definition paper](https://arxiv.org/abs/1804.02973)). The method was designed by Marcus Schulze in 1997 to compute a graph out of voter preferences among candidates and pick the ones preferred over all others. An ordering of all the candidates can be computed over multiple rounds after removing the previous round's winner(s).
+
+### Ranked Pairs (Tideman) Method
 
 The next algorithm implemented in PrefVote was [Ranked Pairs](https://electowiki.org/wiki/Ranked_Pairs). It was designed by Nicolaus Tideman in 1987. It tallies ranked choice ballots into pairwise comparisons among all choices/candidates. The pairs are sorted by margin of victory from largest margin down to ties at zero. Pairs are "locked" in for consideration of the final order of candidates if they do not conflict with locked pairs with larger margins. Candidates are then ordered starting who beats all other candidates, then each who beat all remaining candidates.
 
+### KR2: Kluft Rank-Rate Method
+
+This voting method came as a result of my development of PrefVote, getting to compare the various ranked-choice and Condorcet voting methods. While the Tideman and Schulze methods are technically sound, they are too complex to explain to the public. In search of a sound but simpler method, I developed KR2.
+
+  * Condorcet pairwise comparisons between choices (like a round-robin tournament) are still done like other Condorcet methods.
+  * Choices are sorted by multiple criteria:
+    * The primary sorting criteria is the Copeland Score, wins minus losses from the Condorcet pairwise comparisons.
+    * The secondary sorting criteria, when there are ties in the primary, is the average choice rank (ACR) of each choice's positions on each ballot. This tie-breaker is a positional or cardinal voting method.
+
+Each poll may be configured (before voting begins) to allow voters to rate choices by moving them into boxes for support and oppose, or maybe also neutral, strong support and strong oppose. By default there are no rating levels and voting is handled like other ranked-choice algorithms. If ratings are used, the rating boundaries become part of each ballot and show divisions by support and opposition by their places in the final ranking.
+
+### Future programming language implementations
+
 After the reference implementation in Perl, next up for language implementations will be [Rust](https://www.rust-lang.org/).
 
-### Preference voting online resources
+## Preference voting online resources
 
 Here is general information about preference voting algorithms.
 
 * [ElectoWiki](https://electowiki.org/), electoral systems wiki
 * Wiki articles
-  * Comparison: [electowiki](https://electowiki.org/wiki/Main_Page) [wikipedia](https://en.wikipedia.org/wiki/Comparison_of_electoral_systems)
-  * Ranked voting: [electowiki](https://electowiki.org/wiki/Ranked_voting) [wikipedia](https://en.wikipedia.org/wiki/Ranked_voting)
-  * Instant-runoff voting: [electowiki](https://electowiki.org/wiki/Instant-runoff_voting) [wikipedia](https://en.wikipedia.org/wiki/Instant-runoff_voting)
-  * Condorcet method: [electowiki](https://electowiki.org/wiki/Condorcet_method) [wikipedia](https://en.wikipedia.org/wiki/Condorcet_method)
-  * Schulze method: [electowiki](https://electowiki.org/wiki/Schulze_method) [wikipedia](https://en.wikipedia.org/wiki/Schulze_method)
-  * Ranked Pairs: [electowiki](https://electowiki.org/wiki/Ranked_Pairs) [wikipedia](https://en.wikipedia.org/wiki/Ranked_pairs)
-  * Condorcet Paradox: [electowiki](https://electowiki.org/wiki/Condorcet_paradox) [wikipedia](https://en.wikipedia.org/wiki/Condorcet_paradox)
-  * Smith set: [electowiki](https://electowiki.org/wiki/Smith_set) [wikipedia](https://en.wikipedia.org/wiki/Smith_set)
-  * voting system criteria: [electowiki](https://electowiki.org/wiki/Voting_system_criterion) [wikipedia](https://en.wikipedia.org/wiki/Voting_criteria)
+    * Comparison: [electowiki](https://electowiki.org/wiki/Main_Page) [wikipedia](https://en.wikipedia.org/wiki/Comparison_of_electoral_systems)
+    * Ranked voting: [electowiki](https://electowiki.org/wiki/Ranked_voting) [wikipedia](https://en.wikipedia.org/wiki/Ranked_voting)
+    * Instant-runoff voting: [electowiki](https://electowiki.org/wiki/Instant-runoff_voting) [wikipedia](https://en.wikipedia.org/wiki/Instant-runoff_voting)
+    * Condorcet method: [electowiki](https://electowiki.org/wiki/Condorcet_method) [wikipedia](https://en.wikipedia.org/wiki/Condorcet_method)
+        * Condorcet Paradox: [electowiki](https://electowiki.org/wiki/Condorcet_paradox) [wikipedia](https://en.wikipedia.org/wiki/Condorcet_paradox)
+        * Smith set: [electowiki](https://electowiki.org/wiki/Smith_set) [wikipedia](https://en.wikipedia.org/wiki/Smith_set)
+        * Round-robin tournament: [wikipedia](https://en.wikipedia.org/wiki/Round-robin_tournament)
+        * Tournament (graph theory): [wikipedia](https://en.wikipedia.org/wiki/Tournament_(graph_theory))
+    * Schulze method: [electowiki](https://electowiki.org/wiki/Schulze_method) [wikipedia](https://en.wikipedia.org/wiki/Schulze_method)
+    * Ranked Pairs: [electowiki](https://electowiki.org/wiki/Ranked_Pairs) [wikipedia](https://en.wikipedia.org/wiki/Ranked_pairs)
+    * voting system criteria: [electowiki](https://electowiki.org/wiki/Voting_system_criterion) [wikipedia](https://en.wikipedia.org/wiki/Voting_criteria)
+    * KR2 Kluft Rank-Rate: [KR2 docs](doc/kr2/)
+        * Copeland Score: [electowiki](https://electowiki.org/wiki/Copeland%27s_method) [wikipedia](https://en.wikipedia.org/wiki/Copeland%27s_method)
+        * positional voting method: [electowiki](https://electowiki.org/wiki
+/Weighted_positional_method) [wikipedia](https://en.wikipedia.org/wiki/Positional_voting)
+        * cardinal voting method:  [electowiki](https://electowiki.org/wiki/Cardinal_voting_systems) [wikipedia](https://en.wikipedia.org/wiki/Rated_voting)
 * [FairVote](https://www.fairvote.org/), nonpartisan group promoting ranked choice voting (RCV) and proportional representation (PR)
 * ["What is Democracy?" video series](http://www.professorbray.net/Teaching/GTD/2020-SummerTerm2/GTD.html), Prof HL Bray, Duke University
 * ["Voting and Elections"](https://www.ams.org/publicoutreach/feature-column/fcarc-voting-introduction), American Mathematical Society articles
