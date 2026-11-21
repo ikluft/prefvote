@@ -68,8 +68,7 @@ Here is general information about preference voting algorithms.
     * voting system criteria: [electowiki](https://electowiki.org/wiki/Voting_system_criterion) [wikipedia](https://en.wikipedia.org/wiki/Voting_criteria)
     * KR2 Kluft Rank-Rate: [KR2 docs](doc/kr2/)
         * Copeland Score: [electowiki](https://electowiki.org/wiki/Copeland%27s_method) [wikipedia](https://en.wikipedia.org/wiki/Copeland%27s_method)
-        * positional voting method: [electowiki](https://electowiki.org/wiki
-/Weighted_positional_method) [wikipedia](https://en.wikipedia.org/wiki/Positional_voting)
+        * positional voting method: [electowiki](https://electowiki.org/wiki/Weighted_positional_method) [wikipedia](https://en.wikipedia.org/wiki/Positional_voting)
         * cardinal voting method:  [electowiki](https://electowiki.org/wiki/Cardinal_voting_systems) [wikipedia](https://en.wikipedia.org/wiki/Rated_voting)
 * [FairVote](https://www.fairvote.org/), nonpartisan group promoting ranked choice voting (RCV) and proportional representation (PR)
 * ["What is Democracy?" video series](http://www.professorbray.net/Teaching/GTD/2020-SummerTerm2/GTD.html), Prof HL Bray, Duke University
