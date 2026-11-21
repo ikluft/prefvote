@@ -20,7 +20,7 @@ The original Vote::STV software implemented the [single transferable vote](https
 
 STV was the first implemented voting method in PrefVote since it was the original implementation as Vote::STV back to 1998. But STV has largely fallen out of favor because studies of voting methods found it lacking on some desirable characteristics, particularly some quirks in close elections in how votes transfer upon elimination of losing candidates. STV was retained while modernizing the code to develop testing infrastructure.
 
-## Condorcet methods
+### Condorcet methods
 
 No voting method can be perfect, due to a long list of desirable properties, some of which [turn out to be in conflict according to Arrow's Impossibility Theorem](https://electowiki.org/wiki/Arrow%27s_impossibility_theorem). Given that there is no perfect voting method, it's important to have agreement among a community on which method it uses. Methods which meet [Condorcet requirements](https://electowiki.org/wiki/Condorcet_method) make comparisons between each pair of candidates and picks a winner who beats all other candidates in pairwise comparisons, if such a winner exists. *Think of a sports round-robin tournament, which is analagous.* Condorcet methods, like round-robin tournaments, differ in how to handle cases when there isn't a clear Condorcet or tournament winner. Cycles can happen where a subset of leading candidates fail to beat the others in that subset.
 
