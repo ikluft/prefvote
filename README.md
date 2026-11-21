@@ -36,7 +36,7 @@ The next algorithm implemented in PrefVote was [Ranked Pairs](https://electowiki
 
 ### KR2: Kluft Rank-Rate Method
 
-This voting method came as a result of my development of PrefVote, getting to compare the various ranked-choice and Condorcet voting methods. While the Ranked Pairs/Tideman and Schulze methods are technically sound, graph theory is too complex to explain to the public. In search of a simpler method which is still also technically sound, I developed KR2.
+This voting method came as a result of my development of PrefVote, getting to compare the various ranked-choice and Condorcet voting methods. While the Ranked Pairs/Tideman and Schulze methods are technically sound, graph theory is too complex to explain to the public. In search of a simpler method which is still also technically sound, I developed the [Kluft Rank-Rate Method (KR2)](doc/kr2/).
 
   * Condorcet pairwise comparisons between choices (like a round-robin tournament) are still done like other Condorcet methods.
   * Choices are sorted by multiple criteria:
