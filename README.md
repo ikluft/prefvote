@@ -39,11 +39,18 @@ The next algorithm implemented in PrefVote was [Ranked Pairs](https://electowiki
 This voting method came as a result of my development of PrefVote, getting to compare the various ranked-choice and Condorcet voting methods. While the Ranked Pairs/Tideman and Schulze methods are technically sound, graph theory is too complex to explain to the public. In search of a simpler method which is still also technically sound, I developed the [Kluft Rank-Rate Method (KR2)](doc/kr2/).
 
   * Condorcet pairwise comparisons between choices (like a round-robin tournament) are still done like other Condorcet methods.
-  * Choices are sorted by multiple criteria:
+  * Ranked ballots are each processed by two different methods and sorted by those criteria:
     * The primary sorting criteria is the Copeland Score, wins minus losses from the Condorcet pairwise comparisons.
     * The secondary sorting criteria, when there are ties in the primary, is the average choice rank (ACR) of each choice's positions on each ballot. This tie-breaker is a positional or cardinal voting method.
 
-Each poll may be configured (before voting begins) to allow voters to rate choices by moving them into boxes for support and oppose, or maybe also neutral, strong support and strong oppose. By default there are no rating levels and voting is handled like other ranked-choice algorithms. If ratings are used, the rating boundaries become part of each ballot and show divisions by support and opposition by their places in the final ranking.
+Each poll may be configured (before voting begins) to allow voters to rate choices by moving them into boxes for support and oppose, or maybe also neutral, strong support and strong oppose. By default there are no rating levels and voting is handled like other ranked-choice algorithms. If ratings are used, the rating boundaries become part of each ballot and show divisions by support and opposition through the boundaries' places in the final ranking.
+
+For example, in a KR2 Level 2 poll, there are 2 levels support and oppose, divided by the "neutral" rating boundary marker. Any choice which ranks higher than the neutral marker is considered supported by the community. Any choice which ranks lower than the neutral marker is considered opposed by the community, and eliminated in the results.
+
+The most significant new developments of the KR2 algorithm are summarized as follows:
+
+* insertion of rating boundaries among the choices on ranked ballots
+* Condorcet paradox resolution (tie-breaking) using positional voting (average choice rank) as a secondary corting criteria
 
 ### Future programming language implementations
 
