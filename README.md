@@ -63,6 +63,7 @@ Here is general information about preference voting algorithms.
 * [ElectoWiki](https://electowiki.org/), electoral systems wiki
 * Wiki articles
     * Comparison: [electowiki](https://electowiki.org/wiki/Main_Page) [wikipedia](https://en.wikipedia.org/wiki/Comparison_of_electoral_systems)
+    * voting system criteria: [electowiki](https://electowiki.org/wiki/Voting_system_criterion) [wikipedia](https://en.wikipedia.org/wiki/Voting_criteria)
     * Ranked voting: [electowiki](https://electowiki.org/wiki/Ranked_voting) [wikipedia](https://en.wikipedia.org/wiki/Ranked_voting)
     * Instant-runoff voting: [electowiki](https://electowiki.org/wiki/Instant-runoff_voting) [wikipedia](https://en.wikipedia.org/wiki/Instant-runoff_voting)
     * Condorcet method: [electowiki](https://electowiki.org/wiki/Condorcet_method) [wikipedia](https://en.wikipedia.org/wiki/Condorcet_method)
@@ -72,7 +73,6 @@ Here is general information about preference voting algorithms.
         * Tournament (graph theory): ~~electowiki~~ [wikipedia](https://en.wikipedia.org/wiki/Tournament_(graph_theory))
     * Schulze method: [electowiki](https://electowiki.org/wiki/Schulze_method) [wikipedia](https://en.wikipedia.org/wiki/Schulze_method)
     * Ranked Pairs: [electowiki](https://electowiki.org/wiki/Ranked_Pairs) [wikipedia](https://en.wikipedia.org/wiki/Ranked_pairs)
-    * voting system criteria: [electowiki](https://electowiki.org/wiki/Voting_system_criterion) [wikipedia](https://en.wikipedia.org/wiki/Voting_criteria)
     * KR2 Kluft Rank-Rate: [KR2 docs](doc/kr2/)
         * Copeland Score: [electowiki](https://electowiki.org/wiki/Copeland%27s_method) [wikipedia](https://en.wikipedia.org/wiki/Copeland%27s_method)
         * positional voting method: [electowiki](https://electowiki.org/wiki/Weighted_positional_method) [wikipedia](https://en.wikipedia.org/wiki/Positional_voting)
