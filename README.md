@@ -2,9 +2,9 @@
 
 by Ian Kluft
 
-PrefVote is a project to promote preference voting.
+PrefVote is a project to promote ranked preference voting.
 
-Implementations of several ranked-choice voting methods and algorithms are included in the ["LAB" (Legacy Algorithm Base)](lab/) directory. (Yes, it's supposed to also sound like laboratory.) The Single Transferable Vote (STV) implementation is descended from the Vote::STV software I wrote in Perl in 1999, with periodic maintenance over the years. Implementation and experimentation with Condorcet-based algorithms Schulze and Ranked Pairs helped me better understand the flaws of STV, and why it has fallen out of favor among those looking for better voting algorithms.
+Implementations of several ranked-choice voting methods and algorithms are included in the ["LAB" (Legacy Algorithm Base)](lab/) directory. (Yes, it's supposed to also sound like laboratory.) The Single Transferable Vote (STV) implementation is descended from the Vote::STV software I wrote in Perl in 1999 for the Silicon Valley Linux User Group (SVLUG) elections, and then with periodic maintenance over the years. Implementation and experimentation with Condorcet-based algorithms Schulze and Ranked Pairs helped me better understand the flaws of STV in handling close elections, and why it has fallen out of favor among those looking for better voting algorithms.
 
 Since the project's original language Perl has strengths in prototyping, that's the reference implementation in this project for multiple language implementations. With translations to multiple programming languages, the library is designed with a [common test suite](test/) among the different implementations to verify proper functioning.
  
