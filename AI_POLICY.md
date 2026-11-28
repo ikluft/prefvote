@@ -14,11 +14,11 @@ AI/LLM-generated code is not accepted.
 
 ## AI in CI/CD
 
-AI/LLM tools in CI/CD pipelines require explicit maintainer approval.
+AI/LLM tools are not permitted in CI/CD pipelines. All automation must use deterministic, non-AI/LLM tooling.
 
 ## Training Data
 
-This project requests that its code not be used for AI/LLM model training. We ask that AI tool providers honor this preference.
+This project requests that its code not be used for AI/LLM model training. We ask that AI/LLM tool providers honor this preference.
 
 ## Enforcement
 
